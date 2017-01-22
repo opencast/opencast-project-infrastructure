@@ -1,0 +1,75 @@
+---
+# vim: et:ts=2:sw=2:sts=2
+
+- hosts: server
+
+  vars:
+    ocadmins:
+      - lars
+      - greglogan
+
+  tasks:
+    - name: install base tools
+      become: yes
+      package:
+        state: present
+        name: '{{ item }}'
+      with_items:
+        - git
+        - htop
+        - nload
+        - vim-enhanced
+
+    - name: create opencast infra users
+      become: yes
+      user:
+        name: '{{ item }}'
+        password: '$6$rounds=656000$/2a4a2lmJtsLBdyM$0VVKwJ4byUPaLirCwdvfgTXRg7dLptq4UVVt/ge9sahNSzHYUYcv9aq/O7ytiuShicXVPya5SjLX8CSyGfKWs/'
+        update_password: on_create
+      with_items: '{{ ocadmins }}'
+
+    - name: append user to vmuser and admin on uos servers
+      become: yes
+      user:
+        name: '{{ item }}'
+        groups: vmusers,vmadmins
+        append: yes
+      with_items: '{{ ocadmins }}'
+      when: "'uos' in group_names"
+
+    - name: set up authorized keys
+      become: yes
+      authorized_key:
+        user: '{{ item }}'
+        state: present
+        key: "{{ lookup('file', 'pub-keys/{{ item }}.pub') }}"
+      with_items: '{{ ocadmins }}'
+
+
+    # sshd options
+
+    - name: disable root login
+      become: yes
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^PermitRootLogin '
+        line: 'PermitRootLogin no'
+      notify:
+        - reload sshd
+
+    - name: disable password authentication
+      become: yes
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^PasswordAuthentication '
+        line: 'PasswordAuthentication no'
+      notify:
+        - reload sshd
+
+
+  handlers:
+    - name: reload sshd
+      become: yes
+      service:
+        name: sshd
+        state: reloaded

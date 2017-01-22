@@ -1,0 +1,13 @@
+[server:children]
+uos
+#switch
+#usask
+#eth
+
+
+[uos]
+nexus.opencast.org
+repo.opencast.org
+# docs.opencast org = repo
+# pullrequests.opencast.org
+octestallinone.virtuos.uos.de
