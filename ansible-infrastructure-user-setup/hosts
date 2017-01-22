@@ -1,13 +1,39 @@
 [server:children]
+eth
+harvard
+switch
 uos
-#switch
-#usask
-#eth
+usask
 
 
 [uos]
 nexus.opencast.org
-repo.opencast.org
-# docs.opencast org = repo
-# pullrequests.opencast.org
+pkg.opencast.org
+# docs.opencast org = pkg
+# pullrequests.opencast.org TODO
 octestallinone.virtuos.uos.de
+
+[usask]
+testallinone.usask.ca
+testadmin.usask.ca
+testengage.usask.ca
+testworker1.usask.ca
+testworker2.usask.ca
+
+[eth]
+opencast-nexus.ethz.ch
+
+[harvard]
+nexus.dcex.harvard.edu
+
+[switch]
+admin.oc-test.switch.ch
+player.oc-test.switch.ch
+ingest.oc-test.switch.ch
+worker1.oc-test.switch.ch
+worker2.oc-test.switch.ch
+worker3.oc-test.switch.ch
+worker4.oc-test.switch.ch
+database.oc-test.switch.ch
+download.oc-test.switch.ch
+streaming.oc-test.switch.ch

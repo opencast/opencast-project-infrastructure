@@ -28,7 +28,7 @@
         update_password: on_create
       with_items: '{{ ocadmins }}'
 
-    - name: append user to vmuser and admin on uos servers
+    - name: add vmusers and vmadmins groups uos servers
       become: yes
       user:
         name: '{{ item }}'
@@ -36,6 +36,14 @@
         append: yes
       with_items: '{{ ocadmins }}'
       when: "'uos' in group_names"
+
+    - name: add wheel group
+      become: yes
+      user:
+        name: '{{ item }}'
+        groups: wheel
+        append: yes
+      with_items: '{{ ocadmins }}'
 
     - name: set up authorized keys
       become: yes
