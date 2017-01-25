@@ -7,11 +7,12 @@ usask
 
 
 [uos]
-nexus.opencast.org
-pkg.opencast.org
 # docs.opencast org = pkg
-# pullrequests.opencast.org TODO
+build.opencast.org
+nexus.opencast.org
 octestallinone.virtuos.uos.de
+pkg.opencast.org
+pullrequests.opencast.org
 
 [usask]
 testallinone.usask.ca
