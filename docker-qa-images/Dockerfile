@@ -1,13 +1,16 @@
 FROM debian:jessie
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
-COPY opencast-ffmpeg_3.2.2-1_amd64.deb /root/opencast-ffmpeg_3.2.2-1_amd64.deb
+COPY gregorydlogan.oc-codesign.gpg.key /root/gregorydlogan.oc-codesign.gpg.key
 
 RUN apt-get update \
+    && apt-key add /root/gregorydlogan.oc-codesign.gpg.key \
     && apt-get install -y \
         software-properties-common \
     && add-apt-repository \
         'deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free' \
+	&& add-apt-repository \
+	'deb http://oc-cache.usask.ca/repo/ jessie main' \
     # Build deps
     && apt-get update \
     && apt-get install -y \
@@ -20,7 +23,7 @@ RUN apt-get update \
         -t jessie-backports maven \
      # Run deps
      && apt-get install -y \
+        opencast-ffmpeg \
         tesseract-ocr \
         netcat \
-        hunspell \
-     && dpkg -i /root/opencast-ffmpeg_3.2.2-1_amd64.deb
+        hunspell
