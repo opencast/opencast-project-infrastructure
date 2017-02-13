@@ -4,16 +4,18 @@ services:
   drone-server:
     image: drone/drone:0.5
     ports:
-      - 80:8000
+      - 8000:8000
     volumes:
       - ./drone:/var/lib/drone/
     restart: always
     environment:
       - DRONE_OPEN=true
+      - DRONE_ORGS=opencast-community
       - DRONE_BITBUCKET=true
       - DRONE_BITBUCKET_CLIENT=NjWDAbZkZkEH6XFRGu
       - DRONE_BITBUCKET_SECRET=T5KyUehE5RYz5FFtSeCwPTTaRbMTBsYj
       - DRONE_SECRET=test
+      - DRONE_ADMIN=greg_logan,lkiesow
 
   drone-agent:
     image: drone/drone:0.5
@@ -25,3 +27,4 @@ services:
     environment:
       - DRONE_SERVER=ws://drone-server:8000/ws/broker
       - DRONE_SECRET=test
+      - DRONE_TIMEOUT=2h
