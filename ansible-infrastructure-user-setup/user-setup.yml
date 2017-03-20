@@ -64,6 +64,7 @@
         line: 'PermitRootLogin no'
       notify:
         - reload sshd
+      when: "'eth' not in group_names"
 
     - name: disable password authentication
       become: yes
