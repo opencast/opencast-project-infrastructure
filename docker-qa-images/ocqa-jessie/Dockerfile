@@ -26,4 +26,9 @@ RUN apt-get update \
         opencast-ffmpeg \
         tesseract-ocr \
         netcat \
-        hunspell
+        hunspell \
+     # Package building deps
+     && apt-get isntall -y \
+        dpkg-dev \
+        debhelper \
+        dh-exec
