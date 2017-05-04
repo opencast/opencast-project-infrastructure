@@ -25,6 +25,7 @@ RUN apt-get update \
      # Maven from backports because Jessie ships with 3.0.5
      && apt-get install -y \
         -t jessie-backports maven \
+        openjdk-8-jdk \
      # Run deps
      && apt-get install -y \
 #        ffmpeg \
