@@ -1,0 +1,16 @@
+---
+# vim: et:ts=2:sw=2:sts=2
+# This playbook deploys a BuildBot master and worker(s) configured for Opencast
+
+- hosts: master
+  user: "{{ login_user }}"
+
+  roles:
+    - buildbot-master
+    - buildbot-master-reconfig
+
+- hosts: workers
+  user: "{{ login_user }}"
+
+  roles:
+    - buildbot-worker

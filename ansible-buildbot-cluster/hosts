@@ -1,0 +1,9 @@
+[buildbot:children]
+master
+workers
+
+[master]
+master.example.com
+
+[workers]
+worker.example.com

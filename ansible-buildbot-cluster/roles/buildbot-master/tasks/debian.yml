@@ -1,0 +1,64 @@
+---
+
+- name: Install BuildBot system level dependencies
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: yes
+  become: yes
+  with_items:
+    - python-pip
+    - python-dev
+    - build-essential
+    - git
+    - sudo
+
+- name: Install BuildBot Python level dependencies
+  pip:
+    name: "{{ item }}"
+  become: yes
+  with_items:
+    - buildbot[bundle]
+    - buildbot[tls]
+    - buildbot-grid-view
+    - requests
+
+- name: Create BuildBot user
+  user:
+    name: 'buildbot'
+    password: '$6$rounds=656000$wuuAoKugbM31ca7G$4ixDGH6.G54ZLIfepc4LhiNsV5UUxeXdfh/3fFhjrsvW3Jg9CgjsMta66hcM/41AptJoTq0wX1ebN03k.2hso/'
+    update_password: always
+    shell: /sbin/nologin
+  become: yes
+
+- name: Detect BuildBot home directory
+  shell: >
+          egrep "^buildbot:" /etc/passwd | awk -F: '{ print $6 }'
+  changed_when: false
+  register: buildbot_home
+
+- name: Create BuildBot master instance
+  shell: buildbot create-master {{ inventory_hostname }}
+  args:
+    chdir: "{{ buildbot_home.stdout_lines[0] }}"
+  become: yes
+  become_user: "buildbot"
+
+- name: Copy default BuildBot master configuration
+  shell: "cp {{ buildbot_home.stdout_lines[0] }}/{{ inventory_hostname }}/master.cfg.sample {{ buildbot_home.stdout_lines[0] }}/{{ inventory_hostname }}/master.cfg"
+  become: yes
+  become_user: buildbot
+
+- name: Apply BuildBot master configuration
+  shell: buildbot reconfig {{ inventory_hostname }}
+  args:
+    chdir: "{{ buildbot_home.stdout_lines[0] }}"
+  become: yes
+  become_user: buildbot
+
+- name: Start BuildBot master
+  shell: buildbot start {{ inventory_hostname }}
+  args:
+    chdir: "{{ buildbot_home.stdout_lines[0] }}"
+  become: yes
+  become_user: buildbot
