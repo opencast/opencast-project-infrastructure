@@ -3,7 +3,8 @@ master
 workers
 
 [master]
-master.example.com
+buildbot
 
 [workers]
-worker.example.com
+builder01
+builder02
