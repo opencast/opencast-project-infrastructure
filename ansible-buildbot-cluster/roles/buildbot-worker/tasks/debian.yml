@@ -60,7 +60,7 @@
     - host
 
 - name: Start BuildBot worker {{ inventory_hostname }}
-  shell: buildbot-worker start {{ inventory_hostname }}
+  shell: buildbot-worker restart {{ inventory_hostname }}
   args:
     chdir: "{{ buildbot_home.stdout_lines[0] }}"
   become: yes

@@ -57,7 +57,7 @@
   become_user: buildbot
 
 - name: Start BuildBot master
-  shell: buildbot start {{ inventory_hostname }}
+  shell: buildbot restart {{ inventory_hostname }}
   args:
     chdir: "{{ buildbot_home.stdout_lines[0] }}"
   become: yes
