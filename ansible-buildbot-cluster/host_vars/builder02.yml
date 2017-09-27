@@ -1,1 +1,4 @@
-deb9ct2.yml
+---
+
+password: bar
+admin_info: Greg Logan <gregorydlogan@gmail.com>

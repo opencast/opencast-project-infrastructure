@@ -8,3 +8,5 @@ buildbot
 [workers]
 builder01
 builder02
+builder03
+builder04

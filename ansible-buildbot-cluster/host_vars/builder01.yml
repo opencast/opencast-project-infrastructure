@@ -1,1 +1,4 @@
-deb9ct1.yml
+---
+
+password: foo
+admin_info: Greg Logan <gregorydlogan@gmail.com>
