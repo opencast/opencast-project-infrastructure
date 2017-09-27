@@ -56,9 +56,11 @@
   become: yes
   become_user: buildbot
 
-- name: Start BuildBot master
-  shell: buildbot restart {{ inventory_hostname }}
-  args:
-    chdir: "{{ buildbot_home.stdout_lines[0] }}"
-  become: yes
-  become_user: buildbot
+- name: Set up crontab to start BuildBot at reboot
+  cron:
+    name: "Start BuildBot"
+    state: present
+    special_time: reboot
+    job: "buildbot start {{ buildbot_home.stdout_lines[0] }}/{{ inventory_hostname }}"
+    user: buildbot
+  notify: "Ensure BuildBot master started"

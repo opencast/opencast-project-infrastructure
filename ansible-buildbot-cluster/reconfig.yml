@@ -7,3 +7,5 @@
 
   roles:
     - buildbot-master-reconfig
+  handlers:
+    - include: handlers/handlers.yml

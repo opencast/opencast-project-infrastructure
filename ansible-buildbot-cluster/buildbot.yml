@@ -8,9 +8,13 @@
   roles:
     - buildbot-master
     - buildbot-master-reconfig
+  handlers:
+    - include: handlers/handlers.yml
 
 - hosts: workers
   user: "{{ login_user }}"
 
   roles:
     - buildbot-worker
+  handlers:
+    - include: handlers/handlers.yml
