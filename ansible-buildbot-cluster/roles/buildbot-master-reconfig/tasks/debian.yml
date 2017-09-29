@@ -21,4 +21,3 @@
     chdir: "{{ buildbot_home.stdout_lines[0] }}"
   become: yes
   become_user: buildbot
-  notify: "Ensure BuildBot master started"
