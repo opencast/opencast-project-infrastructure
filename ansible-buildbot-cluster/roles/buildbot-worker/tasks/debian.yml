@@ -59,11 +59,28 @@
     - admin
     - host
 
-- name: Set up crontab to start BuildBot at reboot
-  cron:
-    name: "Start BuildBot"
-    state: present
-    special_time: reboot
-    job: "buildbot-worker start {{ buildbot_home.stdout_lines[0] }}/{{ inventory_hostname }}"
-    user: buildbot
-  notify: "Ensure BuildBot worker started"
+- name: Template Buildbot master defaults
+  template:
+    src: buildbot-worker.default
+    dest: /etc/default/buildbot-worker.default
+    force: yes
+    owner: root
+    group: root
+
+- name: Template Buildbot master init script
+  template:
+    src: buildbot-worker.init.sh
+    dest: /etc/init.d/buildbot-worker
+    force: yes
+    owner: root
+    group: root
+  notify: "Start BuildBot worker"
+
+- name: Template Buildbot master systemd unit file
+  template:
+    src: buildbot-worker.service
+    dest: /etc/systemd/system/buildbot-worker.service
+    force: yes
+    owner: root
+    group: root
+  notify: "Start BuildBot worker"

@@ -1,0 +1,12 @@
+[Unit]
+Description=BuildBot master
+After=network.target
+
+[Service]
+User=buildbot
+Group=buildbot
+WorkingDirectory={{ buildbot_home.stdout_lines[0] }}/{{ inventory_hostname }}
+ExecStart=/usr/local/bin/buildbot start --nodaemon
+
+[Install]
+WantedBy=multi-user.target

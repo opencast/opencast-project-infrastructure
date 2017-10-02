@@ -56,11 +56,28 @@
   become: yes
   become_user: buildbot
 
-- name: Set up crontab to start BuildBot at reboot
-  cron:
-    name: "Start BuildBot"
-    state: present
-    special_time: reboot
-    job: "buildbot start {{ buildbot_home.stdout_lines[0] }}/{{ inventory_hostname }}"
-    user: buildbot
-  notify: "Ensure BuildBot master started"
+- name: Template Buildbot master defaults
+  template:
+    src: buildbot.default
+    dest: /etc/default/buildbot.default
+    force: yes
+    owner: root
+    group: root
+
+- name: Template Buildbot master init script
+  template:
+    src: buildbot.init.sh
+    dest: /etc/init.d/buildbot
+    force: yes
+    owner: root
+    group: root
+  notify: "Start BuildBot"
+
+- name: Template Buildbot master systemd unit file
+  template:
+    src: buildbot.service
+    dest: /etc/systemd/system/buildbot.service
+    force: yes
+    owner: root
+    group: root
+  notify: "Start BuildBot"

@@ -1,15 +1,15 @@
 ---
 
-- name: Ensure BuildBot master started
-  shell: buildbot restart {{ inventory_hostname }}
-  args:
-    chdir: "{{ buildbot_home.stdout_lines[0] }}"
+- name: Start BuildBot
+  service:
+    name: buildbot
+    state: restarted
+    enabled: yes
   become: yes
-  become_user: buildbot
 
-- name: Ensure BuildBot worker started
-  shell: buildbot-worker restart {{ inventory_hostname }}
-  args:
-    chdir: "{{ buildbot_home.stdout_lines[0] }}"
+- name: Start BuildBot worker
+  service:
+    name: buildbot-worker
+    state: restarted
+    enabled: yes
   become: yes
-  become_user: buildbot
