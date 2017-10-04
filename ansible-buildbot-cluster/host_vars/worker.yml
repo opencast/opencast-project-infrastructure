@@ -2,3 +2,8 @@
 
 password: example_password
 admin_info: Example Admin <admin@example.com>
+
+build_base: True
+build_site: False
+build_debs: False
+build_rpms: False
