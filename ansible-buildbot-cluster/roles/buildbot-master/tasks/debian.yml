@@ -12,6 +12,7 @@
     - build-essential
     - git
     - sudo
+    - nginx
 
 - name: Install BuildBot Python level dependencies
   pip:
@@ -72,6 +73,15 @@
     owner: root
     group: root
   notify: "Start BuildBot"
+
+- name: Template Buildbot nginx config
+  template:
+    src: buildbot.conf
+    dest: /etc/nginx/conf.d/buildbot.conf
+    force: yes
+    owner: root
+    group: root
+  notify: "Restart nginx"
 
 - name: Template Buildbot master systemd unit file
   template:

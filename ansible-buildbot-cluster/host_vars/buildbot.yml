@@ -1,0 +1,17 @@
+---
+
+#Where Builbot lives, relative to the webserver root.  Leave this alone to have http://$servername/ be buildbot
+#String needs to start with a non-slash, and end with a slash (ie, buildbot/, not /buildbot or /builtbot/)
+buildbot_url: ""
+
+#Build url base
+build_url_base: /builds
+
+#Build url with build properties
+build_url: "{{ build_url_base }}/%(prop:branch_pretty)s/%(prop:buildnumber)s"
+
+#Build location on master filesystem
+build_dest_base: /var/www/buildbot
+
+#Build location on master filesystem
+build_dest: "{{ build_dest_base }}/%(prop:branch_pretty)s/%(prop:buildnumber)s"
