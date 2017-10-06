@@ -3,7 +3,7 @@
 password: bar
 admin_info: Greg Logan <gregorydlogan@gmail.com>
 
-build_base: True
+build_base: False
 build_site: True
 build_debs: False
 build_rpms: False
