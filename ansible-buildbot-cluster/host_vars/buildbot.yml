@@ -15,3 +15,10 @@ build_dest_base: /var/www/buildbot
 
 #Build location on master filesystem
 build_dest: "{{ build_dest_base }}/%(prop:branch_pretty)s/%(prop:buildnumber)s"
+
+#The location on disk to deploy the reports to
+deployed_reports: "{{ build_dest }}/reports/%(prop:branch_pretty)s"
+
+#The oath bits
+bitbucket_oath_client_id:
+bitbucket_oath_client_secret:
