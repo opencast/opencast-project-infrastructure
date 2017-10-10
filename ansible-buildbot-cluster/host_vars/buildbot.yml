@@ -16,6 +16,9 @@ build_dest_base: /var/www/buildbot
 #Build location on master filesystem
 build_dest: "{{ build_dest_base }}/%(prop:branch_pretty)s/%(prop:buildnumber)s-%(prop:build_timestamp)s"
 
+#Build locatino for child builds.  This is used by the reports and debs.
+build_master_src: "{{ build_dest_base }}/%(prop:branch_pretty)s/%(prop:parent_build)s-%(prop:build_timestamp)s"
+
 #The location on disk to deploy the reports to
 deployed_reports: "{{ build_dest }}/reports/%(prop:branch_pretty)s"
 
