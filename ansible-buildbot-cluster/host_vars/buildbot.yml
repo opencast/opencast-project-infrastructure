@@ -8,13 +8,13 @@ buildbot_url: ""
 build_url_base: /builds
 
 #Build url with build properties
-build_url: "{{ build_url_base }}/%(prop:branch_pretty)s/%(prop:buildnumber)s"
+build_artifacts_url: "{{ build_url_base }}/%(prop:branch_pretty)s/%(prop:buildnumber)s-%(prop:build_timestamp)s"
 
 #Build location on master filesystem
 build_dest_base: /var/www/buildbot
 
 #Build location on master filesystem
-build_dest: "{{ build_dest_base }}/%(prop:branch_pretty)s/%(prop:buildnumber)s"
+build_dest: "{{ build_dest_base }}/%(prop:branch_pretty)s/%(prop:buildnumber)s-%(prop:build_timestamp)s"
 
 #The location on disk to deploy the reports to
 deployed_reports: "{{ build_dest }}/reports/%(prop:branch_pretty)s"
