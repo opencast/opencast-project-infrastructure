@@ -1,5 +1,6 @@
 ---
 
+id: worker
 password: example_password
 admin_info: Example Admin <admin@example.com>
 
