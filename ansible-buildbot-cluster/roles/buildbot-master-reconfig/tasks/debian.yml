@@ -2,7 +2,7 @@
 
 - name: Detect BuildBot home directory
   shell: >
-          egrep "^buildbot:" /etc/passwd | awk -F: '{ print $6 }'
+          egrep "^{{ buildbot_user }}:" /etc/passwd | awk -F: '{ print $6 }'
   changed_when: false
   register: buildbot_home
 
@@ -10,14 +10,14 @@
   template:
     src: master.cfg
     dest: "{{ buildbot_home.stdout_lines[0] }}/{{ inventory_hostname }}/master.cfg"
-    owner: buildbot
+    owner: "{{ buildbot_user }}"
     force: yes
   become: yes
-  become_user: buildbot
+  become_user: "{{ buildbot_user }}"
 
 - name: Apply BuildBot master configuration
   shell: buildbot reconfig {{ inventory_hostname }}
   args:
     chdir: "{{ buildbot_home.stdout_lines[0] }}"
   become: yes
-  become_user: buildbot
+  become_user: "{{ buildbot_user }}"
