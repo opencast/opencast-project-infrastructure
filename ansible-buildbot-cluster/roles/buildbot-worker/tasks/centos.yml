@@ -1,0 +1,25 @@
+---
+
+- name: Install EPEL release
+  yum:
+    name: "{{ item }}"
+    state: latest
+    update_cache: yes
+  become: yes
+  with_items:
+    - epel-release
+
+- name: Install BuildBot system level dependencies
+  yum:
+    name: "{{ item }}"
+    state: latest
+  become: yes
+  with_items:
+    - python-virtualenv
+    - gcc
+    - gcc-c++
+    - make
+    - git
+    - java-1.8.0-openjdk
+    - maven
+#TODO: Needs ffmpeg!

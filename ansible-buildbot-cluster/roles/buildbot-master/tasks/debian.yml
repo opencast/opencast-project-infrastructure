@@ -13,13 +13,11 @@
     - build-essential
     - git
     - sudo
-    - nginx
 
-- name: Install BuildBot system level dependencies
+- name: Install nginx
   apt:
     name: "{{ item }}"
     state: latest
-    update_cache: yes
   become: yes
   when: config_nginx
   with_items:

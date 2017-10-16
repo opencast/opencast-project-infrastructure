@@ -1,0 +1,36 @@
+---
+
+- name: Install EPEL release
+  yum:
+    name: "{{ item }}"
+    state: latest
+    update_cache: yes
+  become: yes
+  with_items:
+    - epel-release
+
+- name: Install BuildBot system level dependencies
+  yum:
+    name: "{{ item }}"
+    state: latest
+  become: yes
+  with_items:
+    - python-devel
+    - python-virtualenv
+    - libffi-devel
+    - openssl-devel
+    - gcc
+    - gcc-c++
+    - make
+
+- name: Install nginx
+  yum:
+    name: "{{ item }}"
+    state: latest
+  become: yes
+  when: config_nginx
+  with_items:
+    - nginx
+
+
+#setsebool -P httpd_can_network_connect true
