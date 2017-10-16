@@ -17,6 +17,14 @@
 - name: Restart nginx
   service:
     name: nginx
+    state: reloaded
+    enabled: yes
+  become: yes
+  notify: _restart nginx
+
+- name: _restart nginx
+  service:
+    name: nginx
     state: restarted
     enabled: yes
   become: yes

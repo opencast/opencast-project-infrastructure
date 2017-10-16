@@ -5,8 +5,8 @@ After=network.target
 [Service]
 User={{ buildbot_user }}
 Group={{ buildbot_user }}
-WorkingDirectory={{ buildbot_home.stdout_lines[0] }}/{{ inventory_hostname }}
-ExecStart=/usr/local/bin/buildbot start --nodaemon
+WorkingDirectory={{ buildbot_base }}
+ExecStart={{ buildbot_base }}/bin/buildbot start --nodaemon
 
 [Install]
 WantedBy=multi-user.target

@@ -1,6 +1,81 @@
 ---
 
+#########################
+# User Related Settings #
+#########################
+
+#Which user to login as
 login_user: root
 
+#Set this to false if you already have a user set up, make sure to update buildbot_user
+create_buildbot_user: True
+
+#The buildbot user's name
 buildbot_user: buildbot
+
+#The buildbot user's home directory
+buildbot_home: /opt/buildbot
+
+#######################
+# Networking Settings #
+#######################
+
+#Which port to run buildbot on
 buildbot_port: 8010
+
+#Set this to true to configure nginx, false to do it manually
+config_nginx: True
+
+#Where Builbot lives, relative to the webserver root.  Leave this alone to have http://$servername/ be buildbot
+#String needs to start with a non-slash, and end with a slash (ie, buildbot/, not /buildbot or /builtbot/)
+buildbot_url: ""
+
+#Build url base
+build_url_base: /builds
+
+#Build url with build properties
+build_artifacts_url: "{{ build_url_base }}/%(prop:branch_pretty)s/%(prop:buildnumber)s-%(prop:build_timestamp)s"
+
+
+#################
+# Disk Settings #
+#################
+
+#Where the base for buildbot lives
+buildbot_base: "{{ buildbot_home }}/{{ inventory_hostname }}"
+
+#Where the master config file lives
+buildbot_master_config: "{{ buildbot_base }}/master.cfg"
+
+#Build location on master filesystem
+build_dest_base: /var/www/buildbot
+
+#Build location on master filesystem
+build_dest: "{{ build_dest_base }}/%(prop:branch_pretty)s/%(prop:buildnumber)s-%(prop:build_timestamp)s"
+
+#Build locatino for child builds.  This is used by the reports and debs.
+build_master_src: "{{ build_dest_base }}/%(prop:branch_pretty)s/%(prop:parent_build)s-%(prop:build_timestamp)s"
+
+#The location on disk to deploy the reports to
+deployed_reports: "{{ build_dest }}/reports/%(prop:branch_pretty)s"
+
+#####################
+# Buildbot Commands #
+#####################
+
+#What to run to create the base master
+buildbot_create_master: "{{ buildbot_base }}/bin/buildbot create-master {{ inventory_hostname }}"
+
+#What to run to apply the master config
+buildbot_apply: "{{ buildbot_base }}/bin/buildbot reconfig {{ inventory_hostname }}"
+
+#What to run to create a worker
+buildbot_create_worker: "{{ buildbot_base }}/bin/buildbot-worker create-worker {{ inventory_hostname }} {{ groups['master'][0] }} {{ inventory_hostname }} {{ password }}"
+
+#############
+# Auth bits #
+#############
+
+#The oath bits
+bitbucket_oath_client_id: 
+bitbucket_oath_client_secret: 
