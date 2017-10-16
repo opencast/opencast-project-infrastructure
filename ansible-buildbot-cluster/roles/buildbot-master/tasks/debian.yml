@@ -15,86 +15,12 @@
     - sudo
     - nginx
 
-- name: Install BuildBot Python level dependencies
-  pip:
+- name: Install BuildBot system level dependencies
+  apt:
     name: "{{ item }}"
-    virtualenv: "{{ buildbot_base }}"
+    state: latest
+    update_cache: yes
   become: yes
-  with_items:
-    - buildbot[bundle]
-    - buildbot[tls]
-    - buildbot-grid-view
-    - requests
-
-- name: Create BuildBot user
-  user:
-    name: '{{ buildbot_user }}'
-    password: '$6$rounds=656000$wuuAoKugbM31ca7G$4ixDGH6.G54ZLIfepc4LhiNsV5UUxeXdfh/3fFhjrsvW3Jg9CgjsMta66hcM/41AptJoTq0wX1ebN03k.2hso/'
-    update_password: always
-    home: "{{ buildbot_home }}"
-    shell: /sbin/nologin
-  become: yes
-  when: create_buildbot_user
-
-- name: Ensure BuildBot master parent directory exists and has the right permissions
-  file:
-    state: directory
-    path: "{{ buildbot_base }}"
-    owner: "{{ buildbot_user }}"
-    group: "{{ buildbot_user }}"
-  become: yes
-
-- name: Create BuildBot master instance
-  shell: "{{ buildbot_create_master }}"
-  args:
-    chdir: "{{ buildbot_home }}"
-  become: yes
-  become_user: "{{ buildbot_user }}"
-
-- name: Copy default BuildBot master configuration
-  shell: "cp {{ buildbot_master_config }}.sample {{ buildbot_master_config }}"
-  become: yes
-  become_user: "{{ buildbot_user }}"
-
-- name: Apply BuildBot master configuration
-  shell: "{{ buildbot_apply }}"
-  args:
-    chdir: "{{ buildbot_home }}"
-  become: yes
-  become_user: "{{ buildbot_user }}"
-
-- name: Template Buildbot nginx config
-  template:
-    src: buildbot.conf
-    dest: /etc/nginx/conf.d/buildbot.conf
-    force: yes
-    owner: root
-    group: root
   when: config_nginx
-  notify: "Restart nginx"
-
-- name: Template Buildbot master defaults
-  template:
-    src: buildbot.default
-    dest: /etc/default/buildbot.default
-    force: yes
-    owner: root
-    group: root
-
-- name: Template Buildbot master init script
-  template:
-    src: buildbot.init.sh
-    dest: /etc/init.d/buildbot
-    force: yes
-    owner: root
-    group: root
-  notify: "Start BuildBot"
-
-- name: Template Buildbot master systemd unit file
-  template:
-    src: buildbot.service
-    dest: /etc/systemd/system/buildbot.service
-    force: yes
-    owner: root
-    group: root
-  notify: "Start BuildBot"
+  with_items:
+    - nginx
