@@ -74,24 +74,6 @@
   when: config_nginx
   notify: "Restart nginx"
 
-- name: Template Buildbot master defaults
-  template:
-    src: buildbot.default
-    dest: /etc/default/buildbot.default
-    force: yes
-    owner: root
-    group: root
-
-- name: Template Buildbot master init script
-  template:
-    src: buildbot.init.sh
-    dest: /etc/init.d/buildbot
-    force: yes
-    owner: root
-    group: root
-    mode: 0755
-  notify: "Start BuildBot"
-
 - name: Template Buildbot master systemd unit file
   template:
     src: buildbot.service

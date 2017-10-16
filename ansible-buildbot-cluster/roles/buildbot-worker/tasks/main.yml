@@ -61,24 +61,6 @@
     - admin
     - host
 
-- name: Template Buildbot master defaults
-  template:
-    src: buildbot-worker.default
-    dest: /etc/default/buildbot-worker.default
-    force: yes
-    owner: root
-    group: root
-
-- name: Template Buildbot master init script
-  template:
-    src: buildbot-worker.init.sh
-    dest: /etc/init.d/buildbot-worker
-    force: yes
-    owner: root
-    group: root
-    mode: 0755
-  notify: "Start BuildBot worker"
-
 - name: Template Buildbot master systemd unit file
   template:
     src: buildbot-worker.service
