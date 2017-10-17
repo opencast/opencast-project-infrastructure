@@ -24,6 +24,7 @@
   with_items:
     - mock
     - buildbot_pkg
+    - buildbot
     - buildbot[bundle]
     - requests
     - pyopenssl

@@ -1,0 +1,12 @@
+---
+
+login_user: greglogan
+create_buildbot_user: False
+buildbot_user: opencast-build
+buildbot_home: /opt/build.opencast.org
+buildbot_port: 8080
+config_nginx: False
+buildbot_url: "buildbot/"
+build_dest_base: /data/build.opencast.org/output
+bitbucket_oath_client_id: 
+bitbucket_oath_client_secret: 

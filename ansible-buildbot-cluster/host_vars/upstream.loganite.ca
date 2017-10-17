@@ -1,0 +1,10 @@
+---
+
+id: loganite1
+password: 505d6875-784d-4aa3-bec5-b89eb02ce2a1
+admin_info: Greg Logan <gregorydlogan@gmail.com>
+
+build_base: True
+build_site: True
+build_debs: True
+build_rpms: True

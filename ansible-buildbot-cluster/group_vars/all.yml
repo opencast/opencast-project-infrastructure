@@ -70,12 +70,13 @@ buildbot_create_master: "{{ buildbot_base }}/bin/buildbot create-master {{ inven
 buildbot_apply: "{{ buildbot_base }}/bin/buildbot reconfig {{ inventory_hostname }}"
 
 #What to run to create a worker
-buildbot_create_worker: "{{ buildbot_base }}/bin/buildbot-worker create-worker {{ inventory_hostname }} {{ groups['master'][0] }} {{ inventory_hostname }} {{ password }}"
+buildbot_create_worker: "{{ buildbot_base }}/bin/buildbot-worker create-worker {{ inventory_hostname }} {{ groups['master'][0] }} {{ id }} {{ password }}"
 
 #############
 # Auth bits #
 #############
 
 #The oath bits
-bitbucket_oath_client_id: 
-bitbucket_oath_client_secret: 
+#These are set here so the playbooks don't fail, but should be overridden in the host vars
+bitbucket_oath_client_id: FAKE_CLIENT_ID
+bitbucket_oath_client_secret: FAKE_SECRET
