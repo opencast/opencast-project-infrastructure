@@ -9,6 +9,20 @@
   with_items:
     - epel-release
 
+- name: Install Opencast repository
+  yum_repository:
+    name: "{{ item.name }}"
+    baseurl: "{{ item.baseurl }}"
+    username: "{{ repo_username }}"
+    password: "{{ repo_password }}"
+    enabled: yes
+    gpgcheck: yes
+    gpgkey: "{{ oc_rpm_repo_key }}"
+  become: yes
+  with_items:
+    - { name: "Opencast el 7 Repository", baseurl: "{{ oc_rpm_repo_url }}" }
+    - { name: "Opencast el 7 Repository - noarch", baseurl: "{{ oc_rpm_repo_url }}" }
+
 - name: Install BuildBot system level dependencies
   yum:
     name: "{{ item }}"
@@ -22,4 +36,4 @@
     - git
     - java-1.8.0-openjdk
     - maven
-#TODO: Needs ffmpeg!
+    - ffmpeg

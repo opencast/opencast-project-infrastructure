@@ -16,6 +16,7 @@ buildbot_user: buildbot
 #The buildbot user's home directory
 buildbot_home: /opt/buildbot
 
+
 #######################
 # Networking Settings #
 #######################
@@ -36,6 +37,24 @@ build_url_base: /builds
 #Build url with build properties
 build_artifacts_url: "{{ build_url_base }}/%(prop:branch_pretty)s/%(prop:buildnumber)s-%(prop:build_timestamp)s"
 
+#The hostname of the package repository
+repo_host: pkg.opencast.org
+#The package repository suite to install from
+repo_suite: stable
+
+#The full URL for the repository.  If you are using your own repo feel free to change this.
+oc_deb_repo_url: "deb https://{{repo_username}}:{{repo_password}}@{{repo_host}}/debian {{repo_suite}}/"
+
+#The RPM repo urls
+oc_rpm_repo_url: "https://pkg.opencast.org/rpms/release/el/7/x86_64"
+oc_rpm_repo_url_noarch: "https://pkg.opencast.org/rpms/release/el/7/noarch"
+
+#The DEB gpg key
+oc_deb_repo_key: https://pkg.opencast.org/gpgkeys/opencast-deb.key
+oc_deb_repo_key_id: 9A7EA8E5B3820B26
+
+#The RPM gpg key
+oc_rpm_repo_key: https://pkg.opencast.org/gpgkeys/opencast-el7-rpm.opencast.org.key
 
 #################
 # Disk Settings #
@@ -59,6 +78,7 @@ build_master_src: "{{ build_dest_base }}/%(prop:branch_pretty)s/%(prop:parent_bu
 #The location on disk to deploy the reports to
 deployed_reports: "{{ build_dest }}/reports/%(prop:branch_pretty)s"
 
+
 #####################
 # Buildbot Commands #
 #####################
@@ -72,11 +92,18 @@ buildbot_apply: "{{ buildbot_base }}/bin/buildbot reconfig {{ inventory_hostname
 #What to run to create a worker
 buildbot_create_worker: "{{ buildbot_base }}/bin/buildbot-worker create-worker {{ inventory_hostname }} {{ groups['master'][0] }} {{ id }} {{ password }}"
 
+
 #############
 # Auth bits #
 #############
 
-#The oath bits
+#The OAth bits.  These are used to power the login side of things for BuildBot
+#These don't need to be right for testing, you just won't be able to log in
 #These are set here so the playbooks don't fail, but should be overridden in the host vars
 bitbucket_oath_client_id: FAKE_CLIENT_ID
 bitbucket_oath_client_secret: FAKE_SECRET
+
+#The credentials to use when installing the workers.  This is used to get an appropriate version of ffmpeg from the repo
+#These are defined here, but need to be overridden in the host vars
+repo_username: FAKE_USERNAME
+repo_password: FAKE_PASSWORD
