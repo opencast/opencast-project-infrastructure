@@ -22,7 +22,9 @@
     state: latest
   become: yes
   with_items:
-    - buildbot
+    - mock
+    - buildbot_pkg
+    - buildbot[bundle]
     - requests
     - pyopenssl
     - enum
