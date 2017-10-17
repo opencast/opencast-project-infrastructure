@@ -12,6 +12,7 @@
 - name: Install Opencast repository
   yum_repository:
     name: "{{ item.name }}"
+    description: "{{ item.name }}"
     baseurl: "{{ item.baseurl }}"
     username: "{{ repo_username }}"
     password: "{{ repo_password }}"
@@ -20,8 +21,8 @@
     gpgkey: "{{ oc_rpm_repo_key }}"
   become: yes
   with_items:
-    - { name: "Opencast el 7 Repository", baseurl: "{{ oc_rpm_repo_url }}" }
-    - { name: "Opencast el 7 Repository - noarch", baseurl: "{{ oc_rpm_repo_url }}" }
+    - { name: "opencast", description: "Opencast el 7 Repository", baseurl: "{{ oc_rpm_repo_url }}" }
+    - { name: "opencast-noarch", description: "Opencast el 7 Repository - noarch", baseurl: "{{ oc_rpm_repo_url }}" }
 
 - name: Install BuildBot system level dependencies
   yum:

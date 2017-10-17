@@ -46,6 +46,7 @@
     path: "{{ buildbot_home }}"
     owner: "{{ buildbot_user }}"
     group: "{{ buildbot_user }}"
+    recurse: yes
   become: yes
 
 - name: Create BuildBot master instance
