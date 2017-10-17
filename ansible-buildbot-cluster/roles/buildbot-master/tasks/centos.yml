@@ -19,6 +19,7 @@
     - python-virtualenv
     - libffi-devel
     - openssl-devel
+    - git
     - gcc
     - gcc-c++
     - make
