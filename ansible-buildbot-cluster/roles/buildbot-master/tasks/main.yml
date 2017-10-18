@@ -26,6 +26,7 @@
     - buildbot_pkg
     - buildbot
     - buildbot[bundle]
+    - treq
     - requests
     - pyopenssl
     - enum
