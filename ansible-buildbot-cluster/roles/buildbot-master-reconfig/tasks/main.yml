@@ -1,3 +1,17 @@
 ---
 
-- include: debian.yml
+- name: Template BuildBot master configuration
+  template:
+    src: master.cfg
+    dest: "{{ buildbot_master_config }}"
+    owner: "{{ buildbot_user }}"
+    force: yes
+  become: yes
+  become_user: "{{ buildbot_user }}"
+
+- name: Apply BuildBot master configuration
+  shell: "{{ buildbot_apply }}"
+  args:
+    chdir: "{{ buildbot_home }}"
+  become: yes
+  become_user: "{{ buildbot_user }}"
