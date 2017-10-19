@@ -97,3 +97,18 @@
     owner: root
     group: root
   notify: "Start BuildBot"
+
+- name: Template Buildbot cleanup script
+  template:
+    src: cleaner.sh
+    dest: "{{ buildbot_base }}/cleaner.sh"
+    force: yes
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+
+- name: Add Buildbot cleanup script to the crontab
+  crontab:
+    name: "Remove old build artifacts"
+    special_time: daily
+    job: "/bin/bash {{ buildbot_base }}/cleaner.sh"
+    state: present
