@@ -30,6 +30,8 @@
     - requests
     - pyopenssl
     - enum
+    - certifi
+    - urllib3[secure]
 
 - name: Create BuildBot user
   user:

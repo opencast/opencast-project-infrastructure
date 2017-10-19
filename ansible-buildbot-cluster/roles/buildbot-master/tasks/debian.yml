@@ -7,6 +7,8 @@
     update_cache: yes
   become: yes
   with_items:
+    - ca-cacert
+    - ca-certificates
     - python-pip
     - python-dev
     - python-virtualenv
