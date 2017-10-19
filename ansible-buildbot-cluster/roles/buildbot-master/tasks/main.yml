@@ -52,6 +52,14 @@
     recurse: yes
   become: yes
 
+- name: Ensure BuildBot master artifact directory exists and has the right permissions
+  file:
+    state: directory
+    path: "{{ build_dest_base }}"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+  become: yes
+
 - name: Create BuildBot master instance
   shell: "{{ buildbot_create_master }}"
   args:
