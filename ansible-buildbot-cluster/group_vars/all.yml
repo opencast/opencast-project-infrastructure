@@ -17,25 +17,9 @@ buildbot_user: buildbot
 buildbot_home: /opt/buildbot
 
 
-#######################
-# Networking Settings #
-#######################
-
-#Which port to run buildbot on
-buildbot_port: 8010
-
-#Set this to true to configure nginx, false to do it manually
-config_nginx: True
-
-#Where Builbot lives, relative to the webserver root.  Leave this alone to have http://$servername/ be buildbot
-#String needs to start with a non-slash, and end with a slash (ie, buildbot/, not /buildbot or /builtbot/)
-buildbot_url: ""
-
-#Build url base
-build_url_base: /builds
-
-#Build url with build properties
-build_artifacts_url: "{{ build_url_base }}/%(prop:branch_pretty)s/%(prop:buildnumber)s-%(prop:build_timestamp)s"
+#################
+# Repo Settings #
+#################
 
 #The hostname of the package repository
 repo_host: pkg.opencast.org
@@ -56,32 +40,89 @@ oc_deb_repo_key_id: 9A7EA8E5B3820B26
 #The RPM gpg key
 oc_rpm_repo_key: https://pkg.opencast.org/gpgkeys/opencast-el7-rpm.opencast.org.key
 
+
+#######################
+# Networking Settings #
+#######################
+
+#Which port to run buildbot on
+buildbot_port: 8010
+
+#Set this to true to configure nginx, false to do it manually
+config_nginx: True
+
+
+##################
+# Path Fragments #
+##################
+
+#URI fragments defining where things should end up, relative to a given root directory/URL
+artifacts_fragment: "%(prop:branch_pretty)s/%(prop:buildnumber)s-%(prop:build_timestamp)s"
+parent_fragment: "%(prop:branch_pretty)s/%(prop:parent_build)s-%(prop:build_timestamp)s"
+reports_fragment: "reports/%(prop:branch_pretty)s"
+debs_fragment: "{{ parent_fragment }}/debs"
+rpms_fragment: "{{ parent_fragment }}/rpms"
+
+
+#################
+# URL Settings #
+#################
+
+#Where Builbot lives, relative to the webserver root.  Leave this alone to have http://$servername/ be buildbot
+#String needs to start with a non-slash, and end with a slash (ie, buildbot/, not /buildbot or /builtbot/)
+buildbot_url: ""
+
+#Build url base
+url_base: /builds
+
+
+#Build url with build properties
+artifacts_url: "{{ url_base }}/{{ artifacts_fragment }}"
+
+#Build url for the reports
+reports_url: "{{ url_base }}/{{ reports_fragment }}"
+#Build url for the debs
+debs_url: "{{ url_base }}/{{ debs_fragment }}"
+#Build url for the rpms
+rpms_url: "{{ url_base }}/{{ rpms_fragment }}"
+
 #################
 # Disk Settings #
 #################
 
-#Where the base for buildbot lives
+#Where the buildbot install lives
 buildbot_base: "{{ buildbot_home }}/{{ inventory_hostname }}"
 
 #Where the master config file lives
 buildbot_master_config: "{{ buildbot_base }}/master.cfg"
 
-#Build location on master filesystem
-build_dest_base: /var/www/buildbot
+#Where built artifacts of all types live
+disk_base: /var/www/buildbot
+
 
 #Build location on master filesystem
-build_dest: "{{ build_dest_base }}/%(prop:branch_pretty)s/%(prop:buildnumber)s-%(prop:build_timestamp)s"
+artifacts_dist_base: "{{ disk_base }}/{{ artifacts_fragment }}"
 
-#Build locatino for child builds.  This is used by the reports and debs.
-build_master_src: "{{ build_dest_base }}/%(prop:branch_pretty)s/%(prop:parent_build)s-%(prop:build_timestamp)s"
+#Build location on the master filesystem as seen by a child job
+parent_dist_base: "{{ disk_base }}/{{ parent_fragment }}"
 
 #The location on disk to deploy the reports to
-deployed_reports: "{{ build_dest }}/reports/%(prop:branch_pretty)s"
+deployed_reports: "{{ disk_base }}/{{ reports_fragment }}"
+
+#The location on disk to deploy the debs to
+#Note that this is using the *parent* dist base
+deployed_debs: "{{ disk_base }}/{{ debs_fragment }}"
+
+#The location on disk to deploy the debs to
+#Note that this is using the *parent* dist base
+deployed_rpms: "{{ disk_base }}/{{ rpms_fragment }}"
 
 
 #####################
 # Buildbot Commands #
 #####################
+
+#Don't change these, change the paths and whatnot above
 
 #What to run to create the base master
 buildbot_create_master: "{{ buildbot_base }}/bin/buildbot create-master {{ inventory_hostname }}"

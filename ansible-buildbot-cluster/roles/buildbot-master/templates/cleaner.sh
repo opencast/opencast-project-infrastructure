@@ -13,4 +13,4 @@
 #  build r
 #Find all directories under the top level branch dirs, modified outside of the last 30 days
 #Then delete them
-find "{{ build_dest_base }}" -mindepth 2 -type d -ctime 30 -exec rm -rf "{}" \;
+find "{{ disk_base }}" -mindepth 2 -type d -ctime 30 -exec rm -rf "{}" \;

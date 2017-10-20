@@ -55,7 +55,7 @@
 - name: Ensure BuildBot master artifact directory exists and has the right permissions
   file:
     state: directory
-    path: "{{ build_dest_base }}"
+    path: "{{ disk_base }}"
     owner: "{{ buildbot_user }}"
     group: "{{ buildbot_user }}"
   become: yes
