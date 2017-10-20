@@ -6,14 +6,14 @@
 - include: centos.yml
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
-- name: Update Python setuptools
+- name: Update Python pip
   pip:
     name: "{{ item }}"
     virtualenv: "{{ buildbot_base }}"
     state: latest
   become: yes
   with_items:
-    - setuptools
+    - pip
 
 - name: Install BuildBot Python level dependencies
   pip:
@@ -22,9 +22,6 @@
     state: latest
   become: yes
   with_items:
-    - mock
-    - buildbot_pkg
-    - buildbot
     - buildbot[bundle]
     - treq
     - requests
