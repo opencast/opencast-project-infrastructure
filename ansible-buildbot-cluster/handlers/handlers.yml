@@ -1,30 +1,25 @@
 ---
 
 - name: Start BuildBot
-  service:
+  systemd:
     name: buildbot
     state: restarted
     enabled: yes
+    daemon_reload: yes
   become: yes
 
 - name: Start BuildBot worker
-  service:
+  systemd:
     name: buildbot-worker
     state: restarted
     enabled: yes
+    daemon_reload: yes
   become: yes
 
 - name: Restart nginx
-  service:
+  systemd:
     name: nginx
     state: reloaded
     enabled: yes
-  become: yes
-  notify: _restart nginx
-
-- name: _restart nginx
-  service:
-    name: nginx
-    state: restarted
-    enabled: yes
+    daemon_reload: yes
   become: yes
