@@ -18,7 +18,7 @@ buildbot_home: /opt/buildbot
 
 
 #################
-# Repo Settings #
+# Deb and RPM Repo Settings #
 #################
 
 #The hostname of the package repository
@@ -39,6 +39,29 @@ oc_deb_repo_key_id: 9A7EA8E5B3820B26
 
 #The RPM gpg key
 oc_rpm_repo_key: https://pkg.opencast.org/gpgkeys/opencast-el7-rpm.opencast.org.key
+
+
+#####################
+# BuildBot Settings #
+#####################
+
+#The Opencast repository URL
+source_repo_url: "https://bitbucket.org/opencast-community/opencast.git"
+
+#The pull request source's owner
+source_pr_owner: "opencast-community"
+
+#The pull request sources' repository name
+source_pr_slug:  "opencast"
+
+#How long a set of changes needs to be in place prior to starting a build
+stability_limit: 120
+
+#Where to fetch the debian packaging build files from
+source_deb_repo_url: "https://bitbucket.org/greg_logan/debian_packaging.git"
+
+#Who to send status mails to
+mail_to: "dev@opencast.org"
 
 
 #######################
