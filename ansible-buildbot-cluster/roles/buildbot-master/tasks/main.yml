@@ -105,10 +105,13 @@
     force: yes
     owner: "{{ buildbot_user }}"
     group: "{{ buildbot_user }}"
+  become: yes
 
 - name: Add Buildbot cleanup script to the crontab
-  crontab:
+  cron:
     name: "Remove old build artifacts"
     special_time: daily
     job: "/bin/bash {{ buildbot_base }}/cleaner.sh"
+    user: "{{ buildbot_user }}"
     state: present
+  become: yes
