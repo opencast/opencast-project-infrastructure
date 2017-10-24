@@ -3,7 +3,15 @@
 - name: Start BuildBot
   systemd:
     name: buildbot
-    state: restarted
+    state: started
+    enabled: yes
+    daemon_reload: yes
+  become: yes
+
+- name: Reload BuildBot
+  systemd:
+    name: buildbot
+    state: reloaded
     enabled: yes
     daemon_reload: yes
   become: yes
@@ -11,7 +19,7 @@
 - name: Start BuildBot worker
   systemd:
     name: buildbot-worker
-    state: restarted
+    state: started
     enabled: yes
     daemon_reload: yes
   become: yes

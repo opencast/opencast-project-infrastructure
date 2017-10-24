@@ -7,6 +7,7 @@ User={{ buildbot_user }}
 Group={{ buildbot_user }}
 WorkingDirectory={{ buildbot_base }}
 ExecStart={{ buildbot_base }}/bin/buildbot start --nodaemon
+ExecReload=/bin/kill -s HUP $MAINPID
 
 [Install]
 WantedBy=multi-user.target

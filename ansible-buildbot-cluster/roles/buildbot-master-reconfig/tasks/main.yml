@@ -15,3 +15,5 @@
     chdir: "{{ buildbot_home }}"
   become: yes
   become_user: "{{ buildbot_user }}"
+  #Note: We're using the notify here because the above is not triggering the re-read of the config file
+  notify: "Reload BuildBot"
