@@ -24,6 +24,14 @@
     daemon_reload: yes
   become: yes
 
+- name: Start autossh
+  systemd:
+    name: autossh
+    state: started
+    enabled: yes
+    daemon_reload: yes
+  become: yes
+
 - name: Restart nginx
   systemd:
     name: nginx

@@ -1,0 +1,15 @@
+[Unit]
+Description=Keeps a tunnel to build.opencast.org open
+After=network-online.target
+
+[Service]
+User=autossh
+# -p [PORT]
+# -l [user]
+# -M 0 --> no monitoring
+# -N Just open the connection and do nothing (not interactive)
+# LOCALPORT:IP_ON_EXAMPLE_COM:PORT_ON_EXAMPLE_COM
+ExecStart=/usr/bin/autossh -M 0 -N -q -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -p 22 -l autossh build.opencast.org -L 9989:127.0.0.1:9989 -i {{ buildbot_home }}/.ssh/id_rsa
+
+[Install]
+WantedBy=multi-user.target

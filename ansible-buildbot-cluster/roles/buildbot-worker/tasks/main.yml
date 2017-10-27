@@ -50,6 +50,35 @@
   become: yes
   become_user: "{{ buildbot_user }}"
 
+- name: Clear current BuildBot user ssh key
+  file:
+    name: "{{ item }}"
+    state: absent
+  become: yes
+  become_user: "{{ buildbot_user }}"
+  with_items:
+    - .ssh/id_rsa
+    - .ssh/id_rsa.pub
+
+- name: Push BuildBot SSH keys
+  copy:
+    src: {{ item }}
+    dest: {{ item }}
+    flat: yes
+  become: yes
+  become_user: "{{ buildbot_user }}"
+  with_items:
+    - .ssh/id_rsa
+    - .ssh/id_rsa.pub
+
+- name: Populate BuildBot master authorized_keys
+  authorized_key:
+    user: "{{ buildbot_user }}"
+    state: present
+    key: .ssh/id_rsa.pub
+    manage_dir: yes
+  become: yes
+
 - name: Template BuildBot worker configuration
   template:
     src: "{{ item }}"
@@ -62,7 +91,16 @@
     - admin
     - host
 
-- name: Template Buildbot master systemd unit file
+- name: Template autossh systemd unit file
+  template:
+    src: autossh.service
+    dest: /etc/systemd/system/autossh.service
+    force: yes
+    owner: root
+    group: root
+  notify: "Start autossh"
+
+- name: Template Buildbot worker systemd unit file
   template:
     src: buildbot-worker.service
     dest: /etc/systemd/system/buildbot-worker.service

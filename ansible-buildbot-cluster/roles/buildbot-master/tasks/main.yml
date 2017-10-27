@@ -76,6 +76,42 @@
   become: yes
   become_user: "{{ buildbot_user }}"
 
+- name: Clear current BuildBot user ssh key
+  file:
+    name: "{{ item }}"
+    state: absent
+  become: yes
+  become_user: "{{ buildbot_user }}"
+  with_items:
+    - .ssh/id_rsa
+    - .ssh/id_rsa.pub
+
+- name: Generate new BuildBot SSH key
+  user:
+    name: "{{ buildbot_user }}"
+    generate_ssh_key: yes
+    ssh_key_bits: 4096
+  become: yes
+
+- name: Fetch BuildBot SSH keys
+  fetch:
+    src: {{ item }}
+    dest: {{ item }}
+    flat: yes
+  become: yes
+  become_user: "{{ buildbot_user }}"
+  with_items:
+    - .ssh/id_rsa
+    - .ssh/id_rsa.pub
+
+- name: Populate BuildBot master authorized_keys
+  authorized_key:
+    user: "{{ buildbot_user }}"
+    state: present
+    key: .ssh/id_rsa.pub
+    manage_dir: yes
+  become: yes
+
 - name: Template Buildbot nginx config
   template:
     src: buildbot.conf

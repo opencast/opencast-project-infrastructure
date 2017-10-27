@@ -42,3 +42,4 @@
     - dh-exec
     - sudo
     - ffmpeg
+    - autossh
