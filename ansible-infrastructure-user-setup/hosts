@@ -4,6 +4,8 @@ harvard
 switch
 uos
 usask
+cologne
+muenster
 
 
 [uos]
@@ -38,3 +40,11 @@ worker4.oc-test.switch.ch
 database.oc-test.switch.ch
 download.oc-test.switch.ch
 streaming.oc-test.switch.ch
+
+[cologne]
+oc-com-admin.rrz.uni-koeln.de
+oc-com-presentation.rrz.uni-koeln.de
+oc-com-worker1.rrz.uni-koeln.de
+
+[muenster]
+5.9.71.124
