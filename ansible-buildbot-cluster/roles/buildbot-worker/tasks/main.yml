@@ -62,13 +62,6 @@
   with_items:
     - .ssh
 
-- name: Ensuring root has appropriate known hosts entries so autossh works
-  known_hosts:
-    name: "{{ groups['master'][0] }}"
-    key: "{{ lookup('file', '.ssh/known_hosts') }}"
-    state: present
-  become: yes
-
 - name: Push BuildBot SSH keys
   copy:
     src: "{{ item }}"
