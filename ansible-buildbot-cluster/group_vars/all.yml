@@ -153,8 +153,8 @@ buildbot_create_master: "{{ buildbot_base }}/bin/buildbot create-master {{ inven
 #What to run to apply the master config
 buildbot_apply: "{{ buildbot_base }}/bin/buildbot reconfig {{ inventory_hostname }}"
 
-#What to run to create a worker
-buildbot_create_worker: "{{ buildbot_base }}/bin/buildbot-worker create-worker {{ inventory_hostname }} {{ groups['master'][0] }} {{ id }} {{ password }}"
+#What to run to create a worker, note that we're assuming SSH tunnels are in use!
+buildbot_create_worker: "{{ buildbot_base }}/bin/buildbot-worker create-worker {{ inventory_hostname }} localhost {{ id }} {{ password }}"
 
 
 #############

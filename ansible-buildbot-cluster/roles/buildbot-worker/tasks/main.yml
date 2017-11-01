@@ -50,34 +50,35 @@
   become: yes
   become_user: "{{ buildbot_user }}"
 
-- name: Clear current BuildBot user ssh key
+- name: Get Buildbot master sshd server key
+  local_action: shell rm -f .ssh/known_hosts && ssh-keyscan {{ groups['master'][0] }} >> .ssh/known_hosts
+
+- name: Create Buildbot SSH key directory
   file:
-    name: "{{ item }}"
-    state: absent
+    path: "{{ item }}"
+    state: directory
   become: yes
   become_user: "{{ buildbot_user }}"
   with_items:
-    - .ssh/id_rsa
-    - .ssh/id_rsa.pub
+    - .ssh
+
+- name: Ensuring root has appropriate known hosts entries so autossh works
+  known_hosts:
+    name: "{{ groups['master'][0] }}"
+    key: "{{ lookup('file', '.ssh/known_hosts') }}"
+    state: present
+  become: yes
 
 - name: Push BuildBot SSH keys
   copy:
-    src: {{ item }}
-    dest: {{ item }}
-    flat: yes
+    src: "{{ item }}"
+    dest: "{{ item }}"
+    mode: 0600
+    force: yes
   become: yes
   become_user: "{{ buildbot_user }}"
   with_items:
-    - .ssh/id_rsa
-    - .ssh/id_rsa.pub
-
-- name: Populate BuildBot master authorized_keys
-  authorized_key:
-    user: "{{ buildbot_user }}"
-    state: present
-    key: .ssh/id_rsa.pub
-    manage_dir: yes
-  become: yes
+    - .ssh/
 
 - name: Template BuildBot worker configuration
   template:

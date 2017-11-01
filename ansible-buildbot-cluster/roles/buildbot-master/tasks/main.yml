@@ -30,13 +30,14 @@
     - certifi
     - urllib3[secure]
 
+  #Note, we're using /bin/false here rather than /sbin/nologin because nologin prevents ssh login!
 - name: Create BuildBot user
   user:
     name: '{{ buildbot_user }}'
     password: '$6$rounds=656000$wuuAoKugbM31ca7G$4ixDGH6.G54ZLIfepc4LhiNsV5UUxeXdfh/3fFhjrsvW3Jg9CgjsMta66hcM/41AptJoTq0wX1ebN03k.2hso/'
     update_password: always
     home: "{{ buildbot_home }}"
-    shell: /sbin/nologin
+    shell: /bin/false
   become: yes
   when: create_buildbot_user
 
@@ -95,8 +96,8 @@
 
 - name: Fetch BuildBot SSH keys
   fetch:
-    src: {{ item }}
-    dest: {{ item }}
+    src: "{{ item }}"
+    dest: "{{ item }}"
     flat: yes
   become: yes
   become_user: "{{ buildbot_user }}"
@@ -108,7 +109,7 @@
   authorized_key:
     user: "{{ buildbot_user }}"
     state: present
-    key: .ssh/id_rsa.pub
+    key: "{{ lookup('file', '.ssh/id_rsa.pub') }}"
     manage_dir: yes
   become: yes
 
