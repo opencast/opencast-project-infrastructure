@@ -1,0 +1,20 @@
+---
+
+# Opencast RPM repository user name.
+opencast_rpm_repo_username: octestallinone
+# Opencast RPM repository password.
+opencast_rpm_repo_password: ******
+
+# Define, wether to create SELinux policy for opencast services or not.
+# Set this value to yes, if you have SELinux active and running on the vm.
+# Otherwise set this value to no.
+se_linux_enabled: yes
+
+opencast_develop_branch: develop
+opencast_develop_version: 5-SNAPSHOT
+
+opencast_stable_branch: r4.x
+opencast_stable_version: 4.0-SNAPSHOT
+
+opencast_legacy_branch: r3.x
+opencast_legacy_version: 3.0-SNAPSHOT

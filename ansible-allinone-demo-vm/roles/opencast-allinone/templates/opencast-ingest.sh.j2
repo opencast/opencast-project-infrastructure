@@ -1,0 +1,44 @@
+#!/bin/sh
+
+NUMBER_OF_INGESTS=2
+SERVER='https://{{inventory_hostname}}'
+DIGEST_LOGIN='opencast_system_account:CHANGE_ME'
+VIDEO_FILE_PRESENTATION=ToS-slides-4k-1920.mp4
+VIDEO_FILE_PRESENTER=ToS-4k-1920.mov
+
+if [ ! -f "${VIDEO_FILE_PRESENTATION}" ]; then
+        echo 'File des not exist. Exiting...'
+        exit 1
+fi
+
+if [ ! -f "${VIDEO_FILE_PRESENTER}" ]; then
+        echo 'File des not exist. Exiting...'
+        exit 1
+fi
+
+for i in $(seq 1 ${NUMBER_OF_INGESTS}); do
+
+        # Generate title and name
+        TITLE="Tears of Steel (No. ${i})"
+        NAME="Blender Foundation"
+
+        # Ingest media
+        curl -f -i -s -D - -o /dev/null --digest -u ${DIGEST_LOGIN} \
+                -H "X-Requested-Auth: Digest" \
+                "${SERVER}/ingest/addMediaPackage/fast" \
+                -F flavor="presenter/source" \
+                -F "BODY=@${VIDEO_FILE_PRESENTER}" -F title="${TITLE}" \
+                -F creator="${NAME}"
+
+        # Ingest media (Dualstream)
+        curl -f -i -s -D - -o /dev/null --digest -u ${DIGEST_LOGIN} \
+                -H "X-Requested-Auth: Digest" \
+                "${SERVER}/ingest/addMediaPackage/fast" \
+                -F flavor="presentation/source" \
+                -F "BODY=@${VIDEO_FILE_PRESENTATION}" \
+                -F flavor="presenter/source" \
+                -F "BODY=@${VIDEO_FILE_PRESENTER}" \
+                -F title="${TITLE} (Dualstream)" \
+                -F creator="${NAME}"
+
+done

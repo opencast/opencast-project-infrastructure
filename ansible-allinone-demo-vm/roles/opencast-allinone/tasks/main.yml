@@ -1,0 +1,169 @@
+---
+
+###
+# Install Opencast RPM repositories
+
+- name: Install Opencast repository
+  yum_repository:
+    file=opencast
+    name={{item.name}}
+    description={{item.description}}
+    baseurl={{item.baseurl}}
+    username={{opencast_rpm_repo_username}}
+    password={{opencast_rpm_repo_password}}
+    enabled={{item.enabled}}
+    gpgcheck=yes
+    gpgkey=https://pkg.opencast.org/gpgkeys/opencast-el7-rpm.opencast.org.key
+  with_items:
+    - { name: "opencast",
+        description: "Opencast el 7 Repository",
+        baseurl: "https://pkg.opencast.org/rpms/release/el/7/x86_64",
+        enabled: "yes" }
+    - { name: "opencast-noarch",
+        description: "Opencast el 7 Repository - noarch",
+        baseurl: "https://pkg.opencast.org/rpms/release/el/7/noarch",
+        enabled: "yes" }
+    - { name: "opencast-debuginfo",
+        description: "Opencast el 7 Repository - debuginfo",
+        baseurl: "https://pkg.opencast.org/rpms/release/el/7/debuginfo",
+        enabled: "no" }
+
+- name: Install Opencast Testing repository
+  yum_repository:
+    file=opencast-testing
+    name={{item.name}}
+    description={{item.description}}
+    baseurl={{item.baseurl}}
+    username={{opencast_rpm_repo_username}}
+    password={{opencast_rpm_repo_password}}
+    enabled={{item.enabled}}
+    gpgcheck=yes
+    gpgkey=https://pkg.opencast.org/gpgkeys/opencast-el7-rpm.opencast.org.key
+  with_items:
+    - { name: "opencast-testing",
+        description: "Opencast el 7 Testing Repository",
+        baseurl: "https://pkg.opencast.org/rpms/testing/el/7/x86_64",
+        enabled: "no" }
+    - { name: "opencast-testing-noarch",
+        description: "Opencast el 7 Testing Repository - noarch",
+        baseurl: "https://pkg.opencast.org/rpms/testing/el/7/noarch",
+        enabled: "no" }
+    - { name: "opencast-testing-debuginfo",
+        description: "Opencast el 7 Testing Repository - debuginfo",
+        baseurl: "https://pkg.opencast.org/rpms/testing/el/7/debuginfo",
+        enabled: "no" }
+
+###
+# Create opencast user and directory
+
+- name: Create opencast user
+  user:
+    name=opencast
+    createhome=yes
+    state=present
+
+- name: Create opencast data directory
+  file:
+    path=/srv/opencast
+    state=directory
+    mode=0775
+    owner=opencast
+    group=opencast
+
+###
+# Install ActiveMQ
+
+- name: Install Java and ActiveMQ
+  package:
+    name={{item}}
+    state=installed
+  with_items:
+    - java-1.8.0-openjdk
+    - activemq-dist
+
+- name: Enable ActiveMQ service
+  service:
+    name=activemq
+    enabled=yes
+
+###
+# Install Opencast dependencies
+
+- name: Install Opencast dependencies
+  package:
+    name={{item}}
+    state=installed
+  with_items:
+    - nmap-ncat
+    - curl
+    - ffmpeg
+    - tesseract
+    - hunspell
+    - tesseract-langpack-deu
+
+###
+# Install Opencast build and ingest scripts, copy demo media files, install systemd service files
+
+- name: Install Opencast build and ingest scripts
+  template:
+    src={{item}}.j2
+    dest=/home/opencast/{{item}}
+    mode=0750
+    owner=opencast
+    group=opencast
+  with_items:
+    - opencast-build.sh
+    - opencast-ingest.sh
+
+- name: Download demo media files
+  get_url:
+    url={{item}}
+    dest=/home/opencast
+    mode=0640
+    owner=opencast
+    group=opencast
+  with_items:
+    - https://data.lkiesow.de/opencast/ToS-4k-1920.mov
+    - https://data.lkiesow.de/opencast/ToS-slides-4k-1920.mp4
+
+- name: Install systemd service files
+  copy:
+    src={{item}}
+    dest=/etc/systemd/system/
+    mode=0644
+    owner=root
+    group=root
+    force=yes
+  with_items:
+    - opencast.service
+    - opencast-build.service
+    - opencast-build.timer
+
+- name: Give opencast user rights to run build commands with higher privileges
+  copy:
+    src=opencast-build-sudoers
+    dest=/etc/sudoers.d/
+    mode=0440
+    owner=root
+    group=root
+    force=yes
+
+###
+# Enable and run opencast buid service
+
+- name: Enable opencast build service
+  systemd:
+    daemon_reload=yes
+    name=opencast-build.timer
+    enabled=yes
+    state=started
+
+- name: Enable Opencast service
+  service:
+    name=opencast
+    enabled=yes
+
+- name: Run opencast build service
+  service:
+    name=opencast-build.service
+    state=started

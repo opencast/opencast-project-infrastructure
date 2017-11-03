@@ -1,0 +1,49 @@
+#!/bin/bash
+set -uex
+
+{% if 'legacy' in group_names %}
+branch="{{opencast_legacy_branch}}"
+version="{{opencast_legacy_version}}"
+
+{% elif 'stable' in group_names %}
+branch="{{opencast_stable_branch}}"
+version="{{opencast_stable_version}}"
+
+{% elif 'develop' in group_names %}
+branch="{{opencast_develop_branch}}"
+version="{{opencast_develop_version}}"
+
+{% else %}
+branch="{{opencast_stable_branch}}"
+version="{{opencast_stable_version}}"
+
+{% endif %}
+
+cd ~
+
+# Get latest opencast
+curl -s -O "http://build.opencast.org/builds/${branch}/opencast-dist-allinone-${version}.tar.gz"
+tar xf opencast-dist-allinone-*.tar.gz
+rm opencast-dist-allinone-*.tar.gz
+
+# Stop and remove old Opencast
+sudo systemctl stop opencast.service || :
+rm -rf /srv/opencast/opencast-dist-allinone
+
+# Set-up new Opencast
+mv opencast-dist-allinone /srv/opencast/
+sed -i 's#^org.opencastproject.server.url=.*$#org.opencastproject.server.url=https://{{inventory_hostname}}#' /srv/opencast/opencast-dist-allinone/etc/custom.properties
+
+# Update ActiveMQ cofniguration
+#curl -s -O "http://build.opencast.org/builds/${branch}/activemq.xml"
+#GDLGDL: Replaced curl with the file from the tarball
+sudo install -m 644 /srv/opencast/opencast-dist-allinone/docs/scripts/activemq/activemq.xml /etc/activemq/activemq.xml
+sudo systemctl restart activemq.service || :
+
+# Start Opencast
+sudo systemctl start opencast.service
+
+# Wait until Opencast is up before ingesting media
+sleep 300
+cd /home/opencast
+./opencast-ingest.sh

@@ -1,0 +1,115 @@
+---
+
+- name: Install NGiNX, ACME-Tiny and dependencies
+  package:
+    name={{item}}
+    state=installed
+  with_items:
+    - nginx
+    - openssl
+    - python
+    - acme-tiny
+
+- name: Configure NGiNX
+  copy:
+    src={{item}}
+    dest=/etc/nginx/{{item}}
+    force=true
+    owner=root
+    group=root
+    mode=0640
+  with_items:
+    - nginx.conf
+    - ssl.conf
+
+- name: Create Diffie Hellman Ephemeral Parameters for NGiNX
+  command: openssl dhparam -out /etc/nginx/dhparam.pem 2048
+  args:
+    creates: /etc/nginx/dhparam.pem
+
+- name: Secure Diffie Hellman Ephemeral Parameters file for NGiNX
+  file:
+    path=/etc/nginx/dhparam.pem
+    owner=root
+    group=root
+    mode=0640
+
+- name: Configure NGiNX for HTTP
+  template:
+    src=http.conf.j2
+    dest=/etc/nginx/conf.d/{{inventory_hostname}}.http.conf
+    owner=root
+    group=root
+    mode=0640
+
+- name: Configure firewall to allow HTTP and HTTPS incomming connections
+  firewalld:
+    service={{item}}
+    state=enabled
+    permanent=true
+    immediate=true
+  with_items:
+  - http
+  - https
+
+- name: Create ACME domain key
+  command: openssl genpkey -algorithm rsa -pkeyopt rsa_keygen_bits:2048 -out /var/lib/acme/private/{{inventory_hostname}}.key
+  args:
+    creates: /var/lib/acme/private/{{inventory_hostname}}.key
+
+- name: Create domain certificate sighn request
+  command: openssl req -new -sha256 -key /var/lib/acme/private/{{inventory_hostname}}.key -subj "/CN={{inventory_hostname}}" -out /var/lib/acme/csr/{{inventory_hostname}}.csr
+  args:
+    creates: /var/lib/acme/csr/{{inventory_hostname}}.csr
+
+- name: Secure ACME files
+  file:
+    path={{item}}
+    owner=root
+    group=root
+    mode=0640
+  with_items:
+    - /var/lib/acme/private/{{inventory_hostname}}.key
+
+- name: Start and enable NGiNX and ACME-Tiny service
+  service:
+    name={{item}}
+    enabled=true
+    state=started
+  with_items:
+    - nginx
+    - acme-tiny
+
+# Workaround for acme-tiny service started by ansible does not create certificate
+# - name: Request domain certificate
+#   become: yes
+#   become_user: acme
+#   command: acme-tiny-sign --account-key /var/lib/acme/private/account.key --csr /var/lib/acme/csr/{{inventory_hostname}}.csr --acme-dir /var/www/challenges/ --chain --out /var/lib/acme/certs/{{inventory_hostname}}.crt
+#   args:
+#     creates=/var/lib/acme/certs/{{inventory_hostname}}.crt
+
+- name: Install SELinux management tools
+  package:
+    name={{item}}
+    state=installed
+  with_items:
+    - libselinux-python
+    - policycoreutils-python
+  when: se_linux_enabled|bool
+
+- name: SELinux Policy to allow NGiNX to connect on port 8080
+  seport:
+    ports: 8080
+    proto: tcp
+    setype: http_port_t
+    state: present
+  when: se_linux_enabled|bool
+
+- name: Configure NGiNX for HTTPS
+  template:
+    src=https.conf.j2
+    dest=/etc/nginx/conf.d/{{inventory_hostname}}.https.conf
+    owner=root
+    group=root
+    mode=0640
+  notify: reload nginx

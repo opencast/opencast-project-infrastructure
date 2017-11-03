@@ -1,0 +1,15 @@
+---
+
+- hosts: opencast
+  become: yes
+  tasks:
+    - name: Activate EPEL
+      package:
+        name=epel-release
+        state=latest
+
+
+- hosts: opencast
+  become: yes
+  roles:
+    - nginx
