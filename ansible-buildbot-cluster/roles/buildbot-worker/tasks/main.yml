@@ -51,7 +51,7 @@
   become_user: "{{ buildbot_user }}"
 
 - name: Get Buildbot master sshd server key
-  local_action: shell rm -f .ssh/known_hosts && ssh-keyscan {{ groups['master'][0] }} >> .ssh/known_hosts
+  local_action: shell rm -f .ssh/known_hosts && ssh-keyscan {{ groups['master'][0] }} bitbucket.org >> .ssh/known_hosts
 
 - name: Create Buildbot SSH key directory
   file:
