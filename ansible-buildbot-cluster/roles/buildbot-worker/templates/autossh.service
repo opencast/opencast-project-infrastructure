@@ -10,7 +10,7 @@ User={{ buildbot_user }}
 # -N Just open the connection and do nothing (not interactive)
 # LOCALPORT:IP_ON_EXAMPLE_COM:PORT_ON_EXAMPLE_COM
 User=buildbot
-ExecStart=/usr/bin/autossh -M 0 -N -q -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -p 22 -l {{ buildbot_user }} {{ groups['master'][0] }} -L 9989:127.0.0.1:9989 -i {{ buildbot_home }}/.ssh/id_rsa
+ExecStart=/usr/bin/autossh -M 0 -N -q -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -p 22 -l {{ hostvars[groups['master'][0]]['buildbot_user'] }} {{ groups['master'][0] }} -L 9989:127.0.0.1:9989 -i {{ buildbot_home }}/.ssh/id_rsa
 Restart=always
 
 [Install]
