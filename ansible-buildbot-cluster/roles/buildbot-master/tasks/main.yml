@@ -30,14 +30,14 @@
     - certifi
     - urllib3[secure]
 
-  #Note, we're using /bin/false here rather than /sbin/nologin because nologin prevents ssh login!
+  #Note, we're using /bin/bash here rather than /sbin/nologin or /bin/false because we need to be able to log in!
 - name: Create BuildBot user
   user:
     name: '{{ buildbot_user }}'
-    password: '$6$rounds=656000$wuuAoKugbM31ca7G$4ixDGH6.G54ZLIfepc4LhiNsV5UUxeXdfh/3fFhjrsvW3Jg9CgjsMta66hcM/41AptJoTq0wX1ebN03k.2hso/'
+    password: "{{ lookup('password', '/dev/null encrypt=sha1_crypt length=32') }}"
     update_password: always
     home: "{{ buildbot_home }}"
-    shell: /bin/false
+    shell: /bin/bash
   become: yes
   when: create_buildbot_user
 

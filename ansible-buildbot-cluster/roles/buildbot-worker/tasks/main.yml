@@ -27,7 +27,7 @@
 - name: Create BuildBot user
   user:
     name: '{{ buildbot_user }}'
-    password: '$6$rounds=656000$wuuAoKugbM31ca7G$4ixDGH6.G54ZLIfepc4LhiNsV5UUxeXdfh/3fFhjrsvW3Jg9CgjsMta66hcM/41AptJoTq0wX1ebN03k.2hso/'
+    password: "{{ lookup('password', '/dev/null encrypt=sha1_crypt length=32') }}"
     update_password: always
     home: "{{ buildbot_home }}"
     shell: /sbin/nologin
