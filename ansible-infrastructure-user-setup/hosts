@@ -3,7 +3,6 @@ eth
 harvard
 switch
 uos
-usask
 cologne
 muenster
 
@@ -12,22 +11,15 @@ muenster
 # docs.opencast org = pkg
 build.opencast.org
 nexus.opencast.org
-octestallinone.virtuos.uos.de
+develop.opencast.org
 pkg.opencast.org
 pullrequests.opencast.org
 
-[usask]
-testallinone.usask.ca
-testadmin.usask.ca
-testengage.usask.ca
-testworker1.usask.ca
-testworker2.usask.ca
-
 [eth]
-opencast-nexus.ethz.ch
+stable.opencast.org
 
 [harvard]
-nexus.dcex.harvard.edu
+mvncache.opencast.org
 
 [switch]
 admin.oc-test.switch.ch
@@ -47,4 +39,4 @@ oc-com-presentation.rrz.uni-koeln.de
 oc-com-worker1.rrz.uni-koeln.de
 
 [muenster]
-5.9.71.124
+legacy.opencast.org

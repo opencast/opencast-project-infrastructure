@@ -9,6 +9,15 @@
       - greglogan
 
   tasks:
+    - name: install epel (rh)
+      become: yes
+      package:
+        state=present
+        name={{ item }}
+      with_items:
+        - epel-release
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
     - name: install base tools
       become: yes
       package:
