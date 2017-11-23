@@ -82,7 +82,7 @@ config_nginx: True
 #URI fragments defining where things should end up, relative to a given root directory/URL
 artifacts_fragment: "%(prop:branch_pretty)s/%(prop:buildnumber)s-%(prop:build_timestamp)s"
 parent_fragment: "%(prop:branch_pretty)s/%(prop:parent_build)s-%(prop:build_timestamp)s"
-reports_fragment: "reports/%(prop:branch_pretty)s"
+reports_fragment: "{{ parent_fragment }}/reports"
 debs_fragment: "{{ parent_fragment }}/debs"
 rpms_fragment: "{{ parent_fragment }}/rpms"
 
@@ -103,7 +103,7 @@ url_base: /builds
 artifacts_url: "{{ url_base }}/{{ artifacts_fragment }}"
 
 #Build url for the reports
-reports_url: "{{ url_base }}/{{ reports_fragment }}"
+reports_url: "{{ url_base }}/reports/%(prop:branch_pretty)s"
 #Build url for the debs
 debs_url: "{{ url_base }}/{{ debs_fragment }}"
 #Build url for the rpms
@@ -126,11 +126,17 @@ disk_base: /var/www/buildbot
 #Build location on master filesystem
 artifacts_dist_base: "{{ disk_base }}/{{ artifacts_fragment }}"
 
-#Build location on the master filesystem as seen by a child job
+#Build location on the master filesystem as seen by a child job (reports, debs, rpms, etc)
 parent_dist_base: "{{ disk_base }}/{{ parent_fragment }}"
 
 #The location on disk to deploy the reports to
 deployed_reports: "{{ disk_base }}/{{ reports_fragment }}"
+
+#The location on disk to where the report symlinks live
+deployed_reports_symlink_base: "{{ disk_base }}/reports"
+
+#The interpolatable location for each symlink
+deployed_reports_symlink: "{{ deployed_reports_symlink_base }}/%(prop:branch_pretty)s"
 
 #The location on disk to deploy the debs to
 #Note that this is using the *parent* dist base
