@@ -41,22 +41,17 @@
   become: yes
   when: create_buildbot_user
 
-- name: Ensure BuildBot master parent directory exists and has the right permissions
+- name: Ensure BuildBot directories exist and have the right permissions
   file:
     state: directory
-    path: "{{ buildbot_home }}"
+    path: "{{ item  }}"
     owner: "{{ buildbot_user }}"
     group: "{{ buildbot_user }}"
     recurse: yes
   become: yes
-
-- name: Ensure BuildBot master artifact directory exists and has the right permissions
-  file:
-    state: directory
-    path: "{{ disk_base }}"
-    owner: "{{ buildbot_user }}"
-    group: "{{ buildbot_user }}"
-  become: yes
+  with_items:
+    - "{{ buildbot_home }}"
+    - "{{ disk_base }}"
 
 - name: Create BuildBot master instance
   shell: "{{ buildbot_create_master }}"
