@@ -83,6 +83,7 @@ config_nginx: True
 artifacts_fragment: "%(prop:branch_pretty)s/%(prop:buildnumber)s-%(prop:build_timestamp)s"
 parent_fragment: "%(prop:branch_pretty)s/%(prop:parent_build)s-%(prop:build_timestamp)s"
 reports_fragment: "{{ parent_fragment }}/reports"
+coverage_fragment: "{{ parent_fragment }}/coverage"
 debs_fragment: "{{ parent_fragment }}/debs"
 rpms_fragment: "{{ parent_fragment }}/rpms"
 
@@ -138,6 +139,9 @@ deployed_reports_symlink_base: "{{ disk_base }}/reports"
 #The interpolatable location for each symlink
 deployed_reports_symlink: "{{ deployed_reports_symlink_base }}/%(prop:branch_pretty)s"
 
+#The location on disk to deploy the coverage report to
+deployed_coverage: "{{ disk_base }}/{{ coverage_fragment }}"
+
 #The location on disk to deploy the debs to
 #Note that this is using the *parent* dist base
 deployed_debs: "{{ disk_base }}/{{ debs_fragment }}"
@@ -167,6 +171,8 @@ buildbot_scp_builds_get: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{
 buildbot_scp_builds_put: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ artifacts_dist_base }}"
 
 buildbot_scp_reports: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ deployed_reports }}"
+
+buildbot_scp_coverage: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ deployed_coverage }}"
 
 buildbot_scp_debs: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ deployed_debs }}"
 
