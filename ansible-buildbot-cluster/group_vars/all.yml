@@ -83,7 +83,7 @@ config_nginx: True
 artifacts_fragment: "%(prop:branch_pretty)s/%(prop:buildnumber)s-%(prop:build_timestamp)s"
 parent_fragment: "%(prop:branch_pretty)s/%(prop:parent_build)s-%(prop:build_timestamp)s"
 reports_fragment: "{{ parent_fragment }}/reports"
-coverage_fragment: "{{ parent_fragment }}/coverage"
+coverage_fragment: "{{ artifacts_fragment }}/coverage"
 debs_fragment: "{{ parent_fragment }}/debs"
 rpms_fragment: "{{ parent_fragment }}/rpms"
 
