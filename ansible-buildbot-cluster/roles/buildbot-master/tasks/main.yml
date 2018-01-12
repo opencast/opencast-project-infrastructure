@@ -100,6 +100,9 @@
     - .ssh/id_rsa
     - .ssh/id_rsa.pub
 
+- name: Adding local keys
+  local_action: shell cp group_vars/keys/* .ssh/
+
 - name: Populate BuildBot master authorized_keys
   authorized_key:
     user: "{{ buildbot_user }}"
