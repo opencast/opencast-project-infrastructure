@@ -9,3 +9,6 @@ is required.  Please see the infrastructure users playbook to set those up!  To 
 To update BuildBot run:
 
     ansible-playbook -K -i hosts reconfig.yml
+
+Requires:
+  - Ansible 2.4 or newer

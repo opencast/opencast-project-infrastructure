@@ -8,4 +8,4 @@
   roles:
     - buildbot-master-reconfig
   handlers:
-    - include: handlers/handlers.yml
+    - import_tasks: handlers/handlers.yml
