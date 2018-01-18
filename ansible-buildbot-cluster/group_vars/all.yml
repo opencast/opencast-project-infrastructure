@@ -46,16 +46,19 @@ oc_rpm_repo_key: https://pkg.opencast.org/gpgkeys/opencast-el7-rpm.opencast.org.
 #####################
 
 #The Opencast repository URL
-source_repo_url: "https://bitbucket.org/opencast-community/opencast.git"
+source_repo_url: "https://github.com/{{ source_pr_owner }}/{{ source_pr_repo }}.git"
 
 #The pull request source's owner
-source_pr_owner: "opencast-community"
+source_pr_owner: "opencast"
 
 #The pull request sources' repository name
-source_pr_slug:  "opencast"
+source_pr_repo:  "opencast"
 
-#How long a set of changes needs to be in place prior to starting a build
-stability_limit: 120
+#How long a set of changes needs to be in place prior to starting a build (in seconds)
+stability_limit: 300
+
+#Time between SCM polls (in minutes)
+poll_interval: 10
 
 #Where to fetch the debian packaging build files from
 source_deb_repo_url: "https://bitbucket.org/greg_logan/debian_packaging.git"

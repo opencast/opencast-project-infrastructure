@@ -1,9 +1,9 @@
 ---
 
-source_repo_url: "https://github.com/gregorydlogan/opencast.git"
 source_pr_owner: "gregorydlogan"
 source_pr_slug:  "opencast"
 stability_limit: 5
+poll_interval: 60
 #Note: Remember to distribute the ssh keys
 source_deb_repo_url: 'git@bitbucket.org:greg_logan/debian_packaging-private.git'
 mail_to: "gregorydlogan@gmail.com"
