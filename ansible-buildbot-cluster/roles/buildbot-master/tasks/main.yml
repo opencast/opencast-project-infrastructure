@@ -147,3 +147,7 @@
     user: "{{ buildbot_user }}"
     state: present
   become: yes
+
+- name: Setup Buildbot
+  import_role:
+    name: buildbot-master-reconfig
