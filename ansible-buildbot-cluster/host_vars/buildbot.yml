@@ -9,5 +9,6 @@ source_deb_repo_url: 'git@bitbucket.org:greg_logan/debian_packaging-private.git'
 mail_to: "gregorydlogan@gmail.com"
 oc_deb_repo_url: "deb https://apt-cacher/debian {{repo_suite}}/"
 
-bitbucket_oath_client_id: spTESLkZNqMxLd3DWM
-bitbucket_oath_client_secret: ZHEQ4LEaBD4dZY5UfGXLZTC9fB3DbqYH
+github_client_id:
+github_client_secret:
+github_token:
