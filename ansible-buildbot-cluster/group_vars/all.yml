@@ -191,11 +191,19 @@ buildbot_scp_rpms: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ grou
 # Auth bits #
 #############
 
-#The OAth bits.  These are used to power the login side of things for BuildBot
+#The OAth bits.  These are used to power the login side of things for GitHub
 #These don't need to be right for testing, you just won't be able to log in
 #These are set here so the playbooks don't fail, but should be overridden in the host vars
-bitbucket_oath_client_id: FAKE_CLIENT_ID
-bitbucket_oath_client_secret: FAKE_SECRET
+github_client_id: FAKE_ID
+github_client_secret: FAKE_SECRET
+
+#These are strings for the GitHub webhook auth, see the bottom of https://docs.buildbot.net/latest/manual/cfg-wwwhooks.html#github-hook
+github_hook_user: FAKE_USER
+github_hook_pass: FAKE_PASS
+
+#The secret used by the webhook
+github_hook_secret: FAKE_SECRET
+
 
 #The credentials to use when installing the workers.  This is used to get an appropriate version of ffmpeg from the repo
 #These are defined here, but need to be overridden in the host vars

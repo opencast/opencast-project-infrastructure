@@ -139,6 +139,15 @@
     group: "{{ buildbot_user }}"
   become: yes
 
+- name: Template Buildbot hook password
+  template:
+    src: changehook.passwd
+    dest: "{{ buildbot_base }}/changehook.passwd"
+    force: yes
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+  become: yes
+
 - name: Add Buildbot cleanup script to the crontab
   cron:
     name: "Remove old build artifacts"
