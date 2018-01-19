@@ -3,14 +3,7 @@ master
 workers
 
 [master]
-buildbot
+build
 
 [workers]
-builder01
-builder02
-builder03
-builder04
-builder05
-builder06
-builder07
-builder08
+builder0[0:3]
