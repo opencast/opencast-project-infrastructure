@@ -1,7 +1,7 @@
 ---
 
 id: worker1
-password: example_password
+password: example_password1
 admin_info: Example Admin <admin@example.com>
 
 build_base: True

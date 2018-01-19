@@ -3,7 +3,7 @@ master
 workers
 
 [master]
-build
+build.loganite.ca
 
 [workers]
 builder0[0:3]
