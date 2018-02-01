@@ -39,6 +39,7 @@ sed -i 's#^org.opencastproject.server.url=.*$#org.opencastproject.server.url=htt
 #GDLGDL: Replaced curl with the file from the tarball
 sudo install -m 644 /srv/opencast/opencast-dist-allinone/docs/scripts/activemq/activemq.xml /etc/activemq/activemq.xml
 sudo systemctl restart activemq.service || :
+sudo systemctl reload nginx.service || :
 
 # Start Opencast
 sudo systemctl start opencast.service

@@ -3,3 +3,4 @@ opencast        ALL=(root) NOPASSWD: /usr/bin/systemctl stop opencast.service
 opencast        ALL=(root) NOPASSWD: /usr/bin/systemctl start opencast.service
 opencast        ALL=(root) NOPASSWD: /usr/bin/systemctl restart activemq.service
 opencast        ALL=(root) NOPASSWD: /usr/bin/install -m 644 /srv/opencast/opencast-dist-allinone/docs/scripts/activemq/activemq.xml /etc/activemq/activemq.xml
+opencast        ALL=(root) NOPASSWD: /usr/bin/systemctl reload nginx.service

@@ -79,6 +79,7 @@
   with_items:
     - nginx
     - acme-tiny
+    - acme-tiny.timer
 
 # Workaround for acme-tiny service started by ansible does not create certificate
 # - name: Request domain certificate
