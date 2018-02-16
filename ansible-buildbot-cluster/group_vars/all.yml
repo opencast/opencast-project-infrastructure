@@ -90,6 +90,7 @@ artifacts_fragment: "%(prop:branch_pretty)s/%(prop:buildnumber)s-%(prop:build_ti
 artifacts_PR_fragment: "PR/%(prop:buildnumber)s"
 parent_fragment: "%(prop:branch_pretty)s/%(prop:parent_build)s-%(prop:build_timestamp)s"
 reports_fragment: "{{ parent_fragment }}/reports"
+javadocs_fragment: "{{ parent_fragment }}/javadocs"
 coverage_fragment: "{{ artifacts_fragment }}/coverage"
 debs_fragment: "{{ parent_fragment }}/debs"
 rpms_fragment: "{{ parent_fragment }}/rpms"
@@ -160,6 +161,11 @@ deployed_debs: "{{ disk_base }}/{{ debs_fragment }}"
 #Note that this is using the *parent* dist base
 deployed_rpms: "{{ disk_base }}/{{ rpms_fragment }}"
 
+#The location where the javadocs live on disk
+deployed_javadocs: "{{ deployed_reports }}/apidocs"
+
+#The location of the symlink to make it easier to get to the javadocs
+deployed_javadocs_symlink: "{{ disk_base }}/{{ javadocs_fragment }}"
 
 #####################
 # Buildbot Commands #
