@@ -1,7 +1,6 @@
 [server:children]
 eth
 harvard
-switch
 uos
 cologne
 muenster
@@ -20,18 +19,6 @@ stable.opencast.org
 
 [harvard]
 mvncache.opencast.org
-
-[switch]
-admin.oc-test.switch.ch
-player.oc-test.switch.ch
-ingest.oc-test.switch.ch
-worker1.oc-test.switch.ch
-worker2.oc-test.switch.ch
-worker3.oc-test.switch.ch
-worker4.oc-test.switch.ch
-database.oc-test.switch.ch
-download.oc-test.switch.ch
-streaming.oc-test.switch.ch
 
 [cologne]
 oc-com-admin.rrz.uni-koeln.de

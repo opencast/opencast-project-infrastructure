@@ -35,7 +35,10 @@
         name: '{{ item }}'
         password: '$6$rounds=656000$/2a4a2lmJtsLBdyM$0VVKwJ4byUPaLirCwdvfgTXRg7dLptq4UVVt/ge9sahNSzHYUYcv9aq/O7ytiuShicXVPya5SjLX8CSyGfKWs/'
         update_password: on_create
-      with_items: '{{ ocadmins }}'
+      with_items:
+        - "{{ admins }}"
+        - "{{ host_admins | default([]) }}"
+      when: item != ""
 
     - name: add vmusers and vmadmins groups uos servers
       become: yes
@@ -43,8 +46,12 @@
         name: '{{ item }}'
         groups: vmusers,vmadmins
         append: yes
-      with_items: '{{ ocadmins }}'
-      when: "'uos' in group_names"
+      with_items:
+        - "{{ admins }}"
+        - "{{ host_admins | default([]) }}"
+      when:
+        - item != ""
+        - "'uos' in group_names"
 
     - name: add wheel group
       become: yes
@@ -52,7 +59,10 @@
         name: '{{ item }}'
         groups: wheel
         append: yes
-      with_items: '{{ ocadmins }}'
+      with_items:
+        - "{{ admins }}"
+        - "{{ host_admins | default([]) }}"
+      when: item != ""
 
     - name: set up authorized keys
       become: yes
@@ -60,7 +70,20 @@
         user: '{{ item }}'
         state: present
         key: "{{ lookup('file', 'pub-keys/{{ item }}.pub') }}"
-      with_items: '{{ ocadmins }}'
+      with_items:
+        - "{{ admins }}"
+        - "{{ host_admins | default([]) }}"
+      when: item != ""
+
+    - name: remove old users
+      become: yes
+      user:
+        name: '{{ item }}'
+        state: absent
+        remove: yes
+      with_items:
+        - "{{ remove_user | default([]) }}"
+      when: item != ""
 
 
     # sshd options
