@@ -57,17 +57,17 @@ source_pr_repo:  "opencast"
 #How long a set of changes needs to be in place prior to starting a build (in seconds)
 stability_limit: 300
 
-#Time between SCM polls (in minutes)
-poll_interval: 10
-
 #Where to fetch the debian packaging build files from
-source_deb_repo_url: "https://bitbucket.org/greg_logan/debian_packaging.git"
+source_deb_repo_url: "https://github.com/gregorydlogan/debian-packaging.git"
 
 #Who to send status mails to
 mail_to: "dev@opencast.org"
 
 #Set this to true to enable polling, instead of using a webhook
 enable_polling: False
+
+#Time between SCM polls (in minutes)
+poll_interval: 10
 
 
 #######################
