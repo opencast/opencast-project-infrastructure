@@ -92,6 +92,7 @@
     force: yes
     owner: root
     group: root
+  become: yes
   notify: "Start autossh"
 
 - name: Template Buildbot worker systemd unit file
@@ -101,4 +102,5 @@
     force: yes
     owner: root
     group: root
+  become: yes
   notify: "Start BuildBot worker"

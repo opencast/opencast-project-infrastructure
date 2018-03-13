@@ -119,6 +119,7 @@
     owner: root
     group: root
   when: config_nginx
+  become: yes
   notify: "Restart nginx"
 
 - name: Template Buildbot master systemd unit file
@@ -128,6 +129,7 @@
     force: yes
     owner: root
     group: root
+  become: yes
   notify: "Start BuildBot"
 
 - name: Template Buildbot cleanup script
