@@ -1,13 +1,15 @@
 [Unit]
-Description=BuildBot master
-After=network.target
+Description=Buildbot running in Docker
+Requires=docker.service
+After=docker.service
 
 [Service]
-User={{ buildbot_user }}
-Group={{ buildbot_user }}
-WorkingDirectory={{ buildbot_base }}
-ExecStart={{ buildbot_base }}/bin/buildbot start --nodaemon
-ExecReload=/bin/kill -s HUP $MAINPID
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory={{ buildbot_home }}
+ExecStart=/usr/local/bin/docker-compose up -d
+ExecStop=/usr/local/bin/docker-compose down
+TimeoutStartSec=0
 
 [Install]
 WantedBy=multi-user.target

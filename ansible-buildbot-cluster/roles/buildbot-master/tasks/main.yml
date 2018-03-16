@@ -6,29 +6,13 @@
 - import_tasks: centos.yml
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
-- name: Update Python pip
+- name: Install docker-py for Docker latent worker support
   pip:
     name: "{{ item }}"
-    virtualenv: "{{ buildbot_base }}"
     state: latest
   become: yes
   with_items:
-    - pip
-
-- name: Install BuildBot Python level dependencies
-  pip:
-    name: "{{ item }}"
-    virtualenv: "{{ buildbot_base }}"
-    state: latest
-  become: yes
-  with_items:
-    - buildbot[bundle]
-    - treq
-    - requests
-    - pyopenssl
-    - enum
-    - certifi
-    - urllib3[secure]
+    - docker-py
 
   #Note, we're using /bin/bash here rather than /sbin/nologin or /bin/false because we need to be able to log in!
 - name: Create BuildBot user
@@ -41,7 +25,7 @@
   become: yes
   when: create_buildbot_user
 
-- name: Ensure BuildBot directories exist and have the right permissions
+- name: Ensure required directories exist and have the right permissions
   file:
     state: directory
     path: "{{ item  }}"
@@ -52,75 +36,23 @@
   with_items:
     - "{{ buildbot_home }}"
     - "{{ disk_base }}"
+    - "{{ buildbot_home }}/buildbot-config"
+    - "{{ buildbot_home }}/nginx-config"
 
-- name: Create BuildBot master instance
-  shell: "{{ buildbot_create_master }}"
-  args:
-    chdir: "{{ buildbot_home }}"
-  become: yes
-  become_user: "{{ buildbot_user }}"
-
-- name: Copy default BuildBot master configuration
-  shell: "cp {{ buildbot_master_config }}.sample {{ buildbot_master_config }}"
-  become: yes
-  become_user: "{{ buildbot_user }}"
-
-- name: Apply BuildBot master configuration
-  shell: "{{ buildbot_apply }}"
-  args:
-    chdir: "{{ buildbot_home }}"
-  become: yes
-  become_user: "{{ buildbot_user }}"
-
-- name: Clear current BuildBot user ssh key
-  file:
-    name: "{{ item }}"
-    state: absent
-  become: yes
-  become_user: "{{ buildbot_user }}"
-  with_items:
-    - .ssh/id_rsa
-    - .ssh/id_rsa.pub
-
-- name: Generate new BuildBot SSH key
-  user:
-    name: "{{ buildbot_user }}"
-    generate_ssh_key: yes
-    ssh_key_bits: 4096
-  become: yes
-
-- name: Fetch BuildBot SSH keys
-  fetch:
-    src: "{{ item }}"
-    dest: "{{ item }}"
-    flat: yes
-  become: yes
-  become_user: "{{ buildbot_user }}"
-  with_items:
-    - .ssh/id_rsa
-    - .ssh/id_rsa.pub
-
-- name: Adding local keys
-  local_action: shell cp group_vars/keys/* .ssh/
-
-- name: Populate BuildBot master authorized_keys
-  authorized_key:
-    user: "{{ buildbot_user }}"
-    state: present
-    key: "{{ lookup('file', '.ssh/id_rsa.pub') }}"
-    manage_dir: yes
-  become: yes
-
-- name: Template Buildbot nginx config
+- name: Template configuration files
   template:
-    src: buildbot.conf
-    dest: /etc/nginx/conf.d/buildbot.conf
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ buildbot_user }}"
     force: yes
-    owner: root
-    group: root
-  when: config_nginx
   become: yes
-  notify: "Restart nginx"
+  with_items:
+    - { src: "docker-compose.yml", dest: "{{ buildbot_home }}/docker-compose.yml" }
+    - { src: "db.env", dest: "{{ buildbot_home }}/db.env" }
+    - { src: "master.cfg", dest: "{{ buildbot_home }}/buildbot-config/master.cfg" }
+    - { src: "changehook.passwd", dest: "{{ buildbot_home }}/buildbot-config/changehook.passwd" }
+    - { src: "cleaner.sh", dest: "{{ buildbot_home }}/cleaner.sh" }
+    - { src: "buildbot.conf", dest: "{{ buildbot_home }}/nginx-config/buildbot.conf" }
 
 - name: Template Buildbot master systemd unit file
   template:
@@ -130,25 +62,7 @@
     owner: root
     group: root
   become: yes
-  notify: "Start BuildBot"
-
-- name: Template Buildbot cleanup script
-  template:
-    src: cleaner.sh
-    dest: "{{ buildbot_base }}/cleaner.sh"
-    force: yes
-    owner: "{{ buildbot_user }}"
-    group: "{{ buildbot_user }}"
-  become: yes
-
-- name: Template Buildbot hook password
-  template:
-    src: changehook.passwd
-    dest: "{{ buildbot_base }}/changehook.passwd"
-    force: yes
-    owner: "{{ buildbot_user }}"
-    group: "{{ buildbot_user }}"
-  become: yes
+#  notify: "Start BuildBot"
 
 - name: Add Buildbot cleanup script to the crontab
   cron:
@@ -159,6 +73,3 @@
     state: present
   become: yes
 
-- name: Setup Buildbot
-  import_role:
-    name: buildbot-master-reconfig

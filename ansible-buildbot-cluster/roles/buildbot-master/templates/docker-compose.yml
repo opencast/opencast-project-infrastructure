@@ -1,0 +1,49 @@
+version: '2'
+services:
+  buildbot:
+    image: buildbot/buildbot-master:v1.1.0
+    env_file:
+      - db.env
+    environment:
+      - BUILDBOT_CONFIG_DIR=config
+      - BUILDBOT_WORKER_PORT=9989
+    links:
+      - db
+    depends_on:
+      - db
+    expose:
+      - 8080
+      #Note: We're only exposing the worker port to localhost on the master node since comms are done via SSH tunnel
+      - "127.0.0.19989:9989"
+    volumes:
+      - "{{ buildbot_home }}/buildbot-config:/var/lib/buildbot"
+#      - "{{ disk_base }}:{{ disk_base }}"
+  proxy:
+    image: "nginx:stable"
+    links:
+      - buildbot
+    ports:
+      - "80:80"
+    volumes:
+      - "{{ buildbot_home }}/nginx-config:/etc/nginx/conf.d"
+      - "{{ disk_base }}:{{ disk_base }}"
+  db:
+    env_file:
+      - db.env
+    image: "postgres:9.4"
+    expose:
+      - 5432
+    volumes:
+      - "{{ buildbot_home }}/postgres-data:/var/lib/postgresql/data"
+
+#  worker:
+#    image: "buildbot/buildbot-worker:v1.1.0"
+#    environment:
+#        BUILDMASTER: buildbot
+#        BUILDMASTER_PORT: 9989
+#        WORKERNAME: example-worker
+#        WORKERPASS: pass
+#        WORKER_ENVIRONMENT_BLACKLIST: DOCKER_BUILDBOT* BUILDBOT_ENV_* BUILDBOT_1* WORKER_ENVIRONMENT_BLACKLIST
+
+#    links:
+#        - buildbot
