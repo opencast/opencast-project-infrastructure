@@ -6,24 +6,6 @@
 - import_tasks: centos.yml
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
-- name: Update Python pip
-  pip:
-    name: "{{ item }}"
-    virtualenv: "{{ buildbot_base }}"
-    state: latest
-  become: yes
-  with_items:
-    - pip
-
-- name: Install BuildBot Python level dependencies
-  pip:
-    name: "{{ item }}"
-    virtualenv: "{{ buildbot_base }}"
-    state: latest
-  become: yes
-  with_items:
-    - buildbot-worker
-
 - name: Create BuildBot user
   user:
     name: '{{ buildbot_user }}'
@@ -31,6 +13,7 @@
     update_password: always
     home: "{{ buildbot_home }}"
     shell: /sbin/nologin
+    groups: buildbot,docker
   become: yes
   when: create_buildbot_user
 
@@ -43,64 +26,16 @@
     recurse: yes
   become: yes
 
-- name: Create BuildBot worker instance
-  shell: "{{ buildbot_create_worker }}"
-  args:
-    chdir: "{{ buildbot_home }}"
-  become: yes
-  become_user: "{{ buildbot_user }}"
-
-- name: Get Buildbot master sshd server key
-  local_action: shell rm -f .ssh/known_hosts && ssh-keyscan {{ groups['master'][0] }} bitbucket.org >> .ssh/known_hosts
-
-- name: Create Buildbot SSH key directory
-  file:
-    path: "{{ item }}"
-    state: directory
-  become: yes
-  become_user: "{{ buildbot_user }}"
-  with_items:
-    - .ssh
-
-- name: Push BuildBot SSH keys
-  copy:
-    src: "{{ item }}"
-    dest: "{{ item }}"
-    mode: 0600
-    force: yes
-  become: yes
-  become_user: "{{ buildbot_user }}"
-  with_items:
-    - .ssh/
-
-- name: Template BuildBot worker configuration
+- name: Templating guest config files
   template:
-    src: "{{ item }}"
-    dest: "{{ buildbot_base }}/info/{{ item }}"
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    force: yes
     owner: "{{ buildbot_user }}"
-    force: yes
-  become: yes
-  become_user: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: 0755
   with_items:
-    - admin
-    - host
-
-- name: Template autossh systemd unit file
-  template:
-    src: autossh.service
-    dest: /etc/systemd/system/autossh.service
-    force: yes
-    owner: root
-    group: root
+    - { src: debsetup.sh, dest: "{{ buildbot_home }}/debsetup.sh" }
+    - { src: centsetup.sh, dest: "{{ buildbot_home }}/centsetup.sh" }
   become: yes
-  notify: "Start autossh"
 
-- name: Template Buildbot worker systemd unit file
-  template:
-    src: buildbot-worker.service
-    dest: /etc/systemd/system/buildbot-worker.service
-    force: yes
-    owner: root
-    group: root
-  become: yes
-  notify: "Start BuildBot worker"
