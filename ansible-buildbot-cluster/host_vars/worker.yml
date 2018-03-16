@@ -1,17 +1,6 @@
 ---
 
-id: worker
-password: example_password
 admin_info: Example Admin <admin@example.com>
-
-#Build the basic Opencast builds, including PRs
-build_base: True
-#Build mvn site, and other documentation.  This takes a long time, and thus can be turned off separately.
-build_site: False
-#Build the Debian packages nightly.  If the appropriate keys are not present the packages will not be signed.  Don't turn this on on a non-debian host!
-build_debs: False
-#Build the RPM packages nightly.  If the appropriate keys are not present the packages will not be signed.  Don't turn this on on a non-rpm host!
-build_rpms: False
 
 #The credentials to use when installing the workers.  This is used to get an appropriate version of ffmpeg from the repo
 repo_username: 

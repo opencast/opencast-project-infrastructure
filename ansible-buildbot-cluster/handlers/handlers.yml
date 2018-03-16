@@ -32,10 +32,3 @@
     daemon_reload: yes
   become: yes
 
-- name: Restart nginx
-  systemd:
-    name: nginx
-    state: reloaded
-    enabled: yes
-    daemon_reload: yes
-  become: yes

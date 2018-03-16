@@ -2,14 +2,23 @@
 # vim: et:ts=2:sw=2:sts=2
 # This playbook deploys a BuildBot master and worker(s) configured for Opencast
 
+- hosts: all
+  user: "{{ login_user }}"
+
+  roles:
+    #We're becoming here because the docker role does not become inside of itself
+    - { role: geerlingguy.docker, become: yes }
+    - buildbot-keysync
+    - autossh
+
 - hosts: master
   user: "{{ login_user }}"
 
   roles:
     - buildbot-master
-    - buildbot-master-reconfig
   handlers:
     - import_tasks: handlers/handlers.yml
+
 
 - hosts: workers
   user: "{{ login_user }}"

@@ -12,6 +12,7 @@ To update BuildBot run:
 
 Requires:
   - Ansible 2.4 or newer
+  - All hosts must have sudo pre-installed prior to playbook execution
 
 GitHub Setup
 ============
