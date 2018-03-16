@@ -1,0 +1,12 @@
+---
+
+- name: Template autossh systemd unit file
+  template:
+    src: autossh.service
+    dest: /etc/systemd/system/autossh.service
+    force: yes
+    owner: root
+    group: root
+  become: yes
+  notify: "Start autossh"
+
