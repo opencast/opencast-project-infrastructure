@@ -123,7 +123,7 @@ rpms_url: "{{ url_base }}/{{ rpms_fragment }}"
 #################
 
 #Where the buildbot install lives
-buildbot_base: "{{ buildbot_home }}/{{ inventory_hostname }}"
+buildbot_base: "{{ buildbot_home }}"
 
 #Where the master config file lives
 buildbot_master_config: "{{ buildbot_base }}/master.cfg"
