@@ -1,5 +1,6 @@
 ---
 
+login_user: ansible
 source_pr_owner: "gregorydlogan"
 stability_limit: 5
 #Note: Remember to distribute the ssh keys

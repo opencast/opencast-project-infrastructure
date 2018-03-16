@@ -1,12 +1,6 @@
 ---
 
-id: worker3
-password: example_password3
+login_user: ansible
 admin_info: Example Admin <admin@example.com>
-
-build_base: True
-build_site: True
-build_debs: True
-build_rpms: True
 
 oc_deb_repo_url: "deb http://apt-cacher/debian {{repo_suite}}/"

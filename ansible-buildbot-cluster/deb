@@ -6,4 +6,4 @@ workers
 build.loganite.ca
 
 [workers]
-builder0[0:3]
+builder0[0:3].loganite.ca
