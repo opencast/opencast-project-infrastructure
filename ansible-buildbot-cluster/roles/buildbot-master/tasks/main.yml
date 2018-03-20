@@ -62,7 +62,7 @@
     owner: root
     group: root
   become: yes
-#  notify: "Start BuildBot"
+  notify: "Start BuildBot"
 
 - name: Add Buildbot cleanup script to the crontab
   cron:

@@ -1,7 +1,7 @@
 version: '2'
 services:
   buildbot:
-    image: buildbot/buildbot-master:v1.1.0
+    image: greglogan/ocqa-buildbot-master:latest
     env_file:
       - db.env
     environment:
@@ -12,9 +12,9 @@ services:
     depends_on:
       - db
     expose:
-      - 8080
-      #Note: We're only exposing the worker port to localhost on the master node since comms are done via SSH tunnel
-      - "127.0.0.19989:9989"
+      - {{ buildbot_port }}
+#     Note: We're only exposing the worker port to localhost on the master node since comms are done via SSH tunnel
+#      - "127.0.0.1:9989:9989"
     volumes:
       - "{{ buildbot_home }}/buildbot-config:/var/lib/buildbot"
 #      - "{{ disk_base }}:{{ disk_base }}"
