@@ -1,0 +1,11 @@
+[buildbot:children]
+master
+workers
+
+[master]
+oc-com-presentation.rrz.uni-koeln.de
+
+[workers]
+oc-com-admin.rrz.uni-koeln.de
+oc-com-worker1.rrz.uni-koeln.de
+external.loganite.ca
