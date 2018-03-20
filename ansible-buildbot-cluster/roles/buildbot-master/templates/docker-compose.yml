@@ -18,6 +18,7 @@ services:
       - "127.0.0.1:9989:9989"
     volumes:
       - "{{ buildbot_home }}/buildbot-config:/var/lib/buildbot"
+      - "{{ buildbot_home }}/sockets:{{ buildbot_home }}/sockets"
 #      - "{{ disk_base }}:{{ disk_base }}"
   proxy:
     image: "nginx:stable"

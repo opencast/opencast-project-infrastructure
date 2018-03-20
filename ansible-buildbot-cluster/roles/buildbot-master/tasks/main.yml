@@ -35,6 +35,7 @@
   become: yes
   with_items:
     - "{{ buildbot_home }}"
+    - "{{ buildbot_home }}/sockets"
     - "{{ disk_base }}"
     - "{{ buildbot_home }}/buildbot-config"
     - "{{ buildbot_home }}/nginx-config"
