@@ -10,6 +10,8 @@
     - { role: geerlingguy.docker, become: yes }
     - buildbot-keysync
     - autossh
+  handlers:
+    - import_tasks: handlers/handlers.yml
 
 - hosts: master
   user: "{{ login_user }}"
