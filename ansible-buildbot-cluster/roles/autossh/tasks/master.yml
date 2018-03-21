@@ -1,8 +1,0 @@
----
-
-- name: Ensuring sockets are cleaned up on autossh reconnection
-  lineinfile:
-    path: /etc/ssh/sshd_config
-    line: StreamLocalBindUnlink=yes
-    state: present
-  become: yes

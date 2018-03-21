@@ -1,7 +1,4 @@
 ---
 
-- import_tasks: master.yml
-  when: "'master' in group_names"
-
 - import_tasks: worker.yml
   when: "'workers' in group_names"

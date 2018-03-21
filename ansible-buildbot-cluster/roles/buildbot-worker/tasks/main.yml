@@ -6,6 +6,14 @@
 - import_tasks: centos.yml
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
+- name: Ensuring Docker is connectable via TCP
+  replace:
+    path: /lib/systemd/system/docker.service
+    regexp: "dockerd -H fd://$"
+    replace: "dockerd -H fd:// -H tcp://localhost:2375"
+  become: yes
+  notify: "Restart Docker"
+
 - name: Create BuildBot user
   user:
     name: '{{ buildbot_user }}'

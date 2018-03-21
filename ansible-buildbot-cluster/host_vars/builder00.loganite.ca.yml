@@ -1,6 +1,7 @@
 ---
 
 login_user: ansible
+id: 1
 admin_info: Example Admin <admin@example.com>
 
 oc_deb_repo_url: "deb http://apt-cacher/debian {{repo_suite}}/"
