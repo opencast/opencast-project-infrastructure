@@ -95,6 +95,7 @@ artifacts_PR_fragment: "PR/%(prop:buildnumber)s"
 parent_fragment: "%(prop:branch_pretty)s/%(prop:parent_build)s-%(prop:build_timestamp)s"
 reports_fragment: "{{ parent_fragment }}/reports"
 javadocs_fragment: "{{ parent_fragment }}/javadocs"
+markdown_fragment: "{{ parent_fragment }}/markdown"
 coverage_fragment: "{{ artifacts_fragment }}/coverage"
 debs_fragment: "{{ parent_fragment }}/debs"
 rpms_fragment: "{{ parent_fragment }}/rpms"
@@ -151,6 +152,12 @@ deployed_reports_symlink_base: "{{ disk_base }}/reports"
 #The interpolatable location for each symlink
 deployed_reports_symlink: "{{ deployed_reports_symlink_base }}/%(prop:branch_pretty)s"
 
+#The location on disk to deploy the javadocs to
+deployed_javadocs: "{{ disk_base }}/{{ javadocs_fragment }}"
+
+#The location on disk to deploy the markdown docs to
+deployed_markdown: "{{ disk_base }}/{{ markdown_fragment }}"
+
 #The location on disk to deploy the coverage report to
 deployed_coverage: "{{ disk_base }}/{{ coverage_fragment }}"
 
@@ -194,6 +201,12 @@ buildbot_scp_builds_put: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{
 
 #Where to push reports on the master
 buildbot_scp_reports: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ deployed_reports }}"
+
+#Where to push reports on the master
+buildbot_scp_javadocs: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ deployed_javadocs }}"
+
+#Where to push reports on the master
+buildbot_scp_markdown: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ deployed_markdown }}"
 
 #Where to push coverage reports on the master
 buildbot_scp_coverage: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ deployed_coverage }}"
