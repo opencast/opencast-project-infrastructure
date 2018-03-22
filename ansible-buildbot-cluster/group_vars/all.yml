@@ -152,9 +152,6 @@ deployed_reports_symlink_base: "{{ disk_base }}/reports"
 #The interpolatable location for each symlink
 deployed_reports_symlink: "{{ deployed_reports_symlink_base }}/%(prop:branch_pretty)s"
 
-#The location on disk to deploy the javadocs to
-deployed_javadocs: "{{ disk_base }}/{{ javadocs_fragment }}"
-
 #The location on disk to deploy the markdown docs to
 deployed_markdown: "{{ disk_base }}/{{ markdown_fragment }}"
 
