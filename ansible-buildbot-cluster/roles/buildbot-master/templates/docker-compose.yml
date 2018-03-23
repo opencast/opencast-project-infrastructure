@@ -16,6 +16,7 @@ services:
     ports:
       #Note: We're only exposing the worker port to localhost on the master node since comms are done via SSH tunnel
       - "127.0.0.1:9989:9989"
+    network_mode: "host"
     volumes:
       - "{{ buildbot_home }}/buildbot-config:/var/lib/buildbot"
       - "{{ buildbot_home }}/sockets:{{ buildbot_home }}/sockets"
