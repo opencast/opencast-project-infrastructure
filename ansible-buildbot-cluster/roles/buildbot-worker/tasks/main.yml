@@ -47,3 +47,25 @@
     - { src: centsetup.sh, dest: "{{ buildbot_home }}/centsetup.sh" }
   become: yes
 
+- name: Creating ssh key copy directory
+  file:
+    path: "{{ buildbot_home }}/worker"
+    state: directory
+    owner: 1000
+    group: 1000
+    mode: 0750
+  become: yes
+
+- name: Creating copy of SSH keys with appropriate permissions for BuildBot
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    remote_src: yes
+    owner: 1000 #Note: This is the hardcoded buildbot user inside the docker image, do not change this
+    group: 1000
+    mode: 0600
+  with_items:
+    - { src: "{{ buildbot_home }}/.ssh/id_rsa", dest: "{{ buildbot_home }}/worker/id_rsa" }
+    - { src: "{{ buildbot_home }}/.ssh/id_rsa.pub", dest: "{{ buildbot_home }}/worker/id_rsa.pub" }
+    - { src: "{{ buildbot_home }}/.ssh/known_hosts", dest: "{{ buildbot_home }}/worker/known_hosts" }
+  become: yes
