@@ -1,5 +1,7 @@
 ---
 
+id: 0
+name: worker
 admin_info: Example Admin <admin@example.com>
 
 #The credentials to use when installing the workers.  This is used to get an appropriate version of ffmpeg from the repo
