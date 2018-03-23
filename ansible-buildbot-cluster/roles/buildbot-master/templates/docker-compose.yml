@@ -7,20 +7,16 @@ services:
     environment:
       - BUILDBOT_CONFIG_DIR=config
       - BUILDBOT_WORKER_PORT=9989
-    links:
-      - db
     depends_on:
       - db
-    expose:
-      - {{ buildbot_port }}
     ports:
+      - "127.0.0.1:{{ buildbot_port }}:{{ buildbot_port }}"
       #Note: We're only exposing the worker port to localhost on the master node since comms are done via SSH tunnel
       - "127.0.0.1:9989:9989"
     network_mode: "host"
     volumes:
       - "{{ buildbot_home }}/buildbot-config:/var/lib/buildbot"
       - "{{ buildbot_home }}/sockets:{{ buildbot_home }}/sockets"
-#      - "{{ disk_base }}:{{ disk_base }}"
   proxy:
     image: "nginx:stable"
     links:
@@ -34,7 +30,7 @@ services:
     env_file:
       - db.env
     image: "postgres:9.4"
-    expose:
-      - 5432
+    ports:
+      - "127.0.0.1:5432:5432"
     volumes:
       - "{{ buildbot_home }}/postgres-data:/var/lib/postgresql/data"
