@@ -10,7 +10,7 @@ services:
     depends_on:
       - db
     ports:
-      - "127.0.0.1:{{ buildbot_port }}:{{ buildbot_port }}"
+      - "{{ buildbot_port }}:{{ buildbot_port }}"
       #Note: We're only exposing the worker port to localhost on the master node since comms are done via SSH tunnel
       - "127.0.0.1:9989:9989"
     network_mode: "host"
@@ -19,10 +19,9 @@ services:
       - "{{ buildbot_home }}/sockets:{{ buildbot_home }}/sockets"
   proxy:
     image: "nginx:stable"
-    links:
-      - buildbot
     ports:
       - "80:80"
+    network_mode: "host"
     volumes:
       - "{{ buildbot_home }}/nginx-config:/etc/nginx/conf.d"
       - "{{ disk_base }}:{{ disk_base }}"
