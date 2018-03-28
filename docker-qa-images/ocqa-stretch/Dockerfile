@@ -11,13 +11,14 @@ RUN echo 'Acquire::http::Proxy "http://repo:3142";' > /etc/apt/apt.conf.d/01prox
     apt-get install -y \
         software-properties-common \
         apt-transport-https \
-        curl && \
+        curl \
+        gnupg && \
     add-apt-repository \
         'deb https://deb.nodesource.com/node_8.x stretch main' && \
     curl -fsSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
     # Build deps
     apt-get update && \
-    apt-get dist-upgrade && \
+    apt-get dist-upgrade -y && \
     apt-get install -y \
         sudo \
         tar gzip bzip2 unzip \
