@@ -13,7 +13,7 @@ RUN add-apt-repository \
         python-pip \
      # Packages for building docs
         libyaml-dev \
-        nodejs \
+        nodejs && \
      apt-get clean && \
      rm -rf /var/lib/apt/lists/* && \
      pip install --upgrade pip virtualenv setuptools && \

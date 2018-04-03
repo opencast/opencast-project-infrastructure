@@ -7,6 +7,6 @@ RUN apt-get update && \
      # Package building deps
         dpkg-dev \
         debhelper \
-        dh-exec \
+        dh-exec && \
      apt-get clean && \
      rm -rf /var/lib/apt/lists/*
