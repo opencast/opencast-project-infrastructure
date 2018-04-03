@@ -1,4 +1,4 @@
-FROM greglogan:ocqa-deb9-build
+FROM greglogan/ocqa-deb9-build
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 RUN add-apt-repository \

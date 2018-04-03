@@ -1,4 +1,4 @@
-FROM greglogan:ocqa-deb9-package
+FROM greglogan/ocqa-deb9-package
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 # Adapted from https://github.com/buildbot/buildbot/blob/v1.1.0/worker/Dockerfile
