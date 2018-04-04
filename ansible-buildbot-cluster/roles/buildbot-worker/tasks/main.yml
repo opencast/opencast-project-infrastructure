@@ -25,36 +25,20 @@
   become: yes
   when: create_buildbot_user
 
-- name: Ensure BuildBot parent directory exists and has the right permissions
+- name: Ensure BuildBot directories exists and has the right permissions
   file:
     state: directory
-    path: "{{ buildbot_home }}"
-    owner: "{{ buildbot_user }}"
-    group: "{{ buildbot_user }}"
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.owner }}"
+    mode: "{{ item.mode }}"
     recurse: yes
   become: yes
-
-- name: Templating guest config files
-  template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    force: yes
-    owner: "{{ buildbot_user }}"
-    group: "{{ buildbot_user }}"
-    mode: 0755
   with_items:
-    - { src: debsetup.sh, dest: "{{ buildbot_home }}/debsetup.sh" }
-    - { src: centsetup.sh, dest: "{{ buildbot_home }}/centsetup.sh" }
-  become: yes
-
-- name: Creating ssh key copy directory
-  file:
-    path: "{{ buildbot_home }}/worker"
-    state: directory
-    owner: 1000
-    group: 1000
-    mode: 0750
-  become: yes
+    - { path: "{{ buildbot_home }}", owner: "buildbot", mode: "0755" }
+    - { path: "{{ buildbot_home }}/.ssh", owner: "buildbot", mode: "0700" }
+    #Note: This is the hardcoded buildbot user inside the docker image, do not change this
+    - { path: "{{ buildbot_home }}/ssh", owner: 1000, mode: "0700" }
 
 - name: Creating copy of SSH keys with appropriate permissions for BuildBot
   copy:
@@ -65,7 +49,7 @@
     group: 1000
     mode: 0600
   with_items:
-    - { src: "{{ buildbot_home }}/.ssh/id_rsa", dest: "{{ buildbot_home }}/worker/id_rsa" }
-    - { src: "{{ buildbot_home }}/.ssh/id_rsa.pub", dest: "{{ buildbot_home }}/worker/id_rsa.pub" }
-    - { src: "{{ buildbot_home }}/.ssh/known_hosts", dest: "{{ buildbot_home }}/worker/known_hosts" }
+    - { src: "{{ buildbot_home }}/.ssh/id_rsa", dest: "{{ buildbot_home }}/ssh/id_rsa" }
+    - { src: "{{ buildbot_home }}/.ssh/id_rsa.pub", dest: "{{ buildbot_home }}/ssh/id_rsa.pub" }
+    - { src: "{{ buildbot_home }}/.ssh/known_hosts", dest: "{{ buildbot_home }}/ssh/known_hosts" }
   become: yes
