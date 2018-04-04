@@ -1,8 +1,8 @@
 ---
 
+#The builder id, this needs to be unique to the buildbot cluster.
 id: 0
+#The name to use in the buildbot display.
 name: worker
-
-#The credentials to use when installing the workers.  This is used to get an appropriate version of ffmpeg from the repo
-repo_username: 
-repo_password: 
+#The maximum number of concurrent builds alllowed on this node.  Omitting this defaults to 1.
+maxbuilds: 1
