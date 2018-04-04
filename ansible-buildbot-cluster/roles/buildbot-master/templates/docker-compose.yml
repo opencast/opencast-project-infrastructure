@@ -16,7 +16,6 @@ services:
     network_mode: "host"
     volumes:
       - "{{ buildbot_home }}/buildbot-config:/var/lib/buildbot"
-      - "{{ buildbot_home }}/sockets:{{ buildbot_home }}/sockets"
   proxy:
     image: "nginx:stable"
     ports:
