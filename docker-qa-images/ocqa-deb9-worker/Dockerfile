@@ -17,7 +17,10 @@ RUN  curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/release
      # Install required python packages, and twisted
      pip install 'twisted[tls]' && \
      pip install /usr/src/buildbot-worker && \
-     useradd -ms /bin/bash buildbot && chown -R buildbot /buildbot
+     #Create the buildbot user, add it to sudoers so that we can install ffmpeg etc at runtime
+     useradd -ms /bin/bash -G sudo buildbot && \
+     echo "buildbot ALL=(ALL) NOPASSWD:ALL" | tee /etc/sudoers.d/90-buildbot && \
+     chown -R buildbot /buildbot
 
 USER buildbot
 
