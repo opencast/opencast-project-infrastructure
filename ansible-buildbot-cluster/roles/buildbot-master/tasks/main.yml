@@ -47,6 +47,7 @@
     - { src: "changehook.passwd", dest: "{{ buildbot_home }}/buildbot-config/changehook.passwd" }
     - { src: "cleaner.sh", dest: "{{ buildbot_home }}/cleaner.sh" }
     - { src: "buildbot.conf", dest: "{{ buildbot_home }}/nginx-config/buildbot.conf" }
+    - { src: "nexus.conf", dest: "{{ buildbot_home }}/nginx-config/nexus.conf" }
 
 - name: Template Buildbot master systemd unit file
   template:
