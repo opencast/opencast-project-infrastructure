@@ -17,4 +17,4 @@
   with_items:
     - autossh
     - sudo
-
+    - python-pip

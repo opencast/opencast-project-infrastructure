@@ -45,6 +45,16 @@ oc_deb_repo_key_id: 9A7EA8E5B3820B26
 oc_rpm_repo_key: https://pkg.opencast.org/gpgkeys/opencast-el7-rpm.opencast.org.key
 
 
+#################################
+# Docker image related settings #
+#################################
+
+docker_image_user: "opencast"
+
+docker_image_master: "ocqa-buildbot-master"
+
+docker_image_worker: "ocqa-deb9-worker"
+
 #####################
 # BuildBot Settings #
 #####################

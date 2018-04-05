@@ -49,6 +49,11 @@
     - { src: "buildbot.conf", dest: "{{ buildbot_home }}/nginx-config/buildbot.conf" }
     - { src: "nexus.conf", dest: "{{ buildbot_home }}/nginx-config/nexus.conf" }
 
+- name: Ensure latest Docker images are present
+  docker_image:
+    name: "{{ docker_image_user }}/{{ docker_image_master }}"
+  become: yes
+
 - name: Template Buildbot master systemd unit file
   template:
     src: buildbot.service
