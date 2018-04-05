@@ -1,8 +1,0 @@
----
-
-login_user: ansible
-id: 3
-name: builder02
-
-oc_deb_repo_url: "deb http://apt-cacher/debian {{repo_suite}}/"
-oc_deb_repo_url_testing : "deb http://apt-cacher/debian testing/"

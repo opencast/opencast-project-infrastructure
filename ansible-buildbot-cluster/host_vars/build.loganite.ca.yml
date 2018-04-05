@@ -2,11 +2,9 @@
 
 login_user: ansible
 source_pr_owner: "gregorydlogan"
-stability_limit: 5
-#Note: Remember to distribute the ssh keys
-source_deb_repo_url: 'git@bitbucket.org:greg_logan/debian_packaging-private.git'
 mail_to: "gregorydlogan@gmail.com"
 oc_deb_repo_url: "deb https://apt-cacher/debian {{repo_suite}}/"
+docker_image_user: "greglogan"
 
 buildbot_base: /opt/buildbot/build
 
