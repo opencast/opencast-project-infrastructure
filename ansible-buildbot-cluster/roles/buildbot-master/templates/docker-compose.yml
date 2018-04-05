@@ -24,7 +24,7 @@ services:
     volumes:
       - "{{ buildbot_home }}/nginx-config:/etc/nginx/conf.d"
       - "{{ disk_base }}:{{ disk_base }}"
-      - "{{ buildbot_home }}/nexus-cache:/var/lib/nginx/cache
+      - "{{ buildbot_home }}/nexus-cache:/var/lib/nginx/cache"
   db:
     env_file:
       - db.env
