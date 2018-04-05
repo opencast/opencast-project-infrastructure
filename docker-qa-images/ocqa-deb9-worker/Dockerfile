@@ -4,7 +4,11 @@ MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 # Adapted from https://github.com/buildbot/buildbot/blob/v1.1.0/worker/Dockerfile
 
 RUN apt-get update && \
-    apt-get dist-upgrade -y
+    apt-get dist-upgrade -y && \
+     #Create the buildbot user, add it to sudoers so that we can install ffmpeg etc at runtime
+     useradd -ms /bin/bash -d /buildbot buildbot && \
+     mkdir /buildbot/.ssh && \
+     chown -R buildbot /buildbot
 
 COPY . /usr/src/buildbot-worker
 COPY docker/buildbot.tac /buildbot/buildbot.tac
@@ -16,10 +20,7 @@ RUN  curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/release
      chmod +x /usr/local/bin/dumb-init && \
      # Install required python packages, and twisted
      pip install 'twisted[tls]' && \
-     pip install /usr/src/buildbot-worker && \
-     #Create the buildbot user, add it to sudoers so that we can install ffmpeg etc at runtime
-     useradd -ms /bin/bash buildbot && \
-     chown -R buildbot /buildbot
+     pip install /usr/src/buildbot-worker
 
 USER buildbot
 
