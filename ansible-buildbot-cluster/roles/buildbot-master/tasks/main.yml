@@ -19,6 +19,13 @@
   become: yes
   when: create_buildbot_user
 
+- name: Determine Buildbot user's UID and GID
+  getent:
+    database: passwd
+    key: "{{ buildbot_user }}"
+    split: ":"
+  become: yes
+
 - name: Ensure required directories exist and have the right permissions
   file:
     state: directory
