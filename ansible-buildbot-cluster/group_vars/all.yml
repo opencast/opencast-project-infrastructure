@@ -55,6 +55,7 @@ docker_image_master: "ocqa-buildbot-master"
 
 docker_image_worker: "ocqa-deb9-worker"
 
+
 #####################
 # BuildBot Settings #
 #####################
@@ -82,6 +83,9 @@ enable_polling: False
 
 #Time between SCM polls (in minutes)
 poll_interval: 10
+
+#Number of days to keep artifacts around.  Note that this does *not* check against the available disk space!
+keep_artifacts: 15
 
 
 #######################
@@ -132,6 +136,7 @@ reports_url: "{{ url_base }}/reports/%(prop:branch_pretty)s"
 debs_url: "{{ url_base }}/{{ debs_fragment }}"
 #Build url for the rpms
 rpms_url: "{{ url_base }}/{{ rpms_fragment }}"
+
 
 #################
 # Disk Settings #
@@ -185,6 +190,7 @@ deployed_javadocs: "{{ deployed_reports }}/apidocs"
 #The location of the symlink to make it easier to get to the javadocs
 deployed_javadocs_symlink: "{{ disk_base }}/{{ javadocs_fragment }}"
 
+
 #####################
 # Buildbot Commands #
 #####################
@@ -226,6 +232,7 @@ buildbot_scp_debs: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ grou
 
 #Where to push built rpms on the master
 buildbot_scp_rpms: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ deployed_rpms }}"
+
 
 #############
 # Auth bits #
