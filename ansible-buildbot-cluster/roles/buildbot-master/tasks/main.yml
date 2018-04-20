@@ -1,5 +1,11 @@
 ---
 
+- name: Install Python pip
+  package:
+    name: python-pip
+    state: latest
+  become: yes
+
 - name: Install docker-py for Docker latent worker support
   pip:
     name: "{{ item }}"

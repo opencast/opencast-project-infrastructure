@@ -17,8 +17,8 @@
 - name: Ensuring Docker is connectable via TCP
   replace:
     path: /lib/systemd/system/docker.service
-    regexp: "dockerd -H fd://$"
-    replace: "dockerd -H fd:// -H tcp://localhost:2375"
+    regexp: "dockerd"
+    replace: "dockerd -H tcp://localhost:2375"
   become: yes
   notify: "Restart Docker"
 
