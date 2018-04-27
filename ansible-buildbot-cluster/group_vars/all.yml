@@ -173,8 +173,8 @@ deployed_markdown: "{{ disk_base }}/{{ markdown_fragment }}"
 #The location on disk to deploy the coverage report to
 deployed_coverage: "{{ disk_base }}/{{ coverage_fragment }}"
 
-#The location on disk to deploy PR coverage reports to
-deployed_PR_coverage: "{{ disk_base }}/{{ artifacts_PR_fragment }}"
+#The location on disk to deploy PR artifacts to
+deployed_PR_base: "{{ disk_base }}/{{ artifacts_PR_fragment }}"
 
 #The location on disk to deploy the debs to
 #Note that this is using the *parent* dist base
