@@ -7,14 +7,31 @@ import common
 
 def getBuildPipeline(branchname, branchInfo):
 
-    #Note: We're using a string here because using the array disables shell globbing!
-    uploadTarballs = steps.ShellCommand(
-        command=util.Interpolate(
-            "scp build/*.tar.gz {{ buildbot_scp_builds_put }}"),
+    site = steps.ShellCommand(
+        command=[
+            'mvn', '-B', '-V', '-Dmaven.repo.local=./.m2',
+            '-Dmaven.repo.remote=http://{{ inventory_hostname }}/nexus',
+            'site', 'site:stage',
+            util.Interpolate(
+                '-DstagingDirectory=/buildbot/%(prop:parent_fragment)s')
+        ],
         haltOnFailure=True,
         flunkOnFailure=True,
-        name="Upload build to buildmaster")
+        name="Build site report")
 
+    uploadSite = steps.ShellCommand(
+        command=util.Interpolate(
+            "scp -r /buildbot/%(prop:parent_fragment)s {{ buildbot_scp_reports }}"
+        ),
+        haltOnFailure=True,
+        flunkOnFailure=True,
+        name="Upload site report to buildmaster")
+
+    updateSite = steps.MasterShellCommand(
+        command=util.Interpolate(
+            "rm -f {{ deployed_reports_symlink }} && ln -s {{ deployed_reports }} {{ deployed_reports_symlink }} && ln -s {{ deployed_javadocs }} {{ deployed_javadocs_symlink }}"
+        ),
+        name="Deploy Reports")
 
     f_build = util.BuildFactory()
     #This is needed because the nightly schedulers don't set the branch name for some reason...
@@ -36,9 +53,11 @@ def getBuildPipeline(branchname, branchInfo):
             warnOnFailure=True,
             haltOnFailure=True,
             name="Get build timestamp"))
-    f_build.addStep(common.getClone(branchname, branchInfo)
+    f_build.addStep(common.getClone(branchname, branchInfo))
     f_build.addStep(common.getWorkerPrep())
     f_build.addStep(common.getBuild())
     f_build.addStep(common.getMasterPrep())
-    f_build.addStep(uploadTarballs)
+    f_build.addStep(site)
+    f_build.addStep(upload)
+    f_build.addStep(updateSite)
     f_build.addStep(common.getClean())

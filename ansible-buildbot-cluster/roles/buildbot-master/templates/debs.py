@@ -2,6 +2,7 @@
 # ex: set filetype=python:
 
 from buildbot.plugins import *
+import common
 
 def wasCloned(step):
     if step.getProperty("alreadyCloned") == "True":
@@ -168,6 +169,7 @@ def getBuildPipeline(branchname , branchInfo):
         haltOnFailure=True,
         flunkOnFailure=True)
 
+    #Note: We're using a string here because using the array disables shell globbing!
     debsUpload = steps.ShellCommand(
         command=util.Interpolate(
             "scp -r outputs/%(prop:parent_revision)s/* {{ buildbot_scp_debs }}"
@@ -176,7 +178,6 @@ def getBuildPipeline(branchname , branchInfo):
         flunkOnFailure=True,
         name="Upload debs to buildmaster")
 
-    clean = TODO: Define how to clean the debs
 
     f_package_debs = util.BuildFactory()
     f_package_debs.addStep(
@@ -202,6 +203,6 @@ def getBuildPipeline(branchname , branchInfo):
     f_package_debs.addStep(debsFetch)
     f_package_debs.addStep(debsBuild)
     f_package_debs.addStep(debsUpload)
-    f_package_debs.addStep(clean)
+    f_package_debs.addStep(common.getClean())
 
     return f_package_debs
