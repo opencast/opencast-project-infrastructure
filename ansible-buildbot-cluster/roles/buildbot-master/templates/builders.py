@@ -9,6 +9,28 @@ import debs
 import rpms
 
 
+def getPullRequestBuilder():
+  prep_PR_master = steps.MasterShellCommand(
+                     command=['mkdir', '-p',
+                       util.Interpolate(os.path.normpath("{{ deployed_PR_base }}"))],
+                     name="Prep relevant directories on buildmaster")
+
+
+  f_pr_build = util.BuildFactory()
+  f_pr_build.addStep(checkout)
+  f_pr_build.addStep(prep)
+  f_pr_build.addStep(build)
+  #f_pr_build.addStep(cobertura) done with site, so let's do that there
+  f_pr_build.addStep(prep_PR_master)
+  #f_pr_build.addStep(uploadPRCobertura) no longer needed
+  f_pr_build.addStep(clean)
+
+  b_pr = util.BuilderConfig(name="Pull Request Build",
+      workernames=workers,
+      factory=f_pr_build, collapseRequests=True)
+
+  return b_pr
+
 def getBuildersForBranch(branchname, branchInfo):
 
     f_build = build.getBuildPipeline(branchname, brancheInfo)

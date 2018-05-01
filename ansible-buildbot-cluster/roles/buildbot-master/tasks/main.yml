@@ -57,6 +57,14 @@
     - { src: "docker-compose.yml", dest: "{{ buildbot_home }}/docker-compose.yml" }
     - { src: "db.env", dest: "{{ buildbot_home }}/db.env" }
     - { src: "master.cfg", dest: "{{ buildbot_home }}/buildbot-config/master.cfg" }
+    - { src: "builders.py", dest: "{{ buildbot_home }}/buildbot-config/builders.py" }
+    - { src: "build.py", dest: "{{ buildbot_home }}/buildbot-config/build.py" }
+    - { src: "common.py", dest: "{{ buildbot_home }}/buildbot-config/common.py" }
+    - { src: "debs.py", dest: "{{ buildbot_home }}/buildbot-config/debs.py" }
+    - { src: "markdown.py", dest: "{{ buildbot_home }}/buildbot-config/markdown.py" }
+    - { src: "reports.py", dest: "{{ buildbot_home }}/buildbot-config/reports.py" }
+    - { src: "rpms.py", dest: "{{ buildbot_home }}/buildbot-config/rpms.py" }
+    - { src: "schedulers.py", dest: "{{ buildbot_home }}/buildbot-config/schedulers.py" }
     - { src: "changehook.passwd", dest: "{{ buildbot_home }}/buildbot-config/changehook.passwd" }
     - { src: "cleaner.sh", dest: "{{ buildbot_home }}/cleaner.sh" }
     - { src: "buildbot.conf", dest: "{{ buildbot_home }}/nginx-config/buildbot.conf" }
