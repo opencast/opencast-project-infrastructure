@@ -2,6 +2,7 @@
 # ex: set filetype=python:
 
 from buildbot.plugins import *
+import os.path
 import common
 
 
@@ -15,16 +16,6 @@ def getPullRequestPipeline():
         name="Prep relevant directories on buildmaster")
 
     f_build = util.BuildFactory()
-    f_build.addStep(
-        steps.SetProperty(
-            property="branch",
-            value=branches[branchname]['branch'],
-            name="Set regular branch name"))
-    f_build.addStep(
-        steps.SetProperty(
-            property="branch_pretty",
-            value=branchname,
-            name="Set pretty branch name"))
     f_build.addStep(
         steps.SetPropertyFromCommand(
             command="date -u +%FT%H-%M-%S",
@@ -41,7 +32,7 @@ def getPullRequestPipeline():
     f_build.addStep(common.getClean())
 
 
-def getBuildPipeline(branchname, branchInfo):
+def getBuildPipeline():
 
     #Note: We're using a string here because using the array disables shell globbing!
     uploadTarballs = steps.ShellCommand(
@@ -52,25 +43,6 @@ def getBuildPipeline(branchname, branchInfo):
         name="Upload build to buildmaster")
 
     f_build = util.BuildFactory()
-    #This is needed because the nightly schedulers don't set the branch name for some reason...
-    f_build.addStep(
-        steps.SetProperty(
-            property="branch",
-            value=branches[branchname]['branch'],
-            name="Set regular branch name"))
-    f_build.addStep(
-        steps.SetProperty(
-            property="branch_pretty",
-            value=branchname,
-            name="Set pretty branch name"))
-    f_build.addStep(
-        steps.SetPropertyFromCommand(
-            command="date -u +%FT%H-%M-%S",
-            property="build_timestamp",
-            flunkOnFailure=True,
-            warnOnFailure=True,
-            haltOnFailure=True,
-            name="Get build timestamp"))
     f_build.addStep(common.getClone())
     f_build.addStep(common.getWorkerPrep())
     f_build.addStep(common.getBuild())

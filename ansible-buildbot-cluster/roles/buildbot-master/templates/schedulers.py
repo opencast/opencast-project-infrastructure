@@ -2,10 +2,9 @@
 # ex: set filetype=python:
 
 from buildbot.plugins import *
-import common
 
 
-def getPullRequestSchedulers():
+def getPullRequestScheduler():
     return schedulers.AnyBranchScheduler(
         name="Pull Requests",
         treeStableTimer={{stability_limit}},  #NB: Do not make this a string, a horribly unclear error occurs and nothing works for this scheduler...

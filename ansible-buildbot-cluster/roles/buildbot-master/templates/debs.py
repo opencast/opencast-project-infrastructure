@@ -23,7 +23,7 @@ def hideIfNotAlreadyCloned(results, step):
     return wasNotCloned(step)
 
 
-def getBuildPipeline(branchname , branchInfo):
+def getBuildPipeline():
 
     debChecker = steps.SetPropertyFromCommand(
         command="[ -d .git ] && echo True || echo False",
@@ -180,21 +180,6 @@ def getBuildPipeline(branchname , branchInfo):
 
 
     f_package_debs = util.BuildFactory()
-    f_package_debs.addStep(
-        steps.SetProperty(
-            property="branch",
-            value=branchInfo['branch'],
-            name="Set regular branch name"))
-    f_package_debs.addStep(
-        steps.SetProperty(
-            property="branch_pretty",
-            value=branchname,
-            name="Set pretty branch name"))
-    f_package_debs.addStep(
-        steps.SetProperty(
-            property="debs_package_version",
-            value=branchInfo['debsVersion'],
-            name="Set Debian package version"))
     f_package_debs.addStep(debChecker)
     f_package_debs.addStep(debsClone)
     f_package_debs.addStep(debsUpdate)

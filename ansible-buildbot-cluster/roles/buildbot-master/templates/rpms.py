@@ -5,7 +5,7 @@ from buildbot.plugins import *
 import common
 
 
-def getBuildPipeline(branchname, branchInfo):
+def getBuildPipeline():
 
     f_package_rpms = util.BuildFactory()
 

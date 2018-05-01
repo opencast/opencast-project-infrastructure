@@ -52,6 +52,7 @@ def getMasterPrep():
                 " && chown -R {{ getent_passwd['buildbot'][1] }}:{{ getent_passwd['buildbot'][2] }} " +
                 os.path.normpath("{{ artifacts_dist_base }}")
                 )
+            )
         ],
         name="Prep relevant directories on buildmaster")
 

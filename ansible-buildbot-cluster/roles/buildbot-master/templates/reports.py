@@ -5,7 +5,7 @@ from buildbot.plugins import *
 import common
 
 
-def getBuildPipeline(branchname, branchInfo):
+def getBuildPipeline():
 
     site = steps.ShellCommand(
         command=[
@@ -34,25 +34,6 @@ def getBuildPipeline(branchname, branchInfo):
         name="Deploy Reports")
 
     f_build = util.BuildFactory()
-    #This is needed because the nightly schedulers don't set the branch name for some reason...
-    f_build.addStep(
-        steps.SetProperty(
-            property="branch",
-            value=branches[branchname]['branch'],
-            name="Set regular branch name"))
-    f_build.addStep(
-        steps.SetProperty(
-            property="branch_pretty",
-            value=branchname,
-            name="Set pretty branch name"))
-    f_build.addStep(
-        steps.SetPropertyFromCommand(
-            command="date -u +%FT%H-%M-%S",
-            property="build_timestamp",
-            flunkOnFailure=True,
-            warnOnFailure=True,
-            haltOnFailure=True,
-            name="Get build timestamp"))
     f_build.addStep(common.getClone())
     f_build.addStep(common.getWorkerPrep())
     f_build.addStep(common.getBuild())
