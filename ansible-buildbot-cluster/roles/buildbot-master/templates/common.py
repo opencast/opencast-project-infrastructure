@@ -4,7 +4,7 @@
 from buildbot.plugins import *
 
 
-def getClone(branchname, branchInfo):
+def getClone():
     return steps.GitHub(
         repourl="{{ source_repo_url }}",
         mode='incremental',

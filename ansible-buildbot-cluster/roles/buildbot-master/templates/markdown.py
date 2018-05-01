@@ -111,7 +111,7 @@ def getBuildPipeline(branchname, branchInfo):
             warnOnFailure=True,
             haltOnFailure=True,
             name="Get build timestamp"))
-    f_build.addStep(common.getClone(branchname, branchInfo)
+    f_build.addStep(common.getClone()
     f_build.addStep(common.getBuild())
     f_build.addStep(common.getMasterPrep())
     f_build.addStep(check)
