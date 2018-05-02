@@ -14,33 +14,35 @@ def getPullRequestScheduler():
 
 def getSchedulers(pretty_branch_name, git_branch_name):
 
+    scheduler_list = []
+
     commits_branch = schedulers.AnyBranchScheduler(
-        name=pretty_branch_name + " Commits",
+        name=pretty_branch_name + " Overall",
         change_filter=util.ChangeFilter(
             category=None, branch_re=git_branch_name),
         treeStableTimer={{stability_limit}},  #NB: Do not make this a string, a horribly unclear error occurs and nothing works for this scheduler...
         builderNames=[
-            pretty_branch_name + " Commits"
+            pretty_branch_name + " Overall"
         ])
 
     nightly_branch = schedulers.Nightly(
-        name=pretty_branch_name + ' Nightly',
+        name=pretty_branch_name + ' Nightly Overall',
         change_filter=util.ChangeFilter(
             category=None, branch_re=git_branch_name),
         hour=3,
         onlyIfChanged=True,
         builderNames=[
-            pretty_branch_name + " Nightly"
+            pretty_branch_name + " Nightly Overall"
         ])
 
-    triggerables = []
-    for build_type in ("Build", "Reports", "Markdown","Debian Packaging","RPM Packaging")
-      name = pretty_branch_name + " " + build_type
-      triggerables.extend(schedulers.Triggerable(name=name
-                                 builderNames=[name]))
 
+    for build_type in ("Build", "Nightly", "Reports", "Markdown","Debian Packaging","RPM Packaging"):
+      name = pretty_branch_name + " " + build_type
+      scheduler_list.append(schedulers.Triggerable(name=name, builderNames=[name]))
+
+    #Note: This is a hack, but we need a unique name for the force schedulers, and it can't have special characters in it...
     forceScheduler = schedulers.ForceScheduler(
-        name="ForceBuildCommits" + pretty_branch_name,
+        name="ForceBuildCommits" + pretty_branch_name[0],
         buttonName="Force Build",
         label="Force Build Settings",
         builderNames=[
@@ -78,4 +80,5 @@ def getSchedulers(pretty_branch_name, git_branch_name):
         username=util.UserNameParameter(label="your name:", size=80),
         properties=[])
 
-    return [commits_branch, nightly_branch, forceScheduler]
+    scheduler_list.extend([commits_branch, nightly_branch, forceScheduler])
+    return scheduler_list

@@ -63,8 +63,34 @@ def getBuildersForBranch(workers, pretty_branch_name, git_branch_name, debs_vers
       scheduler_name = pretty_branch_name + " " + buildType
       f_parent.addStep(getTriggerStep(scheduler_name))
 
-ASDF
-nightly needs to kick off the build, markdown and reports, then wait, then kick off the rpms and debs.  Alt: have the build kick the packaging off
+    f_nightly_parent = util.BuildFactory()
+    f_nightly_parent.addStep(
+        steps.SetProperty(
+            property="branch",
+            value=git_branch_name,
+            name="Set regular branch name"))
+    f_nightly_parent.addStep(
+        steps.SetProperty(
+            property="branch_pretty",
+            value=pretty_branch_name,
+            name="Set pretty branch name"))
+    f_nightly_parent.addStep(
+        steps.SetProperty(
+            property="debs_package_version",
+            value=debs_version,
+            name="Set Debian packaging version"))
+    f_nightly_parent.addStep(
+        steps.SetPropertyFromCommand(
+            command="date -u +%FT%H-%M-%S",
+            property="build_timestamp",
+            flunkOnFailure=True,
+            warnOnFailure=True,
+            haltOnFailure=True,
+            name="Get build timestamp"))
+    for buildType in ("Nightly", "Reports", "Markdown"):
+      scheduler_name = pretty_branch_name + " " + buildType
+      f_parent.addStep(getTriggerStep(scheduler_name))
+
     f_build = build.getBuildPipeline()
 
     f_reports = reports.getBuildPipeline()
@@ -83,7 +109,13 @@ nightly needs to kick off the build, markdown and reports, then wait, then kick 
 
 
     b_entrypoint = util.BuilderConfig(
-        name=pretty_branch_name + " Commits",
+        name=pretty_branch_name + " Overall",
+        workernames=workers,
+        factory=f_parent,
+        collapseRequests=True)
+
+    b_nightly_entrypoint = util.BuilderConfig(
+        name=pretty_branch_name + " Nightly Overall",
         workernames=workers,
         factory=f_parent,
         collapseRequests=True)
@@ -125,5 +157,5 @@ nightly needs to kick off the build, markdown and reports, then wait, then kick 
         collapseRequests=True)
 
     return [
-        b_entrypoint, b_build, b_nightly, b_reports, b_markdown, b_package_debs, b_package_rpms
+        b_entrypoint, b_nightly_entrypoint, b_build, b_nightly, b_reports, b_markdown, b_package_debs, b_package_rpms
     ]
