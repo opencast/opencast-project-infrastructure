@@ -31,6 +31,7 @@ def getPullRequestPipeline():
     f_build.addStep(prep_PR_master)
     f_build.addStep(common.getClean())
 
+    return f_build
 
 def getBuildPipeline():
 
@@ -49,3 +50,5 @@ def getBuildPipeline():
     f_build.addStep(common.getMasterPrep())
     f_build.addStep(uploadTarballs)
     f_build.addStep(common.getClean())
+
+    return f_build

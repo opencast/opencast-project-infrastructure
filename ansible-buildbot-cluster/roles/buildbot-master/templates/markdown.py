@@ -99,3 +99,5 @@ def getBuildPipeline():
     f_build.addStep(build)
     f_build.addStep(upload)
     f_build.addStep(clean)
+
+    return f_build

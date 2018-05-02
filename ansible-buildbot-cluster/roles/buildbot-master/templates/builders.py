@@ -9,7 +9,7 @@ import debs
 import rpms
 
 
-def getPullRequestBuilder():
+def getPullRequestBuilder(workers):
 
   f_pr_build = build.getPullRequestPipeline()
 
@@ -63,7 +63,8 @@ def getBuildersForBranch(workers, pretty_branch_name, git_branch_name, debs_vers
       scheduler_name = pretty_branch_name + " " + buildType
       f_parent.addStep(getTriggerStep(scheduler_name))
 
-
+ASDF
+nightly needs to kick off the build, markdown and reports, then wait, then kick off the rpms and debs.  Alt: have the build kick the packaging off
     f_build = build.getBuildPipeline()
 
     f_reports = reports.getBuildPipeline()
@@ -82,7 +83,7 @@ def getBuildersForBranch(workers, pretty_branch_name, git_branch_name, debs_vers
 
 
     b_entrypoint = util.BuilderConfig(
-        name=pretty_branch_name,
+        name=pretty_branch_name + " Commits",
         workernames=workers,
         factory=f_parent,
         collapseRequests=True)

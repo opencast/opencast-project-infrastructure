@@ -39,6 +39,8 @@ def getBuildPipeline():
     f_build.addStep(common.getBuild())
     f_build.addStep(common.getMasterPrep())
     f_build.addStep(site)
-    f_build.addStep(upload)
+    f_build.addStep(uploadSite)
     f_build.addStep(updateSite)
     f_build.addStep(common.getClean())
+
+    return f_build

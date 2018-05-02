@@ -20,8 +20,7 @@ def getSchedulers(pretty_branch_name, git_branch_name):
             category=None, branch_re=git_branch_name),
         treeStableTimer={{stability_limit}},  #NB: Do not make this a string, a horribly unclear error occurs and nothing works for this scheduler...
         builderNames=[
-            pretty_branch_name + " Build", pretty_branch_name + " Reports",
-            pretty_branch_name + " Markdown docs"
+            pretty_branch_name + " Commits"
         ])
 
     nightly_branch = schedulers.Nightly(
@@ -31,17 +30,21 @@ def getSchedulers(pretty_branch_name, git_branch_name):
         hour=3,
         onlyIfChanged=True,
         builderNames=[
-            pretty_branch_name + " Nightly", pretty_branch_name + " Reports",
-            pretty_branch_name + " Markdown docs"
+            pretty_branch_name + " Nightly"
         ])
 
+    triggerables = []
+    for build_type in ("Build", "Reports", "Markdown","Debian Packaging","RPM Packaging")
+      name = pretty_branch_name + " " + build_type
+      triggerables.extend(schedulers.Triggerable(name=name
+                                 builderNames=[name]))
+
     forceScheduler = schedulers.ForceScheduler(
-        name="ForceBuildCommits" + git_branch_name,
+        name="ForceBuildCommits" + pretty_branch_name,
         buttonName="Force Build",
         label="Force Build Settings",
         builderNames=[
-            pretty_branch_name + " Nightly", pretty_branch_name + " Reports",
-            pretty_branch_name + " Markdown docs"
+            pretty_branch_name + " Nightly"
         ],
         codebases=[
             util.CodebaseParameter(
