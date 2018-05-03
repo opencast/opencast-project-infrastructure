@@ -25,17 +25,27 @@ def getTriggerStep(scheduler_name):
             waitForFinish=False,
             name="Trigger " + scheduler_name,
             set_properties={
-                 "parent_build": util.Property("buildnumber"),
-                 "parent_revision": util.Property("got_revision"),
+                 "oc_branch_build": util.Property("oc_branch_build"),
+                 "oc_commit": util.Property("oc_commit"),
                  "branch": util.Property("branch"),
                  "branch_pretty": util.Property("branch_pretty"),
                  "build_timestamp": util.Property("build_timestamp"),
                  "debs_package_version": util.Property("debs_package_version")
             })
 
-def getBuildersForBranch(workers, pretty_branch_name, git_branch_name, debs_version):
 
+def __getCoreFactory(pretty_branch_name, git_branch_name, debs_version):
     f_parent = util.BuildFactory()
+    f_parent.addStep(
+        steps.SetProperty(
+            property="oc_branch_build",
+            value=util.Property("buildnumber"),
+            name="Set build number within build branch"))
+    f_parent.addStep(
+        steps.SetProperty(
+            property="oc_commit",
+            value=util.Property("got_revision"),
+            name="Set build number within build branch"))
     f_parent.addStep(
         steps.SetProperty(
             property="branch",
@@ -47,46 +57,28 @@ def getBuildersForBranch(workers, pretty_branch_name, git_branch_name, debs_vers
             value=pretty_branch_name,
             name="Set pretty branch name"))
     f_parent.addStep(
-        steps.SetProperty(
-            property="debs_package_version",
-            value=debs_version,
-            name="Set Debian packaging version"))
-    f_parent.addStep(
         steps.SetPropertyFromCommand(
             command="date -u +%FT%H-%M-%S",
             property="build_timestamp",
             flunkOnFailure=True,
-            warnOnFailure=True,
             haltOnFailure=True,
-            name="Get build timestamp"))
+            name="Timestamp when build began"))
+    f_parent.addStep(
+        steps.SetProperty(
+            property="debs_package_version",
+            value=debs_version,
+            name="Set Debian packaging version"))
+    return f_parent
+
+
+def getBuildersForBranch(workers, pretty_branch_name, git_branch_name, debs_version):
+
+    f_parent = __getCoreFactory(pretty_branch_name, git_branch_name, debs_version)
     for buildType in ("Build", "Reports", "Markdown"):
       scheduler_name = pretty_branch_name + " " + buildType
       f_parent.addStep(getTriggerStep(scheduler_name))
 
-    f_nightly_parent = util.BuildFactory()
-    f_nightly_parent.addStep(
-        steps.SetProperty(
-            property="branch",
-            value=git_branch_name,
-            name="Set regular branch name"))
-    f_nightly_parent.addStep(
-        steps.SetProperty(
-            property="branch_pretty",
-            value=pretty_branch_name,
-            name="Set pretty branch name"))
-    f_nightly_parent.addStep(
-        steps.SetProperty(
-            property="debs_package_version",
-            value=debs_version,
-            name="Set Debian packaging version"))
-    f_nightly_parent.addStep(
-        steps.SetPropertyFromCommand(
-            command="date -u +%FT%H-%M-%S",
-            property="build_timestamp",
-            flunkOnFailure=True,
-            warnOnFailure=True,
-            haltOnFailure=True,
-            name="Get build timestamp"))
+    f_nightly_parent = __getCoreFactory(pretty_branch_name, git_branch_name, debs_version)
     for buildType in ("Nightly", "Reports", "Markdown"):
       scheduler_name = pretty_branch_name + " " + buildType
       f_nightly_parent.addStep(getTriggerStep(scheduler_name))

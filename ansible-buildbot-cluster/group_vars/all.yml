@@ -104,9 +104,9 @@ config_nginx: True
 ##################
 
 #URI fragments defining where things should end up, relative to a given root directory/URL
-artifacts_fragment: "%(prop:branch_pretty)s/%(prop:buildnumber)s-%(prop:build_timestamp)s"
-artifacts_PR_fragment: "PR/%(prop:buildnumber)s"
-parent_fragment: "%(prop:branch_pretty)s/%(prop:parent_build)s-%(prop:build_timestamp)s"
+artifacts_fragment: "%(prop:branch_pretty)s/%(prop:oc_branch_build)s-%(prop:build_timestamp)s"
+artifacts_PR_fragment: "PR/%(prop:oc_branch_build)s"
+parent_fragment: "%(prop:branch_pretty)s/%(prop:oc_branch_build)s-%(prop:build_timestamp)s"
 reports_fragment: "{{ parent_fragment }}/reports"
 javadocs_fragment: "{{ parent_fragment }}/javadocs"
 markdown_fragment: "{{ parent_fragment }}/markdown"
