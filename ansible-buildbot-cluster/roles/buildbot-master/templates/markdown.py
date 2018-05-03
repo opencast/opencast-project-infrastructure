@@ -16,13 +16,13 @@ def getBuildPipeline():
                 haltOnFailure=True,
                 logfile='npm_install'),
             util.ShellArg(
-                command=['node_modules/grunt/bin/grunt'],
+                command=['./node_modules/grunt/bin/grunt'],
                 flunkOnFailure=True,
                 warnOnFailure=True,
                 haltOnFailure=True,
                 logfile='grunt'),
         ],
-        workdir="docs/guides",
+        workdir="build/docs/guides",
         name="Check Markdown doc formatting",
         haltOnFailure=True,
         flunkOnFailure=True)
@@ -48,7 +48,7 @@ def getBuildPipeline():
                 haltOnFailure=True,
                 logfile='user'),
         ],
-        workdir="docs/guides",
+        workdir="build/docs/guides",
         name="Build Markdown docs",
         haltOnFailure=True,
         flunkOnFailure=True)
@@ -78,7 +78,7 @@ def getBuildPipeline():
                 haltOnFailure=True,
                 logfile='user'),
         ],
-        workdir="docs/guides",
+        workdir="build/docs/guides",
         name="Upload Markdown docs to buildmaster",
         haltOnFailure=True,
         flunkOnFailure=True)
