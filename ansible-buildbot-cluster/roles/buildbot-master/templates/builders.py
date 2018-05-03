@@ -89,7 +89,7 @@ def getBuildersForBranch(workers, pretty_branch_name, git_branch_name, debs_vers
             name="Get build timestamp"))
     for buildType in ("Nightly", "Reports", "Markdown"):
       scheduler_name = pretty_branch_name + " " + buildType
-      f_parent.addStep(getTriggerStep(scheduler_name))
+      f_nightly_parent.addStep(getTriggerStep(scheduler_name))
 
     f_build = build.getBuildPipeline()
 
