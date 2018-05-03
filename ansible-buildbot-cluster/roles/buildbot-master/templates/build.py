@@ -48,6 +48,7 @@ def getBuildPipeline():
     f_build.addStep(common.getWorkerPrep())
     f_build.addStep(common.getBuild())
     f_build.addStep(common.getMasterPrep())
+    f_build.addStep(common.getPermissionsFix())
     f_build.addStep(uploadTarballs)
     f_build.addStep(common.getClean())
 

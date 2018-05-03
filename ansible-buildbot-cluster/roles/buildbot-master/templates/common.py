@@ -43,19 +43,21 @@ def getBuild():
 
 def getMasterPrep():
     return steps.MasterShellCommand(
-        command=[
-            util.Interpolate('mkdir -p ' +
-                os.path.normpath("{{ artifacts_dist_base }} ") +
-                os.path.normpath("{{ artifacts_dist_base }}/reports ") +
-                os.path.normpath("{{ artifacts_dist_base }}/debs ") +
-                os.path.normpath("{{ artifacts_dist_base }}/rpms ") +
-                os.path.normpath("{{ deployed_reports_symlink_base }} " +
-                " && chown -R {{ getent_passwd['buildbot'][1] }}:{{ getent_passwd['buildbot'][2] }} " +
-                os.path.normpath("{{ artifacts_dist_base }}")
-                )
-            )
+        command=["mkdir", "-p",
+                util.Interpolate(os.path.normpath("{{ artifacts_dist_base }}")),
+                util.Interpolate(os.path.normpath("{{ artifacts_dist_base }}/reports")),
+                util.Interpolate(os.path.normpath("{{ artifacts_dist_base }}/debs")),
+                util.Interpolate(os.path.normpath("{{ artifacts_dist_base }}/rpms")),
+                util.Interpolate(os.path.normpath("{{ deployed_reports_symlink_base }}"))
         ],
         name="Prep relevant directories on buildmaster")
+
+def getPermissionsFix():
+    return steps.MasterShellCommand(
+        command=["chown", "-R", "{{ getent_passwd['buildbot'][1] }}:{{ getent_passwd['buildbot'][2] }}",
+            util.Interpolate(os.path.normpath("{{ artifacts_dist_base }}"))
+        ],
+        name="Fixing directory permissions on buildmaster")
 
 def getClean():
     return steps.ShellSequence(

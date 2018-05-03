@@ -83,21 +83,14 @@ def getBuildPipeline():
         haltOnFailure=True,
         flunkOnFailure=True)
 
-    #Note: We're using a string here because using the array disables shell globbing!
-    clean = steps.ShellCommand(
-        command="rm -rf */site",
-        workdir="docs/guides",
-        name="Cleanup built docs",
-        haltOnFailure=True,
-        flunkOnFailure=True)
 
     f_build = util.BuildFactory()
     f_build.addStep(common.getClone())
-    f_build.addStep(common.getBuild())
-    f_build.addStep(common.getMasterPrep())
     f_build.addStep(check)
     f_build.addStep(build)
+    f_build.addStep(common.getMasterPrep())
+    f_build.addStep(common.getPermissionsFix())
     f_build.addStep(upload)
-    f_build.addStep(clean)
+    f_build.addStep(common.getClean())
 
     return f_build
