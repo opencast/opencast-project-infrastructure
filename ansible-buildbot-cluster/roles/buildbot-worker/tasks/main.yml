@@ -15,10 +15,12 @@
     - docker-py
 
 - name: Ensuring Docker is connectable via TCP
-  replace:
+  lineinfile:
     path: /lib/systemd/system/docker.service
-    regexp: "dockerd"
-    replace: "dockerd -H tcp://localhost:2375"
+    regexp: 'ExecStart=\/usr\/bin\/dockerd.*'
+    line: 'ExecStart=/usr/bin/dockerd -H fd:// -H tcp://localhost:2375'
+    backrefs: yes
+    state: present
   become: yes
   notify: "Restart Docker"
 
