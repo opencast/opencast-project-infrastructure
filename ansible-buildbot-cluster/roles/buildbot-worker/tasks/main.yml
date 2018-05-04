@@ -22,17 +22,6 @@
   become: yes
   notify: "Restart Docker"
 
-- name: Create BuildBot user
-  user:
-    name: '{{ buildbot_user }}'
-    password: "{{ lookup('password', '/dev/null encrypt=sha1_crypt length=32') }}"
-    update_password: always
-    home: "{{ buildbot_home }}"
-    shell: /sbin/nologin
-    groups: buildbot,docker
-  become: yes
-  when: create_buildbot_user
-
 - name: Ensure BuildBot directories exists and has the right permissions
   file:
     state: directory
