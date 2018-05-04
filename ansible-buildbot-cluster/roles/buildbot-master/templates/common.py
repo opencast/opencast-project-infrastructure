@@ -46,6 +46,7 @@ def getMasterPrep():
         command=["mkdir", "-p",
                 util.Interpolate(os.path.normpath("{{ artifacts_dist_base }}")),
                 util.Interpolate(os.path.normpath("{{ artifacts_dist_base }}/reports")),
+                util.Interpolate(os.path.normpath("{{ artifacts_dist_base }}/markdown")),
                 util.Interpolate(os.path.normpath("{{ artifacts_dist_base }}/debs")),
                 util.Interpolate(os.path.normpath("{{ artifacts_dist_base }}/rpms")),
                 util.Interpolate(os.path.normpath("{{ deployed_reports_symlink_base }}"))
