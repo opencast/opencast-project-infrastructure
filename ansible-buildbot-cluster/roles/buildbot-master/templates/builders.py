@@ -44,7 +44,7 @@ def __getCoreFactory(pretty_branch_name, git_branch_name, debs_version):
     f_parent.addStep(
         steps.SetProperty(
             property="oc_commit",
-            value=util.Property("got_revision"),
+            value=util.Property("revision"),
             name="Set build number within build branch"))
     f_parent.addStep(
         steps.SetProperty(
@@ -109,7 +109,7 @@ def getBuildersForBranch(workers, pretty_branch_name, git_branch_name, debs_vers
     b_nightly_entrypoint = util.BuilderConfig(
         name=pretty_branch_name + " Nightly Overall",
         workernames=workers,
-        factory=f_parent,
+        factory=f_nightly_parent,
         collapseRequests=True)
 
     b_build = util.BuilderConfig(
