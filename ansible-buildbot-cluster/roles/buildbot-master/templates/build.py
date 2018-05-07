@@ -6,29 +6,18 @@ import os.path
 import common
 
 
-def getPullRequestPipeline():
-
-    prep_PR_master = steps.MasterShellCommand(
-        command=[
-            'mkdir', '-p',
-            util.Interpolate(os.path.normpath("{{ deployed_PR_base }}"))
-        ],
-        name="Prep relevant directories on buildmaster")
+def __getBasePipeline():
 
     f_build = util.BuildFactory()
-    f_build.addStep(
-        steps.SetPropertyFromCommand(
-            command="date -u +%FT%H-%M-%S",
-            property="build_timestamp",
-            flunkOnFailure=True,
-            warnOnFailure=True,
-            haltOnFailure=True,
-            name="Get build timestamp"))
     f_build.addStep(common.getClone())
     f_build.addStep(common.getWorkerPrep())
     f_build.addStep(common.getBuild())
-    f_build.addStep(common.getMasterPrep())
-    f_build.addStep(prep_PR_master)
+
+    return f_build
+
+def getPullRequestPipeline():
+
+    f_build = __getBasePipeline()
     f_build.addStep(common.getClean())
 
     return f_build
@@ -43,10 +32,7 @@ def getBuildPipeline():
         flunkOnFailure=True,
         name="Upload build to buildmaster")
 
-    f_build = util.BuildFactory()
-    f_build.addStep(common.getClone())
-    f_build.addStep(common.getWorkerPrep())
-    f_build.addStep(common.getBuild())
+    f_build = __getBasePipeline()
     f_build.addStep(common.getMasterPrep())
     f_build.addStep(common.getPermissionsFix())
     f_build.addStep(uploadTarballs)

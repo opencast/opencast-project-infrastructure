@@ -5,7 +5,7 @@ from buildbot.plugins import *
 import common
 
 
-def getBuildPipeline():
+def __getBasePipeline():
 
     check = steps.ShellSequence(
         commands=[
@@ -53,6 +53,23 @@ def getBuildPipeline():
         haltOnFailure=True,
         flunkOnFailure=True)
 
+
+    f_build = util.BuildFactory()
+    f_build.addStep(common.getClone())
+    f_build.addStep(check)
+    f_build.addStep(build)
+
+    return f_build
+
+def getPullRequestPipeline():
+
+    f_build = __getBasePipeline()
+    f_build.addStep(common.getClean())
+
+    return f_build
+
+def getBuildPipeline():
+
     upload = steps.ShellSequence(
         commands=[
             util.ShellArg(
@@ -84,10 +101,7 @@ def getBuildPipeline():
         flunkOnFailure=True)
 
 
-    f_build = util.BuildFactory()
-    f_build.addStep(common.getClone())
-    f_build.addStep(check)
-    f_build.addStep(build)
+    f_build = __getBasePipeline()
     f_build.addStep(common.getMasterPrep())
     f_build.addStep(common.getPermissionsFix())
     f_build.addStep(upload)
