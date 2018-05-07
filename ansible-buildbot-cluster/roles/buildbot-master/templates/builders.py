@@ -13,11 +13,31 @@ def getPullRequestBuilder(workers):
 
   f_pr_build = build.getPullRequestPipeline()
 
-  b_pr = util.BuilderConfig(name="Pull Request Build",
-      workernames=workers,
-      factory=f_pr_build, collapseRequests=True)
+  f_pr_reports = reports.getPullRequestPipeline()
 
-  return b_pr
+  f_pr_markdown = markdown.getPullRequestPipeline()
+
+  b_pr_build = util.BuilderConfig(
+      name="Pull Request Build",
+      workernames=workers,
+      factory=f_pr_build,
+      collapseRequests=True)
+
+  b_pr_reports = util.BuilderConfig(
+      name="Pull Request Reports",
+      workernames=workers,
+      factory=f_pr_reports,
+      collapseRequests=True)
+
+  b_pr_markdown = util.BuilderConfig(
+      name="Pull Request Markdown",
+      workernames=workers,
+      factory=f_pr_markdown,
+      collapseRequests=True)
+
+  return [
+    b_pr_build, b_pr_reports, b_pr_markdown
+  ]
 
 def getTriggerStep(scheduler_name):
   return steps.Trigger(
@@ -46,12 +66,14 @@ def __getCoreFactory(pretty_branch_name, git_branch_name, debs_version):
             property="oc_commit",
             value=util.Property("revision"),
             name="Set build number within build branch"))
-    f_parent.addStep(
+    if (None != git_branch_name):
+      f_parent.addStep(
         steps.SetProperty(
             property="branch",
             value=git_branch_name,
             name="Set regular branch name"))
-    f_parent.addStep(
+    if (None != pretty_branch_name):
+      f_parent.addStep(
         steps.SetProperty(
             property="branch_pretty",
             value=pretty_branch_name,
@@ -63,7 +85,8 @@ def __getCoreFactory(pretty_branch_name, git_branch_name, debs_version):
             flunkOnFailure=True,
             haltOnFailure=True,
             name="Timestamp when build began"))
-    f_parent.addStep(
+    if (None != debs_version):
+      f_parent.addStep(
         steps.SetProperty(
             property="debs_package_version",
             value=debs_version,

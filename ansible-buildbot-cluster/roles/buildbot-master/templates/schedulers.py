@@ -4,11 +4,11 @@
 from buildbot.plugins import *
 
 
-def getPullRequestScheduler():
+def getPullRequestSchedulers():
     return schedulers.AnyBranchScheduler(
         name="Pull Requests",
         treeStableTimer={{stability_limit}},  #NB: Do not make this a string, a horribly unclear error occurs and nothing works for this scheduler...
-        builderNames=["Pull Request Build"],
+        builderNames=["Pull Request Build", "Pull Request Reports", "Pull Request Markdown"],
         change_filter=util.ChangeFilter(category="pull"))
 
 
