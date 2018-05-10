@@ -27,7 +27,11 @@ RUN echo 'Acquire::http::Proxy "http://repo:3142";' > /etc/apt/apt.conf.d/01prox
         synfig \
         maven \
         openjdk-8-jdk && \
-     dpkg -i /root/*.deb && \
-     rm -f /root/*.deb && \
-     apt-get clean && \
-     rm -rf /var/lib/apt/lists/*
+    dpkg -i /root/*.deb && \
+    rm -f /root/*.deb && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    useradd -ms /bin/bash -d /builder builder && \
+    mkdir /builder/.ssh && \
+    chown -R builder:builder /builder
+

@@ -3,15 +3,8 @@ MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 # Adapted from https://github.com/buildbot/buildbot/blob/v1.1.0/worker/Dockerfile
 
-RUN apt-get update && \
-    apt-get dist-upgrade -y && \
-     #Create the buildbot user, add it to sudoers so that we can install ffmpeg etc at runtime
-     useradd -ms /bin/bash -d /buildbot buildbot && \
-     mkdir /buildbot/.ssh && \
-     chown -R buildbot /buildbot
-
 COPY . /usr/src/buildbot-worker
-COPY docker/buildbot.tac /buildbot/buildbot.tac
+COPY docker/buildbot.tac /builder/buildbot.tac
 
      # Test runs produce a great quantity of dead grandchild processes.  In a
      # non-docker environment, these are automatically reaped by init (process 1),
@@ -22,8 +15,8 @@ RUN  curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/release
      pip install 'twisted[tls]' && \
      pip install /usr/src/buildbot-worker
 
-USER buildbot
+USER builder
 
-WORKDIR /buildbot
+WORKDIR /builder
 
 CMD ["/usr/local/bin/dumb-init", "twistd", "-ny", "buildbot.tac"]
