@@ -8,7 +8,9 @@ RUN apt-get update && \
         dpkg-dev \
         debhelper \
         devscripts \
-        dh-exec && \
+        dh-exec \
+     # Repository generator
+        mini-dinstall && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
