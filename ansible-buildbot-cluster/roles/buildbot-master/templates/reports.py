@@ -32,6 +32,8 @@ def getPullRequestPipeline():
     f_build = __getBasePipeline()
     f_build.addStep(common.getClean())
 
+    return f_build
+
 def getBuildPipeline():
 
 
