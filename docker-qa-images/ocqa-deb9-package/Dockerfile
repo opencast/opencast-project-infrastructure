@@ -9,5 +9,6 @@ RUN apt-get update && \
         debhelper \
         devscripts \
         dh-exec && \
-     apt-get clean && \
-     rm -rf /var/lib/apt/lists/*
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+

@@ -14,7 +14,9 @@ RUN add-apt-repository \
      # Packages for building docs
         libyaml-dev \
         nodejs && \
-     apt-get clean && \
-     rm -rf /var/lib/apt/lists/* && \
-     pip install --upgrade pip virtualenv setuptools && \
-     pip install mkdocs
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    #Currently causing broken pip installs...
+    #pip install --upgrade pip virtualenv setuptools && \
+    pip install mkdocs
+
