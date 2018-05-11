@@ -26,11 +26,6 @@ repo_host: pkg.opencast.org
 #The package repository suite to install from
 repo_suite: stable
 
-#The full URL for the repository.  If you are using your own repo feel free to change this.
-oc_deb_repo_url: "deb https://{{repo_username}}:{{repo_password}}@{{repo_host}}/debian {{repo_suite}}/"
-#Hardcoded testing suite for use by the docker images.  If you are using your own repo feel free to change this.
-oc_deb_repo_url_testing: "deb https://{{repo_username}}:{{repo_password}}@{{repo_host}}/debian testing/"
-
 #The RPM repo urls
 oc_rpm_repo_url: "https://pkg.opencast.org/rpms/release/el/7/x86_64"
 oc_rpm_repo_url_noarch: "https://pkg.opencast.org/rpms/release/el/7/noarch"

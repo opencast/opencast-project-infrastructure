@@ -3,5 +3,4 @@
 login_user: ansible
 id: 1
 name: builder00
-maxbuilds: 4
 docker_image_user: "greglogan"
