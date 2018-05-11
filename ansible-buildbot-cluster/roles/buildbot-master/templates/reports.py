@@ -13,7 +13,7 @@ def __getBasePipeline():
             '-Dmaven.repo.remote=http://{{ inventory_hostname }}/nexus',
             'site', 'site:stage',
             util.Interpolate(
-                '-DstagingDirectory=/buildbot/%(prop:parent_fragment)s')
+                '-DstagingDirectory=/builder/%(prop:parent_fragment)s')
         ],
         haltOnFailure=True,
         flunkOnFailure=True,
@@ -39,7 +39,7 @@ def getBuildPipeline():
 
     uploadSite = steps.ShellCommand(
         command=util.Interpolate(
-            "scp -r /buildbot/%(prop:parent_fragment)s {{ buildbot_scp_reports }}"
+            "scp -r /builder/%(prop:parent_fragment)s {{ buildbot_scp_reports }}"
         ),
         haltOnFailure=True,
         flunkOnFailure=True,
