@@ -5,7 +5,8 @@ MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 ARG         DEBIAN_FRONTEND=noninteractive
 
 # Build deps
-RUN apt-get install -y \
+RUN apt-get update && \
+    apt-get install -y \
         sudo \
         tar gzip bzip2 unzip \
         git \
