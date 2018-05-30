@@ -9,6 +9,7 @@ doBuild() {
 }
 
 doBuildWorker() {
+  doBuild $1 run
   doBuild $1 build
   doBuild $1 doc
   doBuild $1 package

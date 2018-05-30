@@ -10,6 +10,6 @@ set -uxe
 
 IMAGE_TAG="$1/ocqa-$2-$3"
 cd ocqa-$2-$3
-docker build -t $IMAGE_TAG .
+docker push $IMAGE_TAG
 cd ..
 
