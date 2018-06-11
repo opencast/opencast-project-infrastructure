@@ -1,11 +1,11 @@
 ---
 
 - name: Start BuildBot
-  systemd:
-    name: buildbot
-    state: started
-    enabled: yes
-    daemon_reload: yes
+  docker_service:
+    project_src: "{{ buildbot_home }}"
+    pull: yes
+    state: present
+    restarted: yes
   become: yes
 
 - name: Start Autossh

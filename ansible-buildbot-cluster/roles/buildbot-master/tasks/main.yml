@@ -12,7 +12,8 @@
     state: latest
   become: yes
   with_items:
-    - docker-py
+    - docker
+    - docker-compose
 
   #Note, we're using /bin/bash here rather than /sbin/nologin or /bin/false because we need to be able to log in!
 - name: Create BuildBot user
@@ -21,6 +22,7 @@
     password: "{{ lookup('password', '/dev/null encrypt=sha1_crypt length=32') }}"
     update_password: always
     home: "{{ buildbot_home }}"
+    groups: docker
     shell: /bin/bash
   become: yes
   when: create_buildbot_user
@@ -69,20 +71,6 @@
     - { src: "cleaner.sh", dest: "{{ buildbot_home }}/cleaner.sh" }
     - { src: "buildbot.conf", dest: "{{ buildbot_home }}/nginx-config/buildbot.conf" }
     - { src: "nexus.conf", dest: "{{ buildbot_home }}/nginx-config/nexus.conf" }
-
-- name: Ensure latest Docker images are present
-  docker_image:
-    name: "{{ docker_image_user }}/{{ docker_image_master }}"
-  become: yes
-
-- name: Template Buildbot master systemd unit file
-  template:
-    src: buildbot.service
-    dest: /etc/systemd/system/buildbot.service
-    force: yes
-    owner: root
-    group: root
-  become: yes
   notify: "Start BuildBot"
 
 - name: Add Buildbot cleanup script to the crontab

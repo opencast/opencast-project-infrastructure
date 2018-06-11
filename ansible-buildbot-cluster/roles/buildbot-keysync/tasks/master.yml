@@ -13,6 +13,7 @@
 - name: Generate new BuildBot SSH key
   user:
     name: "{{ buildbot_user }}"
+    home: "{{ buildbot_home }}"
     generate_ssh_key: yes
     ssh_key_bits: 4096
   become: yes

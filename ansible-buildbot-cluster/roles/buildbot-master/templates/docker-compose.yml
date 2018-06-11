@@ -2,6 +2,7 @@ version: '2'
 services:
   buildbot:
     image: greglogan/ocqa-buildbot-master:latest
+    restart: always
     env_file:
       - db.env
     environment:
@@ -19,6 +20,7 @@ services:
       - "{{ buildbot_home }}/buildbot-config:/var/lib/buildbot"
   proxy:
     image: "nginx:stable"
+    restart: always
     ports:
       - "80:80"
     network_mode: "host"
@@ -30,6 +32,7 @@ services:
     env_file:
       - db.env
     image: "postgres:9.4"
+    restart: always
     ports:
       - "127.0.0.1:5432:5432"
     volumes:
