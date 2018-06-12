@@ -27,7 +27,7 @@ def getBuildPipeline():
     #Note: We're using a string here because using the array disables shell globbing!
     uploadTarballs = steps.ShellCommand(
         command=util.Interpolate(
-            "scp build/*.tar.gz {{ buildbot_scp_builds_put }}"),
+            "scp build/*.tar.gz {{ buildbot_scp_builds }}"),
         haltOnFailure=True,
         flunkOnFailure=True,
         name="Upload build to buildmaster")

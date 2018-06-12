@@ -99,15 +99,14 @@ config_nginx: True
 ##################
 
 #URI fragments defining where things should end up, relative to a given root directory/URL
-artifacts_fragment: "%(prop:branch_pretty)s/%(prop:oc_branch_build)s-%(prop:build_timestamp)s"
+artifacts_fragment: "%(prop:branch_pretty)s/%(prop:got_revision)s"
 artifacts_PR_fragment: "PR/%(prop:oc_branch_build)s"
-parent_fragment: "%(prop:branch_pretty)s/%(prop:oc_branch_build)s-%(prop:build_timestamp)s"
-reports_fragment: "{{ parent_fragment }}/reports"
-javadocs_fragment: "{{ parent_fragment }}/javadocs"
-markdown_fragment: "{{ parent_fragment }}/markdown"
+reports_fragment: "{{ artifacts_fragment }}/reports"
+javadocs_fragment: "{{ artifacts_fragment }}/javadocs"
+markdown_fragment: "{{ artifacts_fragment }}/markdown"
 coverage_fragment: "{{ artifacts_fragment }}/coverage"
-debs_fragment: "{{ parent_fragment }}/debs"
-rpms_fragment: "{{ parent_fragment }}/rpms"
+debs_fragment: "{{ artifacts_fragment }}/debs"
+rpms_fragment: "{{ artifacts_fragment }}/rpms"
 
 
 #################
@@ -149,9 +148,6 @@ disk_base: /var/www/buildbot
 
 #Build location on master filesystem
 artifacts_dist_base: "{{ disk_base }}/{{ artifacts_fragment }}"
-
-#Build location on the master filesystem as seen by a child job (reports, debs, rpms, etc)
-parent_dist_base: "{{ disk_base }}/{{ parent_fragment }}"
 
 #The location on disk to deploy the reports to
 deployed_reports: "{{ disk_base }}/{{ reports_fragment }}"
@@ -202,10 +198,7 @@ buildbot_apply: "{{ buildbot_base }}/bin/buildbot reconfig {{ inventory_hostname
 buildbot_create_worker: "{{ buildbot_base }}/bin/buildbot-worker create-worker {{ inventory_hostname }} localhost {{ id }} {{ password }}"
 
 #Where to fetch builds from the master
-buildbot_scp_builds_get: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ parent_dist_base }}/*.tar.gz"
-
-#Where to push builds on the master
-buildbot_scp_builds_put: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ artifacts_dist_base }}"
+buildbot_scp_builds: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ artifacts_dist_base }}/*.tar.gz"
 
 #Where to push reports on the master
 buildbot_scp_reports: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ deployed_reports }}"
