@@ -10,6 +10,12 @@
     - .ssh/id_rsa.pub
     - .ssh/authorized_keys
 
+- name: Clear any local copy of ssh key
+  file:
+    name: .ssh
+    state: absent
+  connection: local
+
 - name: Generate new BuildBot SSH key
   user:
     name: "{{ buildbot_user }}"
