@@ -4,8 +4,18 @@
 from buildbot.plugins import *
 import common
 
+def enabled(step):
+    if step.getProperty("npmConfigExists") == "True":
+        return True
+    else:
+        return False
 
-def __getBasePipeline():
+def __getBasePipeline(): 
+
+    enable = steps.SetPropertyFromCommand(
+        command='[ -f docs/guides/package.json ] && echo True || echo False',
+        property="npmConfigExists",
+        name="Check mkdocs version support")
 
     check = steps.ShellSequence(
         commands=[
@@ -25,7 +35,8 @@ def __getBasePipeline():
         workdir="build/docs/guides",
         name="Check Markdown doc formatting",
         haltOnFailure=True,
-        flunkOnFailure=True)
+        flunkOnFailure=True,
+        doStepIf=enabled)
 
     build = steps.ShellSequence(
         commands=[
@@ -51,11 +62,13 @@ def __getBasePipeline():
         workdir="build/docs/guides",
         name="Build Markdown docs",
         haltOnFailure=True,
-        flunkOnFailure=True)
+        flunkOnFailure=True,
+        doStepIf=enabled)
 
 
     f_build = util.BuildFactory()
     f_build.addStep(common.getClone())
+    f_build.addStep(enable)
     f_build.addStep(check)
     f_build.addStep(build)
 
@@ -98,7 +111,8 @@ def getBuildPipeline():
         workdir="build/docs/guides",
         name="Upload Markdown docs to buildmaster",
         haltOnFailure=True,
-        flunkOnFailure=True)
+        flunkOnFailure=True,
+        doStepIf=enabled)
 
 
     f_build = __getBasePipeline()
