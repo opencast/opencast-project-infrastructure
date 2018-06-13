@@ -83,10 +83,10 @@ def getBuildPipeline():
                 command=[
                     'dch', '--newversion',
                     util.Interpolate(
-                        '%(prop:debs_package_version)s-%(prop:parent_build)s'),
+                        '%(prop:debs_package_version)s-%(prop:got_revision)s'),
                     '-b', '-D', 'unstable', '-u', 'low', '--empty',
                     util.Interpolate(
-                        'Build revision %(prop:parent_revision)s, built with %(prop:deb_script_rev)s scripts'
+                        'Build revision %(prop:oc_commit)s, built with %(prop:deb_script_rev)s scripts'
                     )
                 ],
                 flunkOnFailure=True,
@@ -143,7 +143,7 @@ def getBuildPipeline():
         commands=[
             util.ShellArg(
                 command=util.Interpolate(
-                    'echo "source library.sh\ndoOpencast %(prop:debs_package_version)s %(prop:branch)s %(prop:parent_revision)s" | tee build.sh'
+                    'echo "source library.sh\ndoOpencast %(prop:debs_package_version)s %(prop:branch)s %(prop:got_revision)s" | tee build.sh'
                 ),
                 flunkOnFailure=True,
                 warnOnFailure=True,
@@ -157,7 +157,7 @@ def getBuildPipeline():
                 logfile='build'),
             util.ShellArg(
                 command=util.Interpolate(
-                    'echo "Opencast version %(prop:parent_revision)s packaged with version %(prop:deb_script_rev)s" | tee outputs/%(prop:parent_revision)s/revision.txt'
+                    'echo "Opencast version %(prop:got_revision)s packaged with version %(prop:deb_script_rev)s" | tee outputs/%(prop:oc_commit)s/revision.txt'
                 ),
                 flunkOnFailure=True,
                 warnOnFailure=True,

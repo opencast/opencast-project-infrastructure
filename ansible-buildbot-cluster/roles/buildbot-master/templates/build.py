@@ -22,7 +22,7 @@ def getPullRequestPipeline():
 
     return f_build
 
-def getBuildPipeline():
+def getBuildPipeline(pretty_branch_name):
 
     #Note: We're using a string here because using the array disables shell globbing!
     uploadTarballs = steps.ShellCommand(
@@ -31,6 +31,11 @@ def getBuildPipeline():
         haltOnFailure=True,
         flunkOnFailure=True,
         name="Upload build to buildmaster")
+
+    setPrettyName = steps.SetProperty(
+        property="branch_pretty",
+        value=pretty_branch_name,
+        name="Set pretty branch name")
 
     f_build = __getBasePipeline()
     f_build.addStep(common.getMasterPrep())

@@ -39,46 +39,30 @@ def getPullRequestBuilder(workers):
     b_pr_build, b_pr_reports, b_pr_markdown
   ]
 
-def getTriggerStep(scheduler_name):
+def getTriggerStep(scheduler_name, debs_version):
   return steps.Trigger(
             schedulerNames=[scheduler_name],
             waitForFinish=False,
             name="Trigger " + scheduler_name,
             set_properties={
-                 "oc_branch_build": util.Property("oc_branch_build"),
-                 "oc_commit": util.Property("oc_commit"),
-                 "branch": util.Property("branch"),
-                 "branch_pretty": util.Property("branch_pretty"),
-                 "build_timestamp": util.Property("build_timestamp"),
-                 "debs_package_version": util.Property("debs_package_version")
+                 "got_revision": util.Property("got_revision"), #used in the packaging scripts
+                 "branch_pretty": util.Property("branch_pretty"), #used for deploying things
+                 "debs_package_version": debs_version #pretty version name for deb packaging
             })
-
-
-def __getCoreFactory(pretty_branch_name, git_branch_name, debs_version):
-    f_parent = util.BuildFactory()
-    
-    if (None != debs_version):
-      f_parent.addStep(
-        steps.SetProperty(
-            property="debs_package_version",
-            value=debs_version,
-            name="Set Debian packaging version"))
-    return f_parent
-
 
 def getBuildersForBranch(workers, pretty_branch_name, git_branch_name, debs_version):
 
-    f_build = build.getBuildPipeline()
+    f_build = build.getBuildPipeline(pretty_branch_name)
 
     f_reports = reports.getBuildPipeline()
 
     f_markdown = markdown.getBuildPipeline()
 
-    f_nightly = build.getBuildPipeline()
+    f_nightly = build.getBuildPipeline(pretty_branch_name)
 
     for buildType in ("Debian Packaging", "RPM Packaging"):
       scheduler_name = pretty_branch_name + " " + buildType
-      f_nightly.addStep(getTriggerStep(scheduler_name))
+      f_nightly.addStep(getTriggerStep(scheduler_name, debs_version))
 
     f_package_debs = debs.getBuildPipeline()
 
