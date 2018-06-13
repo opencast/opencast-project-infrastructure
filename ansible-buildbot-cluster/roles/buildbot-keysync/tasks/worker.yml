@@ -32,10 +32,14 @@
 - name: Push BuildBot SSH keys
   copy:
     src: ".ssh/"
-    dest: "{{buildbot_home}}/.ssh/"
-    owner: "{{ buildbot_user }}"
-    group: "{{ buildbot_user }}"
+    dest: "{{ buildbot_home }}/{{ item.dest }}/"
+    owner: "{{ item.owner }}"
+    group: "{{ item.owner }}"
     mode: 0600
     force: yes
+  with_items:
+    - { dest: ".ssh", owner: "{{ buildbot_user }}" }
+     #Note: This is the hardcoded buildbot user inside the docker image, do not change this
+    - { dest: "ssh", owner: "1000" }
   become: yes
 
