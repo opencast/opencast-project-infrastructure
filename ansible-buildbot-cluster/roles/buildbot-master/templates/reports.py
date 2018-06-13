@@ -7,14 +7,14 @@ import common
 
 def __getBasePipeline():
 
-    site = steps.ShellCommand(
-        command=[
-            'mvn', '-B', '-V', '-Dmaven.repo.local=./.m2',
-            '-Dmaven.repo.remote=http://{{ inventory_hostname }}/nexus',
+    command = common.getMavenBase()
+    command.extend([
             'site', 'site:stage',
             util.Interpolate(
                 '-DstagingDirectory=/builder/%(prop:parent_fragment)s')
-        ],
+        ])
+    site = steps.ShellCommand(
+        command=command,
         haltOnFailure=True,
         flunkOnFailure=True,
         name="Build site report")

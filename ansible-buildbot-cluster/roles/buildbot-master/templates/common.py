@@ -5,6 +5,9 @@ import os.path
 from buildbot.plugins import *
 
 
+def getMavenBase():
+    return ['mvn', '-B', '-V', '-Dmaven.repo.local=/builder/m2']
+
 def getClone():
     return steps.GitHub(
         repourl="{{ source_repo_url }}",
@@ -15,15 +18,13 @@ def getClone():
         name="Clone/Checkout")
 
 def getWorkerPrep():
+    command = getMavenBase()
+    command.extend(['dependency:go-offline', '-fn'])
     return steps.ShellSequence(
         commands=[
             util.ShellArg(command=['git', 'clean', '-fdx'], logfile='clean'),
             util.ShellArg(
-                command=[
-                    'mvn', '-B', '-V', '-Dmaven.repo.local=./.m2',
-                    '-Dmaven.repo.remote=http://{{ inventory_hostname }}/nexus',
-                    'dependency:go-offline', '-fn'
-                ],
+                command=command,
                 logfile='deps')
         ],
         haltOnFailure=True,
@@ -31,12 +32,10 @@ def getWorkerPrep():
         name="Build Prep")
 
 def getBuild():
+    command = getMavenBase()
+    command.extend(['clean', 'install'])
     return steps.ShellCommand(
-        command=[
-            'mvn', '-B', '-V', '-Dmaven.repo.local=./.m2',
-            '-Dmaven.repo.remote=http://{{ inventory_hostname }}/nexus',
-            'clean', 'install'
-        ],
+        command=command,
         haltOnFailure=True,
         flunkOnFailure=True,
         name="Build")

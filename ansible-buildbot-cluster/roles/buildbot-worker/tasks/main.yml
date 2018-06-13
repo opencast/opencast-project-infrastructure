@@ -38,6 +38,16 @@
     - { path: "{{ buildbot_home }}/.ssh", owner: "buildbot", mode: "0700" }
     #Note: This is the hardcoded buildbot user inside the docker image, do not change this
     - { path: "{{ buildbot_home }}/ssh", owner: 1000, mode: "0700" }
+    - { path: "{{ buildbot_home }}/m2", owner: 1000, mode: "0700" }
+
+- name: Templating Maven settings
+  template:
+    src: settings.xml
+    dest: "{{ buildbot_home }}/m2/settings.xml"
+    owner: 1000
+    group: 1000
+    mode: 0600
+  become: yes
 
 - name: Creating copy of SSH keys with appropriate permissions for BuildBot
   copy:
