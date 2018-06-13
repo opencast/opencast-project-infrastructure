@@ -56,35 +56,7 @@ def getTriggerStep(scheduler_name):
 
 def __getCoreFactory(pretty_branch_name, git_branch_name, debs_version):
     f_parent = util.BuildFactory()
-    f_parent.addStep(
-        steps.SetProperty(
-            property="oc_branch_build",
-            value=util.Property("buildnumber"),
-            name="Set build number within build branch"))
-    f_parent.addStep(
-        steps.SetProperty(
-            property="oc_commit",
-            value=util.Property("revision"),
-            name="Set build number within build branch"))
-    if (None != git_branch_name):
-      f_parent.addStep(
-        steps.SetProperty(
-            property="branch",
-            value=git_branch_name,
-            name="Set regular branch name"))
-    if (None != pretty_branch_name):
-      f_parent.addStep(
-        steps.SetProperty(
-            property="branch_pretty",
-            value=pretty_branch_name,
-            name="Set pretty branch name"))
-    f_parent.addStep(
-        steps.SetPropertyFromCommand(
-            command="date -u +%FT%H-%M-%S",
-            property="build_timestamp",
-            flunkOnFailure=True,
-            haltOnFailure=True,
-            name="Timestamp when build began"))
+    
     if (None != debs_version):
       f_parent.addStep(
         steps.SetProperty(
@@ -95,16 +67,6 @@ def __getCoreFactory(pretty_branch_name, git_branch_name, debs_version):
 
 
 def getBuildersForBranch(workers, pretty_branch_name, git_branch_name, debs_version):
-
-    f_parent = __getCoreFactory(pretty_branch_name, git_branch_name, debs_version)
-    for buildType in ("Build", "Reports", "Markdown"):
-      scheduler_name = pretty_branch_name + " " + buildType
-      f_parent.addStep(getTriggerStep(scheduler_name))
-
-    f_nightly_parent = __getCoreFactory(pretty_branch_name, git_branch_name, debs_version)
-    for buildType in ("Nightly", "Reports", "Markdown"):
-      scheduler_name = pretty_branch_name + " " + buildType
-      f_nightly_parent.addStep(getTriggerStep(scheduler_name))
 
     f_build = build.getBuildPipeline()
 
@@ -122,18 +84,6 @@ def getBuildersForBranch(workers, pretty_branch_name, git_branch_name, debs_vers
 
     f_package_rpms = rpms.getBuildPipeline()
 
-
-    b_entrypoint = util.BuilderConfig(
-        name=pretty_branch_name + " Overall",
-        workernames=workers,
-        factory=f_parent,
-        collapseRequests=True)
-
-    b_nightly_entrypoint = util.BuilderConfig(
-        name=pretty_branch_name + " Nightly Overall",
-        workernames=workers,
-        factory=f_nightly_parent,
-        collapseRequests=True)
 
     b_build = util.BuilderConfig(
         name=pretty_branch_name + " Build",
@@ -172,5 +122,5 @@ def getBuildersForBranch(workers, pretty_branch_name, git_branch_name, debs_vers
         collapseRequests=True)
 
     return [
-        b_entrypoint, b_nightly_entrypoint, b_build, b_nightly, b_reports, b_markdown, b_package_debs, b_package_rpms
+        b_build, b_nightly, b_reports, b_markdown, b_package_debs, b_package_rpms
     ]

@@ -6,7 +6,7 @@
     state: latest
   become: yes
 
-- name: Install docker-py for Docker latent worker support
+- name: Install docker-compose
   pip:
     name: "{{ item }}"
     state: latest
