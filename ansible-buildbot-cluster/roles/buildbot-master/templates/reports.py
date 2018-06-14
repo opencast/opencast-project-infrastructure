@@ -9,7 +9,7 @@ def __getBasePipeline():
 
     command = common.getMavenBase()
     command.extend([
-            'cobertura', 'site', 'site:stage',
+            'cobertura:cobertura', 'site', 'site:stage',
             util.Interpolate(
                 '-DstagingDirectory=/builder/{{ artifacts_fragment }}')
         ])
