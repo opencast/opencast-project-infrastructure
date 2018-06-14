@@ -21,6 +21,7 @@ def getSchedulers(pretty_branch_name, git_branch_name):
         change_filter=util.ChangeFilter(
             category=None, branch_re=git_branch_name),
         treeStableTimer={{stability_limit}},  #NB: Do not make this a string, a horribly unclear error occurs and nothing works for this scheduler...
+        properties={"branch_pretty": pretty_branch_name},
         builderNames=[
             pretty_branch_name + " Build",
             pretty_branch_name + " Reports",
@@ -33,6 +34,7 @@ def getSchedulers(pretty_branch_name, git_branch_name):
             category=None, branch_re=git_branch_name),
         hour=3,
         onlyIfChanged=True,
+        properties={"branch_pretty": pretty_branch_name},
         builderNames=[
             pretty_branch_name + " Nightly",
             pretty_branch_name + " Reports",
@@ -85,7 +87,12 @@ def getSchedulers(pretty_branch_name, git_branch_name):
         # in case you don't require authentication this will display
         # input for user to type his name
         username=util.UserNameParameter(label="your name:", size=80),
-        properties=[])
+        properties=[
+            util.FixedParameter(
+                name="branch_pretty",
+                label="Pretty Branch Name",
+                default=pretty_branch_name)
+			])
 
     scheduler_list.extend([commits_branch, nightly_branch, forceScheduler])
     return scheduler_list

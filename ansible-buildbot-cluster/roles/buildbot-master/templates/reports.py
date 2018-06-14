@@ -34,7 +34,7 @@ def getPullRequestPipeline():
 
     return f_build
 
-def getBuildPipeline(pretty_branch_name):
+def getBuildPipeline():
 
 
     uploadSite = steps.ShellCommand(
@@ -52,7 +52,6 @@ def getBuildPipeline(pretty_branch_name):
         name="Deploy Reports")
 
     f_build = __getBasePipeline()
-    f_build.addStep(common.getPrettyName(pretty_branch_name))
     f_build.addStep(common.getMasterPrep())
     f_build.addStep(common.getPermissionsFix())
     f_build.addStep(uploadSite)

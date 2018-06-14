@@ -52,13 +52,13 @@ def getTriggerStep(scheduler_name, debs_version):
 
 def getBuildersForBranch(workers, pretty_branch_name, git_branch_name, debs_version):
 
-    f_build = build.getBuildPipeline(pretty_branch_name)
+    f_build = build.getBuildPipeline()
 
-    f_reports = reports.getBuildPipeline(pretty_branch_name)
+    f_reports = reports.getBuildPipeline()
 
     f_markdown = markdown.getBuildPipeline()
 
-    f_nightly = build.getBuildPipeline(pretty_branch_name)
+    f_nightly = build.getBuildPipeline()
 
     for buildType in ("Debian Packaging", "RPM Packaging"):
       scheduler_name = pretty_branch_name + " " + buildType
