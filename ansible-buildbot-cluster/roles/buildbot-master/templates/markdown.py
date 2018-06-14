@@ -22,13 +22,11 @@ def __getBasePipeline():
             util.ShellArg(
                 command=['npm', 'install'],
                 flunkOnFailure=True,
-                warnOnFailure=True,
                 haltOnFailure=True,
                 logfile='npm_install'),
             util.ShellArg(
                 command=['./node_modules/grunt/bin/grunt'],
                 flunkOnFailure=True,
-                warnOnFailure=True,
                 haltOnFailure=True,
                 logfile='grunt'),
         ],
@@ -43,20 +41,17 @@ def __getBasePipeline():
             util.ShellArg(
                 command='cd admin && mkdocs build && cd ..',
                 flunkOnFailure=True,
-                warnOnFailure=True,
-                haltOnFailure=True,
+                haltOnFailure=False,
                 logfile='admin'),
             util.ShellArg(
                 command='cd developer && mkdocs build && cd ..',
                 flunkOnFailure=True,
-                warnOnFailure=True,
-                haltOnFailure=True,
+                haltOnFailure=False,
                 logfile='developer'),
             util.ShellArg(
                 command='cd user && mkdocs build && cd ..',
                 flunkOnFailure=True,
-                warnOnFailure=True,
-                haltOnFailure=True,
+                haltOnFailure=False,
                 logfile='user'),
         ],
         workdir="build/docs/guides",
@@ -89,23 +84,20 @@ def getBuildPipeline():
                 command=util.Interpolate(
                     "scp -r admin/site {{ buildbot_scp_markdown }}/admin"),
                 flunkOnFailure=True,
-                warnOnFailure=True,
-                haltOnFailure=True,
+                haltOnFailure=False,
                 logfile='admin'),
             util.ShellArg(
                 command=util.Interpolate(
                     "scp -r developer/site {{ buildbot_scp_markdown }}/developer"
                 ),
                 flunkOnFailure=True,
-                warnOnFailure=True,
-                haltOnFailure=True,
+                haltOnFailure=False,
                 logfile='developer'),
             util.ShellArg(
                 command=util.Interpolate(
                     "scp -r user/site {{ buildbot_scp_markdown }}/user"),
                 flunkOnFailure=True,
-                warnOnFailure=True,
-                haltOnFailure=True,
+                haltOnFailure=False,
                 logfile='user'),
         ],
         workdir="build/docs/guides",
