@@ -172,7 +172,7 @@ def getBuildPipeline():
     #Note: We're using a string here because using the array disables shell globbing!
     debsUpload = steps.ShellCommand(
         command=util.Interpolate(
-            "scp -vr outputs/%(prop:deb_script_rev)s/* {{ buildbot_scp_debs }}"
+            "scp -r outputs/%(prop:got_revision)s/* {{ buildbot_scp_debs }}"
         ),
         haltOnFailure=True,
         flunkOnFailure=True,
