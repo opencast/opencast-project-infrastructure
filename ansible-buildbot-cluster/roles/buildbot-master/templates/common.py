@@ -67,3 +67,9 @@ def getClean():
         haltOnFailure=True,
         flunkOnFailure=True,
         name="Cleanup")
+
+def getPrettyName(pretty_branch_name):
+	return steps.SetProperty(
+        property="branch_pretty",
+        value=pretty_branch_name,
+        name="Set pretty branch name")

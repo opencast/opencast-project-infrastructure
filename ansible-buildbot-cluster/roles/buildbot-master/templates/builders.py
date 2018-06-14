@@ -54,7 +54,7 @@ def getBuildersForBranch(workers, pretty_branch_name, git_branch_name, debs_vers
 
     f_build = build.getBuildPipeline(pretty_branch_name)
 
-    f_reports = reports.getBuildPipeline()
+    f_reports = reports.getBuildPipeline(pretty_branch_name)
 
     f_markdown = markdown.getBuildPipeline()
 
