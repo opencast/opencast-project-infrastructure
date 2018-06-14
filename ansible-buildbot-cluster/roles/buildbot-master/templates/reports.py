@@ -11,7 +11,7 @@ def __getBasePipeline():
     command.extend([
             'site', 'site:stage',
             util.Interpolate(
-                '-DstagingDirectory=/builder/%(prop:parent_fragment)s')
+                '-DstagingDirectory=/builder/{{ artifacts_fragment }}')
         ])
     site = steps.ShellCommand(
         command=command,
@@ -39,7 +39,7 @@ def getBuildPipeline():
 
     uploadSite = steps.ShellCommand(
         command=util.Interpolate(
-            "scp -r /builder/%(prop:parent_fragment)s {{ buildbot_scp_reports }}"
+            "scp -r /builder/{{ artifacts_fragment }}/* {{ buildbot_scp_reports }}"
         ),
         haltOnFailure=True,
         flunkOnFailure=True,

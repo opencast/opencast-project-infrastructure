@@ -146,7 +146,14 @@ disk_base: /var/www/buildbot
 
 
 #Build location on master filesystem
-artifacts_dist_base: "{{ disk_base }}/{{ artifacts_fragment }}"
+deployed_builds: "{{ disk_base }}/{{ artifacts_fragment }}"
+
+#The location on disk to where the build symlinks live
+deployed_builds_symlink_base: "{{ disk_base }}/builds"
+
+#The interpolatable location for each symlink
+deployed_builds_symlink: "{{ deployed_builds_symlink_base }}/%(prop:branch_pretty)s"
+
 
 #The location on disk to deploy the reports to
 deployed_reports: "{{ disk_base }}/{{ reports_fragment }}"
@@ -157,25 +164,55 @@ deployed_reports_symlink_base: "{{ disk_base }}/reports"
 #The interpolatable location for each symlink
 deployed_reports_symlink: "{{ deployed_reports_symlink_base }}/%(prop:branch_pretty)s"
 
+
 #The location on disk to deploy the markdown docs to
 deployed_markdown: "{{ disk_base }}/{{ markdown_fragment }}"
+
+#The location on disk to where the markdown symlinks live
+deployed_markdown_symlink_base: "{{ disk_base }}/markdown"
+
+#The interpolatable location for each symlink
+deployed_markdown_symlink: "{{ deployed_markdown_symlink_base }}/%(prop:branch_pretty)s"
+
 
 #The location on disk to deploy the coverage report to
 deployed_coverage: "{{ disk_base }}/{{ coverage_fragment }}"
 
+#The location on disk to where the coverage symlinks live
+deployed_coverage_symlink_base: "{{ disk_base }}/coverage"
+
+#The interpolatable location for each symlink
+deployed_coverage_symlink: "{{ deployed_coverage_symlink_base }}/%(prop:branch_pretty)s"
+
+
 #The location on disk to deploy the debs to
-#Note that this is using the *parent* dist base
 deployed_debs: "{{ disk_base }}/{{ debs_fragment }}"
 
-#The location on disk to deploy the debs to
-#Note that this is using the *parent* dist base
+#The location on disk to where the debs symlinks live
+deployed_debs_symlink_base: "{{ disk_base }}/debs"
+
+#The interpolatable location for each symlink
+deployed_debs_symlink: "{{ deployed_debs_symlink_base }}/%(prop:branch_pretty)s"
+
+
+#The location on disk to deploy the rpms to
 deployed_rpms: "{{ disk_base }}/{{ rpms_fragment }}"
 
-#The location where the javadocs live on disk
-deployed_javadocs: "{{ deployed_reports }}/apidocs"
+#The location on disk to where the rpm symlinks live
+deployed_rpms_symlink_base: "{{ disk_base }}/rpms"
 
-#The location of the symlink to make it easier to get to the javadocs
-deployed_javadocs_symlink: "{{ disk_base }}/{{ javadocs_fragment }}"
+#The interpolatable location for each symlink
+deployed_rpms_symlink: "{{ deployed_rpms_symlink_base }}/%(prop:branch_pretty)s"
+
+
+#The location where the javadocs live on disk
+deployed_javadocs: "{{ disk_base }}/{{ javadocs_fragment }}"
+
+#The location on disk to where the javadocs symlinks live
+deployed_javadocs_symlink_base: "{{ disk_base }}/javadocs"
+
+#The interpolatable location for each symlink
+deployed_javadocs_symlink: "{{ deployed_javadocs_symlink_base }}/%(prop:branch_pretty)s"
 
 
 #####################
@@ -194,7 +231,7 @@ buildbot_apply: "{{ buildbot_base }}/bin/buildbot reconfig {{ inventory_hostname
 buildbot_create_worker: "{{ buildbot_base }}/bin/buildbot-worker create-worker {{ inventory_hostname }} localhost {{ id }} {{ password }}"
 
 #Where to push builds on the master
-buildbot_scp_builds: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ artifacts_dist_base }}"
+buildbot_scp_builds: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ deployed_builds }}"
 
 #Where to push reports on the master
 buildbot_scp_reports: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ deployed_reports }}"

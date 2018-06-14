@@ -43,19 +43,24 @@ def getBuild():
 def getMasterPrep():
     return steps.MasterShellCommand(
         command=["mkdir", "-p",
-                util.Interpolate(os.path.normpath("{{ artifacts_dist_base }}")),
-                util.Interpolate(os.path.normpath("{{ artifacts_dist_base }}/reports")),
-                util.Interpolate(os.path.normpath("{{ artifacts_dist_base }}/markdown")),
-                util.Interpolate(os.path.normpath("{{ artifacts_dist_base }}/debs")),
-                util.Interpolate(os.path.normpath("{{ artifacts_dist_base }}/rpms")),
-                util.Interpolate(os.path.normpath("{{ deployed_reports_symlink_base }}"))
+                util.Interpolate(os.path.normpath("{{ deployed_reports }}")),
+                util.Interpolate(os.path.normpath("{{ deployed_markdown }}")),
+                util.Interpolate(os.path.normpath("{{ deployed_javadocs }}")),
+                util.Interpolate(os.path.normpath("{{ deployed_debs }}")),
+                util.Interpolate(os.path.normpath("{{ deployed_rpms }}")),
+                util.Interpolate(os.path.normpath("{{ deployed_builds_symlink_base }}")),
+                util.Interpolate(os.path.normpath("{{ deployed_reports_symlink_base }}")),
+                util.Interpolate(os.path.normpath("{{ deployed_markdown_symlink_base }}")),
+                util.Interpolate(os.path.normpath("{{ deployed_javadocs_symlink_base }}")),
+                util.Interpolate(os.path.normpath("{{ deployed_debs_symlink_base }}")),
+                util.Interpolate(os.path.normpath("{{ deployed_rpms_symlink_base }}"))
         ],
         name="Prep relevant directories on buildmaster")
 
 def getPermissionsFix():
     return steps.MasterShellCommand(
         command=["chown", "-R", "{{ getent_passwd['buildbot'][1] }}:{{ getent_passwd['buildbot'][2] }}",
-            util.Interpolate(os.path.normpath("{{ artifacts_dist_base }}"))
+            util.Interpolate(os.path.normpath("{{ deployed_builds }}"))
         ],
         name="Fixing directory permissions on buildmaster")
 

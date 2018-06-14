@@ -172,12 +172,17 @@ def getBuildPipeline():
     #Note: We're using a string here because using the array disables shell globbing!
     debsUpload = steps.ShellCommand(
         command=util.Interpolate(
-            "scp -r outputs/%(prop:parent_revision)s/* {{ buildbot_scp_debs }}"
+            "scp -vr outputs/%(prop:deb_script_rev)s/* {{ buildbot_scp_debs }}"
         ),
         haltOnFailure=True,
         flunkOnFailure=True,
         name="Upload debs to buildmaster")
 
+    debsDeploy = steps.MasterShellCommand(
+        command=util.Interpolate(
+            "rm -f {{ deployed_debs_symlink }} && ln -s {{ deployed_debs }} {{ deployed_debs_symlink }}"
+        ),
+        name="Deploy Debs")
 
     f_package_debs = util.BuildFactory()
     f_package_debs.addStep(debChecker)
@@ -188,6 +193,7 @@ def getBuildPipeline():
     f_package_debs.addStep(debsFetch)
     f_package_debs.addStep(debsBuild)
     f_package_debs.addStep(debsUpload)
+    f_package_debs.addStep(debsDeploy)
     f_package_debs.addStep(common.getClean())
 
     return f_package_debs

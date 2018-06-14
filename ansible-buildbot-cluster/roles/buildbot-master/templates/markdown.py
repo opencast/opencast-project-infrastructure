@@ -114,11 +114,18 @@ def getBuildPipeline():
         flunkOnFailure=True,
         doStepIf=enabled)
 
+    updateMarkdown = steps.MasterShellCommand(
+        command=util.Interpolate(
+            "rm -f {{ deployed_markdown_symlink }} && ln -s {{ deployed_markdown }} {{ deployed_markdown_symlink }}"
+        ),
+        name="Deploy Markdown")
+
 
     f_build = __getBasePipeline()
     f_build.addStep(common.getMasterPrep())
     f_build.addStep(common.getPermissionsFix())
     f_build.addStep(upload)
+    f_build.addStep(updateMarkdown)
     f_build.addStep(common.getClean())
 
     return f_build
