@@ -9,7 +9,7 @@ def __getBasePipeline():
 
     command = common.getMavenBase()
     command.extend([
-            'site', 'site:stage',
+            'cobertura', 'site', 'site:stage',
             util.Interpolate(
                 '-DstagingDirectory=/builder/{{ artifacts_fragment }}')
         ])
@@ -67,7 +67,10 @@ def getBuildPipeline():
 
     updateSite = steps.MasterShellCommand(
         command=util.Interpolate(
-            "rm -f {{ deployed_reports_symlink }} && ln -s {{ deployed_reports }} {{ deployed_reports_symlink }} && ln -s {{ deployed_javadocs }} {{ deployed_javadocs_symlink }}"
+            "rm -f {{ deployed_reports_symlink }} {{ deployed_javadocs_symlink }} {{ deployed_coverage_symlink }} && \
+            ln -s {{ deployed_reports }} {{ deployed_reports_symlink }} && \
+            ln -s {{ deployed_javadocs }} {{ deployed_javadocs_symlink }} && \
+            ln -s {{ deployed_coverage }} {{ deployed_coverage_symlink }}"
         ),
         name="Deploy Reports")
 
