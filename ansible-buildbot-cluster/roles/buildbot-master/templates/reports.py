@@ -7,35 +7,6 @@ import common
 
 def __getBasePipeline():
 
-    command = common.getMavenBase()
-    command.extend([
-            'cobertura:cobertura', 'site', 'site:stage',
-            util.Interpolate(
-                '-DstagingDirectory=/builder/{{ artifacts_fragment }}')
-        ])
-    site = steps.ShellCommand(
-        command=command,
-        haltOnFailure=True,
-        flunkOnFailure=True,
-        name="Build site report")
-
-    f_build = util.BuildFactory()
-    f_build.addStep(common.getClone())
-    f_build.addStep(common.getWorkerPrep())
-    f_build.addStep(common.getBuild())
-    f_build.addStep(site)
-
-    return f_build
-
-def getPullRequestPipeline():
-
-    f_build = __getBasePipeline()
-    f_build.addStep(common.getClean())
-
-    return f_build
-
-def getBuildPipeline():
-
     checkSpaces = steps.ShellSequence(
         commands=[
             util.ShellArg(
@@ -53,9 +24,39 @@ def getBuildPipeline():
                 logfile='End Of Line Space Check')
         ],
         workdir="build/docs/guides",
-        name="Upload Markdown docs to buildmaster",
+        name="Formatting checks",
         haltOnFailure=False,
         flunkOnFailure=True)
+
+    command = common.getMavenBase()
+    command.extend([
+            'cobertura:cobertura', 'site', 'site:stage',
+            util.Interpolate(
+                '-DstagingDirectory=/builder/{{ artifacts_fragment }}')
+        ])
+    site = steps.ShellCommand(
+        command=command,
+        haltOnFailure=True,
+        flunkOnFailure=True,
+        name="Build site report")
+
+    f_build = util.BuildFactory()
+    f_build.addStep(common.getClone())
+    f_build.addStep(common.getWorkerPrep())
+    f_build.addStep(common.getBuild())
+    f_build.addStep(checkSpaces)
+    f_build.addStep(site)
+
+    return f_build
+
+def getPullRequestPipeline():
+
+    f_build = __getBasePipeline()
+    f_build.addStep(common.getClean())
+
+    return f_build
+
+def getBuildPipeline():
 
     uploadSite = steps.ShellCommand(
         command=util.Interpolate(
@@ -77,7 +78,6 @@ def getBuildPipeline():
         name="Deploy Reports")
 
     f_build = __getBasePipeline()
-    f_build.addStep(checkSpaces)
     f_build.addStep(common.getMasterPrep())
     f_build.addStep(common.getPermissionsFix())
     f_build.addStep(uploadSite)
