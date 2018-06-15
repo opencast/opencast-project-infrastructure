@@ -12,7 +12,7 @@ RUN echo 'Acquire::http::Proxy "http://repo:3142";' > /etc/apt/apt.conf.d/01prox
     apt-get install -y \
      # Run deps
         tesseract-ocr \
-        tesseract-eng \
+        tesseract-ocr-eng \
         netcat \
         hunspell \
         synfig \
