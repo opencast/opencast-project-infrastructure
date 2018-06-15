@@ -169,6 +169,13 @@ def getBuildPipeline():
         haltOnFailure=True,
         flunkOnFailure=True)
 
+    masterPrep = steps.MasterShellCommand(
+        command=["mkdir", "-p",
+                util.Interpolate(os.path.normpath("{{ deployed_debs }}")),
+                util.Interpolate(os.path.normpath("{{ deployed_debs_symlink_base }}"))
+        ],
+        name="Prep relevant directories on buildmaster")
+
     #Note: We're using a string here because using the array disables shell globbing!
     debsUpload = steps.ShellCommand(
         command=util.Interpolate(
@@ -192,6 +199,7 @@ def getBuildPipeline():
     f_package_debs.addStep(debsPrep)
     f_package_debs.addStep(debsFetch)
     f_package_debs.addStep(debsBuild)
+    f_package_debs.addStep(masterPrep)
     f_package_debs.addStep(debsUpload)
     f_package_debs.addStep(debsDeploy)
     f_package_debs.addStep(common.getClean())

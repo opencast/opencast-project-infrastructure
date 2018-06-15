@@ -58,6 +58,15 @@ def getPullRequestPipeline():
 
 def getBuildPipeline():
 
+    masterPrep = steps.MasterShellCommand(
+        command=["mkdir", "-p",
+                util.Interpolate(os.path.normpath("{{ deployed_reports }}")),
+                util.Interpolate(os.path.normpath("{{ deployed_reports_symlink_base }}")),
+                util.Interpolate(os.path.normpath("{{ deployed_javadocs_symlink_base }}")),
+                util.Interpolate(os.path.normpath("{{ deployed_coverage_symlink_base }}"))
+        ],
+        name="Prep relevant directories on buildmaster")
+
     uploadSite = steps.ShellCommand(
         command=util.Interpolate(
             "scp -r /builder/{{ artifacts_fragment }}/* {{ buildbot_scp_reports }}"
@@ -78,7 +87,7 @@ def getBuildPipeline():
         name="Deploy Reports")
 
     f_build = __getBasePipeline()
-    f_build.addStep(common.getMasterPrep())
+    f_build.addStep(masterPrep)
     f_build.addStep(common.getPermissionsFix())
     f_build.addStep(uploadSite)
     f_build.addStep(updateSite)

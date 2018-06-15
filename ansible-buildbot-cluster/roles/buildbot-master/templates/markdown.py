@@ -78,6 +78,13 @@ def getPullRequestPipeline():
 
 def getBuildPipeline():
 
+    masterPrep = steps.MasterShellCommand(
+        command=["mkdir", "-p",
+                util.Interpolate(os.path.normpath("{{ deployed_markdown }}")),
+                util.Interpolate(os.path.normpath("{{ deployed_markdown_symlink_base }}")),
+        ],
+        name="Prep relevant directories on buildmaster")
+
     upload = steps.ShellSequence(
         commands=[
             util.ShellArg(
@@ -114,7 +121,7 @@ def getBuildPipeline():
 
 
     f_build = __getBasePipeline()
-    f_build.addStep(common.getMasterPrep())
+    f_build.addStep(masterPrep)
     f_build.addStep(common.getPermissionsFix())
     f_build.addStep(upload)
     f_build.addStep(updateMarkdown)
