@@ -9,11 +9,11 @@ doPush() {
 }
 
 doPushWorker() {
-  doPush $1 run
-  doPush $1 build
-  doPush $1 doc
-  doPush $1 package
   doPush $1 worker
+  doPush $1 package
+  doPush $1 doc
+  doPush $1 build
+  doPush $1 run
 }
 
 doPushWorker deb9
