@@ -283,3 +283,7 @@ github_token: FAKE_TOKEN
 #These are defined here, but need to be overridden in the host vars
 repo_username: FAKE_USERNAME
 repo_password: FAKE_PASSWORD
+
+
+#The API key for crowdin uploads
+crowdin_api_key: FAKE_API_KEY

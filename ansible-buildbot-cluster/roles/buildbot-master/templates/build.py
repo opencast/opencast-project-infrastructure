@@ -46,11 +46,23 @@ def getBuildPipeline():
         ),
         name="Deploy Build")
 
+    updateCrowdin = steps.ShellCommand(
+        command=["bash", ".upload-crowdin.sh"],
+        env={
+            "CROWDIN_API_KEY": util.Interpolate("%(secret:crowdin)s"),
+            "TRAVIS_PULL_REQUEST": "false", #This is always false since the PR doesn't use this method
+            "TRAVIS_BRANCH": util.Interpolate("%(prop:branch)s")
+        },
+        haltOnFailure=False,
+        flunkOnFailure=True,
+        name="Update Crowdin translation keys")
+
     f_build = __getBasePipeline()
     f_build.addStep(masterPrep)
     f_build.addStep(common.getPermissionsFix())
     f_build.addStep(uploadTarballs)
     f_build.addStep(updateBuild)
+    f_build.addStep(updateCrowdin)
     f_build.addStep(common.getClean())
 
     return f_build

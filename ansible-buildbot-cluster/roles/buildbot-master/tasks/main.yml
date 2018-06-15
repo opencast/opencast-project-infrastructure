@@ -46,6 +46,7 @@
     - "{{ buildbot_home }}"
     - "{{ disk_base }}"
     - "{{ buildbot_home }}/buildbot-config"
+    - "{{ buildbot_home }}/buildbot-config/secrets"
     - "{{ buildbot_home }}/nginx-config"
 
 - name: Template configuration files
@@ -53,6 +54,7 @@
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     owner: "{{ buildbot_user }}"
+    mode: 0600
     force: yes
   become: yes
   with_items:
@@ -68,6 +70,7 @@
     - { src: "rpms.py", dest: "{{ buildbot_home }}/buildbot-config/rpms.py" }
     - { src: "schedulers.py", dest: "{{ buildbot_home }}/buildbot-config/schedulers.py" }
     - { src: "changehook.passwd", dest: "{{ buildbot_home }}/buildbot-config/changehook.passwd" }
+    - { src: "crowdin.key", dest: "{{ buildbot_home }}/buildbot-config/secrets/crowdin.key" }
     - { src: "cleaner.sh", dest: "{{ buildbot_home }}/cleaner.sh" }
     - { src: "buildbot.conf", dest: "{{ buildbot_home }}/nginx-config/buildbot.conf" }
     - { src: "nexus.conf", dest: "{{ buildbot_home }}/nginx-config/nexus.conf" }
