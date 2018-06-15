@@ -67,7 +67,9 @@ def getBuildPipeline():
 
     updateSite = steps.MasterShellCommand(
         command=util.Interpolate(
-            "rm -f {{ deployed_reports_symlink }} {{ deployed_javadocs_symlink }} {{ deployed_coverage_symlink }} && \
+            "ln -s {{ deployed_reports }}/apidocs {{ deployed_javadocs }} && \
+            ln -s {{ deployed_reports }} {{ deployed_coverage }} && \
+            rm -f {{ deployed_reports_symlink }} {{ deployed_javadocs_symlink }} {{ deployed_coverage_symlink }} && \
             ln -s {{ deployed_reports }} {{ deployed_reports_symlink }} && \
             ln -s {{ deployed_javadocs }} {{ deployed_javadocs_symlink }} && \
             ln -s {{ deployed_coverage }} {{ deployed_coverage_symlink }}"
