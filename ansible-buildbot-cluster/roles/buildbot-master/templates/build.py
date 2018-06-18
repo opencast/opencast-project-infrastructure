@@ -49,7 +49,7 @@ def getBuildPipeline():
     updateCrowdin = steps.ShellCommand(
         command=["bash", ".upload-crowdin.sh"],
         env={
-            "CROWDIN_API_KEY": util.Secret("crowdin"),
+            "CROWDIN_API_KEY": util.Secret("crowdin.key"),
             "TRAVIS_PULL_REQUEST": "false", #This is always false since the PR doesn't use this method
             "TRAVIS_BRANCH": util.Interpolate("%(prop:branch)s")
         },
