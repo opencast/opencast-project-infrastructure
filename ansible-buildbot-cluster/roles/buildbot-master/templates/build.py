@@ -58,10 +58,10 @@ def getBuildPipeline():
         name="Update Crowdin translation keys")
 
     f_build = __getBasePipeline()
-    #f_build.addStep(masterPrep)
-    #f_build.addStep(common.getPermissionsFix())
-    #f_build.addStep(uploadTarballs)
-    #f_build.addStep(updateBuild)
+    f_build.addStep(masterPrep)
+    f_build.addStep(common.getPermissionsFix())
+    f_build.addStep(uploadTarballs)
+    f_build.addStep(updateBuild)
     f_build.addStep(updateCrowdin)
     f_build.addStep(common.getClean())
 
