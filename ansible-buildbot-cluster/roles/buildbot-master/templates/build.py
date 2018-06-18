@@ -62,7 +62,7 @@ def getBuildPipeline():
     #f_build.addStep(common.getPermissionsFix())
     #f_build.addStep(uploadTarballs)
     #f_build.addStep(updateBuild)
-    f_build.addStep(updateCrowdin, withSecrets=[util.Secret("crowdin")])
+    f_build.addStep(updateCrowdin)
     f_build.addStep(common.getClean())
 
     return f_build
