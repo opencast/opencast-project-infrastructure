@@ -11,6 +11,7 @@ RUN apt-get update && \
         tar gzip bzip2 unzip \
         git \
         maven \
+        curl wget \
         openjdk-8-jdk && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
