@@ -70,6 +70,9 @@ stability_limit: 300
 #Where to fetch the debian packaging build files from
 source_deb_repo_url: "https://github.com/gregorydlogan/debian-packaging.git"
 
+#Where to fetch the rpm packaging build files from
+source_rpm_repo_url: "https://github.com/lkiesow/opencast-rpm-specs.git"
+
 #Who to send status mails to
 mail_to: "dev@opencast.org"
 

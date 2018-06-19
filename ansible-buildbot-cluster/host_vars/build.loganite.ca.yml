@@ -5,6 +5,7 @@ source_pr_owner: "gregorydlogan"
 mail_to: "gregorydlogan@gmail.com"
 docker_image_user: "greglogan"
 source_deb_repo_url: "git@bitbucket.org:greg_logan/debian_packaging-private.git"
+source_rpm_repo_url: "https://github.com/gregorydlogan/opencast-rpm-specs.git"
 
 buildbot_base: /opt/buildbot/build
 
