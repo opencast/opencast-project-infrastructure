@@ -7,7 +7,6 @@ ARG         DEBIAN_FRONTEND=noninteractive
 # Build deps
 RUN apt-get update && \
     apt-get install -y \
-        sudo \
         tar gzip bzip2 unzip \
         git \
         maven \
