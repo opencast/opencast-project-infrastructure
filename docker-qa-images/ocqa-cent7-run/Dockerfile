@@ -1,19 +1,19 @@
 FROM centos:7
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
-COPY ffmpeg*.deb /root/
+#COPY ffmpeg*.deb /root/
 
 RUN yum update -y && \
-    yum install epel-release && \
-    yum install \
+    yum install -y epel-release && \
+    yum install -y \
      # Run deps
         tesseract \
         tesseract-langpack-deu \
         nmap-ncat \
- f       synfig \
+#       synfig \
         sox \
         hunspell \
         hunspell-en \
-        openjdk-8-jre && \
+        java-1.8.0-openjdk && \
     yum clean all
 
