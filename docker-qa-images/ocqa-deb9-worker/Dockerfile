@@ -15,8 +15,7 @@ RUN  curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/release
      pip install 'twisted[tls]' && \
      pip install /usr/src/buildbot-worker
 
-#wget --quiet https://artifacts.crowdin.com/repo/deb/crowdin.deb
-COPY crowdin.deb /root/crowdin.deb
+ADD https://artifacts.crowdin.com/repo/deb/crowdin.deb /root/crowdin.deb
 
 RUN dpkg -i /root/crowdin.deb && \
     rm -f /root/crowdin.deb
