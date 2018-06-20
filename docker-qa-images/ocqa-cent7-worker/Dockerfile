@@ -20,6 +20,7 @@ RUN  curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/release
          #Crowdin
          crowdin && \
      # Install required python packages, and twisted
+     pip install --upgrade pip setuptools && \
      pip install 'twisted[tls]' && \
      pip install /usr/src/buildbot-worker
 
