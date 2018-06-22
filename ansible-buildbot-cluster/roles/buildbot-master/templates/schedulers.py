@@ -16,12 +16,17 @@ def getSchedulers(pretty_branch_name, git_branch_name):
 
     scheduler_list = []
 
+    major_version = pretty_branch_name[0]
+
     commits_branch = schedulers.AnyBranchScheduler(
         name=pretty_branch_name,
         change_filter=util.ChangeFilter(
             category=None, branch_re=git_branch_name),
         treeStableTimer={{stability_limit}},  #NB: Do not make this a string, a horribly unclear error occurs and nothing works for this scheduler...
-        properties={"branch_pretty": pretty_branch_name},
+        properties={
+            "branch_pretty": pretty_branch_name,
+            "major_version": major_version
+        },
         builderNames=[
             pretty_branch_name + " Build",
             pretty_branch_name + " Reports",
@@ -34,7 +39,10 @@ def getSchedulers(pretty_branch_name, git_branch_name):
             category=None, branch_re=git_branch_name),
         hour=3,
         onlyIfChanged=True,
-        properties={"branch_pretty": pretty_branch_name},
+        properties={
+            "branch_pretty": pretty_branch_name,
+            "major_version": major_version
+        },
         builderNames=[
             pretty_branch_name + " Nightly",
             pretty_branch_name + " Reports",
@@ -91,7 +99,11 @@ def getSchedulers(pretty_branch_name, git_branch_name):
             util.FixedParameter(
                 name="branch_pretty",
                 label="Pretty Branch Name",
-                default=pretty_branch_name)
+                default=pretty_branch_name),
+            util.FixedParameter(
+                name="major_version",
+                label="Major Version",
+                default=major_version)
 			])
 
     scheduler_list.extend([commits_branch, nightly_branch, forceScheduler])
