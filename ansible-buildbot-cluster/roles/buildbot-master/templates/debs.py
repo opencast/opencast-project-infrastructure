@@ -71,23 +71,16 @@ def getBuildPipeline():
         workdir="build",
         name="Get Debian script revision")
 
-    debsClean = steps.ShellCommand(
-        command=['rm', '-rf', 'binaries', 'outputs'],
-        workdir="build",
-        flunkOnFailure=False,
-        warnOnFailure=True,
-        name="Cleaning debian packaging directories")
-
     debsPrep = steps.ShellSequence(
         commands=[
             util.ShellArg(
                 command=[
                     'dch', '--newversion',
                     util.Interpolate(
-                        '%(prop:debs_package_version)s-%(prop:got_revision)s'),
+                        '%(prop:deb_script_rev)s-%(prop:got_revision)s'),
                     '-b', '-D', 'unstable', '-u', 'low', '--empty',
                     util.Interpolate(
-                        'Build revision %(prop:oc_commit)s, built with %(prop:deb_script_rev)s scripts'
+                        'Build revision %(prop:got_revision)s, built with %(prop:deb_script_rev)s scripts'
                     )
                 ],
                 flunkOnFailure=True,
