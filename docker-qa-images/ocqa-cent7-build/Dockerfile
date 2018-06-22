@@ -10,7 +10,7 @@ RUN yum install z-y \
 #        maven \
         curl wget \
         java-1.8.0-openjdk-devel && \
-    yum install /root/*.rpm && \
+    yum install -y /root/*.rpm && \
     rm -f /root/*.rpm && \
     yum clean all && \
     useradd -ms /bin/bash -d /builder builder && \

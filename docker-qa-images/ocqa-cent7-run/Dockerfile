@@ -16,7 +16,7 @@ RUN yum update -y && \
         hunspell \
         hunspell-en \
         java-1.8.0-openjdk && \
-    yum install /root/*.rpm && \
+    yum install -y /root/*.rpm && \
     rm -f /root/*.rpm && \
     yum clean all
 
