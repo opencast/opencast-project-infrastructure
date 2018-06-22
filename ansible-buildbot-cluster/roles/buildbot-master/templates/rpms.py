@@ -34,8 +34,7 @@ def getBuildPipeline():
 
     rpmsClone = steps.ShellCommand(
         command=[
-            'git', 'clone', "{{ source_deb_repo_url }}", '--branch',
-            util.Property('branch'), './'
+            'git', 'clone', "{{ source_rpm_repo_url }}", './'
         ],
         flunkOnFailure=True,
         haltOnFailure=True,
@@ -46,7 +45,9 @@ def getBuildPipeline():
     rpmsUpdate = steps.ShellSequence(
         commands=[
             util.ShellArg(
-                command=['git', 'fetch'], flunkOnFailure=True,
+                command=['git', 'fetch'],
+                flunkOnFailure=True,
+                haltOnFailure=True,
                 logfile='fetch'),
             util.ShellArg(
                 command=[
@@ -54,6 +55,7 @@ def getBuildPipeline():
                     util.Interpolate('origin/master')
                 ],
                 flunkOnFailure=True,
+                haltOnFailure=True,
                 logfile='checkout')
         ],
         workdir="build",
@@ -61,60 +63,36 @@ def getBuildPipeline():
         haltOnFailure=True,
         doStepIf=wasCloned,
         hideStepIf=hideIfNotAlreadyCloned,
-        name="Resetting debian packaging configs")
+        name="Resetting rpm packaging configs")
 
     rpmsVersion = steps.SetPropertyFromCommand(
         command="git rev-parse HEAD",
-        property="deb_script_rev",
+        property="rpm_script_rev",
         flunkOnFailure=True,
         warnOnFailure=True,
         haltOnFailure=True,
         workdir="build",
         name="Get rpm script revision")
 
-    rpmsClean = steps.ShellCommand(
-        command=['rm', '-rf', 'binaries', 'outputs'],
-        workdir="build",
-        flunkOnFailure=False,
-        warnOnFailure=True,
-        name="Cleaning debian packaging directories")
-
     rpmsPrep = steps.ShellSequence(
         commands=[
             util.ShellArg(
                 command=[
-                    'dch', '--newversion',
+                    'rpmdev-bumpspec', '-s',
                     util.Interpolate(
-                        '%(prop:debs_package_version)s-%(prop:got_revision)s'),
-                    '-b', '-D', 'unstable', '-u', 'low', '--empty',
+                        '"%(prop:rpm_script_rev)s-%(prop:got_revision)s"'),
+                    '-u', '"Buildbot <buildbot@opencast.org>"',
+                    '-c',
                     util.Interpolate(
-                        'Build revision %(prop:oc_commit)s, built with %(prop:deb_script_rev)s scripts'
-                    )
+                        'Build revision %(prop:got_revision)s, built with %(prop:rpm_script_rev)s scripts'
+                    ),
+                    util.Interpolate('opencast%(prop:major_version)s.spec')
                 ],
                 flunkOnFailure=True,
                 warnOnFailure=True,
-                logfile='dch'),
-            util.ShellArg(
-                command=[
-                    'git', 'config', 'user.email', 'buildbot@opencast.org'
-                ],
-                flunkOnFailure=True,
-                warnOnFailure=True,
-                logfile='email'),
-            util.ShellArg(
-                command=['git', 'config', 'user.name', 'Buildbot'],
-                flunkOnFailure=True,
-                warnOnFailure=True,
-                logfile='authorname'),
-            util.ShellArg(
-                command=[
-                    'git', 'commit', '-am', 'Automated commit prior to build'
-                ],
-                flunkOnFailure=True,
-                warnOnFailure=True,
-                logfile='commit')
+                logfile='rpmdev-bumpspec'),
         ],
-        workdir="build/opencast",
+        workdir="build/specs",
         name="Prepping rpms",
         haltOnFailure=True,
         flunkOnFailure=True)
@@ -123,49 +101,58 @@ def getBuildPipeline():
         commands=[
             util.ShellArg(
                 command=[
-                    'mkdir', '-p',
-                    util.Interpolate('binaries/%(prop:debs_package_version)s')
+                    'rpmdev-setuptree'
                 ],
                 haltOnFailure=True,
                 flunkOnFailure=True,
-                logfile="prep"),
+                logfile="rpmdev"),
             util.ShellArg(
-                command=util.Interpolate(
-                    "scp {{ buildbot_scp_builds }}/*.tar.gz binaries/%(prop:debs_package_version)s/"
-                ),
+                command=[
+                    'mkdir', '-p',
+                    'BUILD/opencast/build'
+                ],
                 haltOnFailure=True,
                 flunkOnFailure=True,
-                logfile="download")
+                logfile="rpmdev"),
+            util.ShellArg(
+                command=[
+                    "scp",
+                    util.Interpolate("{{ buildbot_scp_builds }}/*.tar.gz"),
+                    "BUILD/opencast/"
+                ],
+                haltOnFailure=True,
+                flunkOnFailure=True,
+                logfile="download"),
+			util.ShellArg(
+                command=[
+                    "ln", "-s",
+                    util.Interpolate("opencast%(prop:major_version)s.spec"),
+                    "SPECS"
+				],
+                haltOnFailure=True,
+                flunkOnFailure=True,
+                logfile="specs"),
+			util.ShellArg(
+                command=[
+                    "ln", "-s",
+                    util.Interpolate("opencast%(prop:major_version)s/*"),
+                    "SOURCES"
+				],
+                haltOnFailure=True,
+                flunkOnFailure=True,
+                logfile="sources")
         ],
-        name="Fetching built artifacts from buildmaster",
+        workdir="build/specs",
+        name="Fetching built artifacts from buildmaster and prepping build",
         haltOnFailure=True,
         flunkOnFailure=True)
 
     rpmsBuild = steps.ShellSequence(
-        commands=[
-            util.ShellArg(
-                command=util.Interpolate(
-                    'echo "source library.sh\ndoOpencast %(prop:debs_package_version)s %(prop:branch)s %(prop:got_revision)s" | tee build.sh'
-                ),
-                flunkOnFailure=True,
-                warnOnFailure=True,
-                haltOnFailure=True,
-                logfile='write'),
-            util.ShellArg(
-                command=['bash', 'build.sh'],
-                flunkOnFailure=True,
-                warnOnFailure=True,
-                haltOnFailure=True,
-                logfile='build'),
-            util.ShellArg(
-                command=util.Interpolate(
-                    'echo "Opencast version %(prop:got_revision)s packaged with version %(prop:deb_script_rev)s" | tee outputs/%(prop:oc_commit)s/revision.txt'
-                ),
-                flunkOnFailure=True,
-                warnOnFailure=True,
-                haltOnFailure=True,
-                logfile='revision')
-        ],
+        commands=util.Interpolate(
+            "for tarball in BUILD/opencast/* \
+            do \
+            rpmbuild --define 'ocdist `echo $tarball | cut -d '-' -f 3`' -bb --noclean SPECS/opencast%(prop:major_version)s.spec \
+            done"),
         workdir="build",
         name="Build rpms",
         haltOnFailure=True,
@@ -202,8 +189,8 @@ def getBuildPipeline():
     f_package_rpms.addStep(rpmsFetch)
     f_package_rpms.addStep(rpmsBuild)
     f_package_rpms.addStep(masterPrep)
-    f_package_rpms.addStep(rpmsUpload)
-    f_package_rpms.addStep(rpmsDeploy)
+    #f_package_rpms.addStep(rpmsUpload)
+    #f_package_rpms.addStep(rpmsDeploy)
     f_package_rpms.addStep(common.getClean())
 
     return f_package_rpms
