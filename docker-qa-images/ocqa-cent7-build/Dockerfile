@@ -4,7 +4,7 @@ MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 COPY *.rpm /root/
 
 # Build deps
-RUN yum install z-y \
+RUN yum install -y \
         tar gzip bzip2 unzip \
         git \
 #        maven \
