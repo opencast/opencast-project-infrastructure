@@ -40,7 +40,6 @@
     path: "{{ item  }}"
     owner: "{{ buildbot_user }}"
     group: "{{ buildbot_user }}"
-    recurse: yes
   become: yes
   with_items:
     - "{{ buildbot_home }}"

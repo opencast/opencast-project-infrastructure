@@ -11,7 +11,7 @@ def __getBasePipeline():
     f_build = util.BuildFactory()
     f_build.addStep(common.getClone())
     f_build.addStep(common.getWorkerPrep())
-    #f_build.addStep(common.getBuild())
+    f_build.addStep(common.getBuild())
 
     return f_build
 
