@@ -50,7 +50,10 @@ def getTriggerStep(scheduler_name, debs_version):
                  "debs_package_version": debs_version #pretty version name for deb packaging
             })
 
-def getBuildersForBranch(workers, pretty_branch_name, git_branch_name, debs_version):
+def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branch_name, debs_version):
+	
+    #Get the list of all workers.  This should be used in all cases unless there's a specific need (ie, debs, rpms)
+    workers = deb_workers + rpm_workers
 
     f_build = build.getBuildPipeline()
 
@@ -95,13 +98,13 @@ def getBuildersForBranch(workers, pretty_branch_name, git_branch_name, debs_vers
 
     b_package_debs = util.BuilderConfig(
         name=pretty_branch_name + " Debian Packaging",
-        workernames=workers,
+        workernames=deb_workers,
         factory=f_package_debs,
         collapseRequests=True)
 
     b_package_rpms = util.BuilderConfig(
         name=pretty_branch_name + " RPM Packaging",
-        workernames=workers,
+        workernames=rpm_workers,
         factory=f_package_rpms,
         collapseRequests=True)
 

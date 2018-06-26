@@ -6,3 +6,5 @@ id: 0
 name: worker
 #The maximum number of concurrent builds alllowed on this node.  Omitting this defaults to 1.
 maxbuilds: 1
+#The docker base image.  This can either be debian, or centos.  You likely want one of each so that both the rpms and debs get built.
+docker_base: debian
