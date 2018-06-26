@@ -5,6 +5,7 @@ import os.path
 from buildbot.plugins import *
 import common
 
+profiles = ["admin", "adminpresentation", "adminworker", "allinone", "ingest", "migration", "presentation", "worker"]
 
 def wasCloned(step):
     if step.getProperty("alreadyCloned") == "True":
@@ -23,6 +24,21 @@ def hideIfAlreadyCloned(results, step):
 
 def hideIfNotAlreadyCloned(results, step):
     return wasNotCloned(step)
+
+def getRPMBuilds():
+    builds = []
+    for profile in profiles:
+        builds.append(util.ShellArg(
+                command=[
+                    'rpmbuild', '--define',
+                    'ocdist ' + profile,
+                    '-bb', '--noclean',
+                    util.Interpolate("SPECS/opencast%(prop:major_version)s.spec")
+				],
+                haltOnFailure=True,
+                flunkOnFailure=True,
+                logfile="" + profile))
+    return builds
 
 
 def getBuildPipeline():
@@ -143,16 +159,18 @@ def getBuildPipeline():
                 logfile="sources")
         ],
         workdir="build/specs",
-        name="Fetching built artifacts from buildmaster and prepping build",
+        name="Fetch built artifacts and build prep",
         haltOnFailure=True,
         flunkOnFailure=True)
 
     rpmsBuild = steps.ShellSequence(
-        commands=util.Interpolate(
-            "for tarball in BUILD/opencast/* \
-            do \
-            rpmbuild --define 'ocdist `echo $tarball | cut -d '-' -f 3`' -bb --noclean SPECS/opencast%(prop:major_version)s.spec \
-            done"),
+        commands=[util.ShellArg(
+                command=[
+                    'ls'
+				],
+                haltOnFailure=True,
+                flunkOnFailure=True,
+                logfile="test")],
         workdir="build",
         name="Build rpms",
         haltOnFailure=True,
