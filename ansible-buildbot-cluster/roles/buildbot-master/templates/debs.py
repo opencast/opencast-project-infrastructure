@@ -66,7 +66,6 @@ def getBuildPipeline():
         command="git rev-parse HEAD",
         property="deb_script_rev",
         flunkOnFailure=True,
-        warnOnFailure=True,
         haltOnFailure=True,
         workdir="build",
         name="Get Debian script revision")
@@ -83,27 +82,27 @@ def getBuildPipeline():
                         'Build revision %(prop:got_revision)s, built with %(prop:deb_script_rev)s scripts'
                     )
                 ],
+                haltOnFailure=True,
                 flunkOnFailure=True,
-                warnOnFailure=True,
                 logfile='dch'),
             util.ShellArg(
                 command=[
                     'git', 'config', 'user.email', 'buildbot@opencast.org'
                 ],
+                haltOnFailure=True,
                 flunkOnFailure=True,
-                warnOnFailure=True,
                 logfile='email'),
             util.ShellArg(
                 command=['git', 'config', 'user.name', 'Buildbot'],
+                haltOnFailure=True,
                 flunkOnFailure=True,
-                warnOnFailure=True,
                 logfile='authorname'),
             util.ShellArg(
                 command=[
                     'git', 'commit', '-am', 'Automated commit prior to build'
                 ],
+                haltOnFailure=True,
                 flunkOnFailure=True,
-                warnOnFailure=True,
                 logfile='commit')
         ],
         workdir="build/opencast",
@@ -140,13 +139,11 @@ def getBuildPipeline():
                     'echo "source library.sh\ndoOpencast %(prop:debs_package_version)s %(prop:branch)s %(prop:got_revision)s" | tee build.sh'
                 ),
                 flunkOnFailure=True,
-                warnOnFailure=True,
                 haltOnFailure=True,
                 logfile='write'),
             util.ShellArg(
                 command=['bash', 'build.sh'],
                 flunkOnFailure=True,
-                warnOnFailure=True,
                 haltOnFailure=True,
                 logfile='build'),
             util.ShellArg(
@@ -154,7 +151,6 @@ def getBuildPipeline():
                     'echo "Opencast version %(prop:got_revision)s packaged with version %(prop:deb_script_rev)s" | tee outputs/%(prop:oc_commit)s/revision.txt'
                 ),
                 flunkOnFailure=True,
-                warnOnFailure=True,
                 haltOnFailure=True,
                 logfile='revision')
         ],
