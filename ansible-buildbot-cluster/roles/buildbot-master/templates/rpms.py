@@ -166,7 +166,7 @@ def getBuildPipeline():
         name="Prep relevant directories on buildmaster")
 
     #Note: We're using a string here because using the array disables shell globbing!
-    rpmssUpload = steps.ShellCommand(
+    rpmsUpload = steps.ShellCommand(
         command=util.Interpolate(
             "scp -r outputs/%(prop:got_revision)s/* {{ buildbot_scp_rpms }}"
         ),
@@ -174,7 +174,7 @@ def getBuildPipeline():
         flunkOnFailure=True,
         name="Upload rpms to buildmaster")
 
-    rpmssDeploy = steps.MasterShellCommand(
+    rpmsDeploy = steps.MasterShellCommand(
         command=util.Interpolate(
             "rm -f {{ deployed_rpms_symlink }} && ln -s {{ deployed_rpms }} {{ deployed_rpms_symlink }}"
         ),
@@ -189,8 +189,8 @@ def getBuildPipeline():
     f_package_rpms.addStep(rpmsFetch)
     f_package_rpms.addStep(rpmsBuild)
     f_package_rpms.addStep(masterPrep)
-    #f_package_rpms.addStep(rpmsUpload)
-    #f_package_rpms.addStep(rpmsDeploy)
+    f_package_rpms.addStep(rpmsUpload)
+    f_package_rpms.addStep(rpmsDeploy)
     f_package_rpms.addStep(common.getClean())
 
     return f_package_rpms
