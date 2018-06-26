@@ -225,28 +225,28 @@ deployed_javadocs_symlink: "{{ deployed_javadocs_symlink_base }}/%(prop:branch_p
 #Don't change these, change the paths and whatnot above
 
 #Where to push builds on the master
-buildbot_scp_builds: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ deployed_builds }}"
+buildbot_scp_builds: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_builds }}"
 
 #Where to push reports on the master
-buildbot_scp_reports: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ deployed_reports }}"
+buildbot_scp_reports: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_reports }}"
 
 #Where to push reports on the master
-buildbot_scp_javadocs: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ deployed_javadocs }}"
+buildbot_scp_javadocs: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_javadocs }}"
 
 #Where to push reports on the master
-buildbot_scp_markdown: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ deployed_markdown }}"
+buildbot_scp_markdown: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_markdown }}"
 
 #Where to push coverage reports on the master
-buildbot_scp_coverage: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ deployed_coverage }}"
+buildbot_scp_coverage: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_coverage }}"
 
 #Where to push PR coverage reports on the master
-buildbot_scp_PR_coverage: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ deployed_PR_coverage }}"
+buildbot_scp_PR_coverage: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_PR_coverage }}"
 
 #Where to push built debs on the master
-buildbot_scp_debs: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ deployed_debs }}"
+buildbot_scp_debs: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_debs }}"
 
 #Where to push built rpms on the master
-buildbot_scp_rpms: "{{ hostvars[groups['master'][0]]['buildbot_user'] }}@{{ groups['master'][0] }}:{{ deployed_rpms }}"
+buildbot_scp_rpms: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_rpms }}"
 
 
 #############
