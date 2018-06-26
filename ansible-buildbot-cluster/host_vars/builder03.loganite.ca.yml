@@ -4,3 +4,4 @@ login_user: ansible
 id: 4
 name: builder03
 docker_image_user: "greglogan"
+docker_base: centos
