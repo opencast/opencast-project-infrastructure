@@ -76,7 +76,7 @@ def getBuildPipeline():
                 command=[
                     'dch', '--newversion',
                     util.Interpolate(
-                        '%(prop:deb_script_rev)s-%(prop:got_revision)s'),
+                        '%(prop:branch_pretty)s-%(prop:got_revision)s'),
                     '-b', '-D', 'unstable', '-u', 'low', '--empty',
                     util.Interpolate(
                         'Build revision %(prop:got_revision)s, built with %(prop:deb_script_rev)s scripts'
