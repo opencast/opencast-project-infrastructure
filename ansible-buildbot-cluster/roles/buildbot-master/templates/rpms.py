@@ -80,7 +80,7 @@ def getBuildPipeline():
                 command=[
                     'rpmdev-bumpspec', '-s',
                     util.Interpolate(
-                        '"%(prop:rpm_script_rev)s-%(prop:got_revision)s"'),
+                        '%(prop:got_revision)s'),
                     '-u', '"Buildbot <buildbot@opencast.org>"',
                     '-c',
                     util.Interpolate(
