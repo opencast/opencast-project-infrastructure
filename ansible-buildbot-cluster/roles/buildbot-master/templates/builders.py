@@ -47,7 +47,8 @@ def getTriggerStep(scheduler_name, debs_version):
             set_properties={
                  "got_revision": util.Property("got_revision"), #used in the packaging scripts
                  "branch_pretty": util.Property("branch_pretty"), #used for deploying things
-                 "debs_package_version": debs_version #pretty version name for deb packaging
+                 "debs_package_version": debs_version, #pretty version name for deb packaging
+                 "major_version": util.Property("major_version") #used for rpm packaging
             })
 
 def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branch_name, debs_version):
