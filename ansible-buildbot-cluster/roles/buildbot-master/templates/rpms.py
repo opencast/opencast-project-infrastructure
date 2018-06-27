@@ -34,7 +34,10 @@ def getRPMBuilds():
                     'ocdist ' + profile,
                     '-bb', '--noclean',
                     util.Interpolate("SPECS/opencast%(prop:major_version)s.spec")
-				],
+                ],
+                env={
+                    'HOME': "build"
+                },
                 haltOnFailure=True,
                 flunkOnFailure=True,
                 logfile="" + profile))
@@ -117,15 +120,18 @@ def getBuildPipeline():
         commands=[
             util.ShellArg(
                 command=[
-                    'rpmdev-setuptree'
+                    'rpmdev-setuptree''
                 ],
+                env={
+                    'HOME': "build"
+                },
                 haltOnFailure=True,
                 flunkOnFailure=True,
                 logfile="rpmdev"),
             util.ShellArg(
                 command=[
                     'mkdir', '-p',
-                    'BUILD/opencast/build'
+                    'rpmbuild/BUILD/opencast/build',
                 ],
                 haltOnFailure=True,
                 flunkOnFailure=True,
@@ -139,21 +145,21 @@ def getBuildPipeline():
                 haltOnFailure=True,
                 flunkOnFailure=True,
                 logfile="download"),
-			util.ShellArg(
+            util.ShellArg(
                 command=[
-                    "ln", "-s",
+                    "ln", "-sr",
                     util.Interpolate("opencast%(prop:major_version)s.spec"),
                     "SPECS"
-				],
+                ],
                 haltOnFailure=True,
                 flunkOnFailure=True,
                 logfile="specs"),
-			util.ShellArg(
+            util.ShellArg(
                 command=[
-                    "ln", "-s",
+                    "ln", "-sr",
                     util.Interpolate("opencast%(prop:major_version)s/*"),
                     "SOURCES"
-				],
+                ],
                 haltOnFailure=True,
                 flunkOnFailure=True,
                 logfile="sources")
@@ -164,14 +170,8 @@ def getBuildPipeline():
         flunkOnFailure=True)
 
     rpmsBuild = steps.ShellSequence(
-        commands=[util.ShellArg(
-                command=[
-                    'ls'
-				],
-                haltOnFailure=True,
-                flunkOnFailure=True,
-                logfile="test")],
-        workdir="build",
+        commands=getRPMBuilds(),
+        workdir="build/specs",
         name="Build rpms",
         haltOnFailure=True,
         flunkOnFailure=True)
