@@ -35,9 +35,7 @@ def getRPMBuilds():
                     '-bb', '--noclean',
                     util.Interpolate("SPECS/opencast%(prop:major_version)s.spec")
                 ],
-                env={
-                    'HOME': "build"
-                },
+                #command="ls -R",
                 haltOnFailure=True,
                 flunkOnFailure=True,
                 logfile="" + profile))
@@ -119,19 +117,22 @@ def getBuildPipeline():
     rpmsFetch = steps.ShellSequence(
         commands=[
             util.ShellArg(
+			    #We're using a string here rather than an arg array since we need the shell functions
+                command='echo -e "%_topdir\t`pwd`" > ~/.rpmmacros',
+                haltOnFailure=True,
+                flunkOnFailure=True,
+                logfile="rpmdev-setup"),
+            util.ShellArg(
                 command=[
-                    'rpmdev-setuptree''
+                    'rpmdev-setuptree'
                 ],
-                env={
-                    'HOME': "build"
-                },
                 haltOnFailure=True,
                 flunkOnFailure=True,
                 logfile="rpmdev"),
             util.ShellArg(
                 command=[
                     'mkdir', '-p',
-                    'rpmbuild/BUILD/opencast/build',
+                    'BUILD/opencast/build',
                 ],
                 haltOnFailure=True,
                 flunkOnFailure=True,
@@ -140,7 +141,7 @@ def getBuildPipeline():
                 command=[
                     "scp",
                     util.Interpolate("{{ buildbot_scp_builds }}/*.tar.gz"),
-                    "BUILD/opencast/"
+                    "BUILD/opencast/build"
                 ],
                 haltOnFailure=True,
                 flunkOnFailure=True,
@@ -155,11 +156,8 @@ def getBuildPipeline():
                 flunkOnFailure=True,
                 logfile="specs"),
             util.ShellArg(
-                command=[
-                    "ln", "-sr",
-                    util.Interpolate("opencast%(prop:major_version)s/*"),
-                    "SOURCES"
-                ],
+                #Same here
+                command=util.Interpolate("ln -sr opencast%(prop:major_version)s/* SOURCES"),
                 haltOnFailure=True,
                 flunkOnFailure=True,
                 logfile="sources")
