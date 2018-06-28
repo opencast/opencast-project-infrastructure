@@ -118,7 +118,7 @@ def getBuildPipeline():
         commands=[
             util.ShellArg(
 			    #We're using a string here rather than an arg array since we need the shell functions
-                command='echo -e "%_topdir\t`pwd`" > ~/.rpmmacros',
+                command='echo -e "%_topdir `pwd`" > ~/.rpmmacros',
                 haltOnFailure=True,
                 flunkOnFailure=True,
                 logfile="rpmdev-setup"),
@@ -136,7 +136,7 @@ def getBuildPipeline():
                 ],
                 haltOnFailure=True,
                 flunkOnFailure=True,
-                logfile="rpmdev"),
+                logfile="prep"),
             util.ShellArg(
                 command=[
                     "scp",
