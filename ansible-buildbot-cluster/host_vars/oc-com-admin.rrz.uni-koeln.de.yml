@@ -1,0 +1,15 @@
+---
+
+login_user: greglogan
+mail_to: "gregorydlogan@gmail.com"
+docker_image_user: "greglogan"
+source_rpm_repo_url: "https://github.com/gregorydlogan/opencast-rpm-specs.git"
+
+crowdin_api_key:
+
+github_client_id:
+github_client_secret:
+
+github_hook_user:
+github_hook_pass:
+github_hook_secret:
