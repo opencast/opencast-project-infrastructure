@@ -30,12 +30,12 @@ def getRPMBuilds():
     for profile in profiles:
         builds.append(util.ShellArg(
                 command=[
-                    'rpmbuild', '--define',
-                    'ocdist ' + profile,
+                    'rpmbuild',
+                    '--define', 'ocdist ' + profile,
+                    '--define', util.Interpolate('tarversion %(prop:major_version)s-SNAPSHOT'),
                     '-bb', '--noclean',
                     util.Interpolate("SPECS/opencast%(prop:major_version)s.spec")
                 ],
-                #command="ls -R",
                 haltOnFailure=True,
                 flunkOnFailure=True,
                 logfile="" + profile))
@@ -184,8 +184,9 @@ def getBuildPipeline():
     #Note: We're using a string here because using the array disables shell globbing!
     rpmsUpload = steps.ShellCommand(
         command=util.Interpolate(
-            "scp -r outputs/%(prop:got_revision)s/* {{ buildbot_scp_rpms }}"
+            "scp -r RPMS/noarch/* {{ buildbot_scp_rpms }}"
         ),
+        workdir="build/specs",
         haltOnFailure=True,
         flunkOnFailure=True,
         name="Upload rpms to buildmaster")
