@@ -184,7 +184,7 @@ def getBuildPipeline():
     #Note: We're using a string here because using the array disables shell globbing!
     rpmsUpload = steps.ShellCommand(
         command=util.Interpolate(
-            "scp -r RPMS/noarch/* {{ buildbot_scp_rpms }}"
+            "scp -r RPMS/noarch/ {{ buildbot_scp_rpms }}"
         ),
         workdir="build/specs",
         haltOnFailure=True,
@@ -205,7 +205,7 @@ def getBuildPipeline():
     f_package_rpms.addStep(rpmsPrep)
     f_package_rpms.addStep(rpmsFetch)
     f_package_rpms.addStep(rpmsBuild)
-    f_package_rpms.addStep(masterPrep)
+    #f_package_rpms.addStep(masterPrep)
     f_package_rpms.addStep(rpmsUpload)
     f_package_rpms.addStep(rpmsDeploy)
     f_package_rpms.addStep(common.getClean())
