@@ -1,0 +1,59 @@
+---
+
+- name: Install Python pip
+  package:
+    name: python-pip
+    state: latest
+  become: yes
+
+- name: Install docker-compose
+  pip:
+    name: "{{ item }}"
+    state: latest
+  become: yes
+  with_items:
+    - docker
+    - docker-compose
+
+  #Note, we're using /bin/bash here rather than /sbin/nologin or /bin/false because we need to be able to log in!
+- name: Create BuildBot user
+  user:
+    name: '{{ buildbot_user }}'
+    password: "{{ lookup('password', '/dev/null encrypt=sha1_crypt length=32') }}"
+    update_password: always
+    home: "{{ buildbot_home }}"
+    groups: docker
+    shell: /bin/bash
+  become: yes
+  when: create_buildbot_user
+
+- name: Determine Buildbot user's UID and GID
+  getent:
+    database: passwd
+    key: "{{ buildbot_user }}"
+    split: ":"
+  become: yes
+
+- name: Ensure required directories exist and have the right permissions
+  file:
+    state: directory
+    path: "{{ item  }}"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+  become: yes
+  with_items:
+    - "{{ buildbot_home }}"
+    - "{{ disk_base }}"
+    - "{{ buildbot_home }}/buildbot-config"
+    - "{{ buildbot_home }}/buildbot-config/secrets"
+    - "{{ buildbot_home }}/nginx-config"
+
+- name: Add Buildbot cleanup script to the crontab
+  cron:
+    name: "Remove old build artifacts"
+    special_time: hourly
+    job: "/bin/bash {{ buildbot_base }}/cleaner.sh"
+    user: "{{ buildbot_user }}"
+    state: present
+  become: yes
+

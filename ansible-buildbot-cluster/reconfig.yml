@@ -6,6 +6,6 @@
   user: "{{ login_user }}"
 
   roles:
-    - buildbot-master
+    - buildbot-master-config
   handlers:
     - import_tasks: handlers/handlers.yml
