@@ -48,7 +48,7 @@
     - "{{ buildbot_home }}/buildbot-config/secrets"
     - "{{ buildbot_home }}/nginx-config"
 
-- name: Template configuration files
+- name: Template Buildbot configuration files
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -68,17 +68,27 @@
     - { src: "reports.py", dest: "{{ buildbot_home }}/buildbot-config/reports.py" }
     - { src: "rpms.py", dest: "{{ buildbot_home }}/buildbot-config/rpms.py" }
     - { src: "schedulers.py", dest: "{{ buildbot_home }}/buildbot-config/schedulers.py" }
-    - { src: "changehook.passwd", dest: "{{ buildbot_home }}/buildbot-config/changehook.passwd" }
-    - { src: "crowdin.key", dest: "{{ buildbot_home }}/buildbot-config/secrets/crowdin.key" }
-    - { src: "cleaner.sh", dest: "{{ buildbot_home }}/cleaner.sh" }
     - { src: "buildbot.conf", dest: "{{ buildbot_home }}/nginx-config/buildbot.conf" }
     - { src: "nexus.conf", dest: "{{ buildbot_home }}/nginx-config/nexus.conf" }
   notify: "Start BuildBot"
 
+- name: Template Buildbot support files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ buildbot_user }}"
+    mode: 0600
+    force: yes
+  become: yes
+  with_items:
+    - { src: "changehook.passwd", dest: "{{ buildbot_home }}/buildbot-config/changehook.passwd" }
+    - { src: "crowdin.key", dest: "{{ buildbot_home }}/buildbot-config/secrets/crowdin.key" }
+    - { src: "cleaner.sh", dest: "{{ buildbot_home }}/cleaner.sh" }
+
 - name: Add Buildbot cleanup script to the crontab
   cron:
     name: "Remove old build artifacts"
-    special_time: daily
+    special_time: hourly
     job: "/bin/bash {{ buildbot_base }}/cleaner.sh"
     user: "{{ buildbot_user }}"
     state: present
