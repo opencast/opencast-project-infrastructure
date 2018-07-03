@@ -171,7 +171,7 @@ def getBuildPipeline():
         command=util.Interpolate(
             "scp -r outputs/%(prop:got_revision)s/ {{ buildbot_scp_debs }}"
         ),
-        haltOnFailure=True,
+        haltOnFailure=False,
         flunkOnFailure=True,
         name="Upload debs to buildmaster")
 
@@ -179,6 +179,8 @@ def getBuildPipeline():
         command=util.Interpolate(
             "rm -f {{ deployed_debs_symlink }} && ln -s {{ deployed_debs }} {{ deployed_debs_symlink }}"
         ),
+        haltOnFailure=False,
+        flunkOnFailure=True,
         name="Deploy Debs")
 
     f_package_debs = util.BuildFactory()
@@ -189,7 +191,7 @@ def getBuildPipeline():
     f_package_debs.addStep(debsPrep)
     f_package_debs.addStep(debsFetch)
     f_package_debs.addStep(debsBuild)
-    #f_package_debs.addStep(masterPrep)
+    f_package_debs.addStep(masterPrep)
     f_package_debs.addStep(debsUpload)
     f_package_debs.addStep(debsDeploy)
     f_package_debs.addStep(common.getClean())

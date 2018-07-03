@@ -187,7 +187,7 @@ def getBuildPipeline():
             "scp -r RPMS/noarch/ {{ buildbot_scp_rpms }}"
         ),
         workdir="build/specs",
-        haltOnFailure=True,
+        haltOnFailure=False,
         flunkOnFailure=True,
         name="Upload rpms to buildmaster")
 
@@ -195,6 +195,8 @@ def getBuildPipeline():
         command=util.Interpolate(
             "rm -f {{ deployed_rpms_symlink }} && ln -s {{ deployed_rpms }} {{ deployed_rpms_symlink }}"
         ),
+        haltOnFailure=False,
+        flunkOnFailure=True,
         name="Deploy rpms")
 
     f_package_rpms = util.BuildFactory()
@@ -205,7 +207,7 @@ def getBuildPipeline():
     f_package_rpms.addStep(rpmsPrep)
     f_package_rpms.addStep(rpmsFetch)
     f_package_rpms.addStep(rpmsBuild)
-    #f_package_rpms.addStep(masterPrep)
+    f_package_rpms.addStep(masterPrep)
     f_package_rpms.addStep(rpmsUpload)
     f_package_rpms.addStep(rpmsDeploy)
     f_package_rpms.addStep(common.getClean())
