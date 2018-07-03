@@ -5,3 +5,4 @@ id: 2
 name: oc-com-presentation
 docker_image_user: "greglogan"
 docker_base: centos
+docker_image_worker: ocqa-cent7-worker
