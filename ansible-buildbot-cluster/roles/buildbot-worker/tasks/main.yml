@@ -15,12 +15,12 @@
     - docker-py
 
 - name: Ensuring Docker is connectable via TCP
-  lineinfile:
-    path: /lib/systemd/system/docker.service
-    regexp: 'ExecStart=\/usr\/bin\/dockerd.*'
-    line: 'ExecStart=/usr/bin/dockerd -H fd:// -H tcp://localhost:2375'
-    backrefs: yes
-    state: present
+  template:
+    src: daemon.json
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: 0600
   become: yes
   notify: "Restart Docker"
 
