@@ -11,7 +11,7 @@
 - name: Start Autossh
   systemd:
     name: autossh
-    state: started
+    state: restarted
     enabled: yes
     daemon_reload: yes
   become: yes
