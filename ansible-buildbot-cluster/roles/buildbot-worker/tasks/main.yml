@@ -24,6 +24,14 @@
   become: yes
   notify: "Restart Docker"
 
+- name: Clearing out Docker socket settings from systemd unit files
+  replace:
+    path: /lib/systemd/system/docker.service
+    regexp: " -H fd://"
+    replace: ""
+  become: yes
+  notify: "Restart Docker"
+
 - name: Ensure BuildBot directories exists and has the right permissions
   file:
     state: directory
