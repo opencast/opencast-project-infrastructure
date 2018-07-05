@@ -269,8 +269,7 @@ github_hook_pass: FAKE_PASS
 #The secret used by the webhook
 github_hook_secret: FAKE_SECRET
 
-#The token used by the pullrequest poller, only needed if you have set enable_polling to true
-#Note that this token is on a per-account level, so you probably need to create machine account for your github repo
+#The token used by the pullrequest poller and the status push.  If you are not using either of those then forget this key.
 github_token: FAKE_TOKEN
 
 #The credentials to use when installing the workers.  This is used to get an appropriate version of ffmpeg from the repo
