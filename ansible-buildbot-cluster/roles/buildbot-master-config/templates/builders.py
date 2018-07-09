@@ -39,7 +39,7 @@ def getPullRequestBuilder(workers):
     b_pr_build, b_pr_reports, b_pr_markdown
   ]
 
-def getTriggerStep(scheduler_name, debs_version):
+def getTriggerStep(scheduler_name, debs_version, rpms_version):
   return steps.Trigger(
             schedulerNames=[scheduler_name],
             waitForFinish=False,
@@ -48,10 +48,10 @@ def getTriggerStep(scheduler_name, debs_version):
                  "got_revision": util.Property("got_revision"), #used in the packaging scripts
                  "branch_pretty": util.Property("branch_pretty"), #used for deploying things
                  "debs_package_version": debs_version, #pretty version name for deb packaging
-                 "major_version": util.Property("major_version") #used for rpm packaging
+                 "major_version": rpms_version #used for rpm packaging
             })
 
-def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branch_name, debs_version):
+def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branch_name, debs_version, rpms_version):
 	
     #Get the list of all workers.  This should be used in all cases unless there's a specific need (ie, debs, rpms)
     workers = deb_workers + rpm_workers
@@ -66,7 +66,7 @@ def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branc
 
     for buildType in ("Debian Packaging", "RPM Packaging"):
       scheduler_name = pretty_branch_name + " " + buildType
-      f_nightly.addStep(getTriggerStep(scheduler_name, debs_version))
+      f_nightly.addStep(getTriggerStep(scheduler_name, debs_version, rpms_version))
 
     f_package_debs = debs.getBuildPipeline()
 
