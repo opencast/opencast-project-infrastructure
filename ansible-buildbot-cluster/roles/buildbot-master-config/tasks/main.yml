@@ -1,5 +1,19 @@
 ---
 
+- name: Determine Buildbot UID
+  getent:
+    database: 'passwd'
+    key: '{{ buildbot_user }}'
+    split: ':'
+  register: buildbot_uid
+
+- name: Determine Buildbot GID
+  getent:
+    database: 'group'
+    key: '{{ buildbot_user }}'
+    split: ':'
+  register: buildbot_gid
+  
 - name: Template Buildbot configuration files
   template:
     src: "{{ item.src }}"
