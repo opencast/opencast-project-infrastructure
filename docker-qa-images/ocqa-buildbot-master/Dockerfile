@@ -6,10 +6,13 @@ FROM        buildbot/buildbot-master:v1.2.0
 MAINTAINER  Greg Logan
 
 RUN \
-# install extra pip dependencies not present in upstream image
+    # install cairo for build badges
+    apk add --no-cache cairo && \
+    # install extra pip dependencies not present in upstream image
     pip install --upgrade pip setuptools && \
     pip install requests \
                 urllib3[secure] \
                 txrequests \
-                docker && \
+                docker \
+                buildbot-badges && \
     rm -r /root/.cache
