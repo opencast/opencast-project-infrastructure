@@ -42,7 +42,7 @@ def getBuild():
 
 def getPermissionsFix():
     return steps.MasterShellCommand(
-        command=["chown", "-R", "{{ buildbot_uid }}:{{ buildbot_gid }}",
+        command=["chown", "-R", "{{ buildbot_uid['ansible_facts']['getent_passwd']['buildbot'][1] }}:{{ buildbot_gid['ansible_facts']['getent_group']['buildbot'][1] }}",
             util.Interpolate(os.path.normpath("{{ deployed_builds }}"))
         ],
         name="Fixing directory permissions on buildmaster")

@@ -13,7 +13,7 @@
     key: '{{ buildbot_user }}'
     split: ':'
   register: buildbot_gid
-  
+
 - name: Template Buildbot configuration files
   template:
     src: "{{ item.src }}"
