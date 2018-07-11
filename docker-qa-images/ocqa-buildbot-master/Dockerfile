@@ -16,3 +16,6 @@ RUN \
                 docker \
                 buildbot-badges && \
     rm -r /root/.cache
+
+COPY *.py /usr/lib/python2.7/site-packages/buildbot_badges/
+COPY *.svg.j2 /usr/lib/python2.7/site-packages/buildbot_badges/templates/
