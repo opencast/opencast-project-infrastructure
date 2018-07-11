@@ -83,7 +83,7 @@ enable_polling: False
 poll_interval: 10
 
 #Number of days to keep artifacts around.  Note that this does *not* check against the available disk space!
-keep_artifacts: 15
+keep_artifacts: 7
 
 
 #######################
