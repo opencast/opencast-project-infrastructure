@@ -39,18 +39,6 @@ def getPullRequestBuilder(workers):
     b_pr_build, b_pr_reports, b_pr_markdown
   ]
 
-def getTriggerStep(scheduler_name, debs_version, rpms_version):
-  return steps.Trigger(
-            schedulerNames=[scheduler_name],
-            waitForFinish=False,
-            name="Trigger " + scheduler_name,
-            set_properties={
-                 "got_revision": util.Property("got_revision"), #used in the packaging scripts
-                 "branch_pretty": util.Property("branch_pretty"), #used for deploying things
-                 "debs_package_version": debs_version, #pretty version name for deb packaging
-                 "major_version": rpms_version #used for rpm packaging
-            })
-
 def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branch_name, debs_version, rpms_version):
 	
     #Get the list of all workers.  This should be used in all cases unless there's a specific need (ie, debs, rpms)
@@ -62,12 +50,6 @@ def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branc
 
     f_markdown = markdown.getBuildPipeline()
 
-    f_nightly = build.getBuildPipeline()
-
-    for buildType in ("Debian Packaging", "RPM Packaging"):
-      scheduler_name = pretty_branch_name + " " + buildType
-      f_nightly.addStep(getTriggerStep(scheduler_name, debs_version, rpms_version))
-
     f_package_debs = debs.getBuildPipeline()
 
     f_package_rpms = rpms.getBuildPipeline()
@@ -77,12 +59,6 @@ def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branc
         name=pretty_branch_name + " Build",
         workernames=workers,
         factory=f_build,
-        collapseRequests=True)
-
-    b_nightly = util.BuilderConfig(
-        name=pretty_branch_name + " Nightly",
-        workernames=workers,
-        factory=f_nightly,
         collapseRequests=True)
 
     b_reports = util.BuilderConfig(
@@ -110,5 +86,5 @@ def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branc
         collapseRequests=True)
 
     return [
-        b_build, b_nightly, b_reports, b_markdown, b_package_debs, b_package_rpms
+        b_build, b_reports, b_markdown, b_package_debs, b_package_rpms
     ]

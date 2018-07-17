@@ -44,15 +44,9 @@ def getSchedulers(pretty_branch_name, git_branch_name):
             "major_version": major_version
         },
         builderNames=[
-            pretty_branch_name + " Nightly",
-            pretty_branch_name + " Reports",
-            pretty_branch_name + " Markdown"
+            pretty_branch_name + " Debian Packaging",
+            pretty_branch_name + " RPM Packaging",
         ])
-
-
-    for build_type in ("Debian Packaging","RPM Packaging"):
-      name = pretty_branch_name + " " + build_type
-      scheduler_list.append(schedulers.Triggerable(name=name, builderNames=[name]))
 
     #Note: This is a hack, but we need a unique name for the force schedulers, and it can't have special characters in it...
     forceScheduler = schedulers.ForceScheduler(
@@ -60,10 +54,11 @@ def getSchedulers(pretty_branch_name, git_branch_name):
         buttonName="Force Build",
         label="Force Build Settings",
         builderNames=[
-            pretty_branch_name + " Nightly",
             pretty_branch_name + " Build",
             pretty_branch_name + " Reports",
-            pretty_branch_name + " Markdown"
+            pretty_branch_name + " Markdown",
+            pretty_branch_name + " Debian Packaging",
+            pretty_branch_name + " RPM Packaging",
         ],
         codebases=[
             util.CodebaseParameter(

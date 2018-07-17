@@ -91,29 +91,6 @@ def getBuildPipeline():
         workdir="build",
         name="Get rpm script revision")
 
-    rpmsPrep = steps.ShellSequence(
-        commands=[
-            util.ShellArg(
-                command=[
-                    'rpmdev-bumpspec', '-s',
-                    util.Interpolate(
-                        '%(prop:got_revision)s'),
-                    '-u', '"Buildbot <buildbot@opencast.org>"',
-                    '-c',
-                    util.Interpolate(
-                        'Build revision %(prop:got_revision)s, built with %(prop:rpm_script_rev)s scripts'
-                    ),
-                    util.Interpolate('opencast%(prop:major_version)s.spec')
-                ],
-                flunkOnFailure=True,
-                warnOnFailure=True,
-                logfile='rpmdev-bumpspec'),
-        ],
-        workdir="build/specs",
-        name="Prepping rpms",
-        haltOnFailure=True,
-        flunkOnFailure=True)
-
     rpmsFetch = steps.ShellSequence(
         commands=[
             util.ShellArg(
@@ -167,6 +144,37 @@ def getBuildPipeline():
         haltOnFailure=True,
         flunkOnFailure=True)
 
+    rpmsTarballVersion = steps.SetPropertyFromCommand(
+        command=util.Interpolate('cat BUILD/opencast/build/revision.txt'),
+        property="got_revision", #Note: We're overwriting this value to set it to the built revision rather than whatever it defaults to
+        flunkOnFailure=True,
+        haltOnFailure=True,
+        workdir="build/specs",
+        name="Get build tarball revision")
+
+    rpmsPrep = steps.ShellSequence(
+        commands=[
+            util.ShellArg(
+                command=[
+                    'rpmdev-bumpspec', '-s',
+                    util.Interpolate(
+                        '%(prop:got_revision)s'),
+                    '-u', '"Buildbot <buildbot@opencast.org>"',
+                    '-c',
+                    util.Interpolate(
+                        'Build revision %(prop:got_revision)s, built with %(prop:rpm_script_rev)s scripts'
+                    ),
+                    util.Interpolate('opencast%(prop:major_version)s.spec')
+                ],
+                flunkOnFailure=True,
+                warnOnFailure=True,
+                logfile='rpmdev-bumpspec'),
+        ],
+        workdir="build/specs",
+        name="Prepping rpms",
+        haltOnFailure=True,
+        flunkOnFailure=True)
+
     rpmsBuild = steps.ShellSequence(
         commands=getRPMBuilds(),
         workdir="build/specs",
@@ -204,8 +212,9 @@ def getBuildPipeline():
     f_package_rpms.addStep(rpmsClone)
     f_package_rpms.addStep(rpmsUpdate)
     f_package_rpms.addStep(rpmsVersion)
-    f_package_rpms.addStep(rpmsPrep)
     f_package_rpms.addStep(rpmsFetch)
+    f_package_rpms.addStep(rpmsTarballVersion)
+    f_package_rpms.addStep(rpmsPrep)
     f_package_rpms.addStep(rpmsBuild)
     f_package_rpms.addStep(masterPrep)
     f_package_rpms.addStep(rpmsUpload)

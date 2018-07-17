@@ -70,6 +70,36 @@ def getBuildPipeline():
         workdir="build",
         name="Get Debian script revision")
 
+    debsFetch = steps.ShellSequence(
+        commands=[
+            util.ShellArg(
+                command=[
+                    'mkdir', '-p',
+                    util.Interpolate('binaries/%(prop:debs_package_version)s')
+                ],
+                haltOnFailure=True,
+                flunkOnFailure=True,
+                logfile="prep"),
+            util.ShellArg(
+                command=util.Interpolate(
+                    "scp {{ buildbot_scp_builds }}/*.tar.gz binaries/%(prop:debs_package_version)s/"
+                ),
+                haltOnFailure=True,
+                flunkOnFailure=True,
+                logfile="download")
+        ],
+        name="Fetching built artifacts from buildmaster",
+        haltOnFailure=True,
+        flunkOnFailure=True)
+
+    debsTarballVersion = steps.SetPropertyFromCommand(
+        command=util.Interpolate('cat binaries/%(prop:debs_package_version)s/revision.txt'),
+        property="got_revision", #Note: We're overwriting this value to set it to the built revision rather than whatever it defaults to
+        flunkOnFailure=True,
+        haltOnFailure=True,
+        workdir="build",
+        name="Get build tarball revision")
+
     debsPrep = steps.ShellSequence(
         commands=[
             util.ShellArg(
@@ -107,28 +137,6 @@ def getBuildPipeline():
         ],
         workdir="build/opencast",
         name="Prepping Debs",
-        haltOnFailure=True,
-        flunkOnFailure=True)
-
-    debsFetch = steps.ShellSequence(
-        commands=[
-            util.ShellArg(
-                command=[
-                    'mkdir', '-p',
-                    util.Interpolate('binaries/%(prop:debs_package_version)s')
-                ],
-                haltOnFailure=True,
-                flunkOnFailure=True,
-                logfile="prep"),
-            util.ShellArg(
-                command=util.Interpolate(
-                    "scp {{ buildbot_scp_builds }}/*.tar.gz binaries/%(prop:debs_package_version)s/"
-                ),
-                haltOnFailure=True,
-                flunkOnFailure=True,
-                logfile="download")
-        ],
-        name="Fetching built artifacts from buildmaster",
         haltOnFailure=True,
         flunkOnFailure=True)
 
@@ -188,8 +196,9 @@ def getBuildPipeline():
     f_package_debs.addStep(debsClone)
     f_package_debs.addStep(debsUpdate)
     f_package_debs.addStep(debsVersion)
-    f_package_debs.addStep(debsPrep)
     f_package_debs.addStep(debsFetch)
+    f_package_debs.addStep(debsTarballVersion)
+    f_package_debs.addStep(debsPrep)
     f_package_debs.addStep(debsBuild)
     f_package_debs.addStep(masterPrep)
     f_package_debs.addStep(debsUpload)
