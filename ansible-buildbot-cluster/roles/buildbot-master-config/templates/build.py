@@ -47,12 +47,14 @@ def getBuildPipeline():
         name="Deploy Build")
 
     updateCrowdin = steps.ShellCommand(
-        command=["bash", ".upload-crowdin.sh"],
+        command="if [ -f .upload-crowdin.sh] then CROWDIN_API_KEY=util.Secret('crowdin.key') bash .upload-crowdin.sh; fi",
         env={
             "CROWDIN_API_KEY": util.Secret("crowdin.key"),
             "TRAVIS_PULL_REQUEST": "false", #This is always false since the PR doesn't use this method
             "TRAVIS_BRANCH": util.Interpolate("%(prop:branch)s")
         },
+	doStepIf={{ push_crowdin }},
+	hideStepIf={{ not push_crowdin }},
         haltOnFailure=False,
         flunkOnFailure=True,
         name="Update Crowdin translation keys")

@@ -88,6 +88,9 @@ keep_artifacts: 7
 #Whether to send the status emails and GitHub status pushes
 send_notifications: True
 
+#Whether to push crowdin data on successful build.  Generally this should be False unless you're the golden master CI infrastructure.
+push_crowdin: False
+
 
 #######################
 # Networking Settings #
