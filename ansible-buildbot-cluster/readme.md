@@ -22,7 +22,9 @@ Application Setup
 
 Create an OAUTH application on the org hosting the repository.  For Opencast this is
 https://github.com/organizations/opencast/settings/applications.  For build.opencast.org the homepage URL is
-`http(s)://build.opencast.org`, and the auth callback URL is `http(s)://build.opencast.org/auth/login`
+`http(s)://build.opencast.org`, and the auth callback URL is `http(s)://build.opencast.org/auth/login`.  Note that if
+you're setting this up for your own repo you will need to adjust the `Authz` roles in `master.cfg` since the default
+roles only exist in the upstream Opencast organization!
 
 
 Webhook Setup
@@ -62,6 +64,6 @@ Along with any other keys you wish to override.
 Worker nodes
 ------------
 
-Create a file for each worker node in host\vars named after the worker node.  For example, `builder01.opencast.org.yml`.
-This file sets up what the worker node's identity is within Buildbot, and what it should build.  An example file is in
+Create a file for each worker node in `host_vars` named after the worker node.  For example, `builder01.opencast.org.yml`.
+This file sets up the worker node's identity within Buildbot, and what it should build.  An example file is in
 `host_vars/worker.yml`.
