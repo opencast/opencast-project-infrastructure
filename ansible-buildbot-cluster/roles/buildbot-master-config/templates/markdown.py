@@ -58,8 +58,7 @@ def __getBasePipeline():
         workdir="build/docs/guides",
         name="Build Markdown docs",
         haltOnFailure=True,
-        flunkOnFailure=True,
-        doStepIf=enabled)
+        flunkOnFailure=True)
 
 
     f_build = util.BuildFactory()
