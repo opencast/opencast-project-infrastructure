@@ -41,6 +41,12 @@ def getPullRequestBuilder(workers):
 
 def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branch_name, debs_version, rpms_version):
 	
+    props = {
+        'debs_package_version': debs_version,
+        'rpm_package_version': rpms_version,
+        'branch_pretty': pretty_branch_name
+    }
+
     #Get the list of all workers.  This should be used in all cases unless there's a specific need (ie, debs, rpms)
     workers = deb_workers + rpm_workers
 
@@ -59,30 +65,35 @@ def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branc
         name=pretty_branch_name + " Build",
         workernames=workers,
         factory=f_build,
+        properties=props,
         collapseRequests=True)
 
     b_reports = util.BuilderConfig(
         name=pretty_branch_name + " Reports",
         workernames=workers,
         factory=f_reports,
+        properties=props,
         collapseRequests=True)
 
     b_markdown = util.BuilderConfig(
         name=pretty_branch_name + " Markdown",
         workernames=workers,
         factory=f_markdown,
+        properties=props,
         collapseRequests=True)
 
     b_package_debs = util.BuilderConfig(
         name=pretty_branch_name + " Debian Packaging",
         workernames=deb_workers,
         factory=f_package_debs,
+        properties=props,
         collapseRequests=True)
 
     b_package_rpms = util.BuilderConfig(
         name=pretty_branch_name + " RPM Packaging",
         workernames=rpm_workers,
         factory=f_package_rpms,
+        properties=props,
         collapseRequests=True)
 
     return [
