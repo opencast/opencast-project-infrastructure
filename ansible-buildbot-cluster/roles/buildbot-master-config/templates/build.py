@@ -35,7 +35,7 @@ def getBuildPipeline():
     #Note: We're using a string here because using the array disables shell globbing!
     uploadTarballs = steps.ShellCommand(
         command=util.Interpolate(
-            "echo 'Opencast version %(prop:got_revision)s' | tee build/revision.txt && scp build/*.tar.gz {{ buildbot_scp_builds }}"),
+            "echo 'Opencast version %(prop:got_revision)s' | tee build/revision.txt && scp -r build/ {{ buildbot_scp_builds }}"),
         haltOnFailure=True,
         flunkOnFailure=True,
         name="Upload build to buildmaster")

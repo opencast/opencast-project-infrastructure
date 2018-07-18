@@ -117,7 +117,7 @@ def getBuildPipeline():
             util.ShellArg(
                 command=[
                     "scp",
-                    util.Interpolate("{{ buildbot_scp_builds }}/*.tar.gz"),
+                    util.Interpolate("{{ buildbot_scp_builds_fetch }}/*"),
                     "BUILD/opencast/build"
                 ],
                 haltOnFailure=True,

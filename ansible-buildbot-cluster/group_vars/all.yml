@@ -109,6 +109,7 @@ config_nginx: True
 
 #URI fragments defining where things should end up, relative to a given root directory/URL
 artifacts_fragment: "%(prop:branch_pretty)s/%(prop:got_revision)s"
+builds_fragment: "{{ artifacts_fragment }}/build"
 reports_fragment: "{{ artifacts_fragment }}/reports"
 javadocs_fragment: "{{ artifacts_fragment }}/javadocs"
 markdown_fragment: "{{ artifacts_fragment }}/markdown"
@@ -153,9 +154,12 @@ buildbot_master_config: "{{ buildbot_base }}/master.cfg"
 #Where built artifacts of all types live
 disk_base: /var/www/buildbot
 
+#Where the base of the build lives.  All of the artifacts for a given build live somewhere underneath this.
+build_base: "{{ disk_base }}/{{ artifacts_fragment }}"
+
 
 #Build location on master filesystem
-deployed_builds: "{{ disk_base }}/{{ artifacts_fragment }}"
+deployed_builds: "{{ disk_base }}/{{ builds_fragment }}"
 
 #The location on disk to where the build symlinks live
 deployed_builds_symlink_base: "{{ disk_base }}/builds"
@@ -232,6 +236,9 @@ deployed_javadocs_symlink: "{{ deployed_javadocs_symlink_base }}/%(prop:branch_p
 
 #Where to push builds on the master
 buildbot_scp_builds: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_builds }}"
+
+#Where to get the latest build for a given branch
+buildbot_scp_builds_fetch: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_builds_symlink }}"
 
 #Where to push reports on the master
 buildbot_scp_reports: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_reports }}"

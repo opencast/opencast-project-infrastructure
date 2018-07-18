@@ -82,7 +82,7 @@ def getBuildPipeline():
                 logfile="prep"),
             util.ShellArg(
                 command=util.Interpolate(
-                    "scp {{ buildbot_scp_builds }}/*.tar.gz binaries/%(prop:debs_package_version)s/"
+                    "scp {{ buildbot_scp_builds_fetch }}/* binaries/%(prop:debs_package_version)s/"
                 ),
                 haltOnFailure=True,
                 flunkOnFailure=True,
