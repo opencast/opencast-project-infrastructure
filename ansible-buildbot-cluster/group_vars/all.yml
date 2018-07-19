@@ -238,7 +238,7 @@ deployed_javadocs_symlink: "{{ deployed_javadocs_symlink_base }}/%(prop:branch_p
 buildbot_scp_builds: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_builds }}"
 
 #Where to get the latest build for a given branch
-buildbot_scp_builds_fetch: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_builds_symlink }}/build"
+buildbot_scp_builds_fetch: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_builds_symlink }}"
 
 #Where to push reports on the master
 buildbot_scp_reports: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_reports }}"

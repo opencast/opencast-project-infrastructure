@@ -106,7 +106,7 @@ def getBuildPipeline():
                 command=[
                     'dch', '--newversion',
                     util.Interpolate(
-                        '%(prop:branch_pretty)s-%(prop:got_revision)s'),
+                        '%(prop:debs_package_version)s-%(prop:got_revision)s'),
                     '-b', '-D', 'unstable', '-u', 'low', '--empty',
                     util.Interpolate(
                         'Build revision %(prop:got_revision)s, built with %(prop:deb_script_rev)s scripts'
@@ -143,6 +143,13 @@ def getBuildPipeline():
     debsBuild = steps.ShellSequence(
         commands=[
             util.ShellArg(
+                command=[
+                    'rm', '-f', util.Interpolate("binaries/%(prop:debs_package_version)s/revision.txt")
+                ],
+                haltOnFailure=True,
+                flunkOnFailure=True,
+                logfile='cleanup'),
+            util.ShellArg(
                 command=util.Interpolate(
                     'echo "source library.sh\ndoOpencast %(prop:debs_package_version)s %(prop:branch)s %(prop:got_revision)s" | tee build.sh'
                 ),
@@ -177,9 +184,9 @@ def getBuildPipeline():
     #Note: We're using a string here because using the array disables shell globbing!
     debsUpload = steps.ShellCommand(
         command=util.Interpolate(
-            "scp -r outputs/%(prop:got_revision)s/ {{ buildbot_scp_debs }}"
+            "scp -r outputs/%(prop:got_revision)s/* {{ buildbot_scp_debs }}"
         ),
-        haltOnFailure=False,
+        haltOnFailure=True,
         flunkOnFailure=True,
         name="Upload debs to buildmaster")
 
@@ -201,6 +208,7 @@ def getBuildPipeline():
     f_package_debs.addStep(debsPrep)
     f_package_debs.addStep(debsBuild)
     f_package_debs.addStep(masterPrep)
+    f_package_debs.addStep(common.getPermissionsFix())
     f_package_debs.addStep(debsUpload)
     f_package_debs.addStep(debsDeploy)
     f_package_debs.addStep(common.getClean())
