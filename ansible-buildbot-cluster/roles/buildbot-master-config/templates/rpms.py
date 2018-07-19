@@ -169,6 +169,11 @@ def getBuildPipeline():
                 flunkOnFailure=True,
                 warnOnFailure=True,
                 logfile='rpmdev-bumpspec'),
+            util.ShellArg(
+                command=['rm', '-f', 'BUILD/opencast/build/revision.txt'],
+                haltOnFailure=True,
+                flunkOnFailure=True,
+                logfile="cleanup")
         ],
         workdir="build/specs",
         name="Prepping rpms",
@@ -192,10 +197,10 @@ def getBuildPipeline():
     #Note: We're using a string here because using the array disables shell globbing!
     rpmsUpload = steps.ShellCommand(
         command=util.Interpolate(
-            "scp -r RPMS/noarch/ {{ buildbot_scp_rpms }}"
+            "scp -r RPMS/noarch/* {{ buildbot_scp_rpms }}"
         ),
         workdir="build/specs",
-        haltOnFailure=False,
+        haltOnFailure=True,
         flunkOnFailure=True,
         name="Upload rpms to buildmaster")
 
@@ -217,6 +222,7 @@ def getBuildPipeline():
     f_package_rpms.addStep(rpmsPrep)
     f_package_rpms.addStep(rpmsBuild)
     f_package_rpms.addStep(masterPrep)
+    f_package_rpms.addStep(common.getPermissionsFix())
     f_package_rpms.addStep(rpmsUpload)
     f_package_rpms.addStep(rpmsDeploy)
     f_package_rpms.addStep(common.getClean())
