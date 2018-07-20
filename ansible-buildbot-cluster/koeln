@@ -3,7 +3,7 @@ master
 workers
 
 [master]
-oc-com-admin.rrz.uni-koeln.de
+ci.opencast.org
 
 [workers]
 oc-com-presentation.rrz.uni-koeln.de
