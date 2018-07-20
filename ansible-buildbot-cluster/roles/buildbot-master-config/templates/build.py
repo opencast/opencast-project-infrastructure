@@ -53,8 +53,8 @@ def getBuildPipeline():
             "TRAVIS_PULL_REQUEST": "false", #This is always false since the PR doesn't use this method
             "TRAVIS_BRANCH": util.Interpolate("%(prop:branch)s")
         },
-	doStepIf={{ push_crowdin }},
-	hideStepIf={{ not push_crowdin }},
+        doStepIf={{ push_crowdin }},
+        hideStepIf={{ not push_crowdin }},
         haltOnFailure=False,
         flunkOnFailure=True,
         name="Update Crowdin translation keys")
