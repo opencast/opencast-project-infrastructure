@@ -44,6 +44,7 @@ def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branc
     props = {
         'debs_package_version': debs_version,
         'rpm_package_version': rpms_version,
+        'rpm_spec_filename': 'opencast' + rpms_version[0],
         'branch_pretty': pretty_branch_name
     }
 

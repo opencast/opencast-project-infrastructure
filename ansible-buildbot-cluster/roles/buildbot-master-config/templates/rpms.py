@@ -34,7 +34,7 @@ def getRPMBuilds():
                     '--define', 'ocdist ' + profile,
                     '--define', util.Interpolate('tarversion %(prop:rpm_package_version)s-SNAPSHOT'),
                     '-bb', '--noclean',
-                    util.Interpolate("SPECS/opencast%(prop:rpm_package_version)s.spec")
+                    util.Interpolate("SPECS/%(prop:rpm_spec_filename)s.spec")
                 ],
                 haltOnFailure=True,
                 flunkOnFailure=True,
@@ -126,7 +126,7 @@ def getBuildPipeline():
             util.ShellArg(
                 command=[
                     "ln", "-sr",
-                    util.Interpolate("opencast%(prop:rpm_package_version)s.spec"),
+                    util.Interpolate("%(prop:rpm_spec_filename)s.spec"),
                     "SPECS"
                 ],
                 haltOnFailure=True,
@@ -134,7 +134,7 @@ def getBuildPipeline():
                 logfile="specs"),
             util.ShellArg(
                 #Same here
-                command=util.Interpolate("ln -sr opencast%(prop:rpm_package_version)s/* SOURCES"),
+                command=util.Interpolate("ln -sr %(prop:rpm_spec_filename)s/* SOURCES"),
                 haltOnFailure=True,
                 flunkOnFailure=True,
                 logfile="sources")
@@ -164,7 +164,7 @@ def getBuildPipeline():
                     util.Interpolate(
                         'Build revision %(prop:got_revision)s, built with %(prop:rpm_script_rev)s scripts'
                     ),
-                    util.Interpolate('opencast%(prop:rpm_package_version)s.spec')
+                    util.Interpolate('%(prop:rpm_spec_filename)s.spec')
                 ],
                 flunkOnFailure=True,
                 warnOnFailure=True,
