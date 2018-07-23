@@ -3,7 +3,8 @@
 docker_image_user: "greglogan"
 source_rpm_repo_url: "https://github.com/gregorydlogan/opencast-rpm-specs.git"
 
-crowdin_api_key:
+send_notifications: False
+push_crowdin: True
 
 github_client_id:
 github_client_secret:
