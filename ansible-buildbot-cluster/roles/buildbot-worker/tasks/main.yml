@@ -6,13 +6,22 @@
 - import_tasks: centos.yml
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
-- name: Install docker-py for Docker latent worker support
+- name: Ensuring docker-py is not present
+  pip:
+    name: "{{ item }}"
+    state: absent
+  become: yes
+  with_items:
+    - docker-py
+
+- name: Install docker for Docker latent worker support
   pip:
     name: "{{ item }}"
     state: latest
   become: yes
   with_items:
-    - docker-py
+    - docker
+    - docker-compose
 
 - name: Ensuring Docker is connectable via TCP
   template:
@@ -31,6 +40,18 @@
     replace: ""
   become: yes
   notify: "Restart Docker"
+
+- name: Template docker-compose configuration file
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ buildbot_user }}"
+    mode: 0600
+    force: yes
+  become: yes
+  with_items:
+    - { src: "docker-compose.yml", dest: "{{ buildbot_home }}/docker-compose.yml" }
+  notify: "Start Databases"
 
 - name: Ensure BuildBot directories exists and has the right permissions
   file:

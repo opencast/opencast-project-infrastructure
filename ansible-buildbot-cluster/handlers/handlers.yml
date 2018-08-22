@@ -8,6 +8,14 @@
     restarted: yes
   become: yes
 
+- name: Start Databases
+  docker_service:
+    project_src: "{{ buildbot_home }}"
+    pull: yes
+    state: present
+    restarted: yes
+  become: yes
+
 - name: Start Autossh
   systemd:
     name: autossh
