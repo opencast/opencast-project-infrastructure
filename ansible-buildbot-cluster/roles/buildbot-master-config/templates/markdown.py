@@ -11,6 +11,36 @@ def enabled(step):
     else:
         return False
 
+def generateDBTestStep(dbname, dbport):
+
+    return steps.ShellSequence(
+        commands=[
+            util.ShellArg(
+                command=' echo "select version()" | mysql -u root -p ' + dbport,
+                flunkOnFailure=True,
+                haltOnFailure=False,
+                logfile='version'),
+            util.ShellArg(
+                command=util.Interpolate('echo "create database opencast%(prop:buildnumber)s;" | mysql -u root -p ' + dbport),
+                flunkOnFailure=True,
+                haltOnFailure=False,
+                logfile='createdb'),
+            util.ShellArg(
+                command='mysql -u root -p ' + dbport + ' opencast < docs/scripts/ddl/mysql5.sql',
+                flunkOnFailure=True,
+                haltOnFailure=False,
+                logfile='newdb'),
+            util.ShellArg(
+                command='bash docs/upgrade/.test.sh ' + dbport,
+                flunkOnFailure=True,
+                haltOnFailure=False,
+                logfile='maria'),
+        ],
+        workdir="build/",
+        name="Test database and migration scripts against " + dbname,
+        haltOnFailure=True,
+        flunkOnFailure=True)
+
 def __getBasePipeline(): 
 
     enable = steps.SetPropertyFromCommand(
@@ -66,6 +96,8 @@ def __getBasePipeline():
     f_build.addStep(enable)
     f_build.addStep(check)
     f_build.addStep(build)
+    f_build.addStep(generateDBTestStep("maria", "3307")
+    f_build.addStep(generateDBTestStep("mysql", "3308")
 
     return f_build
 
