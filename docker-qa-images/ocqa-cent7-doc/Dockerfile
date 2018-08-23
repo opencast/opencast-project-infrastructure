@@ -9,7 +9,9 @@ RUN curl -sL -o '/tmp/nodesource-release-el7-1.noarch.rpm' 'https://rpm.nodesour
      # Python deps
         python-pip \
      # Packages for building docs
-        nodejs && \
+        nodejs \
+     # For SQL script testing
+        mysql && \
     yum clean all && \
     pip install mkdocs
 

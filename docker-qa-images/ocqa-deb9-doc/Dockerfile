@@ -16,7 +16,9 @@ RUN apt-get update && \
         python-pip \
      # Packages for building docs
         libyaml-dev \
-        nodejs && \
+        nodejs \
+     # For SQL script testsing
+        mysql-client && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     pip install mkdocs
