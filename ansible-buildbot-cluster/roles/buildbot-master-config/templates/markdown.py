@@ -43,7 +43,7 @@ def generateDBTestStep(dbname, dbport):
         ],
         workdir="build/",
         name="Test database and migration scripts against " + dbname,
-        haltOnFailure=True,
+        haltOnFailure=False,
         flunkOnFailure=True)
 
 def __getBasePipeline(): 
@@ -68,7 +68,7 @@ def __getBasePipeline():
         ],
         workdir="build/docs/guides",
         name="Check Markdown doc formatting",
-        haltOnFailure=True,
+        haltOnFailure=False,
         flunkOnFailure=True,
         doStepIf=enabled)
 
@@ -92,7 +92,7 @@ def __getBasePipeline():
         ],
         workdir="build/docs/guides",
         name="Build Markdown docs",
-        haltOnFailure=True,
+        haltOnFailure=False,
         flunkOnFailure=True)
 
 
