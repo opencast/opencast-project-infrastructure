@@ -7,6 +7,8 @@
     ocadmins:
       - lars
       - greglogan
+      - wsmirnow
+      - cgreweling
 
   tasks:
     - name: install epel (rh)
