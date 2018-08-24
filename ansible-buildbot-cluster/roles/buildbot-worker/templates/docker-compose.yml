@@ -3,11 +3,15 @@ services:
   maria:
     image: mariadb:10
     restart: always
+    ports:
+      - "127.0.0.1:3307:3306"
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
 
   mysql:
     image: mysql:5
     restart: always
+    ports:
+      - "127.0.0.1:3308:3306"
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=true

@@ -13,20 +13,22 @@ def enabled(step):
 
 def generateDBTestStep(dbname, dbport):
 
+    mysqlString = "mysql -u root -h 127.0.0.1 -P " + dbport
+
     return steps.ShellSequence(
         commands=[
             util.ShellArg(
-                command=' echo "select version()" | mysql -u root -p ' + dbport,
+                command='echo "select version()" | ' + mysqlString,
                 flunkOnFailure=True,
                 haltOnFailure=False,
                 logfile='version'),
             util.ShellArg(
-                command=util.Interpolate('echo "create database opencast%(prop:buildnumber)s;" | mysql -u root -p ' + dbport),
+                command=util.Interpolate('echo "create database opencast%(prop:buildnumber)s;" | ' + mysqlString),
                 flunkOnFailure=True,
                 haltOnFailure=False,
                 logfile='createdb'),
             util.ShellArg(
-                command=util.Interpolate('mysql -u root -p ' + dbport + ' opencast%(prop:buildnumber)s < docs/scripts/ddl/mysql5.sql'),
+                command=util.Interpolate(mysqlString + ' opencast%(prop:buildnumber)s < docs/scripts/ddl/mysql5.sql'),
                 flunkOnFailure=True,
                 haltOnFailure=False,
                 logfile='newdb'),
@@ -36,7 +38,7 @@ def generateDBTestStep(dbname, dbport):
                 haltOnFailure=False,
                 logfile=dbname),
             util.ShellArg(
-                command=util.Interpolate('echo "drop database opencast%(prop:buildnumber)s;" | mysql -u root -p ' + dbport),
+                command=util.Interpolate('echo "drop database opencast%(prop:buildnumber)s;" | ' + mysqlString),
                 flunkOnFailure=True,
                 haltOnFailure=False,
                 logfile='dropdb'),
