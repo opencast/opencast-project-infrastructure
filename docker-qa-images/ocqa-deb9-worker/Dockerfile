@@ -13,7 +13,12 @@ RUN  curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/release
      chmod +x /usr/local/bin/dumb-init && \
      # Install required python packages, and twisted
      pip install 'twisted[tls]' && \
-     pip install /usr/src/buildbot-worker
+     pip install /usr/src/buildbot-worker && \
+     # bc for the database test script
+     apt-get update && \
+     apt-get install bc && \
+     apt-get clean && \
+     rm -rf /var/lib/apt/lists/*
 
 ADD https://artifacts.crowdin.com/repo/deb/crowdin.deb /root/crowdin.deb
 

@@ -18,7 +18,9 @@ RUN  curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/release
          gcc \
          python-devel \
          #Crowdin
-         crowdin && \
+         crowdin \
+         # bc for the database test script
+         bc && \
      # Install required python packages, and twisted
      pip install --upgrade pip setuptools && \
      pip install 'twisted[tls]' && \
