@@ -53,7 +53,7 @@
     - { src: "docker-compose.yml", dest: "{{ buildbot_home }}/docker-compose.yml" }
   notify: "Start Databases"
 
-- name: Ensure BuildBot directories exists and has the right permissions
+- name: Ensure Buildbot directories exists and has the right permissions
   file:
     state: directory
     path: "{{ item.path }}"
@@ -78,7 +78,7 @@
     mode: 0600
   become: yes
 
-- name: Creating copy of SSH keys with appropriate permissions for BuildBot
+- name: Creating copy of SSH keys with appropriate permissions for Buildbot
   copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"

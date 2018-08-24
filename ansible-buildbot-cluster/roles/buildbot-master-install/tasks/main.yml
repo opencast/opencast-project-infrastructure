@@ -16,7 +16,7 @@
     - docker-compose
 
   #Note, we're using /bin/bash here rather than /sbin/nologin or /bin/false because we need to be able to log in!
-- name: Create BuildBot user
+- name: Create Buildbot user
   user:
     name: '{{ buildbot_user }}'
     password: "{{ lookup('password', '/dev/null encrypt=sha1_crypt length=32') }}"

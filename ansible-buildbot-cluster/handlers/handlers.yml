@@ -1,6 +1,6 @@
 ---
 
-- name: Start BuildBot
+- name: Start Buildbot
   docker_service:
     project_src: "{{ buildbot_home }}"
     pull: yes

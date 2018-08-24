@@ -36,7 +36,7 @@
     - { src: "schedulers.py", dest: "{{ buildbot_home }}/buildbot-config/schedulers.py" }
     - { src: "buildbot.conf", dest: "{{ buildbot_home }}/nginx-config/buildbot.conf" }
     - { src: "nexus.conf", dest: "{{ buildbot_home }}/nginx-config/nexus.conf" }
-  notify: "Start BuildBot"
+  notify: "Start Buildbot"
 
 - name: Template Buildbot support files
   template:

@@ -1,12 +1,12 @@
-BuildBot
+Buildbot
 ==========
 
-These scripts setup BuildBot and configure it for Opencast usage.  Buildbot runs as its own user, so a second login user
-is required.  Please see the infrastructure users playbook to set those up!  To deploy BuildBot, run:
+These scripts setup Buildbot and configure it for Opencast usage.  Buildbot runs as its own user, so a second login user
+is required.  Please see the infrastructure users playbook to set those up!  To deploy Buildbot, run:
 
     ansible-playbook -K -i hosts buildbot.yml
 
-To update BuildBot run:
+To update Buildbot run:
 
     ansible-playbook -K -i hosts reconfig.yml
 

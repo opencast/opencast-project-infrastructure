@@ -52,7 +52,7 @@ docker_image_worker: "ocqa-deb9-worker"
 
 
 #####################
-# BuildBot Settings #
+# Buildbot Settings #
 #####################
 
 #The Opencast repository URL

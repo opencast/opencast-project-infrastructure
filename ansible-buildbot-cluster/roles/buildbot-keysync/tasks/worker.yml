@@ -3,13 +3,13 @@
 - name: Get Buildbot master sshd server key
   local_action: shell ssh-keyscan {{ groups['master'][0] }} bitbucket.org github.com > .ssh/known_hosts
 
-- name: Create BuildBot group
+- name: Create Buildbot group
   group:
     name: '{{ buildbot_user }}'
     state: present
   become: yes
 
-- name: Create BuildBot user
+- name: Create Buildbot user
   user:
     name: '{{ buildbot_user }}'
     password: "{{ lookup('password', '/dev/null encrypt=sha1_crypt length=32') }}"
@@ -29,7 +29,7 @@
     state: directory
   become: yes
 
-- name: Push BuildBot SSH keys
+- name: Push Buildbot SSH keys
   copy:
     src: ".ssh/"
     dest: "{{ buildbot_home }}/{{ item.dest }}/"

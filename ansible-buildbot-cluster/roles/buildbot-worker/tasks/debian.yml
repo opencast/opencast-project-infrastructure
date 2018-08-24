@@ -1,6 +1,6 @@
 ---
 
-- name: Install BuildBot system level dependencies
+- name: Install Buildbot system level dependencies
   apt:
     name: "{{ item }}"
     state: latest

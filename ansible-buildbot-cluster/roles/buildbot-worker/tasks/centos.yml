@@ -9,7 +9,7 @@
   with_items:
     - epel-release
 
-- name: Install BuildBot system level dependencies
+- name: Install Buildbot system level dependencies
   yum:
     name: "{{ item }}"
     state: latest

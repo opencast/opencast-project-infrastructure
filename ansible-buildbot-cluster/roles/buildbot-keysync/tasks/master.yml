@@ -1,6 +1,6 @@
 ---
 
-- name: Clear current BuildBot user ssh key
+- name: Clear current Buildbot user ssh key
   file:
     name: "{{ buildbot_home}}/{{ item }}"
     state: absent
@@ -16,7 +16,7 @@
     state: absent
   connection: local
 
-- name: Generate new BuildBot SSH key
+- name: Generate new Buildbot SSH key
   user:
     name: "{{ buildbot_user }}"
     home: "{{ buildbot_home }}"
@@ -24,7 +24,7 @@
     ssh_key_bits: 4096
   become: yes
 
-- name: Fetch BuildBot SSH keys
+- name: Fetch Buildbot SSH keys
   fetch:
     src: "{{buildbot_home}}/{{ item }}"
     dest: "{{ item }}"
@@ -37,7 +37,7 @@
 - name: Adding local keys
   local_action: shell cp group_vars/keys/* .ssh/ | true
 
-- name: Populate BuildBot master authorized_keys
+- name: Populate Buildbot master authorized_keys
   authorized_key:
     user: "{{ buildbot_user }}"
     state: present
