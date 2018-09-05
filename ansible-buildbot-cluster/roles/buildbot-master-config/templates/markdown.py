@@ -104,7 +104,8 @@ def __getBasePipeline():
     f_build.addStep(check)
     f_build.addStep(build)
     f_build.addStep(generateDBTestStep("maria", "3307"))
-    f_build.addStep(generateDBTestStep("mysql", "3308"))
+    f_build.addStep(generateDBTestStep("mysql5.6", "3308"))
+    f_build.addStep(generateDBTestStep("mysql5.7", "3309"))
 
     return f_build
 
