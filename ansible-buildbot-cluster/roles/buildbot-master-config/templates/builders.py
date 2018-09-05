@@ -5,6 +5,7 @@ from buildbot.plugins import *
 import build
 import reports
 import markdown
+import database
 import debs
 import rpms
 
@@ -16,6 +17,8 @@ def getPullRequestBuilder(workers):
   f_pr_reports = reports.getPullRequestPipeline()
 
   f_pr_markdown = markdown.getPullRequestPipeline()
+
+  f_pr_db = database.getPullRequestPipeline()
 
   b_pr_build = util.BuilderConfig(
       name="Pull Request Build",
@@ -35,8 +38,14 @@ def getPullRequestBuilder(workers):
       factory=f_pr_markdown,
       collapseRequests=True)
 
+  b_pr_db = util.BuilderConfig(
+      name="Pull Request Database Tests",
+      workernames=workers,
+      factory=f_pr_db,
+      collapseRequests=True)
+
   return [
-    b_pr_build, b_pr_reports, b_pr_markdown
+    b_pr_build, b_pr_reports, b_pr_markdown, b_pr_db
   ]
 
 def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branch_name, debs_version, rpms_version):
@@ -56,6 +65,8 @@ def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branc
     f_reports = reports.getBuildPipeline()
 
     f_markdown = markdown.getBuildPipeline()
+
+    f_db = database.getBuildPipeline()
 
     f_package_debs = debs.getBuildPipeline()
 
@@ -83,6 +94,13 @@ def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branc
         properties=props,
         collapseRequests=True)
 
+    b_db = util.BuilderConfig(
+        name=pretty_branch_name + " Database Tests",
+        workernames=workers,
+        factory=f_db,
+        properties=props,
+        collapseRequests=True)
+
     b_package_debs = util.BuilderConfig(
         name=pretty_branch_name + " Debian Packaging",
         workernames=deb_workers,
@@ -98,5 +116,5 @@ def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branc
         collapseRequests=True)
 
     return [
-        b_build, b_reports, b_markdown, b_package_debs, b_package_rpms
+        b_build, b_reports, b_markdown, b_db, b_package_debs, b_package_rpms
     ]

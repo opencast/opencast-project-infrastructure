@@ -8,7 +8,12 @@ def getPullRequestSchedulers():
     return schedulers.AnyBranchScheduler(
         name="Pull Requests",
         treeStableTimer={{stability_limit}},  #NB: Do not make this a string, a horribly unclear error occurs and nothing works for this scheduler...
-        builderNames=["Pull Request Build", "Pull Request Reports", "Pull Request Markdown"],
+        builderNames=[
+            "Pull Request Build",
+            "Pull Request Reports",
+            "Pull Request Markdown",
+            "Pull Request Database Tests"
+        ],
         change_filter=util.ChangeFilter(category="pull"))
 
 
@@ -24,7 +29,8 @@ def getSchedulers(pretty_branch_name, git_branch_name):
         builderNames=[
             pretty_branch_name + " Build",
             pretty_branch_name + " Reports",
-            pretty_branch_name + " Markdown"
+            pretty_branch_name + " Markdown",
+            pretty_branch_name + " Database Tests"
         ])
 
     nightly_branch = schedulers.Nightly(
@@ -47,6 +53,7 @@ def getSchedulers(pretty_branch_name, git_branch_name):
             pretty_branch_name + " Build",
             pretty_branch_name + " Reports",
             pretty_branch_name + " Markdown",
+            pretty_branch_name + " Database Tests",
             pretty_branch_name + " Debian Packaging",
             pretty_branch_name + " RPM Packaging",
         ],

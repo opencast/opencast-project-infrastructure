@@ -31,6 +31,7 @@
     - { src: "common.py", dest: "{{ buildbot_home }}/buildbot-config/common.py" }
     - { src: "debs.py", dest: "{{ buildbot_home }}/buildbot-config/debs.py" }
     - { src: "markdown.py", dest: "{{ buildbot_home }}/buildbot-config/markdown.py" }
+    - { src: "database.py", dest: "{{ buildbot_home }}/buildbot-config/database.py" }
     - { src: "reports.py", dest: "{{ buildbot_home }}/buildbot-config/reports.py" }
     - { src: "rpms.py", dest: "{{ buildbot_home }}/buildbot-config/rpms.py" }
     - { src: "schedulers.py", dest: "{{ buildbot_home }}/buildbot-config/schedulers.py" }
