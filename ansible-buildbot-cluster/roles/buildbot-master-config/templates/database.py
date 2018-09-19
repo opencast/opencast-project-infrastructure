@@ -39,7 +39,7 @@ def generateDBTestStep(dbname, dbport):
                 logfile='dropdb'),
         ],
         workdir="build/",
-        name="Test database and migration scripts against " + dbname,
+        name="Test database scripts against " + dbname,
         haltOnFailure=False,
         flunkOnFailure=True)
 
