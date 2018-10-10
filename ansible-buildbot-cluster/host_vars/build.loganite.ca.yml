@@ -7,11 +7,17 @@ docker_image_user: "greglogan"
 source_deb_repo_url: "git@bitbucket.org:greg_logan/debian_packaging-private.git"
 source_rpm_repo_url: "https://github.com/gregorydlogan/opencast-rpm-specs.git"
 
-buildbot_base: /opt/buildbot/build
+send_notifications: False
+push_crowdin: False
 
-github_client_id:
-github_client_secret:
-github_token:
-github_hook_user:
-github_hook_pass:
-github_hook_secret:
+crowdin_api_key: "FAKE"
+
+github_client_id: "{{ lookup('passwordstore', 'Work/Github/oauth-id') }}"
+github_client_secret:  "{{ lookup('passwordstore', 'Work/Github/oauth-secret') }}"
+
+github_hook_user: "{{ lookup('passwordstore', 'Work/Github/hook-user') }}"
+github_hook_pass: "{{ lookup('passwordstore', 'Work/Github/hook-pass') }}"
+github_hook_secret:  "{{ lookup('passwordstore', 'Work/Github/hook-secret') }}"
+
+github_token:  "{{ lookup('passwordstore', 'Work/Github/api-token') }}"
+

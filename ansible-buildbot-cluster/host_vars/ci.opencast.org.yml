@@ -6,11 +6,13 @@ source_rpm_repo_url: "https://github.com/gregorydlogan/opencast-rpm-specs.git"
 send_notifications: False
 push_crowdin: True
 
-github_client_id:
-github_client_secret:
+crowdin_api_key: "{{ lookup('passwordstore', 'crowdin.com/api-key') }}"
 
-github_hook_user:
-github_hook_pass:
-github_hook_secret:
+github_client_id: "{{ lookup('passwordstore', 'github.com/oauth-id') }}"
+github_client_secret:  "{{ lookup('passwordstore', 'github.com/oauth-secret') }}"
 
-github_token:
+github_hook_user: "{{ lookup('passwordstore', 'github.com/hook-user') }}"
+github_hook_pass: "{{ lookup('passwordstore', 'github.com/hook-pass') }}"
+github_hook_secret:  "{{ lookup('passwordstore', 'github.com/hook-secret') }}"
+
+github_token:  "{{ lookup('passwordstore', 'github.com/api-token') }}"
