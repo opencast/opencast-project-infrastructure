@@ -14,6 +14,14 @@ Requires:
   - Ansible 2.4 or newer
   - All hosts must have sudo pre-installed prior to playbook execution
 
+Deploying Opencast's setup
+==========================
+
+These playbooks make use of `passwordstore` lookups, so make sure you have access to our credentials, and a local copy.
+Unless your default `PASSWORD\_STORE\_DIR` environment variable points at that copy, you will need to modify the
+command above to look like `PASSWORD\_STORE\_DIR=~/opencast/opencast-accounts ansible-playbook...`
+
+
 GitHub Setup
 ============
 
