@@ -1,5 +1,6 @@
 ---
 
+mail_to: "gregorydlogan@gmail.com"
 docker_image_user: "greglogan"
 source_rpm_repo_url: "https://github.com/gregorydlogan/opencast-rpm-specs.git"
 
