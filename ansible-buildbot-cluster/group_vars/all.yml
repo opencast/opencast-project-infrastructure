@@ -4,9 +4,6 @@
 # User Related Settings #
 #########################
 
-#Which user to login as
-login_user: root
-
 #Set this to false if you already have a user set up, make sure to update buildbot_user
 create_buildbot_user: True
 

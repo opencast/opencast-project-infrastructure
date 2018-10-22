@@ -3,7 +3,6 @@
 # This playbook deploys a Buildbot master and worker(s) configured for Opencast
 
 - hosts: all
-  user: "{{ login_user }}"
 
   roles:
     #We're becoming here because the docker role does not become inside of itself
@@ -14,7 +13,6 @@
     - import_tasks: handlers/handlers.yml
 
 - hosts: master
-  user: "{{ login_user }}"
 
   roles:
     - buildbot-master-install
@@ -24,7 +22,6 @@
 
 
 - hosts: workers
-  user: "{{ login_user }}"
 
   roles:
     - buildbot-worker
