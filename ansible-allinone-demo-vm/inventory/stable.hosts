@@ -1,8 +1,0 @@
-[allinone]
-stable.opencast.org
-
-[opencast:children]
-allinone
-
-[stable:children]
-opencast

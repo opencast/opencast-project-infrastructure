@@ -1,8 +1,0 @@
-[allinone]
-develop.opencast.org
-
-[opencast:children]
-allinone
-
-[develop:children]
-opencast

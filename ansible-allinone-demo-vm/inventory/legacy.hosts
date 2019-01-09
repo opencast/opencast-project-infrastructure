@@ -1,8 +1,0 @@
-[allinone]
-legacy.opencast.org
-
-[opencast:children]
-allinone
-
-[legacy:children]
-opencast

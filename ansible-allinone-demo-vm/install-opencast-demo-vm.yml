@@ -1,14 +1,16 @@
 ---
 
-- hosts: opencast
+- hosts: all
   become: yes
   tasks:
     - name: Activate EPEL
       package:
-        name=epel-release
-        state=latest
+        name: epel-release
+        state: latest
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
-- hosts: allinone
+- hosts: all
   become: yes
   roles:
+    - nginx
     - opencast-allinone

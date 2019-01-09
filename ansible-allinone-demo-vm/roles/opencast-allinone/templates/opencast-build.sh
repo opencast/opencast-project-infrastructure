@@ -1,21 +1,17 @@
-#!/bin/bash
+#!/bin/sh
 set -uex
 
-{% if 'legacy' in group_names %}
+{% if 'legacy' in inventory_hostname %}
 branch="{{opencast_legacy_branch}}"
 version="{{opencast_legacy_version}}"
 
-{% elif 'stable' in group_names %}
+{% elif 'stable' in inventory_hostname %}
 branch="{{opencast_stable_branch}}"
 version="{{opencast_stable_version}}"
-
-{% elif 'develop' in group_names %}
-branch="{{opencast_develop_branch}}"
-version="{{opencast_develop_version}}"
 
 {% else %}
-branch="{{opencast_stable_branch}}"
-version="{{opencast_stable_version}}"
+branch="{{opencast_develop_branch}}"
+version="{{opencast_develop_version}}"
 
 {% endif %}
 
@@ -34,12 +30,13 @@ rm -rf /srv/opencast/opencast-dist-allinone
 mv opencast-dist-allinone /srv/opencast/
 sed -i 's#^org.opencastproject.server.url=.*$#org.opencastproject.server.url=https://{{inventory_hostname}}#' /srv/opencast/opencast-dist-allinone/etc/custom.properties
 
+# Ensure access to log files
+mkdir -p /srv/opencast/opencast-dist-allinone/data/log
+chcon -Rt httpd_sys_content_t /srv/opencast/opencast-dist-allinone/data/log || :
+
 # Update ActiveMQ cofniguration
-#curl -s -O "http://build.opencast.org/builds/${branch}/activemq.xml"
-#GDLGDL: Replaced curl with the file from the tarball
 sudo install -m 644 /srv/opencast/opencast-dist-allinone/docs/scripts/activemq/activemq.xml /etc/activemq/activemq.xml
 sudo systemctl restart activemq.service || :
-sudo systemctl reload nginx.service || :
 
 # Start Opencast
 sudo systemctl start opencast.service
