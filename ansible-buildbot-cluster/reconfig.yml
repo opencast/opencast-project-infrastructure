@@ -3,7 +3,6 @@
 # This playbook deploys a Buildbot master and worker(s) configured for Opencast
 
 - hosts: master
-  user: "{{ login_user }}"
 
   roles:
     - buildbot-master-config
