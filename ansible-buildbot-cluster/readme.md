@@ -6,9 +6,9 @@ is required.  Please see the infrastructure users playbook to set those up!  To 
 
     ansible-playbook -K -i hosts buildbot.yml
 
-To update Buildbot run:
+To update the Buildbot configuration:
 
-    ansible-playbook -K -i hosts reconfig.yml
+    ansible-playbook -K -i hosts buildbot.yml --tags reconfig
 
 Requires:
   - Ansible 2.4 or newer
