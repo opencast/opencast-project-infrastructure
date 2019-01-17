@@ -3,9 +3,10 @@
 set -uxe
 
 DOCKER_OWNER=greglogan
+TAG=v1.4.0
 
 doPush() {
-  bash push-container.sh $DOCKER_OWNER $1 $2
+  bash push-container.sh $DOCKER_OWNER $1 $2 $TAG
 }
 
 doPushWorker() {

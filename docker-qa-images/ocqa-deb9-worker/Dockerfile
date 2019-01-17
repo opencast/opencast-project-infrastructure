@@ -1,7 +1,7 @@
 FROM greglogan/ocqa-deb9-package
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
-# Adapted from https://github.com/buildbot/buildbot/blob/v1.1.0/worker/Dockerfile
+# Adapted from https://github.com/buildbot/buildbot/blob/v1.4.0/worker/Dockerfile
 
 COPY . /usr/src/buildbot-worker
 COPY docker/buildbot.tac /builder/buildbot.tac
