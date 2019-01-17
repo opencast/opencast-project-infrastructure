@@ -1,7 +1,0 @@
----
-
-login_user: ansible
-id: 1
-name: builder00
-docker_image_user: "greglogan"
-docker_base: debian

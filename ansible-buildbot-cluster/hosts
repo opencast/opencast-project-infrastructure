@@ -3,7 +3,8 @@ master
 workers
 
 [master]
-build.opencast.org
+ci.opencast.org
 
 [workers]
-upstream.loganite.ca
+oc-com-presentation.rrz.uni-koeln.de
+oc-com-worker1.rrz.uni-koeln.de

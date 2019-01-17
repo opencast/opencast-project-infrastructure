@@ -73,5 +73,5 @@ Worker nodes
 ------------
 
 Create a file for each worker node in `host_vars` named after the worker node.  For example, `builder01.opencast.org.yml`.
-This file sets up the worker node's identity within Buildbot, and what it should build.  An example file is in
-`host_vars/worker.yml`.
+This file sets up the worker node's identity within Buildbot, and what it should build.  An example files can be found in
+`host_vars/`.

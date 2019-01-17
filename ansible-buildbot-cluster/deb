@@ -1,9 +1,0 @@
-[buildbot:children]
-master
-workers
-
-[master]
-build.loganite.ca
-
-[workers]
-builder0[0:1].loganite.ca
