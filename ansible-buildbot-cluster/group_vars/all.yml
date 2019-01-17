@@ -4,6 +4,9 @@
 # User Related Settings #
 #########################
 
+#The user to log into the remote hosts as.  Override this with host variables.
+login_user: ansible
+
 #Set this to false if you already have a user set up, make sure to update buildbot_user
 create_buildbot_user: True
 
