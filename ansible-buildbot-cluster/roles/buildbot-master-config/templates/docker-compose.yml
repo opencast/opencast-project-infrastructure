@@ -1,7 +1,7 @@
 version: '2'
 services:
   buildbot:
-    image: greglogan/ocqa-buildbot-master:latest
+    image: "{{ docker_image_user }}/ocqa-buildbot-master:{{ docker_image_tag }}"
     restart: always
     env_file:
       - db.env

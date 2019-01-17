@@ -47,6 +47,8 @@ docker_image_master: "ocqa-buildbot-master"
 
 docker_image_worker: "ocqa-deb9-worker"
 
+docker_image_tag: "v1.7.0"
+
 
 #####################
 # Buildbot Settings #
