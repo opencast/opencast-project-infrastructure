@@ -93,7 +93,3 @@
     - { src: "{{ buildbot_home }}/.ssh/known_hosts", dest: "{{ buildbot_home }}/ssh/known_hosts" }
   become: yes
 
-- name: Ensure latest Docker images are present
-  docker_image:
-    name: "{{ docker_image_user }}/{{ docker_image_worker }}"
-  become: yes
