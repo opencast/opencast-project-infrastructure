@@ -30,6 +30,7 @@
     owner: root
     group: root
     mode: 0600
+    force: yes
   become: yes
   notify: "Restart Docker"
 
