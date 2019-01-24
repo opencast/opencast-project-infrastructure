@@ -69,6 +69,9 @@ source_pr_repo:  "opencast"
 #How long a set of changes needs to be in place prior to starting a build (in seconds)
 stability_limit: 60
 
+#What hour to start the builds at
+nightly_build_hour: 3
+
 #Where to fetch the debian packaging build files from
 source_deb_repo_url: "https://github.com/gregorydlogan/debian-packaging.git"
 

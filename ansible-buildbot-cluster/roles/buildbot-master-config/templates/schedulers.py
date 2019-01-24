@@ -37,7 +37,7 @@ def getSchedulers(pretty_branch_name, git_branch_name):
         name=pretty_branch_name + ' Nightly',
         change_filter=util.ChangeFilter(
             category=None, branch_re=git_branch_name),
-        hour=3,
+        hour={{nightly_build_hour}},
         onlyIfChanged=True,
         builderNames=[
             pretty_branch_name + " Debian Packaging",
