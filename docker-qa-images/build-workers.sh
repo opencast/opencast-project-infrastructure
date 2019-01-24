@@ -3,7 +3,7 @@
 set -uxe
 
 DOCKER_OWNER=greglogan
-TAG=v1.7.0
+TAG=v1.8.0
 
 doBuild() {
   bash build-container.sh $DOCKER_OWNER $1 $2 $TAG
