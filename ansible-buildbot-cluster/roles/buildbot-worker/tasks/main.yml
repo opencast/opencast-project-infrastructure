@@ -69,6 +69,7 @@
     #Note: This is the hardcoded buildbot user inside the docker image, do not change this
     - { path: "{{ buildbot_home }}/ssh", owner: 1000, mode: "0700" }
     - { path: "{{ buildbot_home }}/m2", owner: 1000, mode: "0700" }
+    - { path: "{{ buildbot_home }}/builds", owner: 1000, mode: "0700" }
 
 - name: Templating Maven settings
   template:
