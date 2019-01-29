@@ -96,6 +96,9 @@ send_notifications: True
 #Whether to push crowdin data on successful build.  Generally this should be False unless you're the golden master CI infrastructure.
 push_crowdin: False
 
+#Set this to True to skip tests during the Maven build.  Not something for production.
+skip_tests: False
+
 
 #######################
 # Networking Settings #
