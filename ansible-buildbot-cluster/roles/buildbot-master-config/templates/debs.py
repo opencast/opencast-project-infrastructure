@@ -100,13 +100,15 @@ def getBuildPipeline():
         workdir="build",
         name="Get build tarball revision")
 
-    debsPrep = steps.ShellSequence(
+    debsBuild = steps.ShellSequence(
         commands=[
             util.ShellArg(
                 command=[
-                    'dch', '--newversion',
+                    'dch',
+                    '--changelog', 'opencast/debian/changelog',
+                    '--newversion',
                     util.Interpolate(
-                        '%(prop:debs_package_version)s-%(prop:got_revision)s'),
+                        '%(prop:debs_package_version)s-%(prop:buildnumber)-%(prop:got_revision)s'),
                     '-b', '-D', 'unstable', '-u', 'low', '--empty',
                     util.Interpolate(
                         'Build revision %(prop:got_revision)s, built with %(prop:deb_script_rev)s scripts'
@@ -115,33 +117,6 @@ def getBuildPipeline():
                 haltOnFailure=True,
                 flunkOnFailure=True,
                 logfile='dch'),
-            util.ShellArg(
-                command=[
-                    'git', 'config', 'user.email', 'buildbot@opencast.org'
-                ],
-                haltOnFailure=True,
-                flunkOnFailure=True,
-                logfile='email'),
-            util.ShellArg(
-                command=['git', 'config', 'user.name', 'Buildbot'],
-                haltOnFailure=True,
-                flunkOnFailure=True,
-                logfile='authorname'),
-            util.ShellArg(
-                command=[
-                    'git', 'commit', '-am', 'Automated commit prior to build'
-                ],
-                haltOnFailure=True,
-                flunkOnFailure=True,
-                logfile='commit')
-        ],
-        workdir="build/opencast",
-        name="Prepping Debs",
-        haltOnFailure=True,
-        flunkOnFailure=True)
-
-    debsBuild = steps.ShellSequence(
-        commands=[
             util.ShellArg(
                 command=[
                     'rm', '-f', util.Interpolate("binaries/%(prop:debs_package_version)s/revision.txt")
@@ -169,6 +144,10 @@ def getBuildPipeline():
                 haltOnFailure=True,
                 logfile='revision')
         ],
+        env={
+            "NAME": "Buildbot",
+            "EMAIL": "buildbot@ci.opencast.org"
+        },
         workdir="build",
         name="Build debs",
         haltOnFailure=True,
@@ -205,7 +184,6 @@ def getBuildPipeline():
     f_package_debs.addStep(debsVersion)
     f_package_debs.addStep(debsFetch)
     f_package_debs.addStep(debsTarballVersion)
-    f_package_debs.addStep(debsPrep)
     f_package_debs.addStep(debsBuild)
     f_package_debs.addStep(masterPrep)
     f_package_debs.addStep(common.getPermissionsFix())
