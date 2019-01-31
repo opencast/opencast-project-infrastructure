@@ -32,9 +32,9 @@ def getRPMBuilds():
                 command=[
                     'rpmbuild',
                     '--define', 'ocdist ' + profile,
-                    '--define', util.Interpolate('tarversion %(prop:rpm_package_version)s-SNAPSHOT'),
+                    '--define', util.Interpolate('tarversion %(prop:pkg_major_version)s-SNAPSHOT'),
                     '-bb', '--noclean',
-                    util.Interpolate("SPECS/%(prop:rpm_spec_filename)s.spec")
+                    util.Interpolate("SPECS/opencast%(prop:pkg_major_version)s.spec")
                 ],
                 haltOnFailure=True,
                 flunkOnFailure=True,
@@ -133,7 +133,7 @@ def getBuildPipeline():
             util.ShellArg(
                 command=[
                     "ln", "-sr",
-                    util.Interpolate("%(prop:rpm_spec_filename)s.spec"),
+                    util.Interpolate("opencast%(prop:pkg_major_version)s.spec"),
                     "SPECS"
                 ],
                 haltOnFailure=True,
@@ -141,7 +141,7 @@ def getBuildPipeline():
                 logfile="specs"),
             util.ShellArg(
                 #Same here
-                command=util.Interpolate("ln -sr %(prop:rpm_spec_filename)s/* SOURCES"),
+                command=util.Interpolate("ln -sr opencast%(prop:pkg_major_version)s/* SOURCES"),
                 haltOnFailure=True,
                 flunkOnFailure=True,
                 logfile="sources")
@@ -173,13 +173,13 @@ def getBuildPipeline():
                 command=[
                     'rpmdev-bumpspec', '-s',
                     util.Interpolate(
-                        '%(prop:got_revision)s'),
+                        '%(prop:short_revision)s'),
                     '-u', '"Buildbot <buildbot@opencast.org>"',
                     '-c',
                     util.Interpolate(
                         'Opencast revision %(prop:got_revision)s, packaged with RPM scripts version %(prop:rpm_script_rev)s'
                     ),
-                    util.Interpolate('%(prop:rpm_spec_filename)s.spec')
+                    util.Interpolate('opencast%(prop:pkg_major_version)s.spec')
                 ],
                 flunkOnFailure=True,
                 warnOnFailure=True,
