@@ -73,7 +73,14 @@ def getBuildPipeline():
                 ],
                 flunkOnFailure=True,
                 haltOnFailure=True,
-                logfile='checkout')
+                logfile='checkout'),
+            util.ShellArg(
+                command=[
+                    'git', 'clean', '-fdx'
+                ],
+                flunkOnFailure=True,
+                haltOnFailure=True,
+                logfile='clean')
         ],
         workdir="build",
         flunkOnFailure=True,

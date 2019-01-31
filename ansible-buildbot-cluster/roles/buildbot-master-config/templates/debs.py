@@ -53,7 +53,13 @@ def getBuildPipeline():
                     util.Interpolate('origin/%(prop:branch)s')
                 ],  #We use reset here to get rid of other entries in the changelog
                 flunkOnFailure=True,
-                logfile='checkout')
+                logfile='checkout'),
+            util.ShellArg(
+                command=[
+                    'git', 'clean', '-fdx'
+                ],
+                flunkOnFailure=True,
+                logfile='clean')
         ],
         workdir="build",
         flunkOnFailure=True,
