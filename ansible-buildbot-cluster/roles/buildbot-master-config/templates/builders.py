@@ -48,13 +48,17 @@ def getPullRequestBuilder(workers):
     b_pr_build, b_pr_reports, b_pr_markdown, b_pr_db
   ]
 
-def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branch_name, debs_version, rpms_version):
+@util.renderer
+def renderShortRevision(props):
+  shortrev = props.getProperty('got_revision')
+  return shortrev[:9]
+
+def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branch_name, pkg_major_version, pkg_minor_version):
 	
     props = {
-        'debs_package_version': debs_version,
-        'rpm_package_version': rpms_version,
-        'rpm_spec_filename': 'opencast' + rpms_version[0],
-        'branch_pretty': pretty_branch_name
+        'pkg_major_version': pkg_major_version,
+        'pkg_minor_version': pkg_minor_version,
+        'branch_pretty': pretty_branch_name,
     }
 
     #Get the list of all workers.  This should be used in all cases unless there's a specific need (ie, debs, rpms)

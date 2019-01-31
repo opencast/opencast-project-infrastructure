@@ -75,14 +75,14 @@ def getBuildPipeline():
             util.ShellArg(
                 command=[
                     'mkdir', '-p',
-                    util.Interpolate('binaries/%(prop:debs_package_version)s')
+                    util.Interpolate('binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s')
                 ],
                 haltOnFailure=True,
                 flunkOnFailure=True,
                 logfile="prep"),
             util.ShellArg(
                 command=util.Interpolate(
-                    "scp {{ buildbot_scp_builds_fetch }}/* binaries/%(prop:debs_package_version)s/"
+                    "scp {{ buildbot_scp_builds_fetch }}/* binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/"
                 ),
                 haltOnFailure=True,
                 flunkOnFailure=True,
@@ -93,12 +93,20 @@ def getBuildPipeline():
         flunkOnFailure=True)
 
     debsTarballVersion = steps.SetPropertyFromCommand(
-        command=util.Interpolate('cat binaries/%(prop:debs_package_version)s/revision.txt'),
+        command=util.Interpolate('cat binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/revision.txt'),
         property="got_revision", #Note: We're overwriting this value to set it to the built revision rather than whatever it defaults to
         flunkOnFailure=True,
         haltOnFailure=True,
         workdir="build",
         name="Get build tarball revision")
+
+    debsTarballShortVersion = steps.SetPropertyFromCommand(
+        command=util.Interpolate('cat binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/revision.txt | cut -c -9'),
+        property="short_revision",
+        flunkOnFailure=True,
+        haltOnFailure=True,
+        workdir="build",
+        name="Get build tarball short revision")
 
     debsBuild = steps.ShellSequence(
         commands=[
@@ -108,10 +116,10 @@ def getBuildPipeline():
                     '--changelog', 'opencast/debian/changelog',
                     '--newversion',
                     util.Interpolate(
-                        '%(prop:debs_package_version)s-%(prop:buildnumber)-%(prop:got_revision)s'),
+                        '%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s-%(prop:buildnumber)s-%(prop:short_revision)s'),
                     '-b', '-D', 'unstable', '-u', 'low', '--empty',
                     util.Interpolate(
-                        'Build revision %(prop:got_revision)s, built with %(prop:deb_script_rev)s scripts'
+                        'Opencast revision %(prop:got_revision)s, packaged with Debian scripts version %(prop:deb_script_rev)s'
                     )
                 ],
                 haltOnFailure=True,
@@ -119,18 +127,25 @@ def getBuildPipeline():
                 logfile='dch'),
             util.ShellArg(
                 command=[
-                    'rm', '-f', util.Interpolate("binaries/%(prop:debs_package_version)s/revision.txt")
+                    'rm', '-f', util.Interpolate("binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/revision.txt")
                 ],
                 haltOnFailure=True,
                 flunkOnFailure=True,
                 logfile='cleanup'),
             util.ShellArg(
                 command=util.Interpolate(
-                    'echo "source library.sh\ndoOpencast %(prop:debs_package_version)s %(prop:branch)s %(prop:got_revision)s" | tee build.sh'
+                    'echo "source library.sh\ndoOpencast %(prop:pkg_major_version)s.%(prop:pkg_minor_version)s %(prop:branch)s %(prop:got_revision)s" | tee build.sh'
                 ),
                 flunkOnFailure=True,
                 haltOnFailure=True,
                 logfile='write'),
+            util.ShellArg(
+                command=util.Interpolate(
+                    'ln -s opencast-%(prop:pkg_major_version)s_%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s.orig.tar.xz opencast-%(prop:pkg_major_version)s_%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s-%(prop:buildnumber)s.orig.tar.xz'
+                ),
+                flunkOnFailure=True,
+                haltOnFailure=True,
+                logfile='link'),
             util.ShellArg(
                 command=['bash', 'build.sh'],
                 flunkOnFailure=True,
@@ -184,6 +199,7 @@ def getBuildPipeline():
     f_package_debs.addStep(debsVersion)
     f_package_debs.addStep(debsFetch)
     f_package_debs.addStep(debsTarballVersion)
+    f_package_debs.addStep(debsTarballShortVersion)
     f_package_debs.addStep(debsBuild)
     f_package_debs.addStep(masterPrep)
     f_package_debs.addStep(common.getPermissionsFix())

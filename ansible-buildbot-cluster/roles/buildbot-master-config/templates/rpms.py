@@ -152,6 +152,14 @@ def getBuildPipeline():
         workdir="build/specs",
         name="Get build tarball revision")
 
+    rpmsTarballShortVersion = steps.SetPropertyFromCommand(
+        command=util.Interpolate('cat BUILD/opencast/build/revision.txt | cut -c -9'),
+        property="short_revision",
+        flunkOnFailure=True,
+        haltOnFailure=True,
+        workdir="build/specs",
+        name="Get build tarball short revision")
+
     rpmsPrep = steps.ShellSequence(
         commands=[
             util.ShellArg(
@@ -162,7 +170,7 @@ def getBuildPipeline():
                     '-u', '"Buildbot <buildbot@opencast.org>"',
                     '-c',
                     util.Interpolate(
-                        'Build revision %(prop:got_revision)s, built with %(prop:rpm_script_rev)s scripts'
+                        'Opencast revision %(prop:got_revision)s, packaged with RPM scripts version %(prop:rpm_script_rev)s'
                     ),
                     util.Interpolate('%(prop:rpm_spec_filename)s.spec')
                 ],
@@ -219,6 +227,7 @@ def getBuildPipeline():
     f_package_rpms.addStep(rpmsVersion)
     f_package_rpms.addStep(rpmsFetch)
     f_package_rpms.addStep(rpmsTarballVersion)
+    f_package_rpms.addStep(rpmsTarballShortVersion)
     f_package_rpms.addStep(rpmsPrep)
     f_package_rpms.addStep(rpmsBuild)
     f_package_rpms.addStep(masterPrep)
