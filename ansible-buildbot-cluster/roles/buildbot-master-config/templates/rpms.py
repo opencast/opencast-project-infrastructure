@@ -186,7 +186,7 @@ def getBuildPipeline():
                 command=[
                     'sed'
                     '-i',
-                    util.Interpolate('"s/2\%{?dist}/%{prop:buildnumber}.%{prop:short_revision}\%{?dist}/g"'),
+                    util.Interpolate('"s/2\\%{?dist}/%{prop:buildnumber}s.%{prop:short_revision}s\\%{?dist}/g"'),
                     util.Interpolate('opencast%(prop:pkg_major_version)s.spec')
                 ],
                 flunkOnFailure=True,
