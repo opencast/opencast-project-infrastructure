@@ -1,4 +1,4 @@
-FROM greglogan/ocqa-cent7-package
+FROM greglogan/ocqa-cent7-package:v2.0.0
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 # Adapted from https://github.com/buildbot/buildbot/blob/v1.7.0/worker/Dockerfile
@@ -16,15 +16,14 @@ RUN  curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/release
      yum install -y \
          #Bits for buildbot worker
          gcc \
-         python-devel \
+         python36-devel \
          #Crowdin
          crowdin \
          # bc for the database test script
          bc && \
      # Install required python packages, and twisted
-     pip install --upgrade pip setuptools && \
-     pip install 'twisted[tls]' && \
-     pip install /usr/src/buildbot-worker
+     pip3 install 'twisted[tls]' && \
+     pip3 install /usr/src/buildbot-worker
 
 USER builder
 

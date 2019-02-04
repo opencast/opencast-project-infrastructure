@@ -1,4 +1,4 @@
-FROM greglogan/ocqa-deb9-package
+FROM greglogan/ocqa-deb9-package:v2.0.0
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 # Adapted from https://github.com/buildbot/buildbot/blob/v1.7.0/worker/Dockerfile
@@ -12,8 +12,8 @@ COPY docker/buildbot.tac /builder/buildbot.tac
 RUN  curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.1/dumb-init_1.2.1_amd64 && \
      chmod +x /usr/local/bin/dumb-init && \
      # Install required python packages, and twisted
-     pip install 'twisted[tls]' && \
-     pip install /usr/src/buildbot-worker && \
+     pip3 install 'twisted[tls]' && \
+     pip3 install /usr/src/buildbot-worker && \
      # bc for the database test script
      apt-get update && \
      apt-get install bc && \

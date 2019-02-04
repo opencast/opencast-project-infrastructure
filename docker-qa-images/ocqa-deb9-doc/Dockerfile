@@ -1,4 +1,4 @@
-FROM greglogan/ocqa-deb9-build
+FROM greglogan/ocqa-deb9-build:v2.0.0
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 RUN apt-get update && \
@@ -13,7 +13,7 @@ RUN apt-get update && \
     # Build deps
     apt-get install -y \
      # Python deps
-        python-pip \
+        python3-pip \
      # Packages for building docs
         libyaml-dev \
         nodejs \
@@ -21,5 +21,5 @@ RUN apt-get update && \
         mysql-client && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    pip install mkdocs
+    pip3 install mkdocs
 
