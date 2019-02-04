@@ -171,7 +171,7 @@ def getBuildPipeline():
         commands=[
             util.ShellArg(
                 command=[
-                    'rpmdev-bumpspec'
+                    'rpmdev-bumpspec',
                     '-u', '"Buildbot <buildbot@opencast.org>"',
                     '-c',
                     util.Interpolate(
@@ -184,9 +184,9 @@ def getBuildPipeline():
                 logfile='rpmdev-bumpspec'),
             util.ShellArg(
                 command=[
-                    'sed'
+                    'sed',
                     '-i',
-                    util.Interpolate('"s/2\\%{?dist}/%{prop:buildnumber}s.%{prop:short_revision}s\\%{?dist}/g"'),
+                    util.Interpolate('s/2%%{?dist}/%(prop:buildnumber)s.%(prop:short_revision)s%%{?dist}/g'),
                     util.Interpolate('opencast%(prop:pkg_major_version)s.spec')
                 ],
                 flunkOnFailure=True,
