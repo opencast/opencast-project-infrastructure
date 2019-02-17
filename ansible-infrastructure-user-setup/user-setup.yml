@@ -16,7 +16,7 @@
         name={{ item }}
       with_items:
         - epel-release
-      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Scientific'
 
     - name: install base tools
       become: yes
@@ -28,41 +28,30 @@
         - htop
         - nload
         - vim
+        - zsh
+
+    - name: Ensure group wheel exists
+      group:
+        name: wheel
+        state: present
 
     - name: create opencast infra users
       become: yes
       user:
         name: '{{ item }}'
-        password: '$6$rounds=656000$/2a4a2lmJtsLBdyM$0VVKwJ4byUPaLirCwdvfgTXRg7dLptq4UVVt/ge9sahNSzHYUYcv9aq/O7ytiuShicXVPya5SjLX8CSyGfKWs/'
-        update_password: on_create
-      with_items:
-        - "{{ admins }}"
-        - "{{ host_admins | default([]) }}"
-      when: item != ""
-
-    - name: add vmusers and vmadmins groups uos servers
-      become: yes
-      user:
-        name: '{{ item }}'
-        groups: vmusers,vmadmins
-        append: yes
-      with_items:
-        - "{{ admins }}"
-        - "{{ host_admins | default([]) }}"
-      when:
-        - item != ""
-        - "'uos' in group_names"
-
-    - name: add wheel group
-      become: yes
-      user:
-        name: '{{ item }}'
         groups: wheel
+      with_items:
+        - "{{ admins }}"
+
+    - name: add vmusers groups uos servers
+      become: yes
+      user:
+        name: '{{ item }}'
+        groups: vmusers
         append: yes
       with_items:
         - "{{ admins }}"
-        - "{{ host_admins | default([]) }}"
-      when: item != ""
+      when: "'uos' in group_names"
 
     - name: set up authorized keys
       become: yes
@@ -70,10 +59,9 @@
         user: '{{ item }}'
         state: present
         key: "{{ lookup('file', 'pub-keys/{{ item }}.pub') }}"
+        exclusive: True
       with_items:
         - "{{ admins }}"
-        - "{{ host_admins | default([]) }}"
-      when: item != ""
 
     - name: remove old users
       become: yes
@@ -84,6 +72,14 @@
       with_items:
         - "{{ remove_user | default([]) }}"
       when: item != ""
+
+    - name: allow wheel to sudo without a password
+      become: yes
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: "^%wheel"
+        line: "%wheel ALL=(ALL) NOPASSWD: ALL"
 
 
     # sshd options

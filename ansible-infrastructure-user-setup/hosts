@@ -3,16 +3,16 @@ eth
 harvard
 uos
 cologne
-muenster
+ilmenau
 
 
 [uos]
-# docs.opencast org = pkg
+vm584.rz.uos.de
+vm589.rz.uos.de
 build.opencast.org
 nexus.opencast.org
 develop.opencast.org
 pkg.opencast.org
-pullrequests.opencast.org
 
 [eth]
 stable.opencast.org
@@ -25,5 +25,5 @@ oc-com-admin.rrz.uni-koeln.de
 oc-com-presentation.rrz.uni-koeln.de
 oc-com-worker1.rrz.uni-koeln.de
 
-[muenster]
+[ilmenau]
 legacy.opencast.org
