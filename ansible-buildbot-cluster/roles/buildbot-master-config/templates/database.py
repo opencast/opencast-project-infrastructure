@@ -41,7 +41,9 @@ def generateDBTestStep(dbname, dbport):
         workdir="build/",
         name="Test database scripts against " + dbname,
         haltOnFailure=False,
-        flunkOnFailure=True)
+        flunkOnFailure=True,
+        locks=db_lock.access('db_lock'))
+
 
 def __getBasePipeline(): 
 

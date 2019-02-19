@@ -39,7 +39,8 @@ def __getBasePipeline():
         command=command,
         haltOnFailure=True,
         flunkOnFailure=True,
-        name="Build site report")
+        name="Build site report",
+        locks=mvn_lock.access('mvn_lock'))
 
     f_build = util.BuildFactory()
     f_build.addStep(common.getClone())
