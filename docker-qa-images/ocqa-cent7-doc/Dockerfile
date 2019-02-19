@@ -14,6 +14,6 @@ RUN curl -sL -o '/tmp/nodesource-release-el7-1.noarch.rpm' 'https://rpm.nodesour
      # For SQL script testing
         mysql && \
     yum clean all && \
-    pip3 install --upgrade pip setuptools && \
-    pip3 install mkdocs
+    pip3.6 install --upgrade pip setuptools && \
+    pip3.6 install mkdocs
 

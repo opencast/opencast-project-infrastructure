@@ -22,8 +22,8 @@ RUN  curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/release
          # bc for the database test script
          bc && \
      # Install required python packages, and twisted
-     pip3 install 'twisted[tls]' && \
-     pip3 install /usr/src/buildbot-worker
+     pip3.6 install 'twisted[tls]' && \
+     pip3.6 install /usr/src/buildbot-worker
 
 USER builder
 
