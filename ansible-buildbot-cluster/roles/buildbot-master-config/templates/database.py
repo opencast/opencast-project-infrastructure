@@ -5,6 +5,8 @@ import os.path
 from buildbot.plugins import *
 import common
 
+db_lock = util.WorkerLock("db_lock",
+                             maxCount=1)
 
 def generateDBTestStep(dbname, dbport):
 
@@ -42,7 +44,7 @@ def generateDBTestStep(dbname, dbport):
         name="Test database scripts against " + dbname,
         haltOnFailure=False,
         flunkOnFailure=True,
-        locks=db_lock.access('db_lock'))
+        locks=db_lock.access('exclusive'))
 
 
 def __getBasePipeline(): 
