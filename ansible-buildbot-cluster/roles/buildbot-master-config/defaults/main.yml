@@ -15,7 +15,7 @@ docker_deb_image_worker: "ocqa-deb9-worker"
 docker_cent_image_worker: "ocqa-cent7-worker"
 
 #The version tag to use for all of the images
-docker_image_tag: "v1.8.0"
+docker_image_tag: "v2.0.0"
 
 
 #####################
