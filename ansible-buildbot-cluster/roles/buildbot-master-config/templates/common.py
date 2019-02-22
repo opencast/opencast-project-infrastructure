@@ -40,7 +40,7 @@ def getWorkerPrep():
         haltOnFailure=True,
         flunkOnFailure=True,
         name="Build Prep",
-        locks=mvn_lock.access('counting'))
+        locks=[mvn_lock.access('counting')])
 
 def getBuild():
     command = getMavenBase()
@@ -50,7 +50,7 @@ def getBuild():
         haltOnFailure=True,
         flunkOnFailure=True,
         name="Build",
-        locks=mvn_lock.access('counting'))
+        locks=[mvn_lock.access('counting')])
 
 def getPermissionsFix():
     return steps.MasterShellCommand(

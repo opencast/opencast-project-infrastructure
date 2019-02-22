@@ -40,7 +40,7 @@ def __getBasePipeline():
         haltOnFailure=True,
         flunkOnFailure=True,
         name="Build site report",
-        locks=common.getMavenLock().access('counting'))
+        locks=[common.getMavenLock().access('counting')])
 
     f_build = util.BuildFactory()
     f_build.addStep(common.getClone())
