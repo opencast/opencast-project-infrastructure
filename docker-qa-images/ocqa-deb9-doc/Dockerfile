@@ -14,6 +14,7 @@ RUN apt-get update && \
     apt-get install -y \
      # Python deps
         python3-pip \
+        python-pip \
      # Packages for building docs
         libyaml-dev \
         nodejs \
@@ -21,5 +22,5 @@ RUN apt-get update && \
         mysql-client && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    pip3 install mkdocs
+    pip install mkdocs
 
