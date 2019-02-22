@@ -16,12 +16,16 @@ RUN  curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/release
      yum install -y \
          #Bits for buildbot worker
          gcc \
+         python36 \
          python36-devel \
+         python36-pip \
+         openssl-devel \
          #Crowdin
          crowdin \
          # bc for the database test script
          bc && \
      # Install required python packages, and twisted
+     pip3.6 install --upgrade pip setuptools && \
      pip3.6 install 'twisted[tls]' && \
      pip3.6 install /usr/src/buildbot-worker
 

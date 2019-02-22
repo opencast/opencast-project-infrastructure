@@ -7,8 +7,6 @@ RUN curl -sL -o '/tmp/nodesource-release-el7-1.noarch.rpm' 'https://rpm.nodesour
     # Build deps
     yum install -y \
      # Python deps
-        python36 \
-        python36-pip \
         python-pip \
      # Packages for building docs
         nodejs \
