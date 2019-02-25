@@ -10,6 +10,10 @@ import debs
 import rpms
 
 
+rpm_lock = util.WorkerLock("rpm_lock",
+                             maxCount=1)
+
+
 def getPullRequestBuilder(workers):
 
   f_pr_build = build.getPullRequestPipeline()
@@ -117,7 +121,8 @@ def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branc
         workernames=rpm_workers,
         factory=f_package_rpms,
         properties=props,
-        collapseRequests=True)
+        collapseRequests=True,
+        locks=[rpm_lock.access('exclusive')])
 
     return [
         b_build, b_reports, b_markdown, b_db, b_package_debs, b_package_rpms
