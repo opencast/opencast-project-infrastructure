@@ -34,11 +34,22 @@
   become: yes
   notify: "Restart Docker"
 
-- name: Clearing out Docker socket settings from systemd unit files
-  replace:
-    path: /lib/systemd/system/docker.service
-    regexp: " -H fd://"
-    replace: ""
+- name: Ensuring that Docker systemd override directory is present
+  file:
+    path: /etc/systemd/system/docker.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  become: yes
+
+- name: Templating Docker systemd override
+  template:
+    src: override.conf
+    dest: /etc/systemd/system/docker.service.d/override.conf
+    owner: root
+    group: root
+    mode: 0644
   become: yes
   notify: "Restart Docker"
 
