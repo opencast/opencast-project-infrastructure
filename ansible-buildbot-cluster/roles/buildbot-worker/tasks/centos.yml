@@ -2,19 +2,13 @@
 
 - name: Install EPEL release
   yum:
-    name: "{{ item }}"
+    name: epel-release
     state: latest
     update_cache: yes
   become: yes
-  with_items:
-    - epel-release
 
 - name: Install Buildbot system level dependencies
   yum:
-    name: "{{ item }}"
+    name: [ 'autossh', 'sudo', 'python-pip' ]
     state: latest
   become: yes
-  with_items:
-    - autossh
-    - sudo
-    - python-pip

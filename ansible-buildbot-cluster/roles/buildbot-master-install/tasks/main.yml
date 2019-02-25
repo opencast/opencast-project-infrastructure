@@ -8,12 +8,9 @@
 
 - name: Install docker-compose
   pip:
-    name: "{{ item }}"
+    name: [ 'docker', 'docker-compose' ]
     state: latest
   become: yes
-  with_items:
-    - docker
-    - docker-compose
 
   #Note, we're using /bin/bash here rather than /sbin/nologin or /bin/false because we need to be able to log in!
 - name: Create Buildbot user

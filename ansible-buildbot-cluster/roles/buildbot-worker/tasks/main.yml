@@ -8,20 +8,15 @@
 
 - name: Ensuring docker-py is not present
   pip:
-    name: "{{ item }}"
+    name: docker-py
     state: absent
   become: yes
-  with_items:
-    - docker-py
 
 - name: Install docker for Docker latent worker support
   pip:
-    name: "{{ item }}"
+    name: [ 'docker', 'docker-compose' ]
     state: latest
   become: yes
-  with_items:
-    - docker
-    - docker-compose
 
 - name: Ensuring Docker is connectable via TCP
   template:

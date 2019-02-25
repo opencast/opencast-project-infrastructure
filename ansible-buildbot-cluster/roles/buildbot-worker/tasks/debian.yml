@@ -2,11 +2,6 @@
 
 - name: Install Buildbot system level dependencies
   apt:
-    name: "{{ item }}"
+    name: [ 'autossh', 'sudo', 'python-pip' ]
     state: latest
   become: yes
-  with_items:
-    - autossh
-    - sudo
-    - python-pip
-
