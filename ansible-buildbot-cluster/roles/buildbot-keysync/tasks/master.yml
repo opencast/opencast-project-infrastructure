@@ -12,7 +12,7 @@
 
 - name: Clear any local copy of ssh key
   file:
-    name: .ssh
+    name: ".ssh/{{ inventory_hostname }}"
     state: absent
   connection: local
 
@@ -24,23 +24,29 @@
     ssh_key_bits: 4096
   become: yes
 
+- name: Create local cache directory
+  file:
+    name: ".ssh/{{ inventory_hostname }}"
+    state: directory
+  connection: local
+
 - name: Fetch Buildbot SSH keys
   fetch:
-    src: "{{buildbot_home}}/{{ item }}"
-    dest: "{{ item }}"
+    src: "{{buildbot_home}}/.ssh/{{ item }}"
+    dest: ".ssh/{{ inventory_hostname }}/{{ item }}"
     flat: yes
   become: yes
   with_items:
-    - .ssh/id_rsa
-    - .ssh/id_rsa.pub
+    - id_rsa
+    - id_rsa.pub
 
 - name: Adding local keys
-  local_action: shell cp group_vars/keys/* .ssh/ | true
+  local_action: shell "cp group_vars/keys/* .ssh/{{ inventory_hostname }}" | true
 
 - name: Populate Buildbot master authorized_keys
   authorized_key:
     user: "{{ buildbot_user }}"
     state: present
-    key: "{{ lookup('file', '.ssh/id_rsa.pub') }}"
+    key: "{{ lookup('file', '.ssh/{{ inventory_hostname }}/id_rsa.pub') }}"
     manage_dir: yes
   become: yes

@@ -31,7 +31,7 @@
 
 - name: Push Buildbot SSH keys
   copy:
-    src: ".ssh/"
+    src: ".ssh/{{ groups['master'][0] }}/"
     dest: "{{ buildbot_home }}/{{ item.dest }}/"
     owner: "{{ item.owner }}"
     group: "{{ item.owner }}"
