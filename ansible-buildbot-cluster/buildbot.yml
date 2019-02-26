@@ -7,6 +7,8 @@
   roles:
     #We're becoming here because the docker role does not become inside of itself
     - { role: geerlingguy.docker, become: yes }
+    - docker-tcp-connectable
+    - buildbot-base
     - buildbot-keysync
     - autossh
   handlers:
@@ -24,6 +26,6 @@
 - hosts: workers
   user: "{{ login_user }}"
   roles:
-    - buildbot-worker
+    - { role: buildbot-worker, when: "'master' not in group_names" }
   handlers:
     - import_tasks: handlers/handlers.yml
