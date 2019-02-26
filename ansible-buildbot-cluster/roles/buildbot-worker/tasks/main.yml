@@ -1,23 +1,5 @@
 ---
 
-- import_tasks: debian.yml
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-
-- import_tasks: centos.yml
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
-
-- name: Ensuring docker-py is not present
-  pip:
-    name: docker-py
-    state: absent
-  become: yes
-
-- name: Install docker for Docker latent worker support
-  pip:
-    name: [ 'docker', 'docker-compose' ]
-    state: latest
-  become: yes
-
 - name: Template docker-compose configuration file
   template:
     src: "{{ item.src }}"

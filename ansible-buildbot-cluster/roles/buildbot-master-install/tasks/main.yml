@@ -1,17 +1,5 @@
 ---
 
-- name: Install Python pip
-  package:
-    name: python-pip
-    state: latest
-  become: yes
-
-- name: Install docker-compose
-  pip:
-    name: [ 'docker', 'docker-compose' ]
-    state: latest
-  become: yes
-
   #Note, we're using /bin/bash here rather than /sbin/nologin or /bin/false because we need to be able to log in!
 - name: Create Buildbot user
   user:

@@ -1,0 +1,27 @@
+---
+
+- name: Install EPEL release
+  yum:
+    name: epel-release
+    state: latest
+    update_cache: yes
+  become: yes
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: Install Buildbot system level dependencies
+  package:
+    name: [ 'autossh', 'sudo', 'python-pip' ]
+    state: latest
+  become: yes
+
+- name: Ensuring docker-py is not present
+  pip:
+    name: docker-py
+    state: absent
+  become: yes
+
+- name: Install docker and docker-compose
+  pip:
+    name: [ 'docker', 'docker-compose' ]
+    state: latest
+  become: yes
