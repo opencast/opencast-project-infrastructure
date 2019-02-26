@@ -1,11 +1,7 @@
 ---
 
 #Worker settings
-id: 3
-name: oc-com-admin
-docker_image_user: "greglogan"
-docker_base: centos
-
+name: ci.opencast.org
 
 #Master settings
 login_user: greglogan
