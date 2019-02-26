@@ -10,6 +10,12 @@ import debs
 import rpms
 
 
+mvn_lock = util.WorkerLock("mvn_lock",
+                             maxCount=1)
+
+db_lock = util.WorkerLock("db_lock",
+                             maxCount=1)
+
 rpm_lock = util.WorkerLock("rpm_lock",
                              maxCount=1)
 
@@ -86,14 +92,16 @@ def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branc
         workernames=workers,
         factory=f_build,
         properties=props,
-        collapseRequests=True)
+        collapseRequests=True,
+        locks=[mvn_lock.access('exclusive')])
 
     b_reports = util.BuilderConfig(
         name=pretty_branch_name + " Reports",
         workernames=workers,
         factory=f_reports,
         properties=props,
-        collapseRequests=True)
+        collapseRequests=True,
+        locks=[mvn_lock.access('exclusive')])
 
     b_markdown = util.BuilderConfig(
         name=pretty_branch_name + " Markdown",
@@ -107,7 +115,8 @@ def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branc
         workernames=workers,
         factory=f_db,
         properties=props,
-        collapseRequests=True)
+        collapseRequests=True,
+        locks=[db_lock.access('exclusive')])
 
     b_package_debs = util.BuilderConfig(
         name=pretty_branch_name + " Debian Packaging",

@@ -5,12 +5,6 @@ import os.path
 from buildbot.plugins import *
 
 
-mvn_lock = util.WorkerLock("mvn_lock",
-                             maxCount=1)
-
-def getMavenLock():
-  return mvn_lock
-
 def getMavenBase():
 {% if skip_tests %}
     return ['mvn', '-B', '-V', '-Dmaven.repo.local=/builder/m2', '-DskipTests']
@@ -39,8 +33,7 @@ def getWorkerPrep():
         ],
         haltOnFailure=True,
         flunkOnFailure=True,
-        name="Build Prep",
-        locks=[mvn_lock.access('counting')])
+        name="Build Prep")
 
 def getBuild():
     command = getMavenBase()
@@ -49,8 +42,7 @@ def getBuild():
         command=command,
         haltOnFailure=True,
         flunkOnFailure=True,
-        name="Build",
-        locks=[mvn_lock.access('counting')])
+        name="Build")
 
 def getPermissionsFix():
     return steps.MasterShellCommand(
