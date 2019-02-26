@@ -1,8 +1,5 @@
 ---
 
-- name: Get Buildbot master sshd server key
-  local_action: shell ssh-keyscan {{ groups['master'][0] }} bitbucket.org github.com > .ssh/known_hosts
-
 - name: Create Buildbot group
   group:
     name: '{{ buildbot_user }}'
@@ -18,7 +15,7 @@
     shell: /sbin/nologin
     groups: buildbot,docker
   become: yes
-  when: create_buildbot_user
+  when: create_buildbot_user and 'master' not in group_names
 
 - name: Create Buildbot SSH key directory
   file:
@@ -42,4 +39,5 @@
      #Note: This is the hardcoded buildbot user inside the docker image, do not change this
     - { dest: "ssh", owner: "1000" }
   become: yes
+  notify: "Start Autossh"
 

@@ -9,6 +9,7 @@
     - .ssh/id_rsa
     - .ssh/id_rsa.pub
     - .ssh/authorized_keys
+    - .ssh/known_hosts
 
 - name: Clear any local copy of ssh key
   file:
@@ -23,11 +24,16 @@
     generate_ssh_key: yes
     ssh_key_bits: 4096
   become: yes
+  notify: "Start Autossh"
 
 - name: Create local cache directory
   file:
     name: ".ssh/{{ inventory_hostname }}"
     state: directory
+  connection: local
+
+- name: Get Buildbot master sshd server key
+  shell: "ssh-keyscan {{ groups['master'][0] }} bitbucket.org github.com > .ssh/{{ inventory_hostname }}/known_hosts"
   connection: local
 
 - name: Fetch Buildbot SSH keys
@@ -49,4 +55,13 @@
     state: present
     key: "{{ lookup('file', '.ssh/{{ inventory_hostname }}/id_rsa.pub') }}"
     manage_dir: yes
+  become: yes
+
+- name: Push Buildbot master known_hosts
+  copy:
+    src: ".ssh/{{ inventory_hostname }}/known_hosts"
+    dest: "{{ buildbot_home }}/.ssh/known_hosts"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: 0644
   become: yes

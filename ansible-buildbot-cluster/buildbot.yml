@@ -9,8 +9,8 @@
     - { role: geerlingguy.docker, become: yes }
     - docker-tcp-connectable
     - buildbot-base
-    - buildbot-keysync
-    - autossh
+    - { role: buildbot-keysync, tags: rekey }
+    - { role: autossh, tags: rekey }
   handlers:
     - import_tasks: handlers/handlers.yml
 
