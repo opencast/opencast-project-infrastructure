@@ -26,6 +26,6 @@
 - hosts: workers
   user: "{{ login_user }}"
   roles:
-    - { role: buildbot-worker, when: "'master' not in group_names" }
+    - buildbot-worker
   handlers:
     - import_tasks: handlers/handlers.yml

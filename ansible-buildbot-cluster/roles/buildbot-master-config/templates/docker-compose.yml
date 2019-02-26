@@ -37,3 +37,31 @@ services:
       - "127.0.0.1:5432:5432"
     volumes:
       - "{{ buildbot_home }}/postgres-data:/var/lib/postgresql/data"
+
+{% if inventory_hostname in groups['workers'] %}
+  maria:
+    image: mariadb:10
+    restart: always
+    ports:
+      - "127.0.0.1:3307:3306"
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+
+  mysql56:
+    image: mysql:5.6
+    restart: always
+    ports:
+      - "127.0.0.1:3308:3306"
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+      - MYSQL_ROOT_HOST=%
+
+  mysql57:
+    image: mysql:5.7
+    restart: always
+    ports:
+      - "127.0.0.1:3309:3306"
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+      - MYSQL_ROOT_HOST=%
+{% endif %}

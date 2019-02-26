@@ -26,6 +26,7 @@
     mode: 0600
     force: yes
   become: yes
+  when: "'master' not in group_names"
   with_items:
     - { src: "docker-compose.yml", dest: "{{ buildbot_home }}/docker-compose.yml" }
   notify: "Start Databases"
@@ -39,6 +40,7 @@
     mode: "{{ item.mode }}"
     recurse: yes
   become: yes
+  when: "'master' not in group_names"
   with_items:
     - { path: "{{ buildbot_home }}", owner: "buildbot", mode: "0755" }
     - { path: "{{ buildbot_home }}/.ssh", owner: "buildbot", mode: "0700" }

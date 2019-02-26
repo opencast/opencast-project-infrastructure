@@ -34,16 +34,19 @@
 - name: Ensure required directories exist and have the right permissions
   file:
     state: directory
-    path: "{{ item  }}"
-    owner: "{{ buildbot_user }}"
-    group: "{{ buildbot_user }}"
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.owner }}"
+    mode: "{{ item.mode }}"
   become: yes
   with_items:
-    - "{{ buildbot_home }}"
-    - "{{ disk_base }}"
-    - "{{ buildbot_home }}/buildbot-config"
-    - "{{ buildbot_home }}/buildbot-config/secrets"
-    - "{{ buildbot_home }}/nginx-config"
+    - { path: "{{ buildbot_home }}", owner: "{{ buildbot_user }}", mode: "0755" }
+    - { path: "{{ disk_base }}", owner: "{{ buildbot_user }}", mode: "0755" }
+    - { path: "{{ buildbot_home }}/buildbot-config", owner: "{{ buildbot_user }}", mode: "0755" }
+    - { path: "{{ buildbot_home }}/buildbot-config/secrets", owner: "{{ buildbot_user }}", mode: "0700" }
+    - { path: "{{ buildbot_home }}/nginx-config", owner: "{{ buildbot_user }}", mode: "0755" }
+    - { path: "{{ buildbot_home }}/m2", owner: 1000, mode: "0700" }
+    - { path: "{{ buildbot_home }}/builds", owner: 1000, mode: "0700" }
 
 - name: Add Buildbot cleanup script to the crontab
   cron:
