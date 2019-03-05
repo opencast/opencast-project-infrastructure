@@ -10,7 +10,7 @@
     - docker-tcp-connectable
     - buildbot-base
     - { role: buildbot-keysync, tags: rekey }
-    - { role: autossh, when: "'master' not in group_names", tags: rekey }
+    - { role: autossh, tags: rekey }
   handlers:
     - import_tasks: handlers/handlers.yml
 
