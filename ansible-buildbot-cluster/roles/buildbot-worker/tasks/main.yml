@@ -20,7 +20,6 @@
     owner: "{{ item.owner }}"
     group: "{{ item.owner }}"
     mode: "{{ item.mode }}"
-    recurse: yes
   become: yes
   when: "'master' not in group_names"
   with_items:
