@@ -15,7 +15,6 @@ services:
       - "127.0.0.1:3308:3306"
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
-      - MYSQL_ROOT_HOST=%
 
   mysql57:
     image: mysql:5.7
@@ -24,4 +23,3 @@ services:
       - "127.0.0.1:3309:3306"
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
-      - MYSQL_ROOT_HOST=%
