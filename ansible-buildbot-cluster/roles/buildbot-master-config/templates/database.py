@@ -53,19 +53,18 @@ def __getBasePipeline():
     f_build.addStep(generateDBTestStep("maria", "3307"))
     f_build.addStep(generateDBTestStep("mysql5.6", "3308"))
     f_build.addStep(generateDBTestStep("mysql5.7", "3309"))
+    f_build.addStep(common.getClean())
 
     return f_build
 
 def getPullRequestPipeline():
 
     f_build = __getBasePipeline()
-    f_build.addStep(common.getClean())
 
     return f_build
 
 def getBuildPipeline():
 
     f_build = __getBasePipeline()
-    f_build.addStep(common.getClean())
 
     return f_build

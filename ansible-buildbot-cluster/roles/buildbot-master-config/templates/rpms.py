@@ -38,7 +38,7 @@ def getRPMBuilds():
                 ],
                 haltOnFailure=True,
                 flunkOnFailure=True,
-                logfile="" + profile))
+                logfile=profile))
     return builds
 
 
