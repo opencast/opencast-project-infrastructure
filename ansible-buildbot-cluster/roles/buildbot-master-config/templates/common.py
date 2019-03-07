@@ -67,4 +67,5 @@ def getClean():
         ],
         haltOnFailure=True,
         flunkOnFailure=True,
+        alwaysRun=True,
         name="Cleanup")
