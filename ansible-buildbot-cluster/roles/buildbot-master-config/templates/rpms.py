@@ -236,6 +236,7 @@ def getBuildPipeline():
         name="Deploy rpms")
 
     f_package_rpms = util.BuildFactory()
+    f_package_rpms.addStep(common.getPreflightChecks())
     f_package_rpms.addStep(rpmChecker)
     f_package_rpms.addStep(rpmsClone)
     f_package_rpms.addStep(rpmsUpdate)

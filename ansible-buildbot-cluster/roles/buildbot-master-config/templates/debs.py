@@ -199,6 +199,7 @@ def getBuildPipeline():
         name="Deploy Debs")
 
     f_package_debs = util.BuildFactory()
+    f_package_debs.addStep(common.getPreflightChecks())
     f_package_debs.addStep(debChecker)
     f_package_debs.addStep(debsClone)
     f_package_debs.addStep(debsUpdate)

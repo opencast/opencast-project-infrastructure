@@ -64,6 +64,10 @@ push_crowdin: False
 #Set this to True to skip tests during the Maven build.  Not something for production.
 skip_tests: False
 
+#Set this to the minimum amount of free disk space, in megabytes (ie, df -m), below which a build will abort on startup
+#Currently a combination of the main build and the reports build occupy about 5800 MB
+minimum_build_diskspace: 6000
+
 
 #######################
 # Networking Settings #

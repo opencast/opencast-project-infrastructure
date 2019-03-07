@@ -12,6 +12,15 @@ def getMavenBase():
     return ['mvn', '-B', '-V', '-Dmaven.repo.local=/builder/m2']
 {% endif %}
 
+def getPreflightChecks():
+    return steps.ShellSequence(
+        commands=[
+            util.ShellArg(command="df /builds -m | tail -n 1 | awk '$4 <= {{ minimum_build_diskspace }} { exit 1 }'", logfile='freespace'),
+        ],
+        haltOnFailure=True,
+        flunkOnFailure=True,
+        name="Pre-flight checks")
+
 def getClone():
     return steps.GitHub(
         repourl="{{ source_repo_url }}",
