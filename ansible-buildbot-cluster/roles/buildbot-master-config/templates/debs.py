@@ -45,7 +45,8 @@ def getBuildPipeline():
     debsUpdate = steps.ShellSequence(
         commands=[
             util.ShellArg(
-                command=['git', 'fetch'], flunkOnFailure=True,
+                command=['git', 'fetch'],
+                flunkOnFailure=True,
                 logfile='fetch'),
             util.ShellArg(
                 command=[
@@ -179,6 +180,7 @@ def getBuildPipeline():
                 util.Interpolate(os.path.normpath("{{ deployed_debs }}")),
                 util.Interpolate(os.path.normpath("{{ deployed_debs_symlink_base }}"))
         ],
+        flunkOnFailure=True,
         name="Prep relevant directories on buildmaster")
 
     #Note: We're using a string here because using the array disables shell globbing!
@@ -194,7 +196,6 @@ def getBuildPipeline():
         command=util.Interpolate(
             "rm -f {{ deployed_debs_symlink }} && ln -s {{ deployed_debs }} {{ deployed_debs_symlink }}"
         ),
-        haltOnFailure=False,
         flunkOnFailure=True,
         name="Deploy Debs")
 

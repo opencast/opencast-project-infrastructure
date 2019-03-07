@@ -28,7 +28,7 @@ def __getBasePipeline():
             util.ShellArg(
                 command=['./node_modules/grunt/bin/grunt'],
                 flunkOnFailure=True,
-                haltOnFailure=True,
+                haltOnFailure=False,
                 logfile='grunt'),
         ],
         workdir="build/docs/guides",
@@ -57,7 +57,7 @@ def __getBasePipeline():
         ],
         workdir="build/docs/guides",
         name="Build Markdown docs",
-        haltOnFailure=False,
+        haltOnFailure=True,
         flunkOnFailure=True)
 
 
@@ -83,6 +83,7 @@ def getBuildPipeline():
                 util.Interpolate(os.path.normpath("{{ deployed_markdown }}")),
                 util.Interpolate(os.path.normpath("{{ deployed_markdown_symlink_base }}")),
         ],
+        flunkOnFailure=True,
         name="Prep relevant directories on buildmaster")
 
     upload = steps.ShellSequence(
@@ -117,6 +118,7 @@ def getBuildPipeline():
         command=util.Interpolate(
             "rm -f {{ deployed_markdown_symlink }} && ln -s {{ deployed_markdown }} {{ deployed_markdown_symlink }}"
         ),
+        flunkOnFailure=True,
         name="Deploy Markdown")
 
 

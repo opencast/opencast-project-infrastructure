@@ -31,6 +31,7 @@ def getBuildPipeline():
                 util.Interpolate(os.path.normpath("{{ deployed_builds_symlink_base }}"))
 
         ],
+        flunkOnFailure=True,
         name="Prep relevant directories on buildmaster")
 
     #Note: We're using a string here because using the array disables shell globbing!
@@ -45,6 +46,7 @@ def getBuildPipeline():
         command=util.Interpolate(
             "rm -f {{ deployed_builds_symlink }} && ln -s {{ deployed_builds }} {{ deployed_builds_symlink }}"
         ),
+        flunkOnFailure=True,
         name="Deploy Build")
 
     updateCrowdin = steps.ShellCommand(
@@ -55,7 +57,7 @@ def getBuildPipeline():
         },
         doStepIf={{ push_crowdin }},
         hideStepIf={{ not push_crowdin }},
-        haltOnFailure=False,
+        haltOnFailure=True,
         flunkOnFailure=True,
         name="Update Crowdin translation keys")
 

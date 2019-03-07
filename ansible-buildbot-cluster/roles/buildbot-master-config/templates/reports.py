@@ -67,6 +67,7 @@ def getBuildPipeline():
                 util.Interpolate(os.path.normpath("{{ deployed_javadocs_symlink_base }}")),
                 util.Interpolate(os.path.normpath("{{ deployed_coverage_symlink_base }}"))
         ],
+        flunkOnFailure=True,
         name="Prep relevant directories on buildmaster")
 
     uploadSite = steps.ShellCommand(
@@ -86,6 +87,7 @@ def getBuildPipeline():
             ln -s {{ deployed_javadocs }} {{ deployed_javadocs_symlink }} && \
             ln -s {{ deployed_coverage }} {{ deployed_coverage_symlink }}"
         ),
+        flunkOnFailure=True,
         name="Deploy Reports")
 
     f_build = __getBasePipeline()
