@@ -40,7 +40,7 @@
   cron:
     name: "Remove old build artifacts"
     special_time: hourly
-    job: "/bin/bash {{ buildbot_base }}/cleaner.sh"
+    job: "python {{ buildbot_base }}/cleaner.py"
     user: "{{ buildbot_user }}"
     state: present
   become: yes
