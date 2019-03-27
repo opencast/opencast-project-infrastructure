@@ -5,12 +5,6 @@ import os.path
 from buildbot.plugins import *
 import common
 
-def enabled(step):
-    if step.getProperty("npmConfigExists") == "True":
-        return True
-    else:
-        return False
-
 def __getBasePipeline(): 
 
     enable = steps.SetPropertyFromCommand(
@@ -18,7 +12,12 @@ def __getBasePipeline():
         property="npmConfigExists",
         name="Check mkdocs version support")
 
-    check = steps.ShellSequence(
+    grunt = steps.SetPropertyFromCommand(
+        command='[ -f docs/guides/Gruntfile.js ] && echo True || echo False',
+        property="gruntConfigExists",
+        name="Check Grunt config file existence")
+
+    gruntCheck = steps.ShellSequence(
         commands=[
             util.ShellArg(
                 command=['npm', 'install'],
@@ -35,7 +34,30 @@ def __getBasePipeline():
         name="Check Markdown doc formatting",
         haltOnFailure=False,
         flunkOnFailure=True,
-        doStepIf=enabled)
+        doStepIf=lambda step: step.getProperty("npmConfigExists") == "True" and step.getProperty("gruntConfigExists") == "True",
+        hideStepIf=lambda results, step: step.getProperty("npmConfigExists") == "True" and step.getProperty("gruntConfigExists") == "True")
+
+    npmCheck = steps.ShellSequence(
+        commands=[
+            util.ShellArg(
+                command=['npm', 'install'],
+                flunkOnFailure=True,
+                haltOnFailure=True,
+                logfile='npm_install'),
+            util.ShellArg(
+                command=['npm', 'test'],
+                flunkOnFailure=True,
+                haltOnFailure=False,
+                logfile='markdown-cli'),
+        ],
+        workdir="build/docs/guides",
+        name="Check Markdown doc formatting",
+        haltOnFailure=False,
+        flunkOnFailure=True,
+        doStepIf=lambda step: step.getProperty("npmConfigExists") == "True" and step.getProperty("gruntConfigExists") != "True",
+        hideStepIf=lambda results, step: step.getProperty("npmConfigExists") == "True" and step.getProperty("gruntConfigExists") != "True")
+
+
 
     build = steps.ShellSequence(
         commands=[
@@ -64,7 +86,9 @@ def __getBasePipeline():
     f_build = util.BuildFactory()
     f_build.addStep(common.getClone())
     f_build.addStep(enable)
-    f_build.addStep(check)
+    f_build.addStep(grunt)
+    f_build.addStep(gruntCheck)
+    f_build.addStep(npmCheck)
     f_build.addStep(build)
 
     return f_build
@@ -112,7 +136,7 @@ def getBuildPipeline():
         name="Upload Markdown docs to buildmaster",
         haltOnFailure=True,
         flunkOnFailure=True,
-        doStepIf=enabled)
+        doStepIf=lambda step: step.getProperty("npmConfigExists") == "True")
 
     updateMarkdown = steps.MasterShellCommand(
         command=util.Interpolate(
