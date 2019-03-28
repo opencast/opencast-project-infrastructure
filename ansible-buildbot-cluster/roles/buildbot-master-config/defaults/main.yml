@@ -55,8 +55,11 @@ poll_interval: 10
 #Number of days to keep artifacts around.  Note that this does *not* check against the available disk space!
 keep_artifacts: 7
 
-#Whether to send the status emails and GitHub status pushes
-send_notifications: True
+#Whether to send the status emails
+send_mail_notifications: True
+
+#Whether to send the GitHub status pushes
+send_gh_notifications: True
 
 #Whether to push crowdin data on successful build.  Generally this should be False unless you're the golden master CI infrastructure.
 push_crowdin: False
