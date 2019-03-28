@@ -47,8 +47,15 @@ def getWorkerPrep():
 def getBuild():
     command = getMavenBase()
     command.extend(['clean', 'install'])
-    return steps.ShellCommand(
-        command=command,
+    return steps.ShellSequence(
+        commands=[
+            util.ShellArg(
+                command=['sed','-i','s/WARN/DEBUG/','docs/log4j/log4j.properties'],
+                logfile='sed'),
+            util.ShellArg(
+                command=command,
+                logfile='build')
+        ],
         haltOnFailure=True,
         flunkOnFailure=True,
         name="Build")
