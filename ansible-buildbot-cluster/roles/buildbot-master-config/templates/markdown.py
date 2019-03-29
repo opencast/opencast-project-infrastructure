@@ -31,11 +31,11 @@ def __getBasePipeline():
                 logfile='grunt'),
         ],
         workdir="build/docs/guides",
-        name="Check Markdown doc formatting",
+        name="Check Markdown doc formatting with grunt",
         haltOnFailure=False,
         flunkOnFailure=True,
         doStepIf=lambda step: step.getProperty("npmConfigExists") == "True" and step.getProperty("gruntConfigExists") == "True",
-        hideStepIf=lambda results, step: step.getProperty("npmConfigExists") == "True" and step.getProperty("gruntConfigExists") == "True")
+        hideStepIf=lambda results, step: not (step.getProperty("npmConfigExists") == "True" and step.getProperty("gruntConfigExists") == "True"))
 
     npmCheck = steps.ShellSequence(
         commands=[
@@ -51,11 +51,11 @@ def __getBasePipeline():
                 logfile='markdown-cli'),
         ],
         workdir="build/docs/guides",
-        name="Check Markdown doc formatting",
+        name="Check Markdown doc formatting with markdown-cli",
         haltOnFailure=False,
         flunkOnFailure=True,
         doStepIf=lambda step: step.getProperty("npmConfigExists") == "True" and step.getProperty("gruntConfigExists") != "True",
-        hideStepIf=lambda results, step: step.getProperty("npmConfigExists") == "True" and step.getProperty("gruntConfigExists") != "True")
+        hideStepIf=lambda results, step: not (step.getProperty("npmConfigExists") == "True" and step.getProperty("gruntConfigExists") != "True"))
 
 
 
