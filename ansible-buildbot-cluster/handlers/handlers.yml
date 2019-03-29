@@ -23,6 +23,7 @@
     enabled: yes
     daemon_reload: yes
   become: yes
+  when: "'master' not in group_names"
 
 - name: Restart Docker
   systemd:
