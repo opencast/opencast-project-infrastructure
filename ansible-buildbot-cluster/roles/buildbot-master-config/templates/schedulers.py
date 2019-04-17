@@ -44,6 +44,13 @@ def getSchedulers(pretty_branch_name, git_branch_name):
             pretty_branch_name + " RPM Packaging",
         ])
 
+    triggerable_branch = schedulers.Triggerable(
+        name=pretty_branch_name + ' Triggerable',
+        builderNames=[
+            pretty_branch_name + " Debian Packaging",
+            pretty_branch_name + " RPM Packaging",
+        ])
+
     #Note: This is a hack, but we need a unique name for the force schedulers, and it can't have special characters in it...
     forceScheduler = schedulers.ForceScheduler(
         name="ForceBuildCommits" + pretty_branch_name[0],
@@ -88,5 +95,5 @@ def getSchedulers(pretty_branch_name, git_branch_name):
         # input for user to type his name
         username=util.UserNameParameter(label="your name:", size=80))
 
-    scheduler_list.extend([commits_branch, nightly_branch, forceScheduler])
+    scheduler_list.extend([commits_branch, nightly_branch, triggerable_branch, forceScheduler])
     return scheduler_list

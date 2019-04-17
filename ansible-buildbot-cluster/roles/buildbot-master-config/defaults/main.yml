@@ -71,6 +71,8 @@ skip_tests: False
 #Currently a combination of the main build and the reports build occupy about 5800 MB
 minimum_build_diskspace: 6000
 
+#Set this to True to package every build, as well as running nightly as needed
+package_all: False
 
 #######################
 # Networking Settings #

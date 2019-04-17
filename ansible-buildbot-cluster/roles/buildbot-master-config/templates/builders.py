@@ -78,6 +78,9 @@ def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branc
     workers = deb_workers + rpm_workers
 
     f_build = build.getBuildPipeline()
+{% if package_all %}
+    f_build.addStep(steps.Trigger(schedulerNames=[pretty_branch_name + " Triggerable"], name="Trigger packaging builds"))
+{% endif %}
 
     f_reports = reports.getBuildPipeline()
 
