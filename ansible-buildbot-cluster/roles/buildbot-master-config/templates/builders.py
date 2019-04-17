@@ -34,13 +34,15 @@ def getPullRequestBuilder(workers):
       name="Pull Request Build",
       workernames=workers,
       factory=f_pr_build,
-      collapseRequests=True)
+      collapseRequests=True,
+      locks=[mvn_lock.access('exclusive')])
 
   b_pr_reports = util.BuilderConfig(
       name="Pull Request Reports",
       workernames=workers,
       factory=f_pr_reports,
-      collapseRequests=True)
+      collapseRequests=True,
+      locks=[mvn_lock.access('exclusive')])
 
   b_pr_markdown = util.BuilderConfig(
       name="Pull Request Markdown",
@@ -52,7 +54,8 @@ def getPullRequestBuilder(workers):
       name="Pull Request Database Tests",
       workernames=workers,
       factory=f_pr_db,
-      collapseRequests=True)
+      collapseRequests=True,
+      locks=[db_lock.access('exclusive')])
 
   return [
     b_pr_build, b_pr_reports, b_pr_markdown, b_pr_db
