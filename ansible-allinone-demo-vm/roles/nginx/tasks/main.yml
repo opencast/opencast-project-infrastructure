@@ -52,6 +52,26 @@
     mode: 0640
   notify: reload nginx
 
+- name: install selinux config libs
+  package:
+    name: libsemanage-python
+    state: present
+  when: >
+     ansible_distribution == 'CentOS'
+     or ansible_distribution == 'Red Hat Enterprise Linux'
+     or ansible_distribution == 'Scientific'
+
+- name: allow httpd to act as reverse proxy
+  become: yes
+  seboolean:
+    name: httpd_can_network_relay
+    state: yes
+    persistent: yes
+  when: >
+     ansible_distribution == 'CentOS'
+     or ansible_distribution == 'Red Hat Enterprise Linux'
+     or ansible_distribution == 'Scientific'
+
 - name: start and enable nginx
   service:
     name={{item}}
