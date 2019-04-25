@@ -74,6 +74,9 @@ minimum_build_diskspace: 6000
 #Set this to True to package every build, as well as running nightly as needed
 package_all: False
 
+#Set this to True on the node which builds the package repository data
+repo_builder: False
+
 #######################
 # Networking Settings #
 #######################
@@ -95,7 +98,9 @@ markdown_fragment: "{{ artifacts_fragment }}/markdown"
 coverage_fragment: "{{ artifacts_fragment }}/coverage"
 debs_fragment: "{{ artifacts_fragment }}/debs"
 rpms_fragment: "{{ artifacts_fragment }}/rpms"
-
+repo_fragment: "{{ disk_base }}/repo" #This is relative to the buildbot base data directory
+deb_repo_fragment: "{{ repo_fragment }}/debs"
+rpm_repo_fragment: "{{ repo_fragment }}/rpms"
 
 #################
 # URL Settings #
@@ -126,6 +131,10 @@ rpms_url: "{{ url_base }}/{{ rpms_fragment }}"
 
 #Where the buildbot install lives
 buildbot_base: "{{ buildbot_home }}"
+
+#This is the directory for buildbot's configuration files from *inside* the docker container.  This is used for the debian repo code.
+#Don't change this unless the structure of the container is changing too.
+buildbot_config: /var/lib/buildbot
 
 #Where the master config file lives
 buildbot_master_config: "{{ buildbot_base }}/master.cfg"

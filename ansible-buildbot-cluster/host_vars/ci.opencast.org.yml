@@ -2,6 +2,7 @@
 
 #Worker settings
 name: ci.opencast.org
+repo_builder: True
 
 #Master settings
 login_user: greglogan

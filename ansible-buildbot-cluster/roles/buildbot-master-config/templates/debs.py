@@ -214,6 +214,6 @@ def getBuildPipeline():
     f_package_debs.addStep(debsUpload)
     f_package_debs.addStep(debsDeploy)
     f_package_debs.addStep(common.getClean())
-    f_package_debs.addStep(steps.Trigger(schedulerNames=[util.Interpolate("%(prop:branch_pretty)s Debian Repo Triggerable")], name="Trigger package repo build")
+    f_package_debs.addStep(steps.Trigger(schedulerNames=[util.Interpolate("%(prop:branch_pretty)s Debian Repo Triggerable")], name="Trigger package repo build"))
 
     return f_package_debs

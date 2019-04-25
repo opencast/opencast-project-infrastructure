@@ -8,6 +8,8 @@ import markdown
 import database
 import debs
 import rpms
+import deb_repo
+import rpm_repo
 
 
 mvn_lock = util.WorkerLock("mvn_lock",
@@ -109,6 +111,9 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
 
     f_package_rpms = rpms.getBuildPipeline()
 
+    f_repo_debs = deb_repo.getBuildPipeline()
+
+    f_repo_rpms = rpm_repo.getBuildPipeline()
 
     b_build = util.BuilderConfig(
         name=pretty_branch_name + " Build",
@@ -160,7 +165,7 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
     b_repo_debs = util.BuilderConfig(
         name=pretty_branch_name + " Debian Repository",
         workernames=getWorkerList("debian"),
-        factory=f_package_debs,
+        factory=f_repo_debs,
         properties=props,
         collapseRequests=True,
         locks=[deb_lock.access('exclusive')])
@@ -168,7 +173,7 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
     b_repo_rpms = util.BuilderConfig(
         name=pretty_branch_name + " RPM Repository",
         workernames=getWorkerList("centos"),
-        factory=f_package_rpms,
+        factory=f_repo_rpms,
         properties=props,
         collapseRequests=True,
         locks=[rpm_lock.access('exclusive')])
