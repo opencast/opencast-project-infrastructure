@@ -67,7 +67,6 @@ def getSchedulers(pretty_branch_name, git_branch_name):
             pretty_branch_name + " RPM Packaging",
             pretty_branch_name + " Debian Repository",
             pretty_branch_name + " RPM Repository",
-
         ],
         codebases=[
             util.CodebaseParameter(

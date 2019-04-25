@@ -23,7 +23,7 @@ rpm_lock = util.WorkerLock("rpm_lock",
                              maxCount=1)
 
 
-def getPullRequestBuilder(workers):
+def getPullRequestBuilder():
 
   f_pr_build = build.getPullRequestPipeline()
 
@@ -35,27 +35,27 @@ def getPullRequestBuilder(workers):
 
   b_pr_build = util.BuilderConfig(
       name="Pull Request Build",
-      workernames=workers,
+      workernames=getWorkerList(),
       factory=f_pr_build,
       collapseRequests=True,
       locks=[mvn_lock.access('exclusive')])
 
   b_pr_reports = util.BuilderConfig(
       name="Pull Request Reports",
-      workernames=workers,
+      workernames=getWorkerList(),
       factory=f_pr_reports,
       collapseRequests=True,
       locks=[mvn_lock.access('exclusive')])
 
   b_pr_markdown = util.BuilderConfig(
       name="Pull Request Markdown",
-      workernames=workers,
+      workernames=getWorkerList(),
       factory=f_pr_markdown,
       collapseRequests=True)
 
   b_pr_db = util.BuilderConfig(
       name="Pull Request Database Tests",
-      workernames=workers,
+      workernames=getWorkerList(),
       factory=f_pr_db,
       collapseRequests=True,
       locks=[db_lock.access('exclusive')])
@@ -69,16 +69,30 @@ def renderShortRevision(props):
   shortrev = props.getProperty('got_revision')
   return shortrev[:9]
 
-def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branch_name, pkg_major_version, pkg_minor_version):
-	
+def getWorkerList(filterBy=None):
+  workers = {
+{% for worker in groups['workers'] %}
+{% if hostvars[worker]['bifurcated'] is defined %}
+    "{{ hostvars[worker]['name'] }}-deb": "debian",
+    "{{ hostvars[worker]['name'] }}-rpm": "centos",
+{% else %}
+    "{{ hostvars[worker]['name'] }}": "{{ hostvars[worker]['docker_base'] }}",
+{% endif %}
+{% endfor %}
+  }
+
+  if None == filterBy:
+    return list(workers.keys())
+  else:
+    return list(filter(lambda x: workers[x] == filterBy, workers))
+
+def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version, pkg_minor_version):
+
     props = {
         'pkg_major_version': pkg_major_version,
         'pkg_minor_version': pkg_minor_version,
         'branch_pretty': pretty_branch_name,
     }
-
-    #Get the list of all workers.  This should be used in all cases unless there's a specific need (ie, debs, rpms)
-    workers = deb_workers + rpm_workers
 
     f_build = build.getBuildPipeline()
 {% if package_all %}
@@ -98,7 +112,7 @@ def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branc
 
     b_build = util.BuilderConfig(
         name=pretty_branch_name + " Build",
-        workernames=workers,
+        workernames=getWorkerList(),
         factory=f_build,
         properties=props,
         collapseRequests=True,
@@ -106,7 +120,7 @@ def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branc
 
     b_reports = util.BuilderConfig(
         name=pretty_branch_name + " Reports",
-        workernames=workers,
+        workernames=getWorkerList(),
         factory=f_reports,
         properties=props,
         collapseRequests=True,
@@ -114,14 +128,14 @@ def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branc
 
     b_markdown = util.BuilderConfig(
         name=pretty_branch_name + " Markdown",
-        workernames=workers,
+        workernames=getWorkerList(),
         factory=f_markdown,
         properties=props,
         collapseRequests=True)
 
     b_db = util.BuilderConfig(
         name=pretty_branch_name + " Database Tests",
-        workernames=workers,
+        workernames=getWorkerList(),
         factory=f_db,
         properties=props,
         collapseRequests=True,
@@ -129,7 +143,7 @@ def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branc
 
     b_package_debs = util.BuilderConfig(
         name=pretty_branch_name + " Debian Packaging",
-        workernames=deb_workers,
+        workernames=getWorkerList("debian"),
         factory=f_package_debs,
         properties=props,
         collapseRequests=True,
@@ -137,7 +151,7 @@ def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branc
 
     b_package_rpms = util.BuilderConfig(
         name=pretty_branch_name + " RPM Packaging",
-        workernames=rpm_workers,
+        workernames=getWorkerList("centos"),
         factory=f_package_rpms,
         properties=props,
         collapseRequests=True,
@@ -145,7 +159,7 @@ def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branc
 
     b_repo_debs = util.BuilderConfig(
         name=pretty_branch_name + " Debian Repository",
-        workernames=deb_workers,
+        workernames=getWorkerList("debian"),
         factory=f_package_debs,
         properties=props,
         collapseRequests=True,
@@ -153,7 +167,7 @@ def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branc
 
     b_repo_rpms = util.BuilderConfig(
         name=pretty_branch_name + " RPM Repository",
-        workernames=rpm_workers,
+        workernames=getWorkerList("centos"),
         factory=f_package_rpms,
         properties=props,
         collapseRequests=True,
