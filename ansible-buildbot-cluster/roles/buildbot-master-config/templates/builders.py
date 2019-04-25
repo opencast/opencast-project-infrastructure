@@ -16,6 +16,9 @@ mvn_lock = util.WorkerLock("mvn_lock",
 db_lock = util.WorkerLock("db_lock",
                              maxCount=1)
 
+deb_lock = util.WorkerLock("deb_lock",
+                             maxCount=1)
+
 rpm_lock = util.WorkerLock("rpm_lock",
                              maxCount=1)
 
@@ -129,7 +132,8 @@ def getBuildersForBranch(deb_workers, rpm_workers, pretty_branch_name, git_branc
         workernames=deb_workers,
         factory=f_package_debs,
         properties=props,
-        collapseRequests=True)
+        collapseRequests=True,
+        locks=[deb_lock.access('exclusive')])
 
     b_package_rpms = util.BuilderConfig(
         name=pretty_branch_name + " RPM Packaging",
