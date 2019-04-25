@@ -37,7 +37,10 @@
         description: "Opencast el 7 Repository - debuginfo",
         baseurl: "https://pkg.opencast.org/rpms/release/el/7/debuginfo",
         enabled: "no" }
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: >
+     ansible_distribution == 'CentOS'
+     or ansible_distribution == 'Red Hat Enterprise Linux'
+     or ansible_distribution == 'Scientific'
 
 - name: install opencast testing repository (rh)
   yum_repository:
@@ -63,7 +66,10 @@
         description: "Opencast el 7 Testing Repository - debuginfo",
         baseurl: "https://pkg.opencast.org/rpms/testing/el/7/debuginfo",
         enabled: "no" }
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: >
+     ansible_distribution == 'CentOS'
+     or ansible_distribution == 'Red Hat Enterprise Linux'
+     or ansible_distribution == 'Scientific'
 
 - name: add apt signing key for opencast repository
   apt_key:
@@ -91,6 +97,13 @@
     createhome: yes
     state: present
 
+- name: add vmusers groups uos servers
+  user:
+    name: opencast
+    groups: vmusers
+    append: yes
+  when: "'uos' in group_names"
+
 - name: create opencast data directory
   file:
     path: /srv/opencast
@@ -114,7 +127,10 @@
     - hunspell
     - tesseract-langpack-deu
     - activemq-dist
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: >
+     ansible_distribution == 'CentOS'
+     or ansible_distribution == 'Red Hat Enterprise Linux'
+     or ansible_distribution == 'Scientific'
 
 - name: install opencast dependencies (deb)
   package:
