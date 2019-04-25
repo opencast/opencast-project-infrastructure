@@ -49,6 +49,8 @@ def getSchedulers(pretty_branch_name, git_branch_name):
         builderNames=[
             pretty_branch_name + " Debian Packaging",
             pretty_branch_name + " RPM Packaging",
+            pretty_branch_name + " Debian Repository",
+            pretty_branch_name + " RPM Repository"
         ])
 
     #Note: This is a hack, but we need a unique name for the force schedulers, and it can't have special characters in it...
@@ -63,6 +65,9 @@ def getSchedulers(pretty_branch_name, git_branch_name):
             pretty_branch_name + " Database Tests",
             pretty_branch_name + " Debian Packaging",
             pretty_branch_name + " RPM Packaging",
+            pretty_branch_name + " Debian Repository",
+            pretty_branch_name + " RPM Repository",
+
         ],
         codebases=[
             util.CodebaseParameter(
