@@ -96,7 +96,7 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
 
     f_build = build.getBuildPipeline()
 {% if package_all %}
-    f_build.addStep(steps.Trigger(schedulerNames=[pretty_branch_name + " Triggerable"], name="Trigger packaging builds"))
+    f_build.addStep(steps.Trigger(schedulerNames=[pretty_branch_name + " Packaging Triggerable"], name="Trigger packaging builds"))
 {% endif %}
 
     f_reports = reports.getBuildPipeline()
