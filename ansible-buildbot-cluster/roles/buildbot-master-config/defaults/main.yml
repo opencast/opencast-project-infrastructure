@@ -74,8 +74,6 @@ minimum_build_diskspace: 6000
 #Set this to True to package every build, as well as running nightly as needed
 package_all: False
 
-#Set this to True on the node which builds the package repository data
-repo_builder: False
 
 #######################
 # Networking Settings #
