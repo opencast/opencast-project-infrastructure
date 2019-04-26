@@ -84,6 +84,7 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
         'pkg_major_version': pkg_major_version,
         'pkg_minor_version': pkg_minor_version,
         'branch_pretty': pretty_branch_name,
+        'signing_key': '{{ signing_key_id }}'
     }
 
     deb_props = dict(props)

@@ -257,6 +257,8 @@ buildbot_scp_rpms: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_rp
 #The package repository suite to install from
 #repo_suite: stable
 
+signing_key_id: 048D039F1DAE53EA0357ED824917F260EA15B53F
+
 #The RPM repo urls
 #oc_rpm_repo_url: "https://pkg.opencast.org/rpms/release/el/7/x86_64"
 #oc_rpm_repo_url_noarch: "https://pkg.opencast.org/rpms/release/el/7/noarch"
@@ -265,7 +267,6 @@ buildbot_scp_rpms: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_rp
 
 #The DEB gpg key
 #oc_deb_repo_key: https://pkg.opencast.org/gpgkeys/opencast-deb.key
-#oc_deb_repo_key_id: 9A7EA8E5B3820B26
 
 #The RPM gpg key
 #oc_rpm_repo_key: https://pkg.opencast.org/gpgkeys/opencast-el7-rpm.opencast.org.key
