@@ -1,21 +1,41 @@
-
 # -*- python -*-
 # ex: set filetype=python:
-
-#Assume the keys and repo are mounted somewhere accessible
-#TODO:
-#    Create the directory structure
-#    (re)place files in said structure
-#    run createrepo at the top level of the repo
-#    done
 
 import os.path
 from buildbot.plugins import *
 import common
 
-
 def getBuildPipeline():
 
-    f_repo_rpms = util.BuildFactory()
+    repo_prep = steps.ShellCommand(
+        command=[
+            'mkdir', '-p', util.Interpolate('{{ rpm_repo_fragment }}/%(prop:pkg_major_version)s/')
+        ],
+        flunkOnFailure=True,
+        haltOnFailure=True,
+        name='Prep repository structure')
 
-    return f_repo_rpms
+    repo_link = steps.ShellCommand(
+        command=util.Interpolate(
+            "scp -r {{ buildbot_scp_rpms }}/* {{ rpm_repo_fragment }}/%(prop:pkg_major_version)s/"
+        ),
+        flunkOnFailure=True,
+        haltOnFailure=True,
+        name='Fetch packages')
+
+    repo_build = steps.ShellCommand(
+        command=[
+            'createrepo', '.'
+        ],
+        workdir=util.Interpolate('{{ rpm_repo_fragment }}'),
+        flunkOnFailure=True,
+        haltOnFailure=True,
+        name='Build repository')
+
+    f_rpm_repo = util.BuildFactory()
+    f_rpm_repo.addStep(common.getPreflightChecks())
+    f_rpm_repo.addStep(repo_prep)
+    f_rpm_repo.addStep(repo_link)
+    f_rpm_repo.addStep(repo_build)
+
+    return f_rpm_repo
