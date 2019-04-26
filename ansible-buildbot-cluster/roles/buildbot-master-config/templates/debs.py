@@ -202,6 +202,9 @@ def getBuildPipeline():
 
     debsRepo = steps.Trigger(
         schedulerNames=[util.Interpolate("%(prop:branch_pretty)s Debian Repo Triggerable")],
+        set_properties={
+            'got_revision': util.Property("got_revision")
+        },
         name="Trigger package repo generation")
 
     f_package_debs = util.BuildFactory()

@@ -237,6 +237,9 @@ def getBuildPipeline():
 
     rpmRepo = steps.Trigger(
         schedulerNames=[util.Interpolate("%(prop:branch_pretty)s RPM Repo Triggerable")],
+        set_properties={
+            'got_revision': util.Property('got_revision')
+        },
         name="Trigger package repo build")
 
     f_package_rpms = util.BuildFactory()
