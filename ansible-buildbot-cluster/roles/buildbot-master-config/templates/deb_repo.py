@@ -23,14 +23,13 @@ def getBuildPipeline():
         haltOnFailure=True,
         name='Clean repository stucture')
 
-    repo_link = steps.ShellCommand(
-        #Note: Neither hardlinking nor symlinking works here.  Hardlinking because Docker won't let you hardlink across volumes, synlinking because mini-dinstall fails to dereference the link.
+    repo_fetch = steps.ShellCommand(
         command=util.Interpolate(
-            "cp -r {{ deployed_debs_symlink }}/* {{ deb_repo_fragment }}/mini-dinstall/incoming"
+            "scp -r {{ buildbot_scp_debs }}/* {{ deb_repo_fragment }}/mini-dinstall/incoming"
         ),
         flunkOnFailure=True,
         haltOnFailure=True,
-        name='Link packages')
+        name='Fetch packages')
 
     #this file needs to be in the cwd for it to be picked up with mini-dinstall
     repo_copy = steps.ShellCommand(
@@ -53,7 +52,7 @@ def getBuildPipeline():
     f_deb_repo.addStep(common.getPreflightChecks())
     f_deb_repo.addStep(repo_prep)
     f_deb_repo.addStep(repo_clean)
-    f_deb_repo.addStep(repo_link)
+    f_deb_repo.addStep(repo_fetch)
     f_deb_repo.addStep(repo_copy)
     f_deb_repo.addStep(repo_build)
 
