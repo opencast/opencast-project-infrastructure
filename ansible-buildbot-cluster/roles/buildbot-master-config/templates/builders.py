@@ -25,6 +25,12 @@ rpm_lock = util.WorkerLock("rpm_lock",
                              maxCount=1)
 
 
+workers = [
+{% for worker in groups['workers'] %}
+  "{{ hostvars[worker]['name'] }}",
+{% endfor %}
+]
+
 def getPullRequestBuilder():
 
   f_pr_build = build.getPullRequestPipeline()
@@ -37,27 +43,27 @@ def getPullRequestBuilder():
 
   b_pr_build = util.BuilderConfig(
       name="Pull Request Build",
-      workernames=getWorkerList(),
+      workernames=workers,
       factory=f_pr_build,
       collapseRequests=True,
       locks=[mvn_lock.access('exclusive')])
 
   b_pr_reports = util.BuilderConfig(
       name="Pull Request Reports",
-      workernames=getWorkerList(),
+      workernames=workers,
       factory=f_pr_reports,
       collapseRequests=True,
       locks=[mvn_lock.access('exclusive')])
 
   b_pr_markdown = util.BuilderConfig(
       name="Pull Request Markdown",
-      workernames=getWorkerList(),
+      workernames=workers,
       factory=f_pr_markdown,
       collapseRequests=True)
 
   b_pr_db = util.BuilderConfig(
       name="Pull Request Database Tests",
-      workernames=getWorkerList(),
+      workernames=workers,
       factory=f_pr_db,
       collapseRequests=True,
       locks=[db_lock.access('exclusive')])
@@ -71,30 +77,20 @@ def renderShortRevision(props):
   shortrev = props.getProperty('got_revision')
   return shortrev[:9]
 
-def getWorkerList(filterBy=None):
-  workers = {
-{% for worker in groups['workers'] %}
-{% if hostvars[worker]['bifurcated'] is defined %}
-    "{{ hostvars[worker]['name'] }}-deb": "debian",
-    "{{ hostvars[worker]['name'] }}-rpm": "centos",
-{% else %}
-    "{{ hostvars[worker]['name'] }}": "{{ hostvars[worker]['docker_base'] }}",
-{% endif %}
-{% endfor %}
-  }
-
-  if None == filterBy:
-    return list(workers.keys())
-  else:
-    return list(filter(lambda x: workers[x] == filterBy, workers))
-
 def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version, pkg_minor_version):
+
 
     props = {
         'pkg_major_version': pkg_major_version,
         'pkg_minor_version': pkg_minor_version,
         'branch_pretty': pretty_branch_name,
     }
+
+    deb_props = dict(props)
+    deb_props['image'] = "debian"
+
+    cent_props = dict(props)
+    cent_props['image'] = "centos"
 
     f_build = build.getBuildPipeline()
 {% if package_all %}
@@ -117,7 +113,7 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
 
     b_build = util.BuilderConfig(
         name=pretty_branch_name + " Build",
-        workernames=getWorkerList(),
+        workernames=workers,
         factory=f_build,
         properties=props,
         collapseRequests=True,
@@ -125,7 +121,7 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
 
     b_reports = util.BuilderConfig(
         name=pretty_branch_name + " Reports",
-        workernames=getWorkerList(),
+        workernames=workers,
         factory=f_reports,
         properties=props,
         collapseRequests=True,
@@ -133,14 +129,14 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
 
     b_markdown = util.BuilderConfig(
         name=pretty_branch_name + " Markdown",
-        workernames=getWorkerList(),
+        workernames=workers,
         factory=f_markdown,
         properties=props,
         collapseRequests=True)
 
     b_db = util.BuilderConfig(
         name=pretty_branch_name + " Database Tests",
-        workernames=getWorkerList(),
+        workernames=workers,
         factory=f_db,
         properties=props,
         collapseRequests=True,
@@ -148,33 +144,33 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
 
     b_package_debs = util.BuilderConfig(
         name=pretty_branch_name + " Debian Packaging",
-        workernames=getWorkerList("debian"),
+        workernames=workers,
         factory=f_package_debs,
-        properties=props,
+        properties=deb_props,
         collapseRequests=True,
         locks=[deb_lock.access('exclusive')])
 
     b_package_rpms = util.BuilderConfig(
         name=pretty_branch_name + " RPM Packaging",
-        workernames=getWorkerList("centos"),
+        workernames=workers,
         factory=f_package_rpms,
-        properties=props,
+        properties=cent_props,
         collapseRequests=True,
         locks=[rpm_lock.access('exclusive')])
 
     b_repo_debs = util.BuilderConfig(
         name=pretty_branch_name + " Debian Repository",
-        workernames=getWorkerList("debian"),
+        workernames=workers,
         factory=f_repo_debs,
-        properties=props,
+        properties=deb_props,
         collapseRequests=True,
         locks=[deb_lock.access('exclusive')])
 
     b_repo_rpms = util.BuilderConfig(
         name=pretty_branch_name + " RPM Repository",
-        workernames=getWorkerList("centos"),
+        workernames=workers,
         factory=f_repo_rpms,
-        properties=props,
+        properties=cent_props,
         collapseRequests=True,
         locks=[rpm_lock.access('exclusive')])
 
