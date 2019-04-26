@@ -72,11 +72,6 @@ def getPullRequestBuilder():
     b_pr_build, b_pr_reports, b_pr_markdown, b_pr_db
   ]
 
-@util.renderer
-def renderShortRevision(props):
-  shortrev = props.getProperty('got_revision')
-  return shortrev[:9]
-
 def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version, pkg_minor_version):
 
 
