@@ -216,6 +216,7 @@ def getBuildPipeline():
     f_package_debs.addStep(debsFetch)
     f_package_debs.addStep(debsTarballVersion)
     f_package_debs.addStep(debsTarballShortVersion)
+    f_package_debs.addStep(common.loadSigningKey())
     f_package_debs.addStep(debsBuild)
     f_package_debs.addStep(masterPrep)
     f_package_debs.addStep(common.getPermissionsFix())

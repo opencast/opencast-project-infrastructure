@@ -54,6 +54,7 @@ def getBuildPipeline():
     f_deb_repo.addStep(repo_clean)
     f_deb_repo.addStep(repo_fetch)
     f_deb_repo.addStep(repo_copy)
+    f_deb_repo.addStep(common.loadSigningKey())
     f_deb_repo.addStep(repo_build)
 
     return f_deb_repo

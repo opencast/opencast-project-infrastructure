@@ -24,3 +24,5 @@ github_hook_pass: "{{ lookup('passwordstore', 'github.com/hook-pass') }}"
 github_hook_secret:  "{{ lookup('passwordstore', 'github.com/hook-secret') }}"
 
 github_token:  "{{ lookup('passwordstore', 'github.com/api-token') }}"
+
+signing_key: "{{ lookup('passwordstore', 'gpg/nightly/key returnall=true') }}"

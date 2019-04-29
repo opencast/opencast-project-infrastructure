@@ -68,6 +68,15 @@ def getPermissionsFix():
         flunkOnFailure=True,
         name="Fixing directory permissions on buildmaster")
 
+def loadSigningKey():
+    return steps.ShellCommand(
+        command=[
+            "gpg", "--import", "{{ buildbot_config }}/signing.key"
+        ],
+        haltOnFailure=True,
+        flunkOnFailure=True,
+        name="Lead signing key")
+
 def getClean():
     return steps.ShellSequence(
         commands=[

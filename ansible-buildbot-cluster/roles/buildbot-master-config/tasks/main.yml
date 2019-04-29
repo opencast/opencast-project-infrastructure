@@ -65,4 +65,5 @@
   with_items:
     - { src: "changehook.passwd", dest: "{{ buildbot_home }}/buildbot-config/changehook.passwd" }
     - { src: "crowdin.key", dest: "{{ buildbot_home }}/buildbot-config/secrets/crowdin.key" }
+    - { src: "signing.key", dest: "{{ buildbot_home }}/buildbot-config/signing.key" }
 

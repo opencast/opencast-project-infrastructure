@@ -15,7 +15,7 @@ def getBuildPipeline():
         haltOnFailure=True,
         name='Prep repository structure')
 
-    repo_link = steps.ShellCommand(
+    repo_fetch = steps.ShellCommand(
         command=util.Interpolate(
             "scp -r {{ buildbot_scp_rpms }}/* {{ rpm_repo_fragment }}/%(prop:pkg_major_version)s/"
         ),
@@ -35,7 +35,8 @@ def getBuildPipeline():
     f_rpm_repo = util.BuildFactory()
     f_rpm_repo.addStep(common.getPreflightChecks())
     f_rpm_repo.addStep(repo_prep)
-    f_rpm_repo.addStep(repo_link)
+    f_rpm_repo.addStep(repo_fetch)
+    f_rpm_repo.addStep(common.loadSigningKey())
     f_rpm_repo.addStep(repo_build)
 
     return f_rpm_repo
