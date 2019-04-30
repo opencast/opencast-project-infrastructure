@@ -33,6 +33,7 @@ def getRPMBuilds():
                     'rpmbuild',
                     '--define', 'ocdist ' + profile,
                     '--define', util.Interpolate('tarversion %(prop:pkg_major_version)s-SNAPSHOT'),
+                    '--define', util.Interpolate('srcversion %(prop:pkg_major_version)s.x'),
                     '-bb', '--noclean',
                     util.Interpolate("SPECS/opencast%(prop:pkg_major_version)s.spec")
                 ],
