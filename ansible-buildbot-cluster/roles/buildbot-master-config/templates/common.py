@@ -73,6 +73,9 @@ def loadSigningKey():
         command=[
             "gpg", "--import", "{{ buildbot_config }}/signing.key"
         ],
+        env={
+            "GNUPGHOME": "/builder/gnupg"
+        },
         haltOnFailure=True,
         flunkOnFailure=True,
         name="Load signing key")

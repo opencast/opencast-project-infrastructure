@@ -27,6 +27,9 @@ def getBuildPipeline():
         command=[
             'createrepo', '.'
         ],
+        env={
+            "GNUPGHOME": "/builder/gnupg"
+        },
         workdir=util.Interpolate('{{ rpm_repo_fragment }}'),
         flunkOnFailure=True,
         haltOnFailure=True,

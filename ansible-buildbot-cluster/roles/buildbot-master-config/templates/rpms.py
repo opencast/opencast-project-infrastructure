@@ -205,6 +205,9 @@ def getBuildPipeline():
 
     rpmsBuild = steps.ShellSequence(
         commands=getRPMBuilds(),
+        env={
+                "GNUPGHOME": "/builder/gnupg"
+        },
         workdir="build/specs",
         name="Build rpms",
         haltOnFailure=True,
