@@ -75,7 +75,7 @@ def loadSigningKey():
         ],
         haltOnFailure=True,
         flunkOnFailure=True,
-        name="Lead signing key")
+        name="Load signing key")
 
 def getClean():
     return steps.ShellSequence(
