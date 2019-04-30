@@ -40,6 +40,16 @@ def getRPMBuilds():
                 haltOnFailure=True,
                 flunkOnFailure=True,
                 logfile=profile))
+        builds.append(util.ShellArg(
+                command=[
+                    'rpmsign',
+                    '--addsign',
+                    '--key-id', util.Interpolate("%(prop:signing_key)s"),
+                    util.Interpolate("RPMS/opencast%(prop:pkg_major_version)s-" + profile + "-%(prop:pkg_major_version)s.x-%(prop:buildnumber)s.%(prop:short_revision)s.el7.noarch.rpm")
+                ],
+                haltOnFailure=True,
+                flunkOnFailure=True,
+                logfile=profile + " signing"))
     return builds
 
 
