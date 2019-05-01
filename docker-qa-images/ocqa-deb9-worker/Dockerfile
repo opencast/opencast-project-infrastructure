@@ -3,8 +3,7 @@ MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 # Adapted from https://github.com/buildbot/buildbot/blob/v1.7.0/worker/Dockerfile
 
-COPY . /usr/src/buildbot-worker
-COPY docker/buildbot.tac /builder/buildbot.tac
+COPY buildbot.tac /builder/buildbot.tac
 
      # Test runs produce a great quantity of dead grandchild processes.  In a
      # non-docker environment, these are automatically reaped by init (process 1),
@@ -12,8 +11,7 @@ COPY docker/buildbot.tac /builder/buildbot.tac
 RUN  curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.1/dumb-init_1.2.1_amd64 && \
      chmod +x /usr/local/bin/dumb-init && \
      # Install required python packages, and twisted
-     pip3 install 'twisted[tls]' && \
-     pip3 install /usr/src/buildbot-worker && \
+     pip3 install buildbot-worker==2.2.0 && \
      # bc for the database test script
      apt-get update && \
      apt-get install bc && \

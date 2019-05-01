@@ -3,8 +3,7 @@ MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 # Adapted from https://github.com/buildbot/buildbot/blob/v1.7.0/worker/Dockerfile
 
-COPY . /usr/src/buildbot-worker
-COPY docker/buildbot.tac /builder/buildbot.tac
+COPY buildbot.tac /builder/buildbot.tac
 COPY crowdin.repo /etc/yum.repos.d/crowdin.repo
 
      # Test runs produce a great quantity of dead grandchild processes.  In a
@@ -26,8 +25,7 @@ RUN  curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/release
          bc && \
      # Install required python packages, and twisted
      pip3.6 install --upgrade pip setuptools && \
-     pip3.6 install 'twisted[tls]' && \
-     pip3.6 install /usr/src/buildbot-worker
+     pip3.6 install buildbot-worker==2.2.0
 
 USER builder
 
