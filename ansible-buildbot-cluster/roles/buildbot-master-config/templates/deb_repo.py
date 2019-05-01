@@ -44,9 +44,6 @@ def getBuildPipeline():
         command=[
             'mini-dinstall', '-vbc', 'mini-dinstall.conf'
         ],
-        env={
-            "GNUPGHOME": "/builder/gnupg"
-        },
         flunkOnFailure=True,
         haltOnFailure=True,
         name='Build repository')
