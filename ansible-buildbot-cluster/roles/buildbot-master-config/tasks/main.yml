@@ -58,12 +58,12 @@
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    owner: "{{ buildbot_user }}"
+    owner: "{{ item.owner | default(buildbot_user) }}"
     mode: 0600
     force: yes
   become: yes
   with_items:
     - { src: "changehook.passwd", dest: "{{ buildbot_home }}/buildbot-config/changehook.passwd" }
     - { src: "crowdin.key", dest: "{{ buildbot_home }}/buildbot-config/secrets/crowdin.key" }
-    - { src: "signing.key", dest: "{{ buildbot_home }}/buildbot-config/signing.key" }
+    - { src: "signing.key", dest: "{{ buildbot_home }}/buildbot-config/signing.key", owner: "1000" }
 
