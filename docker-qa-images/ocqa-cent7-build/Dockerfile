@@ -1,4 +1,4 @@
-FROM greglogan/ocqa-cent7-run:v2.0.0
+FROM greglogan/ocqa-cent7-run:v2.2.0
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 COPY *.rpm /root/
