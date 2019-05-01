@@ -33,7 +33,6 @@ def getRPMBuilds():
                     'rpmbuild',
                     '--define', 'ocdist ' + profile,
                     '--define', util.Interpolate('tarversion %(prop:pkg_major_version)s-SNAPSHOT'),
-                    '--define', util.Interpolate('srcversion %(prop:pkg_major_version)s.x'),
                     '-bb', '--noclean',
                     util.Interpolate("SPECS/opencast%(prop:pkg_major_version)s.spec")
                 ],
@@ -45,7 +44,7 @@ def getRPMBuilds():
                     'rpmsign',
                     '--addsign',
                     '--key-id', util.Interpolate("%(prop:signing_key)s"),
-                    util.Interpolate("RPMS/opencast%(prop:pkg_major_version)s-" + profile + "-%(prop:pkg_major_version)s.x-%(prop:buildnumber)s.%(prop:short_revision)s.el7.noarch.rpm")
+                    util.Interpolate("RPMS/noarch/opencast%(prop:pkg_major_version)s-" + profile + "-%(prop:pkg_major_version)s.x-%(prop:buildnumber)s.%(prop:short_revision)s.el7.noarch.rpm")
                 ],
                 haltOnFailure=True,
                 flunkOnFailure=True,
@@ -182,6 +181,16 @@ def getBuildPipeline():
         commands=[
             util.ShellArg(
                 command=[
+                    'sed',
+                    '-i',
+                    util.Interpolate('s/srcversion .../srcversion %(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/g'),
+                    util.Interpolate('opencast%(prop:pkg_major_version)s.spec')
+                ],
+                flunkOnFailure=True,
+                warnOnFailure=True,
+                logfile='version'),
+            util.ShellArg(
+                command=[
                     'rpmdev-bumpspec',
                     '-u', '"Buildbot <buildbot@opencast.org>"',
                     '-c',
@@ -202,7 +211,7 @@ def getBuildPipeline():
                 ],
                 flunkOnFailure=True,
                 warnOnFailure=True,
-                logfile='sed'),
+                logfile='buildnumber'),
             util.ShellArg(
                 command=['rm', '-f', 'BUILD/opencast/build/revision.txt'],
                 haltOnFailure=True,
