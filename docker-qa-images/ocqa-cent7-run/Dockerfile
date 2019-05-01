@@ -6,6 +6,7 @@ COPY *.rpm /root/
 RUN yum update -y && \
     yum install -y epel-release && \
     yum install -y \
+        bash \
      # Run deps
         tesseract \
         tesseract-langpack-deu \
