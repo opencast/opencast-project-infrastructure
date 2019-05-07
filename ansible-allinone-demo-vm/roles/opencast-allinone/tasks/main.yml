@@ -11,7 +11,9 @@
     - apt-transport-https
     - ca-certificates
     - sudo
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: >
+    ansible_distribution == 'Debian'
+    or ansible_distribution == 'Ubuntu'
 
 - name: install opencast repository (rh)
   yum_repository:
@@ -38,9 +40,9 @@
         baseurl: "https://pkg.opencast.org/rpms/release/el/7/debuginfo",
         enabled: "no" }
   when: >
-     ansible_distribution == 'CentOS'
-     or ansible_distribution == 'Red Hat Enterprise Linux'
-     or ansible_distribution == 'Scientific'
+    ansible_distribution == 'CentOS'
+    or ansible_distribution == 'RedHat'
+    or ansible_distribution == 'Scientific'
 
 - name: install opencast testing repository (rh)
   yum_repository:
@@ -67,15 +69,17 @@
         baseurl: "https://pkg.opencast.org/rpms/testing/el/7/debuginfo",
         enabled: "no" }
   when: >
-     ansible_distribution == 'CentOS'
-     or ansible_distribution == 'Red Hat Enterprise Linux'
-     or ansible_distribution == 'Scientific'
+    ansible_distribution == 'CentOS'
+    or ansible_distribution == 'RedHat'
+    or ansible_distribution == 'Scientific'
 
 - name: add apt signing key for opencast repository
   apt_key:
     url: https://pkg.opencast.org/gpgkeys/opencast-deb.key
     state: present
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: >
+    ansible_distribution == 'Debian'
+    or ansible_distribution == 'Ubuntu'
 
 - name: install deb repository
   apt_repository:
@@ -85,7 +89,9 @@
   with_items:
     - stable/
     - testing/
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: >
+    ansible_distribution == 'Debian'
+    or ansible_distribution == 'Ubuntu'
 
 
 ###
@@ -128,9 +134,9 @@
     - tesseract-langpack-deu
     - activemq-dist
   when: >
-     ansible_distribution == 'CentOS'
-     or ansible_distribution == 'Red Hat Enterprise Linux'
-     or ansible_distribution == 'Scientific'
+    ansible_distribution == 'CentOS'
+    or ansible_distribution == 'RedHat'
+    or ansible_distribution == 'Scientific'
 
 - name: install opencast dependencies (deb)
   package:
@@ -145,7 +151,9 @@
     - sox
     - synfig
     - tesseract-ocr
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: >
+    ansible_distribution == 'Debian'
+    or ansible_distribution == 'Ubuntu'
 
 - name: enable activemq service
   service:

@@ -57,9 +57,9 @@
     name: libsemanage-python
     state: present
   when: >
-     ansible_distribution == 'CentOS'
-     or ansible_distribution == 'Red Hat Enterprise Linux'
-     or ansible_distribution == 'Scientific'
+    ansible_distribution == 'CentOS'
+    or ansible_distribution == 'RedHat'
+    or ansible_distribution == 'Scientific'
 
 - name: allow httpd to act as reverse proxy
   become: yes
@@ -68,9 +68,9 @@
     state: yes
     persistent: yes
   when: >
-     ansible_distribution == 'CentOS'
-     or ansible_distribution == 'Red Hat Enterprise Linux'
-     or ansible_distribution == 'Scientific'
+    ansible_distribution == 'CentOS'
+    or ansible_distribution == 'RedHat'
+    or ansible_distribution == 'Scientific'
 
 - name: start and enable nginx
   service:
