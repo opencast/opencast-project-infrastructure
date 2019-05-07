@@ -16,7 +16,10 @@
         name={{ item }}
       with_items:
         - epel-release
-      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Scientific'
+      when: >
+        ansible_distribution == 'CentOS'
+        or ansible_distribution == 'RedHat'
+        or ansible_distribution == 'Scientific'
 
     - name: install base tools
       become: yes
