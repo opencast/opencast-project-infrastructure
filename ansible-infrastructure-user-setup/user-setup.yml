@@ -14,7 +14,7 @@
       package:
         state=present
         name={{ item }}
-      with_items:
+      loop:
         - epel-release
       when: >
         ansible_distribution == 'CentOS'
@@ -26,7 +26,7 @@
       package:
         state: present
         name: '{{ item }}'
-      with_items:
+      loop:
         - git
         - htop
         - nload
@@ -44,8 +44,7 @@
         name: '{{ item }}'
         groups: wheel
         append: yes
-      with_items:
-        - "{{ admins }}"
+      loop: '{{ admins }}'
 
     - name: add vmusers groups uos servers
       become: yes
@@ -53,8 +52,7 @@
         name: '{{ item }}'
         groups: vmusers
         append: yes
-      with_items:
-        - "{{ admins }}"
+      loop: '{{ admins }}'
       when: "'uos' in group_names"
 
     - name: set up authorized keys
@@ -64,8 +62,7 @@
         state: present
         key: "{{ lookup('file', 'pub-keys/{{ item }}.pub') }}"
         exclusive: True
-      with_items:
-        - "{{ admins }}"
+      loop: '{{ admins }}'
 
     - name: remove old users
       become: yes
@@ -73,8 +70,7 @@
         name: '{{ item }}'
         state: absent
         remove: yes
-      with_items:
-        - "{{ remove_user | default([]) }}"
+      loop: "{{ remove_user | default([]) }}"
       when: item != ""
 
     - name: allow wheel to sudo without a password
