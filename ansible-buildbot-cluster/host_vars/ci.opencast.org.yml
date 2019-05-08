@@ -13,6 +13,7 @@ source_rpm_repo_url: "https://github.com/gregorydlogan/opencast-rpm-specs.git"
 send_mail_notifications: True
 send_gh_notifications: False
 push_crowdin: True
+max_builds: 2
 
 crowdin_api_key: "{{ lookup('passwordstore', 'crowdin.com/api-key') }}"
 

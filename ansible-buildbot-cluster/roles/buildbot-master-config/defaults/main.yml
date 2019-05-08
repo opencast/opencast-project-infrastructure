@@ -55,6 +55,9 @@ poll_interval: 10
 #Number of days to keep artifacts around.  Note that this does *not* check against the available disk space!
 keep_artifacts: 7
 
+#The maximum number of builds, per branch, to keep around
+max_builds: 4
+
 #Whether to send the status emails
 send_mail_notifications: True
 
