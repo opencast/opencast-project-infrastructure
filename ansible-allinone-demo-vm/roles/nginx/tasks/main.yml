@@ -27,7 +27,7 @@
     group: root
     force: no
     mode: 0640
-  with_items:
+  loop:
     - { key: certificate.pem, value: "ssl/{{inventory_hostname}}.crt" }
     - { key: key.pem,         value: "ssl/{{inventory_hostname}}.key" }
 
@@ -74,8 +74,6 @@
 
 - name: start and enable nginx
   service:
-    name={{item}}
-    enabled=true
-    state=started
-  with_items:
-    - nginx
+    name: nginx
+    enabled: true
+    state: started
