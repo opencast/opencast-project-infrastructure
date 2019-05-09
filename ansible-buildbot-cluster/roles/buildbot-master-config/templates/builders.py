@@ -26,9 +26,11 @@ rpm_lock = util.WorkerLock("rpm_lock",
 
 
 workers = [
-{% for worker in groups['workers'] %}
-  "{{ hostvars[worker]['name'] }}",
-{% endfor %}
+  {{ '\"' + groups['workers'] | map('extract', hostvars, 'name') | join('\", \"') + '\"' }}
+]
+
+repo_workers = [
+  {{ '\"' + groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | map(attribute='name') | join('\", \"') + '\"' }}
 ]
 
 def getPullRequestBuilder():
@@ -90,7 +92,8 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
 
     f_build = build.getBuildPipeline()
 {% if package_all %}
-    f_build.addStep(steps.Trigger(schedulerNames=[pretty_branch_name + " Packaging Triggerable"], name="Trigger packaging builds"))
+    if len(repo_workers) > 0:
+      f_build.addStep(steps.Trigger(schedulerNames=[pretty_branch_name + " Packaging Triggerable"], name="Trigger packaging builds"))
 {% endif %}
 
     f_reports = reports.getBuildPipeline()
@@ -154,7 +157,12 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
         collapseRequests=True,
         locks=[rpm_lock.access('exclusive')])
 
-    b_repo_debs = util.BuilderConfig(
+    builders = [
+        b_build, b_reports, b_markdown, b_db, b_package_debs, b_package_rpms
+    ]
+
+    if len(repo_workers) > 0:
+      b_repo_debs = util.BuilderConfig(
         name=pretty_branch_name + " Debian Repository",
         workernames=workers,
         factory=f_repo_debs,
@@ -162,7 +170,7 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
         collapseRequests=True,
         locks=[deb_lock.access('exclusive')])
 
-    b_repo_rpms = util.BuilderConfig(
+      b_repo_rpms = util.BuilderConfig(
         name=pretty_branch_name + " RPM Repository",
         workernames=workers,
         factory=f_repo_rpms,
@@ -170,6 +178,7 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
         collapseRequests=True,
         locks=[rpm_lock.access('exclusive')])
 
-    return [
-        b_build, b_reports, b_markdown, b_db, b_package_debs, b_package_rpms, b_repo_debs, b_repo_rpms
-    ]
+      builders.append(b_repo_debs)
+      builders.append(b_repo_rpms)
+
+    return builders

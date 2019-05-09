@@ -50,7 +50,7 @@ def getSchedulers(pretty_branch_name, git_branch_name):
             pretty_branch_name + " Debian Packaging",
             pretty_branch_name + " RPM Packaging",
         ])
-
+{% if groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | list | length > 0 %}
     triggerable_deb_repo = schedulers.Triggerable(
         name=pretty_branch_name + ' Debian Repo Triggerable',
         builderNames=[
@@ -62,7 +62,7 @@ def getSchedulers(pretty_branch_name, git_branch_name):
         builderNames=[
             pretty_branch_name + " RPM Repository"
         ])
-
+{% endif %}
 
     #Note: This is a hack, but we need a unique name for the force schedulers, and it can't have special characters in it...
     forceScheduler = schedulers.ForceScheduler(
@@ -76,8 +76,10 @@ def getSchedulers(pretty_branch_name, git_branch_name):
             pretty_branch_name + " Database Tests",
             pretty_branch_name + " Debian Packaging",
             pretty_branch_name + " RPM Packaging",
+{% if groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | list | length > 0 %}
             pretty_branch_name + " Debian Repository",
             pretty_branch_name + " RPM Repository",
+{% endif %}
         ],
         codebases=[
             util.CodebaseParameter(
@@ -110,5 +112,8 @@ def getSchedulers(pretty_branch_name, git_branch_name):
         # input for user to type his name
         username=util.UserNameParameter(label="your name:", size=80))
 
-    scheduler_list.extend([commits_branch, nightly_branch, triggerable_packaging, triggerable_deb_repo, triggerable_rpm_repo, forceScheduler])
+    scheduler_list.extend([commits_branch, nightly_branch, triggerable_packaging, forceScheduler])
+{% if groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | list | length > 0 %}
+    scheduler_list.extend([ triggerable_deb_repo, triggerable_rpm_repo ])
+{% endif %}
     return scheduler_list
