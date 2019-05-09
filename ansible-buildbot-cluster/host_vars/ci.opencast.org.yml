@@ -1,7 +1,7 @@
 ---
 
 #Worker settings
-name: ci.opencast.org
+name: ci-opencast-org
 repo_builder: True
 
 #Master settings
