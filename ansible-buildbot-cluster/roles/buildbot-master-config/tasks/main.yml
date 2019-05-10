@@ -7,18 +7,12 @@
     split: ':'
   register: buildbot_uid
 
-- name: Determine Buildbot GID
-  getent:
-    database: 'group'
-    key: '{{ buildbot_user }}'
-    split: ':'
-  register: buildbot_gid
-
 - name: Template Buildbot configuration files
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
     mode: 0600
     force: yes
   become: yes

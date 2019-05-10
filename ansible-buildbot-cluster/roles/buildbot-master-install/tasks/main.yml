@@ -12,29 +12,20 @@
   become: yes
   when: create_buildbot_user
 
-- name: Determine Buildbot user's UID and GID
-  getent:
-    database: passwd
-    key: "{{ buildbot_user }}"
-    split: ":"
-  become: yes
-
 - name: Ensure required directories exist and have the right permissions
   file:
     state: directory
     path: "{{ item.path }}"
-    owner: "{{ item.owner }}"
-    group: "{{ item.owner }}"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
     mode: "{{ item.mode }}"
   become: yes
   with_items:
-    - { path: "{{ buildbot_home }}", owner: "{{ buildbot_user }}", mode: "0755" }
-    - { path: "{{ disk_base }}", owner: "{{ buildbot_user }}", mode: "0755" }
-    - { path: "{{ buildbot_home }}/buildbot-config", owner: "{{ buildbot_user }}", mode: "0755" }
-    - { path: "{{ buildbot_home }}/buildbot-config/secrets", owner: "{{ buildbot_user }}", mode: "0700" }
-    - { path: "{{ buildbot_home }}/nginx-config", owner: "{{ buildbot_user }}", mode: "0755" }
-    - { path: "{{ buildbot_home }}/m2", owner: 1000, mode: "0700" }
-    - { path: "{{ buildbot_home }}/builds", owner: 1000, mode: "0700" }
+    - { path: "{{ buildbot_home }}", mode: "0755" }
+    - { path: "{{ disk_base }}", mode: "0755" }
+    - { path: "{{ buildbot_home }}/buildbot-config", mode: "0755" }
+    - { path: "{{ buildbot_home }}/buildbot-config/secrets", mode: "0700" }
+    - { path: "{{ buildbot_home }}/nginx-config", mode: "0755" }
 
 - name: Add Buildbot cleanup script to the crontab
   cron:

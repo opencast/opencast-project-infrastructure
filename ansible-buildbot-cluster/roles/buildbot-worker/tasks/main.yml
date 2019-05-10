@@ -21,10 +21,9 @@
     group: "{{ item.owner }}"
     mode: "{{ item.mode }}"
   become: yes
-  when: "'master' not in group_names"
   with_items:
-    - { path: "{{ buildbot_home }}", owner: "buildbot", mode: "0755" }
-    - { path: "{{ buildbot_home }}/.ssh", owner: "buildbot", mode: "0700" }
+    - { path: "{{ buildbot_home }}", owner: "{{ buildbot_user }}", mode: "0755" }
+    - { path: "{{ buildbot_home }}/.ssh", owner: "{{ buildbot_user }}", mode: "0700" }
     #Note: This is the hardcoded buildbot user inside the docker image, do not change this
     - { path: "{{ buildbot_home }}/ssh", owner: 1000, mode: "0700" }
     - { path: "{{ buildbot_home }}/m2", owner: 1000, mode: "0700" }

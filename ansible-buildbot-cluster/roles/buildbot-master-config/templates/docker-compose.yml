@@ -1,6 +1,7 @@
 version: '2'
 services:
   buildbot:
+    user: "{{ buildbot_uid['ansible_facts']['getent_passwd'][buildbot_user][2] }}"
     image: "{{ docker_image_user }}/ocqa-buildbot-master:{{ docker_image_tag }}"
     restart: always
     env_file:

@@ -148,7 +148,6 @@ def getBuildPipeline():
 
     f_build = __getBasePipeline()
     f_build.addStep(masterPrep)
-    f_build.addStep(common.getPermissionsFix())
     f_build.addStep(upload)
     f_build.addStep(updateMarkdown)
     f_build.addStep(common.getClean())

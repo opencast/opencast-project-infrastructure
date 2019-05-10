@@ -275,7 +275,6 @@ def getBuildPipeline():
     f_package_rpms.addStep(common.loadSigningKey())
     f_package_rpms.addStep(rpmsBuild)
     f_package_rpms.addStep(masterPrep)
-    f_package_rpms.addStep(common.getPermissionsFix())
     f_package_rpms.addStep(rpmsUpload)
     f_package_rpms.addStep(rpmsDeploy)
     f_package_rpms.addStep(common.getClean())
