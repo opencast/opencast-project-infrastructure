@@ -27,8 +27,4 @@ RUN  curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/release
      pip3.6 install --upgrade pip setuptools && \
      pip3.6 install buildbot-worker==2.2.0
 
-USER builder
 
-WORKDIR /builder
-
-CMD ["/usr/local/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]

@@ -14,7 +14,7 @@ doBuildWorker() {
   doBuild $1 build
   doBuild $1 doc
   doBuild $1 package
-  doBuild $1 worker
+  doBuild $1 worker-base
 }
 
 doBuildWorker deb9

@@ -12,8 +12,5 @@ RUN yum install -y \
         java-1.8.0-openjdk-devel && \
     yum install -y /root/*.rpm && \
     rm -f /root/*.rpm && \
-    yum clean all && \
-    useradd -ms /bin/bash -d /builder builder && \
-    mkdir /builder/.ssh && \
-    chown -R builder:builder /builder
+    yum clean all
 

@@ -10,7 +10,7 @@ doPush() {
 }
 
 doPushWorker() {
-  doPush $1 worker
+  doPush $1 worker-base
   doPush $1 package
   doPush $1 doc
   doPush $1 build

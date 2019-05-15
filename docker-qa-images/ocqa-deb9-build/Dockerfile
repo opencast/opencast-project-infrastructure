@@ -13,8 +13,5 @@ RUN apt-get update && \
         curl wget \
         openjdk-8-jdk && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    useradd -ms /bin/bash -d /builder builder && \
-    mkdir /builder/.ssh && \
-    chown -R builder:builder /builder
+    rm -rf /var/lib/apt/lists/*
 

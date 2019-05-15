@@ -23,8 +23,3 @@ ADD https://artifacts.crowdin.com/repo/deb/crowdin.deb /root/crowdin.deb
 RUN dpkg -i /root/crowdin.deb && \
     rm -f /root/crowdin.deb
 
-USER builder
-
-WORKDIR /builder
-
-CMD ["/usr/local/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]
