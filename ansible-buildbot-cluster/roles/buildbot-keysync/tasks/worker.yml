@@ -36,8 +36,7 @@
     force: yes
   with_items:
     - { dest: ".ssh", owner: "{{ buildbot_user }}" }
-     #Note: This is the hardcoded buildbot user inside the docker image, do not change this
-    - { dest: "ssh", owner: "1000" }
+    - { dest: "ssh", owner: "{{ buildbot_user }}" }
   become: yes
   notify: "Start Autossh"
 

@@ -7,6 +7,13 @@
     split: ':'
   register: buildbot_uid
 
+- name: Determine Buildbot GID
+  getent:
+    database: 'group'
+    key: '{{ buildbot_user }}'
+    split: ':'
+  register: buildbot_gid
+
 - name: Template Buildbot configuration files
   template:
     src: "{{ item.src }}"
@@ -40,6 +47,7 @@
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
     mode: "{{ item.mode }}"
     force: yes
   become: yes
@@ -52,12 +60,13 @@
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    owner: "{{ item.owner | default(buildbot_user) }}"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
     mode: 0600
     force: yes
   become: yes
   with_items:
     - { src: "changehook.passwd", dest: "{{ buildbot_home }}/buildbot-config/changehook.passwd" }
     - { src: "crowdin.key", dest: "{{ buildbot_home }}/buildbot-config/secrets/crowdin.key" }
-    - { src: "signing.key", dest: "{{ buildbot_home }}/buildbot-config/signing.key", owner: "1000" }
+    - { src: "signing.key", dest: "{{ buildbot_home }}/buildbot-config/signing.key" }
 
