@@ -1,0 +1,13 @@
+FROM greglogan/ocqa-{0}-worker-base:{{ docker_image_tag }}
+
+RUN groupadd -g {2} builder && \
+    useradd -m -u {1} -g {2} -s /bin/bash -d /builder builder && \
+    mkdir /builder/.ssh && \
+    chown -R builder:builder /builder
+
+USER builder
+
+WORKDIR /builder
+
+CMD ["/usr/local/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]
+
