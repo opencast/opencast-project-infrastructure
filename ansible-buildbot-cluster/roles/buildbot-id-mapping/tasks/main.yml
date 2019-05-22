@@ -1,0 +1,16 @@
+---
+
+- name: Determine Buildbot UID
+  getent:
+    database: 'passwd'
+    key: '{{ buildbot_user }}'
+    split: ':'
+  register: '{{ inventory_hostname }}_uid'
+
+- name: Determine Buildbot GID
+  getent:
+    database: 'group'
+    key: '{{ buildbot_user }}'
+    split: ':'
+  register: '{{ inventory_hostname }}_gid'
+
