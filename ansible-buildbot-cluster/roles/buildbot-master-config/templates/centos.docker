@@ -2,8 +2,8 @@ FROM greglogan/ocqa-{0}-worker-base:{{ docker_image_tag }}
 
 RUN groupadd -g {2} builder && \
     useradd -m -u {1} -g {2} -s /bin/bash -d /builder builder && \
-    mkdir /builder/.ssh && \
-    chown -R builder:builder /builder
+    mkdir -p /builder/.ssh /builds && \
+    chown -R builder:builder /builder /builds
 
 USER builder
 
