@@ -63,7 +63,7 @@ def getBuild():
 def loadSigningKey():
     return steps.ShellCommand(
         command=[
-            "gpg", "--import", "{{ buildbot_config }}/signing.key"
+            "gpg", "--import", "{{ buildbot_config }}/secrets/signing.key"
         ],
         haltOnFailure=True,
         flunkOnFailure=True,
