@@ -11,7 +11,7 @@
     - buildbot-base
     - { role: buildbot-keysync, tags: [ rekey ] }
     - { role: autossh, when: "'master' not in group_names", tags: [ rekey ] }
-    - { role: buildbot-id-mapping, tags: [ buildbot ] }
+    - { role: buildbot-id-mapping, tags: [ buildbot, reconfig ] }
   handlers:
     - import_tasks: handlers/handlers.yml
 
