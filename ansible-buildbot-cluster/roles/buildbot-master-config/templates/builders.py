@@ -164,7 +164,7 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
     if len(repo_workers) > 0:
       b_repo_debs = util.BuilderConfig(
         name=pretty_branch_name + " Debian Repository",
-        workernames=workers,
+        workernames=repo_workers,
         factory=f_repo_debs,
         properties=deb_props,
         collapseRequests=True,
@@ -172,7 +172,7 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
 
       b_repo_rpms = util.BuilderConfig(
         name=pretty_branch_name + " RPM Repository",
-        workernames=workers,
+        workernames=repo_workers,
         factory=f_repo_rpms,
         properties=cent_props,
         collapseRequests=True,
