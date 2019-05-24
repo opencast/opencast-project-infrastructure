@@ -23,15 +23,15 @@
   with_items:
     - { path: "{{ buildbot_home }}", mode: "0755" }
     - { path: "{{ disk_base }}", mode: "0755" }
-    - { path: "{{ buildbot_home }}/buildbot-config", mode: "0755" }
-    - { path: "{{ buildbot_home }}/buildbot-config/secrets", mode: "0700" }
+    - { path: "{{ buildbot_config_master }}", mode: "0755" }
+    - { path: "{{ buildbot_secrets_master }}", mode: "0700" }
     - { path: "{{ buildbot_home }}/nginx-config", mode: "0755" }
 
 - name: Add Buildbot cleanup script to the crontab
   cron:
     name: "Remove old build artifacts"
     special_time: hourly
-    job: "python {{ buildbot_base }}/cleaner.py"
+    job: "python {{ buildbot_home }}/cleaner.py"
     user: "{{ buildbot_user }}"
     state: present
   become: yes

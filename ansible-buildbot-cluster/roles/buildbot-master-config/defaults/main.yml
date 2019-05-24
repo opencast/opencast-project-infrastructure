@@ -133,15 +133,15 @@ rpms_url: "{{ url_base }}/{{ rpms_fragment }}"
 # Disk Settings #
 #################
 
-#Where the buildbot install lives
-buildbot_base: "{{ buildbot_home }}"
-
 #This is the directory for buildbot's configuration files from *inside* the docker container.  This is used for the debian repo code.
 #Don't change this unless the structure of the container is changing too.
 buildbot_config: /var/lib/buildbot
 
-#Where the master config file lives
-buildbot_master_config: "{{ buildbot_base }}/master.cfg"
+#Where the master configs live
+buildbot_config_master: "{{ buildbot_home }}/buildbot-config"
+
+#Where the secret files live
+buildbot_secrets_master: "{{ buildbot_config_master }}/secrets"
 
 #Where built artifacts of all types live
 disk_base: /var/www/buildbot

@@ -12,18 +12,18 @@
   with_items:
     - { src: "docker-compose.yml", dest: "{{ buildbot_home }}/docker-compose.yml" }
     - { src: "db.env", dest: "{{ buildbot_home }}/db.env" }
-    - { src: "master.cfg", dest: "{{ buildbot_home }}/buildbot-config/master.cfg" }
-    - { src: "builders.py", dest: "{{ buildbot_home }}/buildbot-config/builders.py" }
-    - { src: "build.py", dest: "{{ buildbot_home }}/buildbot-config/build.py" }
-    - { src: "common.py", dest: "{{ buildbot_home }}/buildbot-config/common.py" }
-    - { src: "debs.py", dest: "{{ buildbot_home }}/buildbot-config/debs.py" }
-    - { src: "markdown.py", dest: "{{ buildbot_home }}/buildbot-config/markdown.py" }
-    - { src: "database.py", dest: "{{ buildbot_home }}/buildbot-config/database.py" }
-    - { src: "reports.py", dest: "{{ buildbot_home }}/buildbot-config/reports.py" }
-    - { src: "rpms.py", dest: "{{ buildbot_home }}/buildbot-config/rpms.py" }
-    - { src: "schedulers.py", dest: "{{ buildbot_home }}/buildbot-config/schedulers.py" }
-    - { src: "deb_repo.py", dest: "{{ buildbot_home }}/buildbot-config/deb_repo.py" }
-    - { src: "rpm_repo.py", dest: "{{ buildbot_home }}/buildbot-config/rpm_repo.py" }
+    - { src: "master.cfg", dest: "{{ buildbot_config_master }}/master.cfg" }
+    - { src: "builders.py", dest: "{{ buildbot_config_master }}/builders.py" }
+    - { src: "build.py", dest: "{{ buildbot_config_master }}/build.py" }
+    - { src: "common.py", dest: "{{ buildbot_config_master }}/common.py" }
+    - { src: "debs.py", dest: "{{ buildbot_config_master }}/debs.py" }
+    - { src: "markdown.py", dest: "{{ buildbot_config_master }}/markdown.py" }
+    - { src: "database.py", dest: "{{ buildbot_config_master }}/database.py" }
+    - { src: "reports.py", dest: "{{ buildbot_config_master }}/reports.py" }
+    - { src: "rpms.py", dest: "{{ buildbot_config_master }}/rpms.py" }
+    - { src: "schedulers.py", dest: "{{ buildbot_config_master }}/schedulers.py" }
+    - { src: "deb_repo.py", dest: "{{ buildbot_config_master }}/deb_repo.py" }
+    - { src: "rpm_repo.py", dest: "{{ buildbot_config_master }}/rpm_repo.py" }
     - { src: "buildbot.conf", dest: "{{ buildbot_home }}/nginx-config/buildbot.conf" }
     - { src: "nexus.conf", dest: "{{ buildbot_home }}/nginx-config/nexus.conf" }
   notify: "Start Buildbot"
@@ -38,8 +38,8 @@
     force: yes
   become: yes
   with_items:
-    - { src: "mini-dinstall.conf", dest: "{{ buildbot_home }}/buildbot-config/mini-dinstall.conf", mode: "644" }
-    - { src: "deb_sign.sh", dest: "{{ buildbot_home }}/buildbot-config/deb_sign.sh", mode: "755" }
+    - { src: "mini-dinstall.conf", dest: "{{ buildbot_config_master }}/mini-dinstall.conf", mode: "644" }
+    - { src: "deb_sign.sh", dest: "{{ buildbot_config_master }}/deb_sign.sh", mode: "755" }
     - { src: "cleaner.py", dest: "{{ buildbot_home }}/cleaner.py", mode: "644" }
 
 - name: Template Buildbot private support files
@@ -52,7 +52,7 @@
     force: yes
   become: yes
   with_items:
-    - { src: "changehook.passwd", dest: "{{ buildbot_home }}/buildbot-config/changehook.passwd" }
-    - { src: "crowdin.key", dest: "{{ buildbot_home }}/buildbot-config/secrets/crowdin.key" }
-    - { src: "signing.key", dest: "{{ buildbot_home }}/buildbot-config/secrets/signing.key" }
+    - { src: "changehook.passwd", dest: "{{ buildbot_config_master }}/changehook.passwd" }
+    - { src: "crowdin.key", dest: "{{ buildbot_secrets_master }}/crowdin.key" }
+    - { src: "signing.key", dest: "{{ buildbot_secrets_master }}/signing.key" }
 
