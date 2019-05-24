@@ -61,9 +61,17 @@ def getBuild():
         name="Build")
 
 def loadSigningKey():
-    return steps.ShellCommand(
-        command=[
-            "gpg", "--import", "{{ buildbot_config }}/secrets/signing.key"
+    return steps.ShellSequence(
+        commands=[
+            util.ShellArg(
+                command=util.Interpolate("echo '%(secret:signing.key)s' > /tmp/key"),
+                logfile="send"),
+            util.ShellArg(
+                command=["gpg", "--import", "/tmp/key"],
+                logfile="load"),
+            util.ShellArg(
+                command=["rm", "-f", "/tmp/key"],
+                logfile="cleanup")
         ],
         haltOnFailure=True,
         flunkOnFailure=True,
