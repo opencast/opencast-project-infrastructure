@@ -1,7 +1,5 @@
 ---
 
 login_user: greglogan
-id: 1
 name: oc-com-worker
 docker_image_user: "greglogan"
-docker_base: debian
