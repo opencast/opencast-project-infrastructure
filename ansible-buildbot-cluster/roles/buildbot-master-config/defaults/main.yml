@@ -250,8 +250,14 @@ buildbot_scp_PR_coverage: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ depl
 #Where to push built debs on the master
 buildbot_scp_debs: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_debs }}"
 
+#Where to fetch the latest deb build from
+buildbot_scp_debs_fetch: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_debs_symlink }}"
+
 #Where to push built rpms on the master
 buildbot_scp_rpms: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_rpms }}"
+
+#Where to fetch the latest rpm build from
+buildbot_scp_rpms_fetch: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_rpms_symlink }}"
 
 #Where to find the signing key
 buildbot_scp_signing_key: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ buildbot_secrets_master }}/signing.key"

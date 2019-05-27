@@ -25,7 +25,7 @@ def getBuildPipeline():
 
     repo_fetch = steps.ShellCommand(
         command=util.Interpolate(
-            "scp -r {{ buildbot_scp_debs }}/* {{ deb_repo_fragment }}/mini-dinstall/incoming"
+            "scp -r {{ buildbot_scp_debs_fetch }}/* {{ deb_repo_fragment }}/mini-dinstall/incoming"
         ),
         flunkOnFailure=True,
         haltOnFailure=True,
