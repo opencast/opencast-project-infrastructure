@@ -13,6 +13,8 @@ send_mail_notifications: True
 send_gh_notifications: True
 push_crowdin: True
 max_builds: 2
+rpm_repo_fragment: "/srv/www/pkg.opencast.org/rpms"
+deb_repo_fragment: "/srv/www/pkg.opencast.org/debs"
 
 crowdin_api_key: "{{ lookup('passwordstore', 'crowdin.com/api-key') }}"
 
