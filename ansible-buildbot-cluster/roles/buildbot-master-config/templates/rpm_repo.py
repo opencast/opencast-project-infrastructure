@@ -9,7 +9,7 @@ def getBuildPipeline():
 
     repo_prep = steps.ShellCommand(
         command=[
-            'mkdir', '-p', util.Interpolate('{{ rpm_repo_fragment }}/%(prop:pkg_major_version)s/')
+            'mkdir', '-p', util.Interpolate('{{ rpm_repo_fragment }}/unstable/el/%(prop:pkg_major_version)s/')
         ],
         flunkOnFailure=True,
         haltOnFailure=True,
@@ -17,7 +17,7 @@ def getBuildPipeline():
 
     repo_fetch = steps.ShellCommand(
         command=util.Interpolate(
-            "scp -r {{ buildbot_scp_rpms_fetch }}/* {{ rpm_repo_fragment }}/%(prop:pkg_major_version)s/"
+            "scp -r {{ buildbot_scp_rpms_fetch }}/* {{ rpm_repo_fragment }}/unstable/el/%(prop:pkg_major_version)s/"
         ),
         flunkOnFailure=True,
         haltOnFailure=True,
