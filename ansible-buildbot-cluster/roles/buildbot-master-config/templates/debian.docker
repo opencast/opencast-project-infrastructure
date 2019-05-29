@@ -1,7 +1,7 @@
-FROM greglogan/ocqa-{0}-worker-base:{{ docker_image_tag }}
+FROM greglogan/ocqa-{0}-{1}:{{ docker_image_tag }}
 
-RUN groupadd -g {2} builder && \
-    useradd -m -u {1} -g {2} -s /bin/bash -d /builder builder && \
+RUN groupadd -g {3} builder && \
+    useradd -m -u {2} -g {3} -s /bin/bash -d /builder builder && \
     mkdir -p /builder/.ssh /builds && \
     chown -R builder:builder /builder /builds
 
