@@ -15,6 +15,7 @@ doBuildWorker() {
   doBuild $1 doc
   doBuild $1 package
   doBuild $1 worker-base
+  doBuild $1 package-stripped
 }
 
 doBuildWorker deb9

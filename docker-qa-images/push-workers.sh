@@ -15,6 +15,7 @@ doPushWorker() {
   doPush $1 doc
   doPush $1 build
   doPush $1 run
+  doPush $1 package-stripped
 }
 
 doPushWorker deb9

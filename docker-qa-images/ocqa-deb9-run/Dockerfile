@@ -6,8 +6,8 @@ ARG         DEBIAN_FRONTEND=noninteractive
 
 COPY ffmpeg*.deb /root/
 
-RUN echo 'Acquire::http::Proxy "http://repo:3142";' > /etc/apt/apt.conf.d/01proxy && \
-    apt-get update && \
+RUN apt-get update && \
+    apt-get dist-upgrade -y && \
     apt-get install -y \
         bash \
      # Run deps
