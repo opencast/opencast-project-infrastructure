@@ -1,4 +1,4 @@
-FROM greglogan/ocqa-cent7-doc:v2.3.0
+FROM greglogan/ocqa-cent7-doc:v2.3.1
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 RUN yum install -y \

@@ -1,4 +1,4 @@
-FROM greglogan/ocqa-deb9-run:v2.3.0
+FROM greglogan/ocqa-deb9-run:v2.3.1
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 # This will make apt-get install without question

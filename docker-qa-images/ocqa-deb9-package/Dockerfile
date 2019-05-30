@@ -1,4 +1,4 @@
-FROM greglogan/ocqa-deb9-doc:v2.3.0
+FROM greglogan/ocqa-deb9-doc:v2.3.1
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 RUN apt-get update && \
