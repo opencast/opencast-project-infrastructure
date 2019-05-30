@@ -48,3 +48,24 @@ repo_password: FAKE_PASSWORD
 
 #The API key for crowdin uploads
 crowdin_api_key: FAKE_API_KEY
+
+#The raw GPG key to use for package and repository signing.
+signing_key: FAKE_KEY
+
+#The signing key to use.  This ID *must* match the key above.
+signing_key_id: FAKE_KEY_ID
+
+
+#################
+# Disk Settings #
+#################
+
+#Where the master configs live
+buildbot_config_master: "{{ buildbot_home }}/buildbot-config"
+
+#Where the secret files live
+buildbot_secrets_master: "{{ buildbot_config_master }}/secrets"
+
+#Where built artifacts of all types live
+disk_base: /var/www/buildbot
+

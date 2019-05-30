@@ -1,5 +1,18 @@
 ---
 
+- name: Ensure required directories exist and have the right permissions
+  file:
+    state: directory
+    path: "{{ item.path }}"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: "{{ item.mode }}"
+  become: yes
+  with_items:
+    - { path: "{{ buildbot_home }}", mode: "0755" }
+    - { path: "{{ buildbot_config_master }}", mode: "0755" }
+    - { path: "{{ buildbot_secrets_master }}", mode: "0700" }
+
 - name: Template Buildbot configuration files
   template:
     src: "{{ item.src }}"

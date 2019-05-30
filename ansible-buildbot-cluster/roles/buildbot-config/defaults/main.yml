@@ -1,3 +1,5 @@
+---
+
 #################################
 # Docker image related settings #
 #################################
@@ -137,14 +139,6 @@ rpms_url: "{{ url_base }}/{{ rpms_fragment }}"
 #Don't change this unless the structure of the container is changing too.
 buildbot_config: /var/lib/buildbot
 
-#Where the master configs live
-buildbot_config_master: "{{ buildbot_home }}/buildbot-config"
-
-#Where the secret files live
-buildbot_secrets_master: "{{ buildbot_config_master }}/secrets"
-
-#Where built artifacts of all types live
-disk_base: /var/www/buildbot
 
 #Where the base of the build lives.  All of the artifacts for a given build live somewhere underneath this.
 build_base: "{{ disk_base }}/{{ artifacts_fragment }}"
@@ -261,7 +255,4 @@ buildbot_scp_rpms_fetch: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deplo
 
 #Where to find the signing key
 buildbot_scp_signing_key: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ buildbot_secrets_master }}/signing.key"
-
-#The signing key to use.  This ID *must* match the key fetched above
-signing_key_id: 048D039F1DAE53EA0357ED824917F260EA15B53F
 

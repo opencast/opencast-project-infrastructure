@@ -19,14 +19,20 @@
   user: "{{ login_user }}"
   roles:
     - { role: buildbot-master-install, tags: [ buildbot ] }
-    - { role: buildbot-master-config, tags: [ buildbot, reconfig ] }
   handlers:
     - import_tasks: handlers/handlers.yml
-
 
 - hosts: workers
   user: "{{ login_user }}"
   roles:
-    - { role: buildbot-worker, tags: [ buildbot, reconfig ] }
+    - { role: buildbot-worker, tags: [ buildbot ] }
   handlers:
     - import_tasks: handlers/handlers.yml
+
+- hosts: all
+  user: "{{ login_user }}"
+  roles:
+    - { role: buildbot-config, tags: [ buildbot, reconfig ] }
+  handlers:
+    - import_tasks: handlers/handlers.yml
+

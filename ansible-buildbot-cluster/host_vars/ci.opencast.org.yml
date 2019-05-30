@@ -28,3 +28,4 @@ github_hook_secret:  "{{ lookup('passwordstore', 'github.com/hook-secret') }}"
 github_token:  "{{ lookup('passwordstore', 'github.com/api-token') }}"
 
 signing_key: "{{ lookup('passwordstore', 'gpg/nightly/key returnall=true') }}"
+signing_key_id: 048D039F1DAE53EA0357ED824917F260EA15B53F
