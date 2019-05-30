@@ -28,6 +28,3 @@ github_hook_secret:  "{{ lookup('passwordstore', 'github.com/hook-secret') }}"
 github_token:  "{{ lookup('passwordstore', 'github.com/api-token') }}"
 
 signing_key: "{{ lookup('passwordstore', 'gpg/nightly/key returnall=true') }}"
-
-webui_user: "{{ lookup('passwordstore', 'ci.opencast.org/user') }}"
-webui_pass: "{{ lookup('passwordstore', 'ci.opencast.org/pass') }}"
