@@ -9,7 +9,7 @@ def getBuildPipeline():
 
     repo_prep = steps.ShellCommand(
         command=[
-            'mkdir', '-p', '{{ deb_repo_fragment }}/mini-dinstall/incoming'
+            'mkdir', '-p', util.Interpolate('%(prop:deb_repo_fragment)s/mini-dinstall/incoming')
         ],
         flunkOnFailure=True,
         haltOnFailure=True,
@@ -17,7 +17,7 @@ def getBuildPipeline():
 
     repo_clean = steps.ShellCommand(
         command=util.Interpolate(
-            'rm -f {{ deb_repo_fragment }}/mini-dinstall/incoming/opencast-%(prop:pkg_major_version)s* {{ deb_repo_fragment }}/mini-dinstall/REJECT/opencast-%(prop:pkg_major_version)s*'
+            'rm -f %(prop:deb_repo_fragment)s/mini-dinstall/incoming/opencast-%(prop:pkg_major_version)s* {{ deb_repo_fragment }}/mini-dinstall/REJECT/opencast-%(prop:pkg_major_version)s*'
         ),
         flunkOnFailure=True,
         haltOnFailure=True,
@@ -25,7 +25,7 @@ def getBuildPipeline():
 
     repo_fetch = steps.ShellCommand(
         command=util.Interpolate(
-            "scp -r {{ buildbot_scp_debs_fetch }}/* {{ deb_repo_fragment }}/mini-dinstall/incoming"
+            "scp -r {{ buildbot_scp_debs_fetch }}/* %(prop:deb_repo_fragment)s/mini-dinstall/incoming"
         ),
         flunkOnFailure=True,
         haltOnFailure=True,
