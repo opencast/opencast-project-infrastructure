@@ -38,8 +38,6 @@
     force: yes
   become: yes
   with_items:
-    - { src: "mini-dinstall.conf", dest: "{{ buildbot_config_master }}/mini-dinstall.conf", mode: "644" }
-    - { src: "deb_sign.sh", dest: "{{ buildbot_config_master }}/deb_sign.sh", mode: "755" }
     - { src: "cleaner.py", dest: "{{ buildbot_home }}/cleaner.py", mode: "644" }
 
 - name: Template Buildbot private support files

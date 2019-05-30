@@ -23,6 +23,7 @@
   become: yes
   with_items:
     - { path: "{{ buildbot_home }}", mode: "0755" }
+    - { path: "{{ buildbot_config_master }}", mode: "0700" }
     - { path: "{{ buildbot_home }}/.ssh", mode: "0700" }
     - { path: "{{ buildbot_home }}/ssh", mode: "0700" }
     - { path: "{{ buildbot_home }}/m2", mode: "0700" }
@@ -52,3 +53,15 @@
     - { src: "{{ buildbot_home }}/.ssh/known_hosts", dest: "{{ buildbot_home }}/ssh/known_hosts" }
   become: yes
 
+- name: Template Buildbot public support files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: "{{ item.mode }}"
+    force: yes
+  become: yes
+  with_items:
+    - { src: "mini-dinstall.conf", dest: "{{ buildbot_config_master }}/mini-dinstall.conf", mode: "644" }
+    - { src: "deb_sign.sh", dest: "{{ buildbot_config_master }}/deb_sign.sh", mode: "755" }
