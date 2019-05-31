@@ -6,3 +6,7 @@ name: pkg-opencast-org
 docker_image_user: "greglogan"
 repo_builder: True
 image: package-stripped
+disk_base: /srv/www
+deb_repo_fragment: "{{ disk_base }}/pkg.opencast.org/debs"
+rpm_repo_fragment: "{{ disk_base }}/pkg.opencast.org/rpms"
+
