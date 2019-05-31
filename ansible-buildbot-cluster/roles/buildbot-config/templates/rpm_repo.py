@@ -27,7 +27,7 @@ def getBuildPipeline():
         command=[
             'createrepo', '.'
         ],
-        workdir=util.Interpolate('%(prop:rpm_repo_fragment)s'),
+        workdir=util.Interpolate('%(prop:rpm_repo_fragment)s/unstable/el/7/noarch'),
         flunkOnFailure=True,
         haltOnFailure=True,
         name='Build repository')
