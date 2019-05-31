@@ -26,11 +26,13 @@ rpm_lock = util.WorkerLock("rpm_lock",
 
 
 workers = [
-  {{ '\"' + groups['workers'] | map('extract', hostvars, 'name') | join('\", \"') + '\"' }}
+  {{ '\"' + groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'undefined') | map(attribute='name') | join('\", \"') + '\"' }},
+  {{ '\"' + groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder', 'eq', 'False') | map(attribute='name') | join('\", \"') + '\"' }}
 ]
 
 repo_workers = [
-  {{ '\"' + groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | map(attribute='name') | join('\", \"') + '\"' }}
+  {{ '\"' + groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | map(attribute='name') | join('\", \"') + '\"' }},
+  {{ '\"' + groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder') | map(attribute='name') | join('\", \"') + '\"' }}
 ]
 
 def getPullRequestBuilder():
