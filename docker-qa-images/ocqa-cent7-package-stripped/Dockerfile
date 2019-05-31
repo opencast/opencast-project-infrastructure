@@ -7,6 +7,7 @@ RUN yum update -y && \
     yum install -y epel-release && \
     yum install -y \
         bash \
+        openssh-clients \
      # Package building deps
         createrepo \
         rpmdevtools \
