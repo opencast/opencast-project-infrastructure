@@ -57,7 +57,7 @@ Buildbot Setup
 Core node
 ---------
 
-Create a file in host\_vars named after your core node.  For Opencast this would be `build.opencast.org.yml`.
+Create a file in host\_vars named after your core node.  For Opencast this would be `ci.opencast.org.yml`.
 This file is overriding the general defaults defined in the `group_vars/all.yml`.  In it set the following keys:
 
 * `github_client_id`
@@ -72,6 +72,5 @@ Along with any other keys you wish to override.
 Worker nodes
 ------------
 
-Create a file for each worker node in `host_vars` named after the worker node.  For example, `builder01.opencast.org.yml`.
-This file sets up the worker node's identity within Buildbot, and what it should build.  An example files can be found in
-`host_vars/`.
+Create a file for each worker node in `host_vars` named after the worker node, and set the worker's properties from there.
+The only requirement for the workers is that they have a unique numerical id.
