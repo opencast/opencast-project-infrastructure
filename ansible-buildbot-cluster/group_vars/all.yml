@@ -1,5 +1,25 @@
 ---
 
+#############################
+# Opencast Related Settings #
+#############################
+
+#A nested dictionary of which branches to build.
+#The first level is the displayed name, with the branch and pom settings the git branch, and pom version
+opencast:
+  Develop:
+    branch: 'develop'
+    pom: '8'
+  7.x:
+    branch: 'r/7.x'
+    pom: '7'
+  6.x:
+    branch: 'r/6.x'
+    pom: '6'
+  5.x:
+    branch: 'r/5.x'
+    pom: '5'
+
 #########################
 # User Related Settings #
 #########################
