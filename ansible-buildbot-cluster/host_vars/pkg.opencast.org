@@ -5,6 +5,7 @@ id: 4
 name: pkg-opencast-org
 docker_image_user: "greglogan"
 repo_builder: True
+only_repo_builder: True
 image: package-stripped
 disk_base: /srv/www
 deb_repo_fragment: "{{ disk_base }}/pkg.opencast.org/debs"
