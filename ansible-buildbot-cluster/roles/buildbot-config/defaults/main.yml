@@ -7,15 +7,6 @@
 #The owner of the docker images (the opencast in opencast/ocqa-*)
 docker_image_user: "opencast"
 
-#The Buildbot master image
-docker_image_master: "ocqa-buildbot-master"
-
-#The debian worker image
-docker_deb_image_worker: "ocqa-deb9-worker"
-
-#The centos worker image
-docker_cent_image_worker: "ocqa-cent7-worker"
-
 #The version tag to use for all of the images
 docker_image_tag: "v2.3.1"
 
