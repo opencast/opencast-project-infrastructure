@@ -25,15 +25,16 @@ rpm_lock = util.WorkerLock("rpm_lock",
                              maxCount=1)
 
 
-workers = [
+#We're doing the filter here to remove blank entries (ie, "") since some of these lines in some cases don't yield results, but it's hard to keep from adding the front and end quotes in Jinja
+workers = list(filter(lambda a: a, [
   {{ '\"' + groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'undefined') | map(attribute='name') | join('\", \"') + '\"' }},
   {{ '\"' + groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder', 'eq', 'False') | map(attribute='name') | join('\", \"') + '\"' }}
-]
+  ]))
 
-repo_workers = [
+repo_workers = list(filter(lambda a: a, [
   {{ '\"' + groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | map(attribute='name') | join('\", \"') + '\"' }},
   {{ '\"' + groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder') | map(attribute='name') | join('\", \"') + '\"' }}
-]
+]))
 
 def getPullRequestBuilder():
 
