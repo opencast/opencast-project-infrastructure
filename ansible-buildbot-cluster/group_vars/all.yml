@@ -10,15 +10,19 @@ opencast:
   Develop:
     branch: 'develop'
     pom: '8'
+    profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
   7.x:
     branch: 'r/7.x'
     pom: '7'
+    profiles: [ "admin", "adminpresentation", "adminworker", "allinone", "ingest", "migration", "presentation", "worker" ]
   6.x:
     branch: 'r/6.x'
     pom: '6'
+    profiles: [ "admin", "adminpresentation", "adminworker", "allinone", "ingest", "migration", "presentation", "worker" ]
   5.x:
     branch: 'r/5.x'
     pom: '5'
+    profiles: [ "admin", "adminpresentation", "adminworker", "allinone", "ingest", "migration", "presentation", "worker" ]
 
 #########################
 # User Related Settings #

@@ -5,7 +5,11 @@ import os.path
 from buildbot.plugins import *
 import common
 
-profiles = ["admin", "adminpresentation", "adminworker", "allinone", "ingest", "migration", "presentation", "worker"]
+profiles = {
+{% for branch in opencast %}
+  '{{ branch }}': {{ opencast[branch]['profiles'] }},
+{% endfor %}
+}
 
 def wasCloned(step):
     if step.getProperty("alreadyCloned") == "True":
@@ -25,9 +29,10 @@ def hideIfAlreadyCloned(results, step):
 def hideIfNotAlreadyCloned(results, step):
     return wasNotCloned(step)
 
-def getRPMBuilds():
+@util.renderer
+def getRPMBuilds(props):
     builds = []
-    for profile in profiles:
+    for profile in profiles[props.getProperty('branch_pretty')]:
         builds.append(util.ShellArg(
                 command=[
                     'rpmbuild',
@@ -224,7 +229,7 @@ def getBuildPipeline():
         flunkOnFailure=True)
 
     rpmsBuild = steps.ShellSequence(
-        commands=getRPMBuilds(),
+        commands=getRPMBuilds,
         workdir="build/specs",
         name="Build rpms",
         haltOnFailure=True,
