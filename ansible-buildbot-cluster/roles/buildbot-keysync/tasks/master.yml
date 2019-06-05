@@ -31,8 +31,12 @@
     state: directory
   connection: local
 
+- name: Adding local keys
+  shell: "cp group_vars/keys/{{ inventory_hostname }}/* .ssh/{{ inventory_hostname }}"
+  connection: local
+
 - name: Get Buildbot master sshd server key
-  shell: "ssh-keyscan {{ groups['master'][0] }} bitbucket.org github.com > .ssh/{{ inventory_hostname }}/known_hosts"
+  shell: "ssh-keyscan {{ groups['master'][0] }} bitbucket.org github.com >> .ssh/{{ inventory_hostname }}/known_hosts"
   connection: local
 
 - name: Fetch Buildbot SSH keys
@@ -44,10 +48,6 @@
   with_items:
     - id_rsa
     - id_rsa.pub
-
-- name: Adding local keys
-  shell: "cp group_vars/keys/{{ inventory_hostname }}/* .ssh/{{ inventory_hostname }}"
-  connection: local
 
 - name: Populate Buildbot master authorized_keys
   authorized_key:
