@@ -50,7 +50,9 @@ def getSchedulers(pretty_branch_name, git_branch_name):
             pretty_branch_name + " Debian Packaging",
             pretty_branch_name + " RPM Packaging",
         ])
-{% if groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | list | length > 0 %}
+
+{% if groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | list | length > 0 or
+      groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder') | list | length > 0 %}
     triggerable_deb_repo = schedulers.Triggerable(
         name=pretty_branch_name + ' Debian Repo Triggerable',
         builderNames=[
@@ -76,7 +78,8 @@ def getSchedulers(pretty_branch_name, git_branch_name):
             pretty_branch_name + " Database Tests",
             pretty_branch_name + " Debian Packaging",
             pretty_branch_name + " RPM Packaging",
-{% if groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | list | length > 0 %}
+{% if groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | list | length > 0 or
+      groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder') | list | length > 0 %}
             pretty_branch_name + " Debian Repository",
             pretty_branch_name + " RPM Repository",
 {% endif %}
@@ -113,7 +116,8 @@ def getSchedulers(pretty_branch_name, git_branch_name):
         username=util.UserNameParameter(label="your name:", size=80))
 
     scheduler_list.extend([commits_branch, nightly_branch, triggerable_packaging, forceScheduler])
-{% if groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | list | length > 0 %}
+{% if groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | list | length > 0 or
+      groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder') | list | length > 0 %}
     scheduler_list.extend([ triggerable_deb_repo, triggerable_rpm_repo ])
 {% endif %}
     return scheduler_list
