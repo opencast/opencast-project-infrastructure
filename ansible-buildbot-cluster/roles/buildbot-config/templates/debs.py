@@ -5,69 +5,15 @@ import os.path
 from buildbot.plugins import *
 import common
 
-def wasCloned(step):
-    if step.getProperty("alreadyCloned") == "True":
-        return True
-    else:
-        return False
-
-
-def wasNotCloned(step):
-    return not wasCloned(step)
-
-
-def hideIfAlreadyCloned(results, step):
-    return wasCloned(step)
-
-
-def hideIfNotAlreadyCloned(results, step):
-    return wasNotCloned(step)
-
-
 def getBuildPipeline():
 
-    debChecker = steps.SetPropertyFromCommand(
-        command="[ -d .git ] && echo True || echo False",
-        property="alreadyCloned",
-        name="Checking if this is a fresh clone")
-
-    debsClone = steps.ShellCommand(
-        command=[
-            'git', 'clone', "{{ source_deb_repo_url }}", '--branch',
-            util.Property('branch'), './'
-        ],
-        flunkOnFailure=True,
-        haltOnFailure=True,
-        doStepIf=wasNotCloned,
-        hideStepIf=hideIfAlreadyCloned,
-        name="Cloning debian packaging configs")
-
-    debsUpdate = steps.ShellSequence(
-        commands=[
-            util.ShellArg(
-                command=['git', 'fetch'],
-                flunkOnFailure=True,
-                logfile='fetch'),
-            util.ShellArg(
-                command=[
-                    'git', 'reset', '--hard',
-                    util.Interpolate('origin/%(prop:branch)s')
-                ],  #We use reset here to get rid of other entries in the changelog
-                flunkOnFailure=True,
-                logfile='checkout'),
-            util.ShellArg(
-                command=[
-                    'git', 'clean', '-fdx'
-                ],
-                flunkOnFailure=True,
-                logfile='clean')
-        ],
-        workdir="build",
-        flunkOnFailure=True,
-        haltOnFailure=True,
-        doStepIf=wasCloned,
-        hideStepIf=hideIfNotAlreadyCloned,
-        name="Resetting debian packaging configs")
+    debsClone = steps.Git(repourl="{{ source_deb_repo_url }}",
+                      branch=util.Property('branch'),
+                      mode="full",
+                      method="fresh",
+                      flunkOnFailure=True,
+                      haltOnFailure=True,
+                      name="Cloning deb packaging configs")
 
     debsVersion = steps.SetPropertyFromCommand(
         command="git rev-parse HEAD",
@@ -209,9 +155,7 @@ def getBuildPipeline():
 
     f_package_debs = util.BuildFactory()
     f_package_debs.addStep(common.getPreflightChecks())
-    f_package_debs.addStep(debChecker)
     f_package_debs.addStep(debsClone)
-    f_package_debs.addStep(debsUpdate)
     f_package_debs.addStep(debsVersion)
     f_package_debs.addStep(debsFetch)
     f_package_debs.addStep(debsTarballVersion)

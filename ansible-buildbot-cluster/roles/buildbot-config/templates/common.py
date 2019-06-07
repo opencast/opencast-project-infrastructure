@@ -24,7 +24,7 @@ def getPreflightChecks():
 def getClone():
     return steps.GitHub(
         repourl="{{ source_repo_url }}",
-        mode='incremental',
+        mode='full',
         method='fresh',
         haltOnFailure=True,
         flunkOnFailure=True,

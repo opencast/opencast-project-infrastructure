@@ -11,23 +11,6 @@ profiles = {
 {% endfor %}
 }
 
-def wasCloned(step):
-    if step.getProperty("alreadyCloned") == "True":
-        return True
-    else:
-        return False
-
-
-def wasNotCloned(step):
-    return not wasCloned(step)
-
-
-def hideIfAlreadyCloned(results, step):
-    return wasCloned(step)
-
-
-def hideIfNotAlreadyCloned(results, step):
-    return wasNotCloned(step)
 
 @util.renderer
 def getRPMBuilds(props):
@@ -59,50 +42,13 @@ def getRPMBuilds(props):
 
 def getBuildPipeline():
 
-    rpmChecker = steps.SetPropertyFromCommand(
-        command="[ -d .git ] && echo True || echo False",
-        property="alreadyCloned",
-        name="Checking if this is a fresh clone")
-
-    rpmsClone = steps.ShellCommand(
-        command=[
-            'git', 'clone', "{{ source_rpm_repo_url }}", './'
-        ],
-        flunkOnFailure=True,
-        haltOnFailure=True,
-        doStepIf=wasNotCloned,
-        hideStepIf=hideIfAlreadyCloned,
-        name="Cloning rpm packaging configs")
-
-    rpmsUpdate = steps.ShellSequence(
-        commands=[
-            util.ShellArg(
-                command=['git', 'fetch'],
-                flunkOnFailure=True,
-                haltOnFailure=True,
-                logfile='fetch'),
-            util.ShellArg(
-                command=[
-                    'git', 'reset', '--hard',
-                    util.Interpolate('origin/master')
-                ],
-                flunkOnFailure=True,
-                haltOnFailure=True,
-                logfile='checkout'),
-            util.ShellArg(
-                command=[
-                    'git', 'clean', '-fdx'
-                ],
-                flunkOnFailure=True,
-                haltOnFailure=True,
-                logfile='clean')
-        ],
-        workdir="build",
-        flunkOnFailure=True,
-        haltOnFailure=True,
-        doStepIf=wasCloned,
-        hideStepIf=hideIfNotAlreadyCloned,
-        name="Resetting rpm packaging configs")
+    rpmsClone = steps.Git(
+                     repourl="{{ source_rpm_repo_url }}",
+                     mode="full",
+                     method="fresh",
+                     flunkOnFailure=True,
+                     haltOnFailure=True,
+                     name="Cloning rpm packaging configs")
 
     rpmsVersion = steps.SetPropertyFromCommand(
         command="git rev-parse HEAD",
@@ -269,9 +215,7 @@ def getBuildPipeline():
 
     f_package_rpms = util.BuildFactory()
     f_package_rpms.addStep(common.getPreflightChecks())
-    f_package_rpms.addStep(rpmChecker)
     f_package_rpms.addStep(rpmsClone)
-    f_package_rpms.addStep(rpmsUpdate)
     f_package_rpms.addStep(rpmsVersion)
     f_package_rpms.addStep(rpmsFetch)
     f_package_rpms.addStep(rpmsTarballVersion)
