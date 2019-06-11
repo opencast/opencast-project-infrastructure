@@ -21,20 +21,29 @@ def getSchedulers(pretty_branch_name, git_branch_name):
 
     scheduler_list = []
 
-    commits_branch = schedulers.AnyBranchScheduler(
-        name=pretty_branch_name,
+    commits = schedulers.AnyBranchScheduler(
+        name=pretty_branch_name + " Quick Build",
         change_filter=util.ChangeFilter(
             category=None, branch_re=git_branch_name),
         treeStableTimer={{stability_limit}},  #NB: Do not make this a string, a horribly unclear error occurs and nothing works for this scheduler...
         builderNames=[
             pretty_branch_name + " Build",
-            pretty_branch_name + " Reports",
             pretty_branch_name + " Markdown",
             pretty_branch_name + " Database Tests"
         ])
 
-    nightly_branch = schedulers.Nightly(
-        name=pretty_branch_name + ' Nightly',
+    reports = schedulers.AnyBranchScheduler(
+        name=pretty_branch_name + " Reports",
+        change_filter=util.ChangeFilter(
+            category=None, branch_re=git_branch_name),
+        treeStableTimer={{stability_limit}},  #NB: Do not make this a string, a horribly unclear error occurs and nothing works for this scheduler...
+        builderNames=[
+            pretty_branch_name + " Reports",
+        ])
+
+{% if not package_all %}
+    package = schedulers.Nightly(
+        name=pretty_branch_name + ' Package Generation',
         change_filter=util.ChangeFilter(
             category=None, branch_re=git_branch_name),
         hour={{nightly_build_hour}},
@@ -43,28 +52,23 @@ def getSchedulers(pretty_branch_name, git_branch_name):
             pretty_branch_name + " Debian Packaging",
             pretty_branch_name + " RPM Packaging",
         ])
-
-    triggerable_packaging = schedulers.Triggerable(
-        name=pretty_branch_name + ' Packaging Triggerable',
+{% else %}
+    package = schedulers.Dependent(
+        name=pretty_branch_name + " Packaging Generation",
+        upstream=commits,
         builderNames=[
             pretty_branch_name + " Debian Packaging",
-            pretty_branch_name + " RPM Packaging",
-        ])
-
-{% if groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | list | length > 0 or
-      groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder') | list | length > 0 %}
-    triggerable_deb_repo = schedulers.Triggerable(
-        name=pretty_branch_name + ' Debian Repo Triggerable',
-        builderNames=[
-            pretty_branch_name + " Debian Repository"
-        ])
-
-    triggerable_rpm_repo = schedulers.Triggerable(
-        name=pretty_branch_name + ' RPM Repo Triggerable',
-        builderNames=[
-            pretty_branch_name + " RPM Repository"
+            pretty_branch_name + " RPM Packaging"
         ])
 {% endif %}
+
+    repo = schedulers.Dependent(
+        name=pretty_branch_name + ' Repository Generation',
+        upstream=package,
+        builderNames=[
+            pretty_branch_name + " Debian Repository",
+            pretty_branch_name + " RPM Repository",
+        ])
 
     #Note: This is a hack, but we need a unique name for the force schedulers, and it can't have special characters in it...
     forceScheduler = schedulers.ForceScheduler(
@@ -115,9 +119,9 @@ def getSchedulers(pretty_branch_name, git_branch_name):
         # input for user to type his name
         username=util.UserNameParameter(label="your name:", size=80))
 
-    scheduler_list.extend([commits_branch, nightly_branch, triggerable_packaging, forceScheduler])
+    scheduler_list.extend([commits, reports, package, forceScheduler])
 {% if groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | list | length > 0 or
       groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder') | list | length > 0 %}
-    scheduler_list.extend([ triggerable_deb_repo, triggerable_rpm_repo ])
+    scheduler_list.extend([ repo ])
 {% endif %}
     return scheduler_list

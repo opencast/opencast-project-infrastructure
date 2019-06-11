@@ -206,13 +206,6 @@ def getBuildPipeline():
         flunkOnFailure=True,
         name="Deploy rpms")
 
-    rpmRepo = steps.Trigger(
-        schedulerNames=[util.Interpolate("%(prop:branch_pretty)s RPM Repo Triggerable")],
-        set_properties={
-            'got_revision': util.Property('got_revision')
-        },
-        name="Trigger package repo build")
-
     f_package_rpms = util.BuildFactory()
     f_package_rpms.addStep(common.getPreflightChecks())
     f_package_rpms.addStep(rpmsClone)
@@ -227,6 +220,5 @@ def getBuildPipeline():
     f_package_rpms.addStep(rpmsUpload)
     f_package_rpms.addStep(rpmsDeploy)
     f_package_rpms.addStep(common.getClean())
-    f_package_rpms.addStep(rpmRepo)
 
     return f_package_rpms

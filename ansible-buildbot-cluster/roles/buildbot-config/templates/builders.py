@@ -94,10 +94,6 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
     cent_props['image'] = "centos"
 
     f_build = build.getBuildPipeline()
-{% if package_all %}
-    if len(repo_workers) > 0:
-      f_build.addStep(steps.Trigger(schedulerNames=[pretty_branch_name + " Packaging Triggerable"], name="Trigger packaging builds"))
-{% endif %}
 
     f_reports = reports.getBuildPipeline()
 

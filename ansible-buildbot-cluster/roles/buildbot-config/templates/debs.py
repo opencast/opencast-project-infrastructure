@@ -146,13 +146,6 @@ def getBuildPipeline():
         flunkOnFailure=True,
         name="Deploy Debs")
 
-    debsRepo = steps.Trigger(
-        schedulerNames=[util.Interpolate("%(prop:branch_pretty)s Debian Repo Triggerable")],
-        set_properties={
-            'got_revision': util.Property("got_revision")
-        },
-        name="Trigger package repo generation")
-
     f_package_debs = util.BuildFactory()
     f_package_debs.addStep(common.getPreflightChecks())
     f_package_debs.addStep(debsClone)
@@ -166,6 +159,5 @@ def getBuildPipeline():
     f_package_debs.addStep(debsUpload)
     f_package_debs.addStep(debsDeploy)
     f_package_debs.addStep(common.getClean())
-    f_package_debs.addStep(debsRepo)
 
     return f_package_debs
