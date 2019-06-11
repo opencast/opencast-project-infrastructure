@@ -5,8 +5,8 @@ from buildbot.plugins import *
 
 profiles = {
 {% for branch in opencast %}
-{% if defined(opencast[branch]['server'] %}
-  '{{ branch }}': {{ opencast[branch]['server'], }}
+{% if 'server' in opencast[branch] %}
+  '{{ branch }}': {{ opencast[branch]['server'], }},
 {% endif %}
 {% endfor %}
 }

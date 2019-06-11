@@ -36,6 +36,9 @@ source_deb_repo_url: "https://github.com/gregorydlogan/debian-packaging.git"
 #Where to fetch the rpm packaging build files from
 source_rpm_repo_url: "https://github.com/lkiesow/opencast-rpm-specs.git"
 
+#Where to fetch the ansible configuration management scripts from
+ansible_scripts_url: "https://github.com/opencast/oc-config-management.git"
+
 #Who to send status mails to
 mail_to: "dev@opencast.org"
 

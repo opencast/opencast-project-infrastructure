@@ -70,6 +70,11 @@ def getSchedulers(pretty_branch_name, git_branch_name):
             pretty_branch_name + " RPM Repository",
         ])
 
+    deploy = schedulers.Dependent(
+        name=pretty_branch_name + " Ansible Deploy",
+        upstream=repo,
+        builderNames=[ pretty_branch_name + " Ansible Deploy" ])
+
     #Note: This is a hack, but we need a unique name for the force schedulers, and it can't have special characters in it...
     forceScheduler = schedulers.ForceScheduler(
         name="ForceBuildCommits" + pretty_branch_name[0],
@@ -86,6 +91,7 @@ def getSchedulers(pretty_branch_name, git_branch_name):
       groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder') | list | length > 0 %}
             pretty_branch_name + " Debian Repository",
             pretty_branch_name + " RPM Repository",
+            pretty_branch_name + " Ansible Deploy"
 {% endif %}
         ],
         codebases=[
@@ -122,6 +128,6 @@ def getSchedulers(pretty_branch_name, git_branch_name):
     scheduler_list.extend([commits, reports, package, forceScheduler])
 {% if groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | list | length > 0 or
       groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder') | list | length > 0 %}
-    scheduler_list.extend([ repo ])
+    scheduler_list.extend([ repo, deploy ])
 {% endif %}
     return scheduler_list

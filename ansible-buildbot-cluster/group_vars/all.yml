@@ -26,7 +26,6 @@ opencast:
     branch: 'r/5.x'
     pom: '5'
     profiles: [ "admin", "adminpresentation", "adminworker", "allinone", "ingest", "migration", "presentation", "worker" ]
-    server: 'None'
 
 #########################
 # User Related Settings #

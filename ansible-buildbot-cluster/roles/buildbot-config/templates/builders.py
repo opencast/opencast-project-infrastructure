@@ -10,6 +10,7 @@ import debs
 import rpms
 import deb_repo
 import rpm_repo
+import ansible
 
 
 mvn_lock = util.WorkerLock("mvn_lock",
@@ -109,6 +110,8 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
 
     f_repo_rpms = rpm_repo.getBuildPipeline()
 
+    f_ansible_deploy = ansible.getBuildPipeline()
+
     b_build = util.BuilderConfig(
         name=pretty_branch_name + " Build",
         workernames=workers,
@@ -177,7 +180,16 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
         collapseRequests=True,
         locks=[rpm_lock.access('exclusive')])
 
+      b_ansible_deploy = util.BuilderConfig(
+        name=pretty_branch_name + " Ansible Deploy",
+        workernames=workers,
+        factory=f_ansible_deploy,
+        properties=props,
+        collapseRequests=True)
+
       builders.append(b_repo_debs)
       builders.append(b_repo_rpms)
+      #This builder depends on deployable rpms and debs
+      builders.append(b_ansible_deploy)
 
     return builders
