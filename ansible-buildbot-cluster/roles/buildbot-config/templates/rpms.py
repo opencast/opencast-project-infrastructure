@@ -44,6 +44,8 @@ def getBuildPipeline():
 
     rpmsClone = steps.Git(
                      repourl="{{ source_rpm_repo_url }}",
+                     branch="master",
+                     alwaysUseLatest=True,
                      mode="full",
                      method="fresh",
                      flunkOnFailure=True,

@@ -9,6 +9,7 @@ def getBuildPipeline():
 
     debsClone = steps.Git(repourl="{{ source_deb_repo_url }}",
                       branch=util.Property('branch'),
+                      alwaysUseLatest=True,
                       mode="full",
                       method="fresh",
                       flunkOnFailure=True,
