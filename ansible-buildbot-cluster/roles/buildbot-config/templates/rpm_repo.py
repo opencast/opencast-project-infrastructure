@@ -38,5 +38,6 @@ def getBuildPipeline():
     f_rpm_repo.addStep(repo_fetch)
     f_rpm_repo.addStep(common.loadSigningKey())
     f_rpm_repo.addStep(repo_build)
+    f_rpm_repo.addStep(common.unloadSigningKey())
 
     return f_rpm_repo

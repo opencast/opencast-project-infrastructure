@@ -67,6 +67,13 @@ def loadSigningKey():
         flunkOnFailure=True,
         name="Load signing key")
 
+def unloadSigningKey():
+    return steps.ShellCommand(
+        command=['rm', '-rf', '/builder/.gnupg'],
+        flunkOnFailure=True,
+        alwaysRun=True,
+        name="Key cleanup")
+
 def getClean():
     return steps.ShellSequence(
         commands=[

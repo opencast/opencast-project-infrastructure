@@ -159,5 +159,6 @@ def getBuildPipeline():
     f_package_debs.addStep(debsUpload)
     f_package_debs.addStep(debsDeploy)
     f_package_debs.addStep(common.getClean())
+    f_package_debs.addStep(common.unloadSigningKey())
 
     return f_package_debs

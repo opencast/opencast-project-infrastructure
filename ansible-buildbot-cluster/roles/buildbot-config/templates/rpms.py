@@ -220,5 +220,6 @@ def getBuildPipeline():
     f_package_rpms.addStep(rpmsUpload)
     f_package_rpms.addStep(rpmsDeploy)
     f_package_rpms.addStep(common.getClean())
+    f_package_rpms.addStep(common.unloadSigningKey())
 
     return f_package_rpms
