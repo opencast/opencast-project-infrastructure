@@ -3,6 +3,13 @@
 
 from buildbot.plugins import *
 
+deployables=[]
+{% for branch in opencast %}
+{%   if 'server' in opencast[branch] %}
+deployables.append('{{ branch }}')
+{%   endif %}
+{% endfor %}
+
 
 def getPullRequestSchedulers():
     return schedulers.AnyBranchScheduler(
@@ -18,8 +25,6 @@ def getPullRequestSchedulers():
 
 
 def getSchedulers(pretty_branch_name, git_branch_name):
-
-    scheduler_list = []
 
     commits = schedulers.AnyBranchScheduler(
         name=pretty_branch_name + " Quick Build",
@@ -62,6 +67,19 @@ def getSchedulers(pretty_branch_name, git_branch_name):
         ])
 {% endif %}
 
+    scheduler_list = [ commits, reports, package ]
+
+    forceBuilders = [
+            pretty_branch_name + " Build",
+            pretty_branch_name + " Reports",
+            pretty_branch_name + " Markdown",
+            pretty_branch_name + " Database Tests",
+            pretty_branch_name + " Debian Packaging",
+            pretty_branch_name + " RPM Packaging"
+    ]
+
+{% if groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | list | length > 0 or
+      groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder') | list | length > 0 %}
     repo = schedulers.Dependent(
         name=pretty_branch_name + ' Repository Generation',
         upstream=package,
@@ -69,31 +87,28 @@ def getSchedulers(pretty_branch_name, git_branch_name):
             pretty_branch_name + " Debian Repository",
             pretty_branch_name + " RPM Repository",
         ])
+    scheduler_list.append(repo)
 
-    deploy = schedulers.Dependent(
+    forceBuilders.append(pretty_branch_name + " Debian Repository")
+    forceBuilders.append(pretty_branch_name + " RPM Repository")
+
+    if pretty_branch_name in deployables:
+      deploy = schedulers.Dependent(
         name=pretty_branch_name + " Ansible Deploy",
         upstream=repo,
         builderNames=[ pretty_branch_name + " Ansible Deploy" ])
+
+      scheduler_list.append(deploy)
+
+      forceBuilders.append(pretty_branch_name + " Ansible Deploy")
+{% endif %}
 
     #Note: This is a hack, but we need a unique name for the force schedulers, and it can't have special characters in it...
     forceScheduler = schedulers.ForceScheduler(
         name="ForceBuildCommits" + pretty_branch_name[0],
         buttonName="Force Build",
         label="Force Build Settings",
-        builderNames=[
-            pretty_branch_name + " Build",
-            pretty_branch_name + " Reports",
-            pretty_branch_name + " Markdown",
-            pretty_branch_name + " Database Tests",
-            pretty_branch_name + " Debian Packaging",
-            pretty_branch_name + " RPM Packaging",
-{% if groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | list | length > 0 or
-      groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder') | list | length > 0 %}
-            pretty_branch_name + " Debian Repository",
-            pretty_branch_name + " RPM Repository",
-            pretty_branch_name + " Ansible Deploy"
-{% endif %}
-        ],
+        builderNames=forceBuilders,
         codebases=[
             util.CodebaseParameter(
                 "",
@@ -125,9 +140,5 @@ def getSchedulers(pretty_branch_name, git_branch_name):
         # input for user to type his name
         username=util.UserNameParameter(label="your name:", size=80))
 
-    scheduler_list.extend([commits, reports, package, forceScheduler])
-{% if groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | list | length > 0 or
-      groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder') | list | length > 0 %}
-    scheduler_list.extend([ repo, deploy ])
-{% endif %}
+    scheduler_list.append(forceScheduler)
     return scheduler_list

@@ -180,16 +180,27 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
         collapseRequests=True,
         locks=[rpm_lock.access('exclusive')])
 
-      b_ansible_deploy = util.BuilderConfig(
-        name=pretty_branch_name + " Ansible Deploy",
-        workernames=workers,
-        factory=f_ansible_deploy,
-        properties=props,
-        collapseRequests=True)
-
       builders.append(b_repo_debs)
       builders.append(b_repo_rpms)
-      #This builder depends on deployable rpms and debs
-      builders.append(b_ansible_deploy)
+
+      deployables = {}
+{% for branch in opencast %}
+{%   if 'server' in opencast[branch] %}
+      deployables['{{ branch }}'] = "{{ opencast[branch]['server'] }}"
+{%   endif %}
+{% endfor %}
+
+      if pretty_branch_name in deployables:
+        deploy_props = dict(props)
+        deploy_props['deploy_env'] = deployables[pretty_branch_name]
+
+        b_ansible_deploy = util.BuilderConfig(
+          name=pretty_branch_name + " Ansible Deploy",
+          workernames=workers,
+          factory=f_ansible_deploy,
+          properties=deploy_props,
+          collapseRequests=True)
+
+        builders.append(b_ansible_deploy)
 
     return builders
