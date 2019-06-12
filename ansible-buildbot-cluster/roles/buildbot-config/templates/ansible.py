@@ -3,19 +3,11 @@
 
 from buildbot.plugins import *
 
-profiles = {
-{% for branch in opencast %}
-{% if 'server' in opencast[branch] %}
-  '{{ branch }}': {{ opencast[branch]['server'], }},
-{% endif %}
-{% endfor %}
-}
-
-
 def getBuildPipeline():
 
     clone = steps.Git(repourl="{{ ansible_scripts_url }}",
                       branch=util.Property('branch'),
+                      alwaysUseLatest=True,
                       mode="full",
                       method="fresh")
 
@@ -34,17 +26,30 @@ def getBuildPipeline():
         flunkOnFailure=True,
         name="Installing Ansible dependencies")
 
+    secrets = steps.ShellCommand(
+        command=['scp', util.Interpolate("{{ buildbot_scp_deploy_key }}"), util.Interpolate("/tmp/%(prop:deploy_env)s")],
+        flunkOnFailure=True,
+        haltOnFailure=True,
+        name="Fetching deploy key")
+
     deploy = steps.ShellCommand(
-        command=['ansible-playbook', '-i', 'hosts', 'opencast.yml'],
+        command=['ansible-playbook', '-i', util.Interpolate("{{ buildbot_config }}/%(prop:deploy_env)s"), 'opencast.yml'],
         haltOnFailure=True,
         flunkOnFailure=True,
         name="Deploying Opencast")
 
+    cleanup = steps.ShellCommand(
+        command=['rm', '-rf', util.Interpolate("/tmp/%(prop:deploy_env)s")],
+        flunkOnFailure=True,
+        alwaysRun=True,
+        name="Cleanup")
 
     f_ansible = util.BuildFactory()
     f_ansible.addStep(clone)
     f_ansible.addStep(version)
     f_ansible.addStep(deps)
+    f_ansible.addStep(secrets)
     f_ansible.addStep(deploy)
+    f_ansible.addStep(cleanup)
 
     return f_ansible

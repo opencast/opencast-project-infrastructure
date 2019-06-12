@@ -250,3 +250,5 @@ buildbot_scp_rpms_fetch: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deplo
 #Where to find the signing key
 buildbot_scp_signing_key: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ buildbot_secrets_master }}/signing.key"
 
+#Where to find the deploy key.  Note that this has a Interpolatable piece at the end
+buildbot_scp_deploy_key: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ buildbot_secrets_master}}/%(prop:deploy_env)s"
