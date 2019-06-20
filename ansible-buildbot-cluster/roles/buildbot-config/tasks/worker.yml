@@ -27,3 +27,12 @@
     - { src: "develop.opencast.org", dest: "{{ buildbot_config_master }}/develop.opencast.org", mode: "0644" }
     - { src: "legacy.opencast.org", dest: "{{ buildbot_config_master }}/legacy.opencast.org", mode: "0644" }
 
+- name: Adding ssh host config data to workers
+  blockinfile:
+    path: "{{ buildbot_home }}/ssh/config"
+    create: yes
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: "0644"
+    block: "{{ lookup('file', 'roles/buildbot-config/templates/ssh_config') }}"
+  become: yes

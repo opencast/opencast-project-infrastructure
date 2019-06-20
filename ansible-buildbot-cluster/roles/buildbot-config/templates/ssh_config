@@ -1,0 +1,11 @@
+Host develop.opencast.org
+  User buildbot
+  IdentityFile /tmp/develop.opencast.org
+
+Host stable.opencast.org
+   User buildbot
+   IdentityFile /tmp/stable.opencast.org
+
+Host legacy.opencast.org
+   User buildbot
+   IdentityFile /tmp/legacy.opencast.org
