@@ -16,10 +16,7 @@
         name={{ item }}
       loop:
         - epel-release
-      when: >
-        ansible_distribution == 'CentOS'
-        or ansible_distribution == 'RedHat'
-        or ansible_distribution == 'Scientific'
+      when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version|int < 8"
 
     - name: install base tools
       become: yes
