@@ -64,7 +64,7 @@
     force: yes
   become: yes
   with_items:
-    - { src: "changehook.passwd", dest: "{{ buildbot_config_master }}/changehook.passwd" }
-    - { src: "crowdin.key", dest: "{{ buildbot_secrets_master }}/crowdin.key" }
-    - { src: "signing.key", dest: "{{ buildbot_secrets_master }}/signing.key" }
+    - { src: "secrets/changehook.passwd", dest: "{{ buildbot_config_master }}/changehook.passwd" }
+    - { src: "secrets/crowdin.key", dest: "{{ buildbot_secrets_master }}/crowdin.key" }
+    - { src: "secrets/signing.key", dest: "{{ buildbot_secrets_master }}/signing.key" }
 
