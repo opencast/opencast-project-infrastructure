@@ -1,19 +1,19 @@
 [fileserver]
-develop.opencast.org
+stable.opencast.org
 
-[mariadb]
-develop.opencast.org
+[database]
+stable.opencast.org
 
 [activemq]
-develop.opencast.org
+stable.opencast.org
 
 [admin]
-develop.opencast.org
+stable.opencast.org
 
 [adminpresentation]
 
 [allinone]
-develop.opencast.org
+stable.opencast.org
 
 [worker]
 

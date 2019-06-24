@@ -11,17 +11,17 @@ opencast:
     branch: 'develop'
     pom: '8'
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
-    server: 'develop.opencast.org'
+    server: 'develop'
   7.x:
     branch: 'r/7.x'
     pom: '7'
     profiles: [ "admin", "adminpresentation", "adminworker", "allinone", "ingest", "migration", "presentation", "worker" ]
-    server: 'stable.opencast.org'
+    server: 'stable'
   6.x:
     branch: 'r/6.x'
     pom: '6'
     profiles: [ "admin", "adminpresentation", "adminworker", "allinone", "ingest", "migration", "presentation", "worker" ]
-    server: 'legacy.opencast.org'
+    server: 'legacy'
   5.x:
     branch: 'r/5.x'
     pom: '5'
