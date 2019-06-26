@@ -33,7 +33,7 @@ def getBuildPipeline():
         name="Fetching deploy key")
 
     deploy = steps.ShellCommand(
-        command=['ansible-playbook', '-i', util.Interpolate("{{ buildbot_config }}/%(prop:deploy_env)s"), 'opencast.yml'],
+        command=['ansible-playbook', '-i', util.Interpolate("{{ buildbot_config }}/envs/%(prop:deploy_env)s"), 'opencast.yml', util.Interpolate('--extra-vars="deb_repo_suite=%(prop:deploy_suite)s rpm_repo_suite=%(prop:deploy_suite)s repo_host=%(prop:package_repo_host)s oc_rpm_key_url=%(prop:key_url)s oc_deb_key_url=%(prop:key_url)s username=%(secret:repo.username)s password=%(secret:repo.password)s"')],
         haltOnFailure=True,
         flunkOnFailure=True,
         name="Deploying Opencast")

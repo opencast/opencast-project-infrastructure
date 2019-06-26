@@ -39,6 +39,15 @@ source_rpm_repo_url: "https://github.com/lkiesow/opencast-rpm-specs.git"
 #Where to fetch the ansible configuration management scripts from
 ansible_scripts_url: "https://github.com/opencast/oc-config-management.git"
 
+#Where to fetch the signing key for the generated packages
+key_url: "https://pkg.opencast.org/gpgkeys/automated.key"
+
+#Where to find the deb and rpm packages
+repo_host: "pkg.opencast.org"
+
+#The repo suite to deploy Opencast from
+repo_deploy_suite: "unstable"
+
 #Who to send status mails to
 mail_to: "dev@opencast.org"
 
