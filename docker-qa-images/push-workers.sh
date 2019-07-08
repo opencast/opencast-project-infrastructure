@@ -11,6 +11,7 @@ doPush() {
 
 doPushWorker() {
   doPush $1 worker-base
+  doPush $1 deploy
   doPush $1 package
   doPush $1 doc
   doPush $1 build
