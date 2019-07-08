@@ -1,4 +1,4 @@
-FROM greglogan/ocqa-{0}-{1}:{{ docker_image_tag }}
+FROM greglogan/ocqa-{0}-{1}:{{ docker_worker_image_tag }}
 
 RUN groupadd -g {3} builder && \
     useradd -m -u {2} -g {3} -s /bin/bash -d /builder builder && \

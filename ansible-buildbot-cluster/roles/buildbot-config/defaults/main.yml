@@ -10,6 +10,8 @@ docker_image_user: "opencast"
 #The version tag to use for all of the images
 docker_image_tag: "v2.3.1"
 
+#The version to use for the workers
+docker_worker_image_tag: "{{ docker_image_tag }}"
 
 #####################
 # Buildbot Settings #
