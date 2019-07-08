@@ -22,5 +22,5 @@ RUN apt-get update && \
         mysql-client && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    pip install mkdocs
+    pip install mkdocs markdown_inline_graphviz_extension
 

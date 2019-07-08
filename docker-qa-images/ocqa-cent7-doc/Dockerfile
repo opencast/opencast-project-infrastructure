@@ -14,5 +14,5 @@ RUN curl -sL -o '/tmp/nodesource-release-el7-1.noarch.rpm' 'https://rpm.nodesour
         mysql && \
     yum clean all && \
     pip install --upgrade pip setuptools && \
-    pip install mkdocs
+    pip install mkdocs markdown_inline_graphviz_extension
 
