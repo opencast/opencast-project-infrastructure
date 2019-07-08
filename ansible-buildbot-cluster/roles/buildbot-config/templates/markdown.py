@@ -77,6 +77,10 @@ def __getBasePipeline():
                 haltOnFailure=False,
                 logfile='user'),
         ],
+        env={
+            "LC_ALL": "en_US.utf-8",
+            "LANG": "en_US.utf-8"
+        },
         workdir="build/docs/guides",
         name="Build Markdown docs",
         haltOnFailure=True,
