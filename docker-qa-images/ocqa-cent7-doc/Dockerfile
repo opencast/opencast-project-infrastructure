@@ -7,12 +7,14 @@ RUN curl -sL -o '/tmp/nodesource-release-el7-1.noarch.rpm' 'https://rpm.nodesour
     # Build deps
     yum install -y \
      # Python deps
-        python-pip \
+        python36 \
+        python36-devel \
+        python36-pip \
      # Packages for building docs
         nodejs \
      # For SQL script testing
         mysql && \
     yum clean all && \
-    pip install --upgrade pip setuptools && \
-    pip install mkdocs markdown_inline_graphviz_extension
+    pip3.6 install --upgrade pip setuptools && \
+    pip3.6 install mkdocs markdown_inline_graphviz_extension
 

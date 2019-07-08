@@ -20,11 +20,12 @@ RUN yum update -y && \
     curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.1/dumb-init_1.2.1_amd64 && \
     chmod +x /usr/local/bin/dumb-init && \
     yum install -y \
-         #Bits for buildbot worker
-         gcc \
+         # Python deps
          python36 \
          python36-devel \
          python36-pip \
+         #Bits for buildbot worker
+         gcc \
          openssl-devel \
          # bc for the database test script
          bc && \

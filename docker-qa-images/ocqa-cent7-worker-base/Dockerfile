@@ -15,9 +15,6 @@ RUN  curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/release
      yum install -y \
          #Bits for buildbot worker
          gcc \
-         python36 \
-         python36-devel \
-         python36-pip \
          openssl-devel \
          #Crowdin
          crowdin \
