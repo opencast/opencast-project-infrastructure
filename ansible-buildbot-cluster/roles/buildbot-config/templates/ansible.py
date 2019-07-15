@@ -32,8 +32,21 @@ def getBuildPipeline():
         haltOnFailure=True,
         name="Fetching deploy key")
 
+    params = [
+            "deb_repo_suite=%(prop:deploy_suite)s",
+            "oc_deb_repo_url=http://%(prop:package_repo_host)s/debian",
+            "oc_deb_key_url=%(prop:key_id)s",
+            "oc_deb_key_id=%(prop:key_id)s",
+            "rpm_repo_suite=%(prop:deploy_suite)s",
+            "oc_rpm_repo_url=http://%(prop:package_repo_host)s/rpms",
+            "oc_rpm_key_url=%(prop:key_url)s",
+            "oc_rpm_key_id=%(prop:key_id)s",
+            "username=%(secret:repo.username)s",
+            "password=%(secret:repo.password)s"
+            ]
+
     deploy = steps.ShellCommand(
-        command=['ansible-playbook', '-i', util.Interpolate("{{ buildbot_config }}/envs/%(prop:deploy_env)s"), 'opencast.yml', util.Interpolate('--extra-vars="deb_repo_suite=%(prop:deploy_suite)s rpm_repo_suite=%(prop:deploy_suite)s repo_host=%(prop:package_repo_host)s oc_rpm_key_url=%(prop:key_url)s oc_deb_key_url=%(prop:key_url)s username=%(secret:repo.username)s password=%(secret:repo.password)s"')],
+        command=['ansible-playbook', '-i', util.Interpolate("{{ buildbot_config }}/envs/%(prop:deploy_env)s"), 'opencast.yml', util.Interpolate('--extra-vars="' + " ".join(params)  + '"')],
         haltOnFailure=True,
         flunkOnFailure=True,
         name="Deploying Opencast")
