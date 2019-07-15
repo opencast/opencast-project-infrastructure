@@ -44,6 +44,8 @@ ansible_scripts_url: "https://github.com/opencast/oc-config-management.git"
 #Where to fetch the signing key for the generated packages
 key_url: "https://pkg.opencast.org/gpgkeys/automated.key"
 
+key_id: "048D039F1DAE53EA0357ED824917F260EA15B53F"
+
 #Where to find the deb and rpm packages
 repo_host: "pkg.opencast.org"
 

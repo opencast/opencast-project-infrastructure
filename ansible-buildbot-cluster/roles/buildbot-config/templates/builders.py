@@ -196,6 +196,7 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
         deploy_props['deploy_suite'] = '{{ repo_deploy_suite }}'
         deploy_props['package_repo_host'] = "{{ repo_host }}"
         deploy_props['key_url'] = "{{ key_url }}"
+        deploy_props['key_id'] = "{{ key_id }}"
 
         b_ansible_deploy = util.BuilderConfig(
           name=pretty_branch_name + " Ansible Deploy",
