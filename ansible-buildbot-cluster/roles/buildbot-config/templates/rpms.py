@@ -32,7 +32,7 @@ def getRPMBuilds(props):
                     'rpmsign',
                     '--addsign',
                     '--key-id', util.Interpolate("%(prop:signing_key)s"),
-                    util.Interpolate("RPMS/noarch/opencast%(prop:pkg_major_version)s-" + profile + "-%(prop:pkg_major_version)s.x-%(prop:buildnumber)s.%(prop:short_revision)s.el7.noarch.rpm")
+                    util.Interpolate("RPMS/noarch/opencast%(prop:pkg_major_version)s-" + profile + "-%(prop:pkg_major_version)s.x-%(prop:buildnumber)s.%(prop:short_revision)s.el7.centos.noarch.rpm")
                 ],
                 haltOnFailure=True,
                 flunkOnFailure=True,
