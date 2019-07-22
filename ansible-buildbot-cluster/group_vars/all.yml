@@ -22,10 +22,6 @@ opencast:
     pom: '6'
     profiles: [ "admin", "adminpresentation", "adminworker", "allinone", "ingest", "migration", "presentation", "worker" ]
     server: 'legacy'
-  5.x:
-    branch: 'r/5.x'
-    pom: '5'
-    profiles: [ "admin", "adminpresentation", "adminworker", "allinone", "ingest", "migration", "presentation", "worker" ]
 
 #########################
 # User Related Settings #
