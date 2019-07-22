@@ -35,18 +35,19 @@ def getBuildPipeline():
     params = [
             "deb_repo_suite=%(prop:deploy_suite)s",
             "oc_deb_repo_url=http://%(prop:package_repo_host)s/debian",
-            "oc_deb_key_url=%(prop:key_id)s",
+            "oc_deb_key_url=%(prop:key_url)s",
             "oc_deb_key_id=%(prop:key_id)s",
             "rpm_repo_suite=%(prop:deploy_suite)s",
             "oc_rpm_repo_url=http://%(prop:package_repo_host)s/rpms",
             "oc_rpm_key_url=%(prop:key_url)s",
             "oc_rpm_key_id=%(prop:key_id)s",
-            "username=%(secret:repo.username)s",
-            "password=%(secret:repo.password)s"
+            "repo_username=%(secret:repo.username)s",
+            "repo_password=%(secret:repo.password)s",
+            "ansible_user={{ buildbot_user }}"
             ]
 
     deploy = steps.ShellCommand(
-        command=['ansible-playbook', '-i', util.Interpolate("{{ buildbot_config }}/envs/%(prop:deploy_env)s"), 'opencast.yml', util.Interpolate('--extra-vars="' + " ".join(params)  + '"')],
+        command=['ansible-playbook', '-b', '-i', util.Interpolate("{{ buildbot_config }}/envs/%(prop:deploy_env)s"), 'opencast.yml', '--tags', 'uninstall,opencast,reset', '--extra-vars', util.Interpolate(" ".join(params))],
         haltOnFailure=True,
         flunkOnFailure=True,
         name="Deploying Opencast")
