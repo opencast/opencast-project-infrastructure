@@ -1,7 +1,7 @@
 ---
 
 - name: Start Buildbot
-  docker_service:
+  docker_compose:
     project_src: "{{ buildbot_home }}"
     pull: yes
     state: present
@@ -9,7 +9,7 @@
   become: yes
 
 - name: Start Databases
-  docker_service:
+  docker_compose:
     project_src: "{{ buildbot_home }}"
     pull: yes
     state: present
