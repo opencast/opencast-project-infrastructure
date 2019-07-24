@@ -35,5 +35,5 @@
     owner: "{{ buildbot_user }}"
     group: "{{ buildbot_user }}"
     mode: "0644"
-    block: "{{ lookup('file', 'roles/buildbot-config/templates/ssh_config') }}"
+    block: "{{ lookup('template', 'roles/buildbot-config/templates/ssh_config') }}"
   become: yes
