@@ -19,24 +19,25 @@
 
 - name: Create Buildbot SSH key directory
   file:
-    path: "{{ buildbot_home }}/.ssh"
+    path: "{{ buildbot_home }}/{{ item }}"
     owner: "{{ buildbot_user }}"
     group: "{{ buildbot_user }}"
     mode: 0700
     state: directory
+  with_items:
+    - "ssh"
   become: yes
 
 - name: Push Buildbot SSH keys
-  copy:
-    src: ".ssh/{{ groups['master'][0] }}/"
-    dest: "{{ buildbot_home }}/{{ item.dest }}/"
-    owner: "{{ item.owner }}"
-    group: "{{ item.owner }}"
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ buildbot_home }}/ssh/"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
     mode: 0600
     force: yes
-  with_items:
-    - { dest: ".ssh", owner: "{{ buildbot_user }}" }
-    - { dest: "ssh", owner: "{{ buildbot_user }}" }
+  with_filetree:
+    - ".ssh/{{ groups['master'][0] }}/"
   become: yes
   notify: "Start Autossh"
 
