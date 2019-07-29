@@ -27,7 +27,7 @@ def getBuildPipeline():
         name="Installing Ansible dependencies")
 
     secrets = steps.ShellCommand(
-        command=['scp', util.Interpolate("{{ buildbot_scp_deploy_key }}"), util.Interpolate("/tmp/%(prop:deploy_env)s")],
+        command=['scp', util.Interpolate("{{ buildbot_scp_deploy_key }}"), util.Interpolate("%(prop:builddir)s/%(prop:deploy_env)s")],
         flunkOnFailure=True,
         haltOnFailure=True,
         name="Fetching deploy key")
@@ -47,13 +47,13 @@ def getBuildPipeline():
             ]
 
     deploy = steps.ShellCommand(
-        command=['ansible-playbook', '-b', '-i', util.Interpolate("{{ buildbot_config }}/envs/%(prop:deploy_env)s"), 'opencast.yml', '--tags', 'uninstall,opencast,reset', '--extra-vars', util.Interpolate(" ".join(params))],
+        command=['ansible-playbook', '-b', util.Interpolate('--private-key=%(prop:builddir)s/%(prop:deploy_env)s'), '-i', util.Interpolate("{{ buildbot_config }}/envs/%(prop:deploy_env)s"), 'opencast.yml', '--tags', 'uninstall,all,reset', '--extra-vars', util.Interpolate(" ".join(params))],
         haltOnFailure=True,
         flunkOnFailure=True,
         name="Deploying Opencast")
 
     cleanup = steps.ShellCommand(
-        command=['rm', '-rf', util.Interpolate("/tmp/%(prop:deploy_env)s")],
+        command=['rm', '-rf', util.Interpolate("%(prop:builddir)s/%(prop:deploy_env)s")],
         flunkOnFailure=True,
         alwaysRun=True,
         name="Cleanup")

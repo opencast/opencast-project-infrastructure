@@ -1,11 +1,8 @@
 Host develop.opencast.org
   User {{ buildbot_user }}
-  IdentityFile /tmp/develop
 
 Host stable.opencast.org
    User {{ buildbot_user }}
-   IdentityFile /tmp/stable
 
 Host legacy.opencast.org
    User {{ buildbot_user }}
-   IdentityFile /tmp/legacy
