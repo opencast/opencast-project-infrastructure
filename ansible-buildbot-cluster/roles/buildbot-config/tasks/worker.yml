@@ -30,7 +30,7 @@
 
 - name: Adding ssh host config data to workers
   blockinfile:
-    path: "{{ buildbot_home }}/ssh/config"
+    path: "{{ buildbot_home }}/.ssh/config"
     create: yes
     owner: "{{ buildbot_user }}"
     group: "{{ buildbot_user }}"

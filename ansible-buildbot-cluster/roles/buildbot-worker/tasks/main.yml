@@ -25,7 +25,6 @@
     - { path: "{{ buildbot_home }}", mode: "0755" }
     - { path: "{{ buildbot_home }}/buildbot-config", mode: "0700" }
     - { path: "{{ buildbot_home }}/.ssh", mode: "0700" }
-    - { path: "{{ buildbot_home }}/ssh", mode: "0700" }
     - { path: "{{ buildbot_home }}/m2", mode: "0700" }
     - { path: "{{ buildbot_home }}/ansible", mode: "0700" }
     - { path: "{{ buildbot_home }}/builds", mode: "0700" }
@@ -40,17 +39,4 @@
   when: "hostvars[inventory_hostname]['image'] | default('worker-base') == 'worker-base'"
   become: yes
 
-- name: Creating copy of SSH keys with appropriate permissions for Buildbot
-  copy:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    remote_src: yes
-    owner: "{{ buildbot_user }}"
-    group: "{{ buildbot_user }}"
-    mode: 0600
-  with_items:
-    - { src: "{{ buildbot_home }}/.ssh/id_rsa", dest: "{{ buildbot_home }}/ssh/id_rsa" }
-    - { src: "{{ buildbot_home }}/.ssh/id_rsa.pub", dest: "{{ buildbot_home }}/ssh/id_rsa.pub" }
-    - { src: "{{ buildbot_home }}/.ssh/known_hosts", dest: "{{ buildbot_home }}/ssh/known_hosts" }
-  become: yes
 
