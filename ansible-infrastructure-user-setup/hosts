@@ -5,6 +5,10 @@ uos
 cologne
 ilmenau
 
+[qa]
+develop.opencast.org
+stable.opencast.org
+legacy.openast.org
 
 [uos]
 vm589.rz.uos.de

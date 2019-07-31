@@ -7,6 +7,8 @@
     admins:
       - lars
       - greglogan
+    bots:
+      - buildbot
 
   tasks:
     - name: install epel (rh)
@@ -35,7 +37,7 @@
         name: wheel
         state: present
 
-    - name: create opencast infra users
+    - name: create opencast admin infra users
       become: yes
       user:
         name: '{{ item }}'
@@ -43,16 +45,22 @@
         append: yes
       loop: '{{ admins }}'
 
+    - name: create opencast bot infra users
+      become: yes
+      user:
+        name: "{{ item }}"
+      loop: "{{ bots }}"
+
     - name: add vmusers groups uos servers
       become: yes
       user:
         name: '{{ item }}'
         groups: vmusers
         append: yes
-      loop: '{{ admins }}'
+      loop: '{{ admins + bots }}'
       when: "'uos' in group_names"
 
-    - name: set up authorized keys
+    - name: set up admin authorized keys
       become: yes
       authorized_key:
         user: '{{ item }}'
@@ -60,6 +68,16 @@
         key: "{{ lookup('file', 'pub-keys/{{ item }}.pub') }}"
         exclusive: True
       loop: '{{ admins }}'
+
+    - name: set up bot authorized keys
+      become: yes
+      authorized_key:
+        user: "{{ item }}"
+        state: present
+        key: "{{ lookup('file', 'pub-keys/' ~ item ~ '-' ~ inventory_hostname.split('.') | first ~ '.pub' ) }}"
+        exclusive: True
+      tags: test
+      loop: "{{ bots }}"
 
     - name: remove old users
       become: yes
