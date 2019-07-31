@@ -13,7 +13,9 @@
     update_password: always
     home: "{{ buildbot_home }}"
     shell: /sbin/nologin
-    groups: buildbot,docker
+    groups:
+      - "{{ buildbot_user }}"
+      - "docker"
   become: yes
   when: create_buildbot_user and 'master' not in group_names
 
