@@ -23,6 +23,7 @@
   become: yes
   with_items:
     - { src: "mini-dinstall.conf", dest: "{{ buildbot_config_master }}/mini-dinstall.conf", mode: "644" }
+    - { src: "opencast-ingest.sh", dest: "{{ buildbot_config_master }}/opencast-ingest.sh", mode: "644" }
     - { src: "deb_sign.sh", dest: "{{ buildbot_config_master }}/deb_sign.sh", mode: "755" }
     - { src: "envs/stable", dest: "{{ buildbot_config_master }}/envs/stable", mode: "0644" }
     - { src: "envs/develop", dest: "{{ buildbot_config_master }}/envs/develop", mode: "0644" }

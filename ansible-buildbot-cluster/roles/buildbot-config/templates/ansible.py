@@ -52,6 +52,24 @@ def getBuildPipeline():
         flunkOnFailure=True,
         name="Deploying Opencast")
 
+    copy = steps.ShellCommand(
+        command=['scp', '{{ buildbot_config }}/opencast-ingest.sh', util.Interpolate("{{ buildbot_scp_deploy_script }}")],
+        haltOnFailure=True,
+        flunkOnFailure=True,
+        name="Copying Ingest script to target server")
+
+    sleep = steps.ShellCommand(
+        command=["sleep", "300"],
+        haltOnFailure=True,
+        flunkOnFailure=True,
+        name="Sleeping to let Opencast finish starting up")
+
+    run = steps.ShellCommand(
+        command=["ssh", "-t", util.Interpolate("{{ buildbot_scp_deploy_script }}"), "bash", "opencast-ingest.sh"],
+        haltOnFailure=True,
+        flunkOnFailure=True,
+        name="Ingesting demo media")
+
     cleanup = steps.ShellCommand(
         command=['rm', '-rf', util.Interpolate("%(prop:builddir)s/%(prop:deploy_env)s")],
         flunkOnFailure=True,
@@ -64,6 +82,9 @@ def getBuildPipeline():
     f_ansible.addStep(deps)
     f_ansible.addStep(secrets)
     f_ansible.addStep(deploy)
+    f_ansible.addStep(copy)
+    f_ansible.addStep(sleep)
+    f_ansible.addStep(run)
     f_ansible.addStep(cleanup)
 
     return f_ansible
