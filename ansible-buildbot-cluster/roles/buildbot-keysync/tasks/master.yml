@@ -33,7 +33,7 @@
 
 - name: Adding local keys
   shell: "cp group_vars/keys/{{ inventory_hostname }}/* .ssh/{{ inventory_hostname }}"
-  when: ("group_vars/keys/" ~ inventory_hostname) is file
+  when: ("group_vars/keys/" ~ inventory_hostname) is directory
   connection: local
 
 - name: Get Buildbot master sshd server key
