@@ -64,8 +64,9 @@ def getBuildPipeline():
         flunkOnFailure=True,
         name="Sleeping to let Opencast finish starting up")
 
+    #We aren't using -u here because this is executing in the same directory as the checked out ansible scripts, which contains a group_vars/all.yml files specifying ansible_user
     run = steps.ShellCommand(
-        command=["ssh", "-t", util.Interpolate("{{ buildbot_scp_deploy_script }}"), "bash", "opencast-ingest.sh"],
+        command=["ansible", "allinone", util.Interpolate('--private-key=%(prop:builddir)s/%(prop:deploy_env)s'), "-i", util.Interpolate("{{ buildbot_config }}/envs/%(prop:deploy_env)s"), "-m", "shell", "-a", "opencast-ingest.sh", "--extra-vars", util.Interpolate(" ".join(params))],
         haltOnFailure=True,
         flunkOnFailure=True,
         name="Ingesting demo media")

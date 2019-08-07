@@ -1,18 +1,18 @@
 [fileserver]
-stable.opencast.org
+stable.{{ infra_domain }}
 
 [database]
-stable.opencast.org
+stable.{{ infra_domain }}
 
 [activemq]
-stable.opencast.org
+stable.{{ infra_domain }}
 
 [admin]
 
 [adminpresentation]
 
 [allinone]
-stable.opencast.org
+stable.{{ infra_domain }}
 
 [worker]
 

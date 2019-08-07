@@ -1,18 +1,18 @@
 [fileserver]
-legacy.opencast.org
+legacy.{{ infra_domain }}
 
 [database]
-legacy.opencast.org
+legacy.{{ infra_domain }}
 
 [activemq]
-legacy.opencast.org
+legacy.{{ infra_domain }}
 
 [admin]
 
 [adminpresentation]
 
 [allinone]
-legacy.opencast.org
+legacy.{{ infra_domain }}
 
 [worker]
 

@@ -1,18 +1,18 @@
 [fileserver]
-develop.opencast.org
+develop.{{ infra_domain }}
 
 [database]
-develop.opencast.org
+develop.{{ infra_domain }}
 
 [activemq]
-develop.opencast.org
+develop.{{ infra_domain }}
 
 [admin]
 
 [adminpresentation]
 
 [allinone]
-develop.opencast.org
+develop.{{ infra_domain }}
 
 [worker]
 

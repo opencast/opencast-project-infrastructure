@@ -1,8 +1,8 @@
-Host develop.opencast.org
+Host develop.{{ infra_domain }}
   User {{ buildbot_user }}
 
-Host stable.opencast.org
+Host stable.{{ infra_domain }}
    User {{ buildbot_user }}
 
-Host legacy.opencast.org
+Host legacy.{{ infra_domain }}
    User {{ buildbot_user }}
