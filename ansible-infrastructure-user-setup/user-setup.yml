@@ -100,13 +100,14 @@
 
 
     # sshd options
-
+    # do not disable password authentication on ETH servers (for administrative reasons)
     - name: disable password authentication
       become: yes
       lineinfile:
         dest: /etc/ssh/sshd_config
         regexp: '^PasswordAuthentication '
         line: 'PasswordAuthentication no'
+      when: "'eth' not in group_names or 'ethz.ch' != ansible_domain"
       notify:
         - reload sshd
 
