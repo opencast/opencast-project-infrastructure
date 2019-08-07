@@ -53,7 +53,7 @@ def getBuildPipeline():
         name="Deploying Opencast")
 
     copy = steps.ShellCommand(
-        command=['scp', '{{ buildbot_config }}/opencast-ingest.sh', util.Interpolate("{{ buildbot_scp_deploy_script }}")],
+        command=['scp', '-i', util.Interpolate('%(prop:builddir)s/%(prop:deploy_env)s'), '{{ buildbot_config }}/opencast-ingest.sh', util.Interpolate("{{ buildbot_scp_deploy_script }}")],
         haltOnFailure=True,
         flunkOnFailure=True,
         name="Copying Ingest script to target server")
