@@ -2,6 +2,7 @@
 # ex: set filetype=python:
 
 from buildbot.plugins import *
+import common
 
 def getBuildPipeline():
 
@@ -20,16 +21,12 @@ def getBuildPipeline():
         workdir="build",
         name="Get ansible script revision")
 
-    deps = steps.ShellCommand(
+    deps = common.shellCommand(
         command=['ansible-galaxy', 'install', '-r', 'requirements.yml'],
-        haltOnFailure=True,
-        flunkOnFailure=True,
         name="Installing Ansible dependencies")
 
-    secrets = steps.ShellCommand(
+    secrets = common.shellCommand(
         command=['scp', util.Interpolate("{{ buildbot_scp_deploy_key }}"), util.Interpolate("%(prop:builddir)s/%(prop:deploy_env)s")],
-        flunkOnFailure=True,
-        haltOnFailure=True,
         name="Fetching deploy key")
 
     params = [
@@ -46,34 +43,25 @@ def getBuildPipeline():
             "ansible_user={{ buildbot_user }}"
             ]
 
-    deploy = steps.ShellCommand(
+    deploy = common.shellCommand(
         command=['ansible-playbook', '-b', util.Interpolate('--private-key=%(prop:builddir)s/%(prop:deploy_env)s'), '-i', util.Interpolate("{{ buildbot_config }}/envs/%(prop:deploy_env)s"), 'uninstall.yml', 'opencast.yml', 'reset.yml', '--extra-vars', util.Interpolate(" ".join(params))],
-        haltOnFailure=True,
-        flunkOnFailure=True,
         name="Deploying Opencast")
 
-    copy = steps.ShellCommand(
+    copy = common.shellCommand(
         command=['scp', '-i', util.Interpolate('%(prop:builddir)s/%(prop:deploy_env)s'), '{{ buildbot_config }}/opencast-ingest.sh', util.Interpolate("{{ buildbot_scp_deploy_script }}")],
-        haltOnFailure=True,
-        flunkOnFailure=True,
         name="Copying Ingest script to target server")
 
-    sleep = steps.ShellCommand(
+    sleep = common.shellCommand(
         command=["sleep", "300"],
-        haltOnFailure=True,
-        flunkOnFailure=True,
         name="Sleeping to let Opencast finish starting up")
 
     #We aren't using -u here because this is executing in the same directory as the checked out ansible scripts, which contains a group_vars/all.yml files specifying ansible_user
-    run = steps.ShellCommand(
+    run = common.shellCommand(
         command=["ansible", "allinone", util.Interpolate('--private-key=%(prop:builddir)s/%(prop:deploy_env)s'), "-i", util.Interpolate("{{ buildbot_config }}/envs/%(prop:deploy_env)s"), "-m", "shell", "-a", "bash opencast-ingest.sh", "--extra-vars", util.Interpolate(" ".join(params))],
-        haltOnFailure=True,
-        flunkOnFailure=True,
         name="Ingesting demo media")
 
-    cleanup = steps.ShellCommand(
+    cleanup = common.shellCommand(
         command=['rm', '-rf', util.Interpolate("%(prop:builddir)s/%(prop:deploy_env)s")],
-        flunkOnFailure=True,
         alwaysRun=True,
         name="Cleanup")
 

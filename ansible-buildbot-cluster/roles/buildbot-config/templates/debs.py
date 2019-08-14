@@ -24,27 +24,21 @@ def getBuildPipeline():
         workdir="build",
         name="Get Debian script revision")
 
-    debsFetch = steps.ShellSequence(
+    debsFetch = common.shellSequence(
         commands=[
-            util.ShellArg(
+            common.shellArg(
                 command=[
                     'mkdir', '-p',
                     util.Interpolate('binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s')
                 ],
-                haltOnFailure=True,
-                flunkOnFailure=True,
                 logfile="prep"),
-            util.ShellArg(
+            common.shellArg(
                 command=util.Interpolate(
                     "scp {{ buildbot_scp_builds_fetch }}/* binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/"
                 ),
-                haltOnFailure=True,
-                flunkOnFailure=True,
                 logfile="download")
         ],
-        name="Fetching built artifacts from buildmaster",
-        haltOnFailure=True,
-        flunkOnFailure=True)
+        name="Fetching built artifacts from buildmaster")
 
     debsTarballVersion = steps.SetPropertyFromCommand(
         command=util.Interpolate('cat binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/revision.txt'),
@@ -62,9 +56,9 @@ def getBuildPipeline():
         workdir="build",
         name="Get build tarball short revision")
 
-    debsBuild = steps.ShellSequence(
+    debsBuild = common.shellSequence(
         commands=[
-            util.ShellArg(
+            common.shellArg(
                 command=[
                     'dch',
                     '--changelog', 'opencast/debian/changelog',
@@ -76,41 +70,29 @@ def getBuildPipeline():
                         'Opencast revision %(prop:got_revision)s, packaged with Debian scripts version %(prop:deb_script_rev)s'
                     )
                 ],
-                haltOnFailure=True,
-                flunkOnFailure=True,
                 logfile='dch'),
-            util.ShellArg(
+            common.shellArg(
                 command=[
                     'rm', '-f', util.Interpolate("binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/revision.txt")
                 ],
-                haltOnFailure=True,
-                flunkOnFailure=True,
                 logfile='cleanup'),
-            util.ShellArg(
+            common.shellArg(
                 command=util.Interpolate(
                     'echo "source library.sh\ndoOpencast %(prop:pkg_major_version)s.%(prop:pkg_minor_version)s %(prop:branch)s %(prop:got_revision)s" | tee build.sh'
                 ),
-                flunkOnFailure=True,
-                haltOnFailure=True,
                 logfile='write'),
-            util.ShellArg(
+            common.shellArg(
                 command=util.Interpolate(
                     'ln -s opencast-%(prop:pkg_major_version)s_%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s.orig.tar.xz opencast-%(prop:pkg_major_version)s_%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s-%(prop:buildnumber)s.orig.tar.xz'
                 ),
-                flunkOnFailure=True,
-                haltOnFailure=True,
                 logfile='link'),
-            util.ShellArg(
+            common.shellArg(
                 command=['bash', 'build.sh'],
-                flunkOnFailure=True,
-                haltOnFailure=True,
                 logfile='build'),
-            util.ShellArg(
+            common.shellArg(
                 command=util.Interpolate(
                     'echo "Opencast version %(prop:got_revision)s packaged with version %(prop:deb_script_rev)s" | tee outputs/%(prop:oc_commit)s/revision.txt'
                 ),
-                flunkOnFailure=True,
-                haltOnFailure=True,
                 logfile='revision')
         ],
         env={
@@ -118,10 +100,8 @@ def getBuildPipeline():
             "EMAIL": "buildbot@ci.opencast.org",
             "SIGNING_KEY": util.Interpolate("%(prop:signing_key)s")
         },
-        workdir="build",
-        name="Build debs",
-        haltOnFailure=True,
-        flunkOnFailure=True)
+#        workdir="build",
+        name="Build debs")
 
     masterPrep = steps.MasterShellCommand(
         command=["mkdir", "-p",
@@ -132,12 +112,10 @@ def getBuildPipeline():
         name="Prep relevant directories on buildmaster")
 
     #Note: We're using a string here because using the array disables shell globbing!
-    debsUpload = steps.ShellCommand(
+    debsUpload = common.shellCommand(
         command=util.Interpolate(
             "scp -r outputs/%(prop:got_revision)s/* {{ buildbot_scp_debs }}"
         ),
-        haltOnFailure=True,
-        flunkOnFailure=True,
         name="Upload debs to buildmaster")
 
     debsDeploy = steps.MasterShellCommand(

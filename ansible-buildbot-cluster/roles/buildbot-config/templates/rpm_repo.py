@@ -7,29 +7,23 @@ import common
 
 def getBuildPipeline():
 
-    repo_prep = steps.ShellCommand(
+    repo_prep = common.shellCommand(
         command=[
             'mkdir', '-p', util.Interpolate('%(prop:rpm_repo_fragment)s/unstable/el/7/noarch/%(prop:pkg_major_version)s/')
         ],
-        flunkOnFailure=True,
-        haltOnFailure=True,
         name='Prep repository structure')
 
-    repo_fetch = steps.ShellCommand(
+    repo_fetch = common.shellCommand(
         command=util.Interpolate(
             "scp -r {{ buildbot_scp_rpms_fetch }}/* %(prop:rpm_repo_fragment)s/unstable/el/7/noarch/%(prop:pkg_major_version)s/"
         ),
-        flunkOnFailure=True,
-        haltOnFailure=True,
         name='Fetch packages')
 
-    repo_build = steps.ShellCommand(
+    repo_build = common.shellCommand(
         command=[
             'createrepo', '.'
         ],
         workdir=util.Interpolate('%(prop:rpm_repo_fragment)s/unstable/el/7/noarch'),
-        flunkOnFailure=True,
-        haltOnFailure=True,
         name='Build repository')
 
     f_rpm_repo = util.BuildFactory()

@@ -35,11 +35,9 @@ def getBuildPipeline():
         name="Prep relevant directories on buildmaster")
 
     #Note: We're using a string here because using the array disables shell globbing!
-    uploadTarballs = steps.ShellCommand(
+    uploadTarballs = common.shellCommand(
         command=util.Interpolate(
             "echo '%(prop:got_revision)s' | tee build/revision.txt && scp build/* {{ buildbot_scp_builds }}"),
-        haltOnFailure=True,
-        flunkOnFailure=True,
         name="Upload build to buildmaster")
 
     updateBuild = steps.MasterShellCommand(
@@ -49,7 +47,7 @@ def getBuildPipeline():
         flunkOnFailure=True,
         name="Deploy Build")
 
-    updateCrowdin = steps.ShellCommand(
+    updateCrowdin = common.shellCommand(
         command=util.Interpolate("if [ -f .upload-crowdin.sh ]; then CROWDIN_API_KEY='%(secret:crowdin.key)s' bash .upload-crowdin.sh; fi"),
         env={
             "TRAVIS_PULL_REQUEST": "false", #This is always false since the PR doesn't use this method
@@ -57,8 +55,6 @@ def getBuildPipeline():
         },
         doStepIf={{ push_crowdin }},
         hideStepIf={{ not push_crowdin }},
-        haltOnFailure=True,
-        flunkOnFailure=True,
         name="Update Crowdin translation keys")
 
     f_build = __getBasePipeline()

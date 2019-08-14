@@ -7,45 +7,35 @@ import common
 
 def getBuildPipeline():
 
-    repo_prep = steps.ShellCommand(
+    repo_prep = common.shellCommand(
         command=[
             'mkdir', '-p', util.Interpolate('%(prop:deb_repo_fragment)s/mini-dinstall/incoming')
         ],
-        flunkOnFailure=True,
-        haltOnFailure=True,
         name='Prep repository structure')
 
-    repo_clean = steps.ShellCommand(
+    repo_clean = common.shellCommand(
         command=util.Interpolate(
             'rm -f %(prop:deb_repo_fragment)s/mini-dinstall/incoming/opencast-%(prop:pkg_major_version)s* {{ deb_repo_fragment }}/mini-dinstall/REJECT/opencast-%(prop:pkg_major_version)s*'
         ),
-        flunkOnFailure=True,
-        haltOnFailure=True,
         name='Clean repository stucture')
 
-    repo_fetch = steps.ShellCommand(
+    repo_fetch = common.shellCommand(
         command=util.Interpolate(
             "scp -r {{ buildbot_scp_debs_fetch }}/* %(prop:deb_repo_fragment)s/mini-dinstall/incoming"
         ),
-        flunkOnFailure=True,
-        haltOnFailure=True,
         name='Fetch packages')
 
     #this file needs to be in the cwd for it to be picked up with mini-dinstall
-    repo_copy = steps.ShellCommand(
+    repo_copy = common.shellCommand(
         command=[
             'cp', '{{ buildbot_config }}/mini-dinstall.conf', '.'
         ],
-        flunkOnFailure=True,
-        haltOnFailure=True,
         name='Copying config file')
 
-    repo_build = steps.ShellCommand(
+    repo_build = common.shellCommand(
         command=[
             'mini-dinstall', '-vbc', 'mini-dinstall.conf'
         ],
-        flunkOnFailure=True,
-        haltOnFailure=True,
         name='Build repository')
 
     f_deb_repo = util.BuildFactory()

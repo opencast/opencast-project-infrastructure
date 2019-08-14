@@ -5,6 +5,41 @@ import os.path
 from buildbot.plugins import *
 
 
+def shellCommand(command, name, workdir="build", env={}, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, alwaysRun=False, doStepIf=True, hideStepIf=False):
+    return steps.ShellCommand(
+        command=command,
+        name=name,
+        workdir=workdir,
+        env=env,
+        flunkOnFailure=flunkOnFailure,
+        haltOnFailure=haltOnFailure,
+        warnOnFailure=warnOnFailure,
+        alwaysRun=alwaysRun,
+        doStepIf=doStepIf,
+        hideStepIf=hideStepIf)
+
+def shellArg(command, logfile, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True):
+    return util.ShellArg(
+        command=command,
+        logfile=logfile,
+        flunkOnFailure=flunkOnFailure,
+        haltOnFailure=haltOnFailure,
+        warnOnFailure=warnOnFailure)
+
+
+def shellSequence(commands, name, workdir="build", env={}, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, alwaysRun=False, doStepIf=True, hideStepIf=False):
+    return steps.ShellSequence(
+        commands=commands,
+        name=name,
+        workdir=workdir,
+        env=env,
+        flunkOnFailure=flunkOnFailure,
+        haltOnFailure=haltOnFailure,
+        warnOnFailure=warnOnFailure,
+        alwaysRun=alwaysRun,
+        doStepIf=doStepIf,
+        hideStepIf=hideStepIf)
+
 def getMavenBase():
 {% if skip_tests %}
     return ['mvn', '-B', '-V', '-T', '1C', '-Dmaven.repo.local=/builder/m2', '-DskipTests']
@@ -13,12 +48,12 @@ def getMavenBase():
 {% endif %}
 
 def getPreflightChecks():
-    return steps.ShellSequence(
+    return shellSequence(
         commands=[
-            util.ShellArg(command="df /builds -m | tail -n 1 | awk '$4 <= {{ minimum_build_diskspace }} { exit 1 }'", logfile='freespace'),
+            shellArg(
+                command="df /builds -m | tail -n 1 | awk '$4 <= {{ minimum_build_diskspace }} { exit 1 }'",
+                logfile='freespace')
         ],
-        haltOnFailure=True,
-        flunkOnFailure=True,
         name="Pre-flight checks")
 
 def getClone():
@@ -33,53 +68,48 @@ def getClone():
 def getWorkerPrep():
     command = getMavenBase()
     command.extend(['dependency:go-offline', '-fn'])
-    return steps.ShellSequence(
+    return shellSequence(
         commands=[
-            util.ShellArg(command=['git', 'clean', '-fdx'], logfile='clean'),
-            util.ShellArg(
+            shellArg(
+                command=['git', 'clean', '-fdx'],
+                logfile='clean'),
+            shellArg(
                 command=command,
                 logfile='deps')
         ],
-        haltOnFailure=True,
-        flunkOnFailure=True,
         name="Build Prep")
 
 def getBuild():
     command = getMavenBase()
     command.extend(['clean', 'install'])
-    return steps.ShellSequence(
+    return shellSequence(
         commands=[
-            util.ShellArg(
+            shellArg(
                 command=['sed','-i','s/WARN/DEBUG/','docs/log4j/log4j.properties'],
                 logfile='sed'),
-            util.ShellArg(
+            shellArg(
                 command=command,
                 logfile='build')
         ],
-        haltOnFailure=True,
-        flunkOnFailure=True,
         name="Build")
 
 def loadSigningKey():
-    return steps.ShellCommand(
+    return shellCommand(
         command="scp {{ buildbot_scp_signing_key }} /dev/stdout | gpg --import",
-        haltOnFailure=True,
-        flunkOnFailure=True,
         name="Load signing key")
 
 def unloadSigningKey():
-    return steps.ShellCommand(
+    return shellCommand(
         command=['rm', '-rf', '/builder/.gnupg'],
-        flunkOnFailure=True,
         alwaysRun=True,
         name="Key cleanup")
 
 def getClean():
-    return steps.ShellSequence(
+    return shellSequence(
         commands=[
-            util.ShellArg(command=['git', 'clean', '-fdx'], logfile='git'),
+            shellArg(
+                command=['git', 'clean', '-fdx'],
+                logfile='git')
         ],
-        haltOnFailure=True,
-        flunkOnFailure=True,
         alwaysRun=True,
         name="Cleanup")

@@ -8,26 +8,22 @@ import common
 
 def __getBasePipeline():
 
-    checkSpaces = steps.ShellSequence(
+    checkSpaces = common.shellSequence(
         commands=[
-            util.ShellArg(
+            common.shellArg(
                 command=util.Interpolate(
                     "(! grep -rnP '\t' modules assemblies pom.xml etc --include=pom.xml)"),
-                flunkOnFailure=True,
                 haltOnFailure=False,
                 logfile='Tab Check'),
-            util.ShellArg(
+            common.shellArg(
                 command=util.Interpolate(
                     "(! grep -rn ' $' modules assemblies pom.xml etc --include=pom.xml)"
                 ),
-                flunkOnFailure=True,
                 haltOnFailure=False,
                 logfile='End Of Line Space Check')
         ],
         workdir="build/docs/guides",
-        name="Formatting checks",
-        haltOnFailure=False,
-        flunkOnFailure=True)
+        name="Formatting checks")
 
     command = common.getMavenBase()
     command.extend([
@@ -35,10 +31,8 @@ def __getBasePipeline():
             util.Interpolate(
                 '-DstagingDirectory=/builder/{{ artifacts_fragment }}')
         ])
-    site = steps.ShellCommand(
+    site = common.shellCommand(
         command=command,
-        haltOnFailure=True,
-        flunkOnFailure=True,
         name="Build site report")
 
     f_build = util.BuildFactory()
@@ -70,12 +64,10 @@ def getBuildPipeline():
         flunkOnFailure=True,
         name="Prep relevant directories on buildmaster")
 
-    uploadSite = steps.ShellCommand(
+    uploadSite = common.shellCommand(
         command=util.Interpolate(
             "scp -r /builder/{{ artifacts_fragment }}/* {{ buildbot_scp_reports }}"
         ),
-        haltOnFailure=True,
-        flunkOnFailure=True,
         name="Upload site report to buildmaster")
 
     updateSite = steps.MasterShellCommand(

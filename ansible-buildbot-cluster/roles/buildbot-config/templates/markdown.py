@@ -17,63 +17,52 @@ def __getBasePipeline():
         property="gruntConfigExists",
         name="Check Grunt config file existence")
 
-    gruntCheck = steps.ShellSequence(
+    gruntCheck = common.shellSequence(
         commands=[
-            util.ShellArg(
+            common.shellArg(
                 command=['npm', 'install'],
-                flunkOnFailure=True,
-                haltOnFailure=True,
                 logfile='npm_install'),
-            util.ShellArg(
+            common.shellArg(
                 command=['./node_modules/grunt/bin/grunt'],
-                flunkOnFailure=True,
                 haltOnFailure=False,
                 logfile='grunt'),
         ],
         workdir="build/docs/guides",
         name="Check Markdown doc formatting with grunt",
         haltOnFailure=False,
-        flunkOnFailure=True,
         doStepIf=lambda step: step.getProperty("npmConfigExists") == "True" and step.getProperty("gruntConfigExists") == "True",
         hideStepIf=lambda results, step: not (step.getProperty("npmConfigExists") == "True" and step.getProperty("gruntConfigExists") == "True"))
 
-    npmCheck = steps.ShellSequence(
+    npmCheck = common.shellSequence(
         commands=[
-            util.ShellArg(
+            common.shellArg(
                 command=['npm', 'install'],
-                flunkOnFailure=True,
-                haltOnFailure=True,
                 logfile='npm_install'),
-            util.ShellArg(
+            common.shellArg(
                 command=['npm', 'test'],
-                flunkOnFailure=True,
                 haltOnFailure=False,
                 logfile='markdown-cli'),
         ],
         workdir="build/docs/guides",
         name="Check Markdown doc formatting with markdown-cli",
         haltOnFailure=False,
-        flunkOnFailure=True,
         doStepIf=lambda step: step.getProperty("npmConfigExists") == "True" and step.getProperty("gruntConfigExists") != "True",
         hideStepIf=lambda results, step: not (step.getProperty("npmConfigExists") == "True" and step.getProperty("gruntConfigExists") != "True"))
 
 
 
-    build = steps.ShellSequence(
+    build = common.shellSequence(
         commands=[
-            util.ShellArg(
+            common.shellArg(
                 command='cd admin && mkdocs build && cd ..',
-                flunkOnFailure=True,
                 haltOnFailure=False,
                 logfile='admin'),
-            util.ShellArg(
+            common.shellArg(
                 command='cd developer && mkdocs build && cd ..',
-                flunkOnFailure=True,
                 haltOnFailure=False,
                 logfile='developer'),
-            util.ShellArg(
+            common.shellArg(
                 command='cd user && mkdocs build && cd ..',
-                flunkOnFailure=True,
                 haltOnFailure=False,
                 logfile='user'),
         ],
@@ -82,9 +71,7 @@ def __getBasePipeline():
             "LANG": "en_US.utf-8"
         },
         workdir="build/docs/guides",
-        name="Build Markdown docs",
-        haltOnFailure=True,
-        flunkOnFailure=True)
+        name="Build Markdown docs")
 
 
     f_build = util.BuildFactory()
@@ -114,32 +101,27 @@ def getBuildPipeline():
         flunkOnFailure=True,
         name="Prep relevant directories on buildmaster")
 
-    upload = steps.ShellSequence(
+    upload = common.shellSequence(
         commands=[
-            util.ShellArg(
+            common.shellArg(
                 command=util.Interpolate(
                     "scp -r admin/site {{ buildbot_scp_markdown }}/admin"),
-                flunkOnFailure=True,
                 haltOnFailure=False,
                 logfile='admin'),
-            util.ShellArg(
+            common.shellArg(
                 command=util.Interpolate(
                     "scp -r developer/site {{ buildbot_scp_markdown }}/developer"
                 ),
-                flunkOnFailure=True,
                 haltOnFailure=False,
                 logfile='developer'),
-            util.ShellArg(
+            common.shellArg(
                 command=util.Interpolate(
                     "scp -r user/site {{ buildbot_scp_markdown }}/user"),
-                flunkOnFailure=True,
                 haltOnFailure=False,
                 logfile='user'),
         ],
         workdir="build/docs/guides",
         name="Upload Markdown docs to buildmaster",
-        haltOnFailure=True,
-        flunkOnFailure=True,
         doStepIf=lambda step: step.getProperty("npmConfigExists") == "True")
 
     updateMarkdown = steps.MasterShellCommand(
