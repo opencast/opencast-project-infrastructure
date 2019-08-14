@@ -9,7 +9,7 @@ curl -s https://data.lkiesow.io/opencast/test-media/ \
   | sed -n 's/^.*href="\([^"]*\.[^.]..\)".*$/\1/p' \
   | while read -r media
 do
-  curl -O "https://data.lkiesow.io/opencast/test-media/${media}"
+  curl -z "${media}" -O "https://data.lkiesow.io/opencast/test-media/${media}"
 done
 
 SERVER='http://localhost:8080'
