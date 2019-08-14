@@ -7,9 +7,9 @@ from buildbot.plugins import *
 
 def getMavenBase():
 {% if skip_tests %}
-    return ['mvn', '-B', '-V', '-Dmaven.repo.local=/builder/m2', '-DskipTests']
+    return ['mvn', '-B', '-V', '-T', '1C', '-Dmaven.repo.local=/builder/m2', '-DskipTests']
 {% else %}
-    return ['mvn', '-B', '-V', '-Dmaven.repo.local=/builder/m2']
+    return ['mvn', '-B', '-V', '-T', '1C', '-Dmaven.repo.local=/builder/m2']
 {% endif %}
 
 def getPreflightChecks():
