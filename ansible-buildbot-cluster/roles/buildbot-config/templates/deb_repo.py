@@ -5,11 +5,13 @@ import os.path
 from buildbot.plugins import *
 import common
 
+
 def getBuildPipeline():
 
     repo_prep = common.shellCommand(
         command=[
-            'mkdir', '-p', util.Interpolate('%(prop:deb_repo_fragment)s/mini-dinstall/incoming')
+            'mkdir', '-p', 
+                util.Interpolate('%(prop:deb_repo_fragment)s/mini-dinstall/incoming')
         ],
         name='Prep repository structure')
 
@@ -25,7 +27,7 @@ def getBuildPipeline():
         ),
         name='Fetch packages')
 
-    #this file needs to be in the cwd for it to be picked up with mini-dinstall
+    # this file needs to be in the cwd for it to be picked up with mini-dinstall
     repo_copy = common.shellCommand(
         command=[
             'cp', '{{ buildbot_config }}/mini-dinstall.conf', '.'

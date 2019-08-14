@@ -16,6 +16,7 @@ def __getBasePipeline():
 
     return f_build
 
+
 def getPullRequestPipeline():
 
     f_build = __getBasePipeline()
@@ -23,18 +24,21 @@ def getPullRequestPipeline():
 
     return f_build
 
+
 def getBuildPipeline():
 
     masterPrep = steps.MasterShellCommand(
         command=["mkdir", "-p",
-                util.Interpolate(os.path.normpath("{{ deployed_builds }}")),
-                util.Interpolate(os.path.normpath("{{ deployed_builds_symlink_base }}"))
+                 util.Interpolate(
+                     os.path.normpath("{{ deployed_builds }}")),
+                 util.Interpolate(
+                     os.path.normpath("{{ deployed_builds_symlink_base }}"))
 
-        ],
+                 ],
         flunkOnFailure=True,
         name="Prep relevant directories on buildmaster")
 
-    #Note: We're using a string here because using the array disables shell globbing!
+    # Note: We're using a string here because using the array disables shell globbing!
     uploadTarballs = common.shellCommand(
         command=util.Interpolate(
             "echo '%(prop:got_revision)s' | tee build/revision.txt && scp build/* {{ buildbot_scp_builds }}"),
@@ -48,7 +52,8 @@ def getBuildPipeline():
         name="Deploy Build")
 
     updateCrowdin = common.shellCommand(
-        command=util.Interpolate("if [ -f .upload-crowdin.sh ]; then CROWDIN_API_KEY='%(secret:crowdin.key)s' bash .upload-crowdin.sh; fi"),
+        command=util.Interpolate(
+            "if [ -f .upload-crowdin.sh ]; then CROWDIN_API_KEY='%(secret:crowdin.key)s' bash .upload-crowdin.sh; fi"),
         env={
             "TRAVIS_PULL_REQUEST": "false", #This is always false since the PR doesn't use this method
             "TRAVIS_BRANCH": util.Interpolate("%(prop:branch)s")

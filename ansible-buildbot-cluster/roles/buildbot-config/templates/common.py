@@ -18,6 +18,7 @@ def shellCommand(command, name, workdir="build", env={}, haltOnFailure=True, flu
         doStepIf=doStepIf,
         hideStepIf=hideStepIf)
 
+
 def shellArg(command, logfile, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True):
     return util.ShellArg(
         command=command,
@@ -47,6 +48,7 @@ def getMavenBase():
     return ['mvn', '-B', '-V', '-T', '1C', '-Dmaven.repo.local=/builder/m2']
 {% endif %}
 
+
 def getPreflightChecks():
     return shellSequence(
         commands=[
@@ -56,6 +58,7 @@ def getPreflightChecks():
         ],
         name="Pre-flight checks")
 
+
 def getClone():
     return steps.GitHub(
         repourl="{{ source_repo_url }}",
@@ -64,6 +67,7 @@ def getClone():
         haltOnFailure=True,
         flunkOnFailure=True,
         name="Clone/Checkout")
+
 
 def getWorkerPrep():
     command = getMavenBase()
@@ -79,13 +83,15 @@ def getWorkerPrep():
         ],
         name="Build Prep")
 
+
 def getBuild():
     command = getMavenBase()
     command.extend(['clean', 'install'])
     return shellSequence(
         commands=[
             shellArg(
-                command=['sed','-i','s/WARN/DEBUG/','docs/log4j/log4j.properties'],
+                command=['sed', '-i', 's/WARN/DEBUG/',
+                         'docs/log4j/log4j.properties'],
                 logfile='sed'),
             shellArg(
                 command=command,
@@ -93,16 +99,19 @@ def getBuild():
         ],
         name="Build")
 
+
 def loadSigningKey():
     return shellCommand(
         command="scp {{ buildbot_scp_signing_key }} /dev/stdout | gpg --import",
         name="Load signing key")
+
 
 def unloadSigningKey():
     return shellCommand(
         command=['rm', '-rf', '/builder/.gnupg'],
         alwaysRun=True,
         name="Key cleanup")
+
 
 def getClean():
     return shellSequence(

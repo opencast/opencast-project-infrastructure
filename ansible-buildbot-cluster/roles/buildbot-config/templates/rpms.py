@@ -7,7 +7,7 @@ import common
 
 profiles = {
 {% for branch in opencast %}
-  '{{ branch }}': {{ opencast[branch]['profiles'] }},
+    '{{ branch }}': {{ opencast[branch]['profiles'] }},
 {% endfor %}
 }
 
@@ -17,36 +17,37 @@ def getRPMBuilds(props):
     builds = []
     for profile in profiles[props.getProperty('branch_pretty')]:
         builds.append(common.shellArg(
-                command=[
-                    'rpmbuild',
-                    '--define', 'ocdist ' + profile,
-                    '--define', util.Interpolate('tarversion %(prop:pkg_major_version)s-SNAPSHOT'),
-                    '-bb', '--noclean',
-                    util.Interpolate("SPECS/opencast%(prop:pkg_major_version)s.spec")
-                ],
-                logfile=profile))
+            command=[
+                'rpmbuild',
+                '--define', 'ocdist ' + profile,
+                '--define', util.Interpolate('tarversion %(prop:pkg_major_version)s-SNAPSHOT'),
+                '-bb', '--noclean',
+                util.Interpolate("SPECS/opencast%(prop:pkg_major_version)s.spec")
+            ],
+            logfile=profile))
         builds.append(common.shellArg(
-                command=[
-                    'rpmsign',
-                    '--addsign',
-                    '--key-id', util.Interpolate("%(prop:signing_key)s"),
-                    util.Interpolate("RPMS/noarch/opencast%(prop:pkg_major_version)s-" + profile + "-%(prop:pkg_major_version)s.x-%(prop:buildnumber)s.%(prop:short_revision)s.el7.noarch.rpm")
-                ],
-                logfile=profile + " signing"))
+            command=[
+                'rpmsign',
+                '--addsign',
+                '--key-id', util.Interpolate("%(prop:signing_key)s"),
+                util.Interpolate(
+                    "RPMS/noarch/opencast%(prop:pkg_major_version)s-" + profile + "-%(prop:pkg_major_version)s.x-%(prop:buildnumber)s.%(prop:short_revision)s.el7.noarch.rpm")
+            ],
+            logfile=profile + " signing"))
     return builds
 
 
 def getBuildPipeline():
 
     rpmsClone = steps.Git(
-                     repourl="{{ source_rpm_repo_url }}",
-                     branch="master",
-                     alwaysUseLatest=True,
-                     mode="full",
-                     method="fresh",
-                     flunkOnFailure=True,
-                     haltOnFailure=True,
-                     name="Cloning rpm packaging configs")
+        repourl="{{ source_rpm_repo_url }}",
+        branch="master",
+        alwaysUseLatest=True,
+        mode="full",
+        method="fresh",
+        flunkOnFailure=True,
+        haltOnFailure=True,
+        name="Cloning rpm packaging configs")
 
     rpmsVersion = steps.SetPropertyFromCommand(
         command="git rev-parse HEAD",
@@ -60,7 +61,7 @@ def getBuildPipeline():
     rpmsFetch = common.shellSequence(
         commands=[
             common.shellArg(
-			    #We're using a string here rather than an arg array since we need the shell functions
+                # We're using a string here rather than an arg array since we need the shell functions
                 command='echo -e "%_topdir `pwd`" > ~/.rpmmacros',
                 logfile="rpmdev-setup"),
             common.shellArg(
@@ -84,13 +85,15 @@ def getBuildPipeline():
             common.shellArg(
                 command=[
                     "ln", "-sr",
-                    util.Interpolate("opencast%(prop:pkg_major_version)s.spec"),
+                    util.Interpolate(
+                        "opencast%(prop:pkg_major_version)s.spec"),
                     "SPECS"
                 ],
                 logfile="specs"),
             common.shellArg(
-                #Same here
-                command=util.Interpolate("ln -sr opencast%(prop:pkg_major_version)s/* SOURCES"),
+                # Same here
+                command=util.Interpolate(
+                    "ln -sr opencast%(prop:pkg_major_version)s/* SOURCES"),
                 logfile="sources")
         ],
         workdir="build/specs",
@@ -98,14 +101,16 @@ def getBuildPipeline():
 
     rpmsTarballVersion = steps.SetPropertyFromCommand(
         command=util.Interpolate('cat BUILD/opencast/build/revision.txt'),
-        property="got_revision", #Note: We're overwriting this value to set it to the built revision rather than whatever it defaults to
+        # Note: We're overwriting this value to set it to the built revision rather than whatever it defaults to
+        property="got_revision",
         flunkOnFailure=True,
         haltOnFailure=True,
         workdir="build/specs",
         name="Get build tarball revision")
 
     rpmsTarballShortVersion = steps.SetPropertyFromCommand(
-        command=util.Interpolate('cat BUILD/opencast/build/revision.txt | cut -c -9'),
+        command=util.Interpolate(
+            'cat BUILD/opencast/build/revision.txt | cut -c -9'),
         property="short_revision",
         flunkOnFailure=True,
         haltOnFailure=True,
@@ -155,13 +160,15 @@ def getBuildPipeline():
 
     masterPrep = steps.MasterShellCommand(
         command=["mkdir", "-p",
-                util.Interpolate(os.path.normpath("{{ deployed_rpms }}")),
-                util.Interpolate(os.path.normpath("{{ deployed_rpms_symlink_base }}"))
-        ],
+                 util.Interpolate(
+                     os.path.normpath("{{ deployed_rpms }}")),
+                 util.Interpolate(
+                     os.path.normpath("{{ deployed_rpms_symlink_base }}"))
+                 ],
         flunkOnFailure=True,
         name="Prep relevant directories on buildmaster")
 
-    #Note: We're using a string here because using the array disables shell globbing!
+    # Note: We're using a string here because using the array disables shell globbing!
     rpmsUpload = common.shellCommand(
         command=util.Interpolate(
             "scp -r RPMS/noarch/* {{ buildbot_scp_rpms }}"

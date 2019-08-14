@@ -5,7 +5,8 @@ import os.path
 from buildbot.plugins import *
 import common
 
-def __getBasePipeline(): 
+
+def __getBasePipeline():
 
     enable = steps.SetPropertyFromCommand(
         command='[ -f docs/guides/package.json ] && echo True || echo False',
@@ -49,8 +50,6 @@ def __getBasePipeline():
         doStepIf=lambda step: step.getProperty("npmConfigExists") == "True" and step.getProperty("gruntConfigExists") != "True",
         hideStepIf=lambda results, step: not (step.getProperty("npmConfigExists") == "True" and step.getProperty("gruntConfigExists") != "True"))
 
-
-
     build = common.shellSequence(
         commands=[
             common.shellArg(
@@ -73,7 +72,6 @@ def __getBasePipeline():
         workdir="build/docs/guides",
         name="Build Markdown docs")
 
-
     f_build = util.BuildFactory()
     f_build.addStep(common.getClone())
     f_build.addStep(enable)
@@ -84,6 +82,7 @@ def __getBasePipeline():
 
     return f_build
 
+
 def getPullRequestPipeline():
 
     f_build = __getBasePipeline()
@@ -91,13 +90,16 @@ def getPullRequestPipeline():
 
     return f_build
 
+
 def getBuildPipeline():
 
     masterPrep = steps.MasterShellCommand(
         command=["mkdir", "-p",
-                util.Interpolate(os.path.normpath("{{ deployed_markdown }}")),
-                util.Interpolate(os.path.normpath("{{ deployed_markdown_symlink_base }}")),
-        ],
+                 util.Interpolate(
+                     os.path.normpath("{{ deployed_markdown }}")),
+                 util.Interpolate(
+                     os.path.normpath("{{ deployed_markdown_symlink_base }}")),
+                 ],
         flunkOnFailure=True,
         name="Prep relevant directories on buildmaster")
 
@@ -130,7 +132,6 @@ def getBuildPipeline():
         ),
         flunkOnFailure=True,
         name="Deploy Markdown")
-
 
     f_build = __getBasePipeline()
     f_build.addStep(masterPrep)

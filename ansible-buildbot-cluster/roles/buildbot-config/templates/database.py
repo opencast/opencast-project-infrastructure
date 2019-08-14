@@ -6,7 +6,8 @@ from buildbot.plugins import *
 import common
 
 db_lock = util.WorkerLock("db_lock",
-                             maxCount=1)
+                          maxCount=1)
+
 
 def generateDBTestStep(dbname, dbport):
 
@@ -19,11 +20,13 @@ def generateDBTestStep(dbname, dbport):
                 haltOnFailure=False,
                 logfile='version'),
             common.shellArg(
-                command=util.Interpolate('echo "create database opencast%(prop:buildnumber)s;" | ' + mysqlString),
+                command=util.Interpolate(
+                    'echo "create database opencast%(prop:buildnumber)s;" | ' + mysqlString),
                 haltOnFailure=False,
                 logfile='createdb'),
             common.shellArg(
-                command=util.Interpolate(mysqlString + ' opencast%(prop:buildnumber)s < docs/scripts/ddl/mysql5.sql'),
+                command=util.Interpolate(
+                    mysqlString + ' opencast%(prop:buildnumber)s < docs/scripts/ddl/mysql5.sql'),
                 haltOnFailure=False,
                 logfile='newdb'),
             common.shellArg(
@@ -31,7 +34,8 @@ def generateDBTestStep(dbname, dbport):
                 haltOnFailure=False,
                 logfile=dbname),
             common.shellArg(
-                command=util.Interpolate('echo "drop database opencast%(prop:buildnumber)s;" | ' + mysqlString),
+                command=util.Interpolate(
+                    'echo "drop database opencast%(prop:buildnumber)s;" | ' + mysqlString),
                 haltOnFailure=False,
                 logfile='dropdb'),
         ],
@@ -41,7 +45,7 @@ def generateDBTestStep(dbname, dbport):
         flunkOnFailure=True)
 
 
-def __getBasePipeline(): 
+def __getBasePipeline():
 
     f_build = util.BuildFactory()
     f_build.addStep(common.getClone())
@@ -52,11 +56,13 @@ def __getBasePipeline():
 
     return f_build
 
+
 def getPullRequestPipeline():
 
     f_build = __getBasePipeline()
 
     return f_build
+
 
 def getBuildPipeline():
 

@@ -3,7 +3,7 @@
 
 from buildbot.plugins import *
 
-deployables=[]
+deployables = []
 {% for branch in opencast %}
 {%   if 'server' in opencast[branch] %}
 deployables.append('{{ branch }}')
@@ -14,7 +14,8 @@ deployables.append('{{ branch }}')
 def getPullRequestSchedulers():
     return schedulers.AnyBranchScheduler(
         name="Pull Requests",
-        treeStableTimer={{stability_limit}},  #NB: Do not make this a string, a horribly unclear error occurs and nothing works for this scheduler...
+        # NB: Do not make this a string, a horribly unclear error occurs and nothing works for this scheduler...
+        treeStableTimer={{ stability_limit }},
         builderNames=[
             "Pull Request Build",
             "Pull Request Reports",
@@ -30,7 +31,8 @@ def getSchedulers(pretty_branch_name, git_branch_name):
         name=pretty_branch_name + " Quick Build",
         change_filter=util.ChangeFilter(
             category=None, branch_re=git_branch_name),
-        treeStableTimer={{stability_limit}},  #NB: Do not make this a string, a horribly unclear error occurs and nothing works for this scheduler...
+        # NB: Do not make this a string, a horribly unclear error occurs and nothing works for this scheduler...
+        treeStableTimer={{ stability_limit }},
         builderNames=[
             pretty_branch_name + " Build",
             pretty_branch_name + " Markdown",
@@ -41,7 +43,8 @@ def getSchedulers(pretty_branch_name, git_branch_name):
         name=pretty_branch_name + " Reports",
         change_filter=util.ChangeFilter(
             category=None, branch_re=git_branch_name),
-        treeStableTimer={{stability_limit}},  #NB: Do not make this a string, a horribly unclear error occurs and nothing works for this scheduler...
+        # NB: Do not make this a string, a horribly unclear error occurs and nothing works for this scheduler...
+        treeStableTimer={{ stability_limit }},
         builderNames=[
             pretty_branch_name + " Reports",
         ])

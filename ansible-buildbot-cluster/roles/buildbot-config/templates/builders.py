@@ -26,16 +26,26 @@ rpm_lock = util.WorkerLock("rpm_lock",
                              maxCount=1)
 
 
-#We're doing the filter here to remove blank entries (ie, "") since some of these lines in some cases don't yield results, but it's hard to keep from adding the front and end quotes in Jinja
+# We're doing the filter here to remove blank entries (ie, "") since some of these lines in some cases don't yield
+# results, but it's hard to keep from adding the front and end quotes in Jinja
 workers = list(filter(lambda a: a, [
-  {{ '\"' + groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'undefined') | map(attribute='name') | join('\", \"') + '\"' }},
-  {{ '\"' + groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder', 'eq', 'False') | map(attribute='name') | join('\", \"') + '\"' }}
+  {{ '\"' + groups['workers'] | map('extract', hostvars)
+                                   | selectattr('only_repo_builder', 'undefined')
+                                   | map(attribute='name') | join('\", \"') + '\"' }},
+  {{ '\"' + groups['workers'] | map('extract', hostvars)
+                                   | selectattr('only_repo_builder', 'defined')
+                                   | selectattr('only_repo_builder', 'eq', 'False') | map(attribute='name') | join('\", \"') + '\"' }}
   ]))
 
 repo_workers = list(filter(lambda a: a, [
-  {{ '\"' + groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | map(attribute='name') | join('\", \"') + '\"' }},
-  {{ '\"' + groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder') | map(attribute='name') | join('\", \"') + '\"' }}
+  {{ '\"' + groups['workers'] | map('extract', hostvars)
+                                   | selectattr('repo_builder', 'defined') | selectattr('repo_builder')
+                                   | map(attribute='name') | join('\", \"') + '\"' }},
+  {{ '\"' + groups['workers'] | map('extract', hostvars)
+                                   | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder')
+                                   | map(attribute='name') | join('\", \"') + '\"' }}
 ]))
+
 
 def getPullRequestBuilder():
 
@@ -78,8 +88,8 @@ def getPullRequestBuilder():
     b_pr_build, b_pr_reports, b_pr_markdown, b_pr_db
   ]
 
-def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version, pkg_minor_version):
 
+def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version, pkg_minor_version):
 
     props = {
         'pkg_major_version': pkg_major_version,

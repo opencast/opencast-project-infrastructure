@@ -5,11 +5,13 @@ import os.path
 from buildbot.plugins import *
 import common
 
+
 def getBuildPipeline():
 
     repo_prep = common.shellCommand(
         command=[
-            'mkdir', '-p', util.Interpolate('%(prop:rpm_repo_fragment)s/unstable/el/7/noarch/%(prop:pkg_major_version)s/')
+            'mkdir', '-p',
+            util.Interpolate('%(prop:rpm_repo_fragment)s/unstable/el/7/noarch/%(prop:pkg_major_version)s/')
         ],
         name='Prep repository structure')
 
@@ -23,7 +25,8 @@ def getBuildPipeline():
         command=[
             'createrepo', '.'
         ],
-        workdir=util.Interpolate('%(prop:rpm_repo_fragment)s/unstable/el/7/noarch'),
+        workdir=util.Interpolate(
+            '%(prop:rpm_repo_fragment)s/unstable/el/7/noarch'),
         name='Build repository')
 
     f_rpm_repo = util.BuildFactory()

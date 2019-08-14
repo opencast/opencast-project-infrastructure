@@ -27,10 +27,9 @@ def __getBasePipeline():
 
     command = common.getMavenBase()
     command.extend([
-            'cobertura:cobertura', 'site', 'site:stage',
-            util.Interpolate(
-                '-DstagingDirectory=/builder/{{ artifacts_fragment }}')
-        ])
+        'cobertura:cobertura', 'site', 'site:stage',
+        util.Interpolate('-DstagingDirectory=/builder/{{ artifacts_fragment }}')
+    ])
     site = common.shellCommand(
         command=command,
         name="Build site report")
@@ -45,6 +44,7 @@ def __getBasePipeline():
 
     return f_build
 
+
 def getPullRequestPipeline():
 
     f_build = __getBasePipeline()
@@ -52,15 +52,20 @@ def getPullRequestPipeline():
 
     return f_build
 
+
 def getBuildPipeline():
 
     masterPrep = steps.MasterShellCommand(
         command=["mkdir", "-p",
-                util.Interpolate(os.path.normpath("{{ deployed_reports }}")),
-                util.Interpolate(os.path.normpath("{{ deployed_reports_symlink_base }}")),
-                util.Interpolate(os.path.normpath("{{ deployed_javadocs_symlink_base }}")),
-                util.Interpolate(os.path.normpath("{{ deployed_coverage_symlink_base }}"))
-        ],
+                 util.Interpolate(
+                     os.path.normpath("{{ deployed_reports }}")),
+                 util.Interpolate(
+                     os.path.normpath("{{ deployed_reports_symlink_base }}")),
+                 util.Interpolate(
+                     os.path.normpath("{{ deployed_javadocs_symlink_base }}")),
+                 util.Interpolate(
+                     os.path.normpath("{{ deployed_coverage_symlink_base }}"))
+                 ],
         flunkOnFailure=True,
         name="Prep relevant directories on buildmaster")
 

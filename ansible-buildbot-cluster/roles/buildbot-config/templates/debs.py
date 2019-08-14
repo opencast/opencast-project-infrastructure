@@ -5,16 +5,17 @@ import os.path
 from buildbot.plugins import *
 import common
 
+
 def getBuildPipeline():
 
     debsClone = steps.Git(repourl="{{ source_deb_repo_url }}",
-                      branch=util.Property('branch'),
-                      alwaysUseLatest=True,
-                      mode="full",
-                      method="fresh",
-                      flunkOnFailure=True,
-                      haltOnFailure=True,
-                      name="Cloning deb packaging configs")
+                          branch=util.Property('branch'),
+                          alwaysUseLatest=True,
+                          mode="full",
+                          method="fresh",
+                          flunkOnFailure=True,
+                          haltOnFailure=True,
+                          name="Cloning deb packaging configs")
 
     debsVersion = steps.SetPropertyFromCommand(
         command="git rev-parse HEAD",
@@ -29,7 +30,8 @@ def getBuildPipeline():
             common.shellArg(
                 command=[
                     'mkdir', '-p',
-                    util.Interpolate('binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s')
+                    util.Interpolate(
+                        'binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s')
                 ],
                 logfile="prep"),
             common.shellArg(
@@ -41,15 +43,18 @@ def getBuildPipeline():
         name="Fetching built artifacts from buildmaster")
 
     debsTarballVersion = steps.SetPropertyFromCommand(
-        command=util.Interpolate('cat binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/revision.txt'),
-        property="got_revision", #Note: We're overwriting this value to set it to the built revision rather than whatever it defaults to
+        command=util.Interpolate(
+            'cat binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/revision.txt'),
+        # Note: We're overwriting this value to set it to the built revision rather than whatever it defaults to
+        property="got_revision",
         flunkOnFailure=True,
         haltOnFailure=True,
         workdir="build",
         name="Get build tarball revision")
 
     debsTarballShortVersion = steps.SetPropertyFromCommand(
-        command=util.Interpolate('cat binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/revision.txt | cut -c -9'),
+        command=util.Interpolate(
+            'cat binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/revision.txt | cut -c -9'),
         property="short_revision",
         flunkOnFailure=True,
         haltOnFailure=True,
@@ -73,7 +78,8 @@ def getBuildPipeline():
                 logfile='dch'),
             common.shellArg(
                 command=[
-                    'rm', '-f', util.Interpolate("binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/revision.txt")
+                    'rm', '-f',
+                    util.Interpolate("binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/revision.txt")
                 ],
                 logfile='cleanup'),
             common.shellArg(
@@ -100,18 +106,19 @@ def getBuildPipeline():
             "EMAIL": "buildbot@ci.opencast.org",
             "SIGNING_KEY": util.Interpolate("%(prop:signing_key)s")
         },
-#        workdir="build",
         name="Build debs")
 
     masterPrep = steps.MasterShellCommand(
         command=["mkdir", "-p",
-                util.Interpolate(os.path.normpath("{{ deployed_debs }}")),
-                util.Interpolate(os.path.normpath("{{ deployed_debs_symlink_base }}"))
-        ],
+                 util.Interpolate(
+                     os.path.normpath("{{ deployed_debs }}")),
+                 util.Interpolate(
+                     os.path.normpath("{{ deployed_debs_symlink_base }}"))
+                 ],
         flunkOnFailure=True,
         name="Prep relevant directories on buildmaster")
 
-    #Note: We're using a string here because using the array disables shell globbing!
+    # Note: We're using a string here because using the array disables shell globbing!
     debsUpload = common.shellCommand(
         command=util.Interpolate(
             "scp -r outputs/%(prop:got_revision)s/* {{ buildbot_scp_debs }}"
