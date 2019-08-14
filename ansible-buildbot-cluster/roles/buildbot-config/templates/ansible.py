@@ -47,7 +47,7 @@ def getBuildPipeline():
             ]
 
     deploy = steps.ShellCommand(
-        command=['ansible-playbook', '-b', util.Interpolate('--private-key=%(prop:builddir)s/%(prop:deploy_env)s'), '-i', util.Interpolate("{{ buildbot_config }}/envs/%(prop:deploy_env)s"), 'opencast.yml', '--tags', 'uninstall,all,reset', '--extra-vars', util.Interpolate(" ".join(params))],
+        command=['ansible-playbook', '-b', util.Interpolate('--private-key=%(prop:builddir)s/%(prop:deploy_env)s'), '-i', util.Interpolate("{{ buildbot_config }}/envs/%(prop:deploy_env)s"), 'uninstall.yml', 'opencast.yml', 'reset.yml', '--extra-vars', util.Interpolate(" ".join(params))],
         haltOnFailure=True,
         flunkOnFailure=True,
         name="Deploying Opencast")
