@@ -43,9 +43,9 @@ def shellSequence(commands, name, workdir="build", env={}, haltOnFailure=True, f
 
 def getMavenBase():
 {% if skip_tests %}
-    return ['mvn', '-B', '-V', '-T', '2', '-Dmaven.repo.local=/builder/m2', '-DskipTests']
+    return ['mvn', '-B', '-V', '-Dmaven.repo.local=/builder/m2', '-DskipTests']
 {% else %}
-    return ['mvn', '-B', '-V', '-T', '2', '-Dmaven.repo.local=/builder/m2']
+    return ['mvn', '-B', '-V', '-Dmaven.repo.local=/builder/m2']
 {% endif %}
 
 
