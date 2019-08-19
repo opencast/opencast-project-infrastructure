@@ -2,7 +2,7 @@
 # ex: set filetype=python:
 
 import os.path
-from buildbot.plugins import *
+from buildbot.plugins import steps, util
 import common
 
 profiles = {

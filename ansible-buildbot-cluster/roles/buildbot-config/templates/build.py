@@ -1,7 +1,7 @@
 # -*- python -*-
 # ex: set filetype=python:
 
-from buildbot.plugins import *
+from buildbot.plugins import steps, util
 import os.path
 import common
 
@@ -55,7 +55,7 @@ def getBuildPipeline():
         command=util.Interpolate(
             "if [ -f .upload-crowdin.sh ]; then CROWDIN_API_KEY='%(secret:crowdin.key)s' bash .upload-crowdin.sh; fi"),
         env={
-            "TRAVIS_PULL_REQUEST": "false", #This is always false since the PR doesn't use this method
+            "TRAVIS_PULL_REQUEST": "false",  # This is always false since the PR doesn't use this method
             "TRAVIS_BRANCH": util.Interpolate("%(prop:branch)s")
         },
         doStepIf={{ push_crowdin }},

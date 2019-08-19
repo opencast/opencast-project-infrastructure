@@ -1,8 +1,7 @@
 # -*- python -*-
 # ex: set filetype=python:
 
-import os.path
-from buildbot.plugins import *
+from buildbot.plugins import steps, util
 
 
 def shellCommand(command, name, workdir="build", env={}, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, alwaysRun=False, doStepIf=True, hideStepIf=False):
@@ -40,6 +39,7 @@ def shellSequence(commands, name, workdir="build", env={}, haltOnFailure=True, f
         alwaysRun=alwaysRun,
         doStepIf=doStepIf,
         hideStepIf=hideStepIf)
+
 
 def getMavenBase():
 {% if skip_tests %}

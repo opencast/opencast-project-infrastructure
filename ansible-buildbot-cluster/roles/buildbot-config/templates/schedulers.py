@@ -1,7 +1,7 @@
 # -*- python -*-
 # ex: set filetype=python:
 
-from buildbot.plugins import *
+from buildbot.plugins import schedulers, util
 
 deployables = []
 {% for branch in opencast %}
@@ -70,15 +70,19 @@ def getSchedulers(pretty_branch_name, git_branch_name):
         ])
 {% endif %}
 
-    scheduler_list = [ commits, reports, package ]
+    scheduler_list = [
+        commits,
+        reports,
+        package
+    ]
 
     forceBuilders = [
-            pretty_branch_name + " Build",
-            pretty_branch_name + " Reports",
-            pretty_branch_name + " Markdown",
-            pretty_branch_name + " Database Tests",
-            pretty_branch_name + " Debian Packaging",
-            pretty_branch_name + " RPM Packaging"
+        pretty_branch_name + " Build",
+        pretty_branch_name + " Reports",
+        pretty_branch_name + " Markdown",
+        pretty_branch_name + " Database Tests",
+        pretty_branch_name + " Debian Packaging",
+        pretty_branch_name + " RPM Packaging"
     ]
 
 {% if groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | list | length > 0 or
@@ -96,17 +100,17 @@ def getSchedulers(pretty_branch_name, git_branch_name):
     forceBuilders.append(pretty_branch_name + " RPM Repository")
 
     if pretty_branch_name in deployables:
-      deploy = schedulers.Dependent(
-        name=pretty_branch_name + " Ansible Deploy",
-        upstream=repo,
-        builderNames=[ pretty_branch_name + " Ansible Deploy" ])
+        deploy = schedulers.Dependent(
+            name=pretty_branch_name + " Ansible Deploy",
+            upstream=repo,
+            builderNames=[pretty_branch_name + " Ansible Deploy"])
 
-      scheduler_list.append(deploy)
+        scheduler_list.append(deploy)
 
-      forceBuilders.append(pretty_branch_name + " Ansible Deploy")
+        forceBuilders.append(pretty_branch_name + " Ansible Deploy")
 {% endif %}
 
-    #Note: This is a hack, but we need a unique name for the force schedulers, and it can't have special characters in it...
+    # Note: This is a hack, but we need a unique name for the force schedulers, and it can't have special characters in it...
     forceScheduler = schedulers.ForceScheduler(
         name="ForceBuildCommits" + pretty_branch_name[0],
         buttonName="Force Build",

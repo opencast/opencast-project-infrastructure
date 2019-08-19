@@ -1,8 +1,7 @@
 # -*- python -*-
 # ex: set filetype=python:
 
-import os.path
-from buildbot.plugins import *
+from buildbot.plugins import util
 import common
 
 
@@ -10,8 +9,8 @@ def getBuildPipeline():
 
     repo_prep = common.shellCommand(
         command=[
-            'mkdir', '-p', 
-                util.Interpolate('%(prop:deb_repo_fragment)s/mini-dinstall/incoming')
+            'mkdir', '-p',
+            util.Interpolate('%(prop:deb_repo_fragment)s/mini-dinstall/incoming')
         ],
         name='Prep repository structure')
 

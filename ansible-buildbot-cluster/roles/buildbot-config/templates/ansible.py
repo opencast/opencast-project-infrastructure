@@ -1,7 +1,7 @@
 # -*- python -*-
 # ex: set filetype=python:
 
-from buildbot.plugins import *
+from buildbot.plugins import steps, util
 import common
 
 
