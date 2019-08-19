@@ -38,10 +38,14 @@ def getBuildPipeline():
         flunkOnFailure=True,
         name="Prep relevant directories on buildmaster")
 
+    stampVersion = common.shellCommand(
+        command=util.Interpolate("mkdir -p build && echo '%(prop:got_revision)s' | tee build/revision.txt"),
+        name="Stamping the build")
+
     # Note: We're using a string here because using the array disables shell globbing!
     uploadTarballs = common.shellCommand(
         command=util.Interpolate(
-            "echo '%(prop:got_revision)s' | tee build/revision.txt && scp build/* {{ buildbot_scp_builds }}"),
+            "scp build/* {{ buildbot_scp_builds }}"),
         name="Upload build to buildmaster")
 
     updateBuild = steps.MasterShellCommand(
@@ -64,6 +68,7 @@ def getBuildPipeline():
 
     f_build = __getBasePipeline()
     f_build.addStep(masterPrep)
+    f_build.addStep(stampVersion)
     f_build.addStep(uploadTarballs)
     f_build.addStep(updateBuild)
     f_build.addStep(updateCrowdin)
