@@ -5,6 +5,8 @@
 
 - hosts: all
   user: "{{ login_user }}"
+  tags:
+    - always
   roles:
     - { role: buildbot-reset }
   handlers:
