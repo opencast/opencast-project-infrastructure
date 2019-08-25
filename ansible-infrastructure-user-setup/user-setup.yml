@@ -12,7 +12,7 @@
 
   tasks:
     - name: install epel (rh)
-      become: yes
+      become: true
       package:
         state=present
         name={{ item }}
@@ -23,7 +23,7 @@
         and ansible_distribution_major_version|int < 8
 
     - name: install base tools
-      become: yes
+      become: true
       package:
         state: present
         name: '{{ item }}'
@@ -40,58 +40,59 @@
         state: present
 
     - name: create opencast admin infra users
-      become: yes
+      become: true
       user:
         name: '{{ item }}'
         groups: wheel
-        append: yes
+        append: true
       loop: '{{ admins }}'
 
     - name: create opencast bot infra users
-      become: yes
+      become: true
       user:
         name: "{{ item }}"
       loop: "{{ bots }}"
 
     - name: add vmusers groups uos servers
-      become: yes
+      become: true
       user:
         name: '{{ item }}'
         groups: vmusers
-        append: yes
+        append: true
       loop: '{{ admins + bots }}'
       when: "'uos' in group_names"
 
     - name: set up admin authorized keys
-      become: yes
+      become: true
       authorized_key:
         user: '{{ item }}'
         state: present
         key: "{{ lookup('file', 'pub-keys/{{ item }}.pub') }}"
-        exclusive: True
+        exclusive: true
       loop: '{{ admins }}'
 
     - name: set up bot authorized keys
-      become: yes
+      become: true
       authorized_key:
         user: "{{ item }}"
         state: present
-        key: "{{ lookup('file', 'pub-keys/' ~ item ~ '-' ~ inventory_hostname.split('.') | first ~ '.pub' ) }}"
-        exclusive: True
+        key: "{{ lookup('file', 'pub-keys/' ~ item ~ '-' ~ \
+              inventory_hostname.split('.') | first ~ '.pub' ) }}"
+        exclusive: true
       tags: test
       loop: "{{ bots }}"
 
     - name: remove old users
-      become: yes
+      become: true
       user:
         name: '{{ item }}'
         state: absent
-        remove: yes
+        remove: true
       loop: "{{ remove_user | default([]) }}"
       when: item != ""
 
     - name: allow wheel to sudo without a password
-      become: yes
+      become: true
       lineinfile:
         path: /etc/sudoers
         state: present
@@ -100,9 +101,9 @@
 
 
     # sshd options
-    # do not disable password authentication on ETH servers (for administrative reasons)
+    # do not disable password authentication on ETH servers (for reasons…)
     - name: disable password authentication
-      become: yes
+      become: true
       lineinfile:
         dest: /etc/ssh/sshd_config
         regexp: '^PasswordAuthentication '
@@ -114,7 +115,7 @@
 
   handlers:
     - name: reload sshd
-      become: yes
+      become: true
       service:
         name: sshd
         state: reloaded

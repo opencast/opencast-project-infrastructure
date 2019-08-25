@@ -9,5 +9,6 @@ install:
   - pip install ansible yamllint
 
 script:
+  - yamllint ansible-infrastructure-user-setup
   - yamllint ansible-s3-storage
   - shellcheck ansible-s3-storage/*.sh
