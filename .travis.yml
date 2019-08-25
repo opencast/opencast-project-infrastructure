@@ -12,3 +12,4 @@ script:
   - yamllint ansible-infrastructure-user-setup
   - yamllint ansible-s3-storage
   - shellcheck ansible-s3-storage/*.sh
+  - yamllint -d "{extends: default, ignore: all.yml}" ansible-allinone-demo-vm

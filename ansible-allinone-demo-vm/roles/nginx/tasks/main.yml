@@ -25,11 +25,11 @@
     dest: /etc/nginx/{{item.value}}
     owner: root
     group: root
-    force: no
+    force: false
     mode: 0640
   loop:
-    - { key: certificate.pem, value: "ssl/{{inventory_hostname}}.crt" }
-    - { key: key.pem,         value: "ssl/{{inventory_hostname}}.key" }
+    - {key: certificate.pem, value: "ssl/{{inventory_hostname}}.crt"}
+    - {key: key.pem, value: "ssl/{{inventory_hostname}}.key"}
 
 - name: create diffie hellman ephemeral parameters for nginx
   command: openssl dhparam -out /etc/nginx/ssl/dhparam.pem 2048
@@ -62,11 +62,11 @@
     or ansible_distribution == 'Scientific'
 
 - name: allow httpd to act as reverse proxy
-  become: yes
+  become: true
   seboolean:
     name: httpd_can_network_relay
-    state: yes
-    persistent: yes
+    state: true
+    persistent: true
   when: >
     ansible_distribution == 'CentOS'
     or ansible_distribution == 'RedHat'
