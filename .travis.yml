@@ -10,3 +10,4 @@ install:
 
 script:
   - yamllint ansible-s3-storage
+  - shellcheck ansible-s3-storage/*.sh
