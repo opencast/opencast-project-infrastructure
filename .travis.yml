@@ -1,0 +1,12 @@
+language: python
+
+dist: bionic
+
+python:
+  - "3.7"
+
+install:
+  - pip install ansible yamllint
+
+script:
+  - yamllint ansible-s3-storage

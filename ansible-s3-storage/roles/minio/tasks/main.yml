@@ -5,11 +5,12 @@
     file: lkiesow-minio-epel-7.repo
     name: lkiesow-minio
     description: 'Copr repo for minio owned by lkiesow'
-    baseurl: 'https://copr-be.cloud.fedoraproject.org/results/lkiesow/minio/epel-7-$basearch/'
-    enabled: yes
-    gpgcheck: yes
-    gpgkey: https://copr-be.cloud.fedoraproject.org/results/lkiesow/minio/pubkey.gpg
-  when: ansible_os_family == 'RedHat'
+    baseurl: "https://copr-be.cloud.fedoraproject.org/results\
+              /lkiesow/minio/epel-7-$basearch/"
+    enabled: true
+    gpgcheck: true
+    gpgkey: "https://copr-be.cloud.fedoraproject.org/results\
+             /lkiesow/minio/pubkey.gpg"
 
 - name: create minio user
   user:
@@ -43,10 +44,10 @@
   service:
     name: ntpd
     state: started
-    enabled: yes
+    enabled: true
 
 - name: enable minio service
   service:
     name: minio
     state: started
-    enabled: yes
+    enabled: true
