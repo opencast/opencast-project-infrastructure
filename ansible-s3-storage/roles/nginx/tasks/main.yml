@@ -1,0 +1,90 @@
+---
+
+- name: activate epel
+  package:
+    name: epel-release
+    state: latest
+  when: >
+    ansible_os_family == 'RedHat'
+    and ansible_distribution_major_version|int < 8
+
+- name: install nginx
+  package:
+    name: nginx
+    state: present
+
+- name: create ssl directory
+  file:
+    path: /etc/nginx/ssl
+    state: directory
+    mode: 0755
+
+- name: initial configuration for certificates
+  copy:
+    src: "{{item.key}}"
+    dest: /etc/nginx/{{item.value}}
+    owner: root
+    group: root
+    force: no
+    mode: 0640
+  loop:
+    - { key: certificate.pem, value: "ssl/{{inventory_hostname}}.crt" }
+    - { key: key.pem,         value: "ssl/{{inventory_hostname}}.key" }
+
+- name: create diffie hellman ephemeral parameters for nginx
+  command: openssl dhparam -out /etc/nginx/ssl/dhparam.pem 2048
+  args:
+    creates: /etc/nginx/ssl/dhparam.pem
+
+- name: dhparam.pem file permission
+  file:
+    path: /etc/nginx/ssl/dhparam.pem
+    owner: root
+    group: root
+    mode: 0640
+
+- name: configure nginx
+  template:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: 0640
+  notify: reload nginx
+
+- name: install selinux config libs
+  package:
+    name: libsemanage-python
+    state: present
+  when: >
+    ansible_distribution == 'CentOS'
+    or ansible_distribution == 'RedHat'
+    or ansible_distribution == 'Scientific'
+
+- name: allow httpd to act as reverse proxy
+  become: yes
+  seboolean:
+    name: httpd_can_network_relay
+    state: yes
+    persistent: yes
+  when: >
+    ansible_distribution == 'CentOS'
+    or ansible_distribution == 'RedHat'
+    or ansible_distribution == 'Scientific'
+
+- name: configure firewall to allow http(s)
+  become: yes
+  firewalld:
+    service: '{{ item }}'
+    permanent: yes
+    immediate: yes
+    state: enabled
+  loop:
+    - http
+    - https
+
+- name: start and enable nginx
+  service:
+    name: nginx
+    enabled: true
+    state: started
