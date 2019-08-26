@@ -10,6 +10,9 @@ install:
 
 script:
   - yamllint ansible-infrastructure-user-setup
+  - ansible-playbook --list-tasks ansible-infrastructure-user-setup/user-setup.yml
   - yamllint ansible-s3-storage
   - shellcheck ansible-s3-storage/*.sh
+  - ansible-playbook --list-tasks ansible-s3-storage/minio-s3-storage-setup.yml
   - yamllint -d "{extends: default, ignore: all.yml}" ansible-allinone-demo-vm
+  - ansible-playbook --list-tasks ansible-allinone-demo-vm/install-opencast-demo-vm.yml
