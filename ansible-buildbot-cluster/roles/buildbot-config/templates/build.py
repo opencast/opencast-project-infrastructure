@@ -11,8 +11,6 @@ def __getBasePipeline():
     f_build = util.BuildFactory()
     f_build.addStep(common.getPreflightChecks())
     f_build.addStep(common.getClone())
-    f_build.addStep(common.getWorkerPrep())
-    f_build.addStep(common.getBuild())
 
     return f_build
 
@@ -20,12 +18,23 @@ def __getBasePipeline():
 def getPullRequestPipeline():
 
     f_build = __getBasePipeline()
+    f_build.addStep(common.getWorkerPrep(deploy=False))
+    f_build.addStep(common.getBuild(deploy=False))
     f_build.addStep(common.getClean())
 
     return f_build
 
 
 def getBuildPipeline():
+
+    mvn = common.getMavenBase()
+    mvn.extend(['install', '-P', 'dist'])
+    buildTarballs = common.shellCommand(
+        command=mvn,
+        workdir="build/assemblies",
+        flunkOnFailure=True,
+        haltOnFailure=True,
+        name="Building the tarballs")
 
     masterPrep = steps.MasterShellCommand(
         command=["mkdir", "-p",
@@ -67,6 +76,9 @@ def getBuildPipeline():
         name="Update Crowdin translation keys")
 
     f_build = __getBasePipeline()
+    f_build.addStep(common.getWorkerPrep(deploy={{ deploy_snapshots }}))
+    f_build.addStep(common.getBuild(deploy={{ deploy_snapshots }}))
+    f_build.addStep(buildTarballs)
     f_build.addStep(masterPrep)
     f_build.addStep(stampVersion)
     f_build.addStep(uploadTarballs)

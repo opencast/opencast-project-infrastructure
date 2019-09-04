@@ -86,6 +86,9 @@ minimum_build_diskspace: 6000
 #Set this to True to package every build, as well as running nightly as needed
 package_all: False
 
+#Set this to False to disable deploying snapshots from the branch builds
+deploy_snapshots: True
+
 #Set this to true to have the workers write through to the underlying disk, rather than keeping the builds in the container
 ##This is really only helpful in debugging
 write_through: False
@@ -265,6 +268,9 @@ buildbot_scp_rpms_fetch: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deplo
 
 #Where to find the signing key
 buildbot_scp_signing_key: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ buildbot_secrets_master }}/signing.key"
+
+#Where to find the maven settings
+buildbot_scp_settings: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ buildbot_secrets_master }}/settings.xml"
 
 #Where to find the deploy key.  Note that this has a Interpolatable piece at the end
 buildbot_scp_deploy_key: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ buildbot_secrets_master}}/%(prop:deploy_env)s"
