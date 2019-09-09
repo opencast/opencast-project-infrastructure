@@ -1,4 +1,4 @@
-FROM greglogan/ocqa-cent7-build:v2.3.1
+FROM greglogan/ocqa-cent7-build:v2.4.0
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 RUN curl -sL -o '/tmp/nodesource-release-el7-1.noarch.rpm' 'https://rpm.nodesource.com/pub_8.x/el/7/x86_64/nodesource-release-el7-1.noarch.rpm' && \

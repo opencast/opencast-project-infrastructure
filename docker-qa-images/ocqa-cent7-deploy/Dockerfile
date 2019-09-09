@@ -1,4 +1,4 @@
-FROM greglogan/ocqa-cent7-package:v2.3.1
+FROM greglogan/ocqa-cent7-package:v2.4.0
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 RUN pip3.6 install --no-cache-dir ansible paramiko
