@@ -1,0 +1,20 @@
+---
+
+- name: Pruning Docker containers and images
+  docker_prune:
+    containers: yes
+    images: yes
+    networks: yes
+    volumes: yes
+  become: yes
+
+- name: Clearing Docker worker images
+  docker_image:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - "ocqa-deb9-worker:{{ docker_image_tag }}"
+    - "ocqa-cent7-worker:{{ docker_image_tag }}"
+    - "{{ docker_image_user }}/ocqa-deb9-worker-base:{{ docker_image_tag }}"
+    - "{{ docker_image_user }}/ocqa-cent7-worker-base:{{ docker_image_tag }}"
+  become: yes
