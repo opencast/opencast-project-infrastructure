@@ -28,7 +28,9 @@ def __getBasePipeline():
     command = common.getMavenBase()
     command.extend([
         'cobertura:cobertura', 'site', 'site:stage',
-        util.Interpolate('-DstagingDirectory=/builder/{{ artifacts_fragment }}')
+        '-Daggregate=true',
+        '-Dcheckstyle.skip=true',
+        '-P "none,!frontend"'
     ])
     site = common.shellCommand(
         command=command,
@@ -69,16 +71,25 @@ def getBuildPipeline():
         flunkOnFailure=True,
         name="Prep relevant directories on buildmaster")
 
-    uploadSite = common.shellCommand(
-        command=util.Interpolate(
-            "scp -r /builder/{{ artifacts_fragment }}/* {{ buildbot_scp_reports }}"
-        ),
+    uploadSite = common.shellSequence(
+        commands=[
+            common.shellArg(
+                command=util.Interpolate(
+                    "scp -r target/staging/* {{ buildbot_scp_reports }}"
+                ),
+                logfile="site"),
+            common.shellArg(
+                command=util.Interpolate(
+                    "scp -r target/site/cobertura {{ buildbot_scp_reports }}/cobertura"
+                ),
+                logfile="cobertura")
+        ],
         name="Upload site report to buildmaster")
 
     updateSite = steps.MasterShellCommand(
         command=util.Interpolate(
             "ln -s {{ deployed_reports }}/apidocs {{ deployed_javadocs }} && \
-            ln -s {{ deployed_reports }} {{ deployed_coverage }} && \
+            ln -s {{ deployed_reports }}/cobertura {{ deployed_coverage }} && \
             rm -f {{ deployed_reports_symlink }} {{ deployed_javadocs_symlink }} {{ deployed_coverage_symlink }} && \
             ln -s {{ deployed_reports }} {{ deployed_reports_symlink }} && \
             ln -s {{ deployed_javadocs }} {{ deployed_javadocs_symlink }} && \
