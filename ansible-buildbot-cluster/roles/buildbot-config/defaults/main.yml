@@ -28,9 +28,10 @@ source_rpm_repo_url: "https://github.com/lkiesow/opencast-rpm-specs.git"
 #Where to fetch the ansible configuration management scripts from
 ansible_scripts_url: "https://github.com/opencast/oc-config-management.git"
 
-#Where to fetch the signing key for the generated packages
+#Where to fetch the signing key for the generated packages.  Must match the signing key id below!
 key_url: "https://pkg.opencast.org/gpgkeys/automated.key"
 
+#The GPG key ID of the key above.  These must match!
 key_id: "048D039F1DAE53EA0357ED824917F260EA15B53F"
 
 #Where to find the deb and rpm packages
@@ -234,9 +235,6 @@ buildbot_scp_markdown: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deploye
 
 #Where to push coverage reports on the master
 buildbot_scp_coverage: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_coverage }}"
-
-#Where to push PR coverage reports on the master
-buildbot_scp_PR_coverage: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_PR_coverage }}"
 
 #Where to push built debs on the master
 buildbot_scp_debs: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_debs }}"
