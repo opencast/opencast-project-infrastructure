@@ -9,6 +9,10 @@
 opencast:
   Develop:
     branch: 'develop'
+    pom: '9'
+    profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
+  8.x:
+    branch: 'r/8.x'
     pom: '8'
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     server: 'develop'
