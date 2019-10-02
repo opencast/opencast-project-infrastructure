@@ -69,24 +69,32 @@ def getClone():
         name="Clone/Checkout")
 
 
-def getWorkerPrep():
-    command = getMavenBase()
-    command.extend(['dependency:go-offline', '-fn'])
+def getWorkerPrep(deploy=False):
+    mvn = getMavenBase()
+    mvn.extend(['dependency:go-offline', '-fn'])
+    commandsAry=[
+        shellArg(
+            command=['git', 'clean', '-fdx'],
+            logfile='clean'),
+        shellArg(
+            command=mvn,
+            logfile='deps')
+    ]
+    if deploy:
+        commandsAry.append(shellArg(
+            command="scp {{ buildbot_scp_settings }} settings.xml",
+            logfile="settings"))
     return shellSequence(
-        commands=[
-            shellArg(
-                command=['git', 'clean', '-fdx'],
-                logfile='clean'),
-            shellArg(
-                command=command,
-                logfile='deps')
-        ],
+        commands=commandsAry,
         name="Build Prep")
 
 
-def getBuild():
+def getBuild(deploy=False):
     command = getMavenBase()
-    command.extend(['clean', 'install'])
+    if not deploy:
+      command.extend(['clean', 'install'])
+    else:
+      command.extend(['clean', 'deploy', '-P', 'none', '-s', 'settings.xml'])
     return shellSequence(
         commands=[
             shellArg(

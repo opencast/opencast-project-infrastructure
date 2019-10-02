@@ -72,4 +72,5 @@
     - { src: "secrets/stable", dest: "{{ buildbot_secrets_master }}/stable" }
     - { src: "secrets/legacy", dest: "{{ buildbot_secrets_master }}/legacy" }
     - { src: "secrets/develop", dest: "{{ buildbot_secrets_master }}/develop" }
+    - { src: "secrets/settings.xml", dest: "{{ buildbot_secrets_master }}/settings.xml" }
 
