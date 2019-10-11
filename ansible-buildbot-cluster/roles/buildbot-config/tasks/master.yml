@@ -73,4 +73,6 @@
     - { src: "secrets/legacy", dest: "{{ buildbot_secrets_master }}/legacy" }
     - { src: "secrets/develop", dest: "{{ buildbot_secrets_master }}/develop" }
     - { src: "secrets/settings.xml", dest: "{{ buildbot_secrets_master }}/settings.xml" }
+    - { src: "secrets/s3.access_key", dest: "{{ buildbot_secrets_master }}/s3.access_key" }
+    - { src: "secrets/s3.secret_key", dest: "{{ buildbot_secrets_master }}/s3.secret_key" }
 

@@ -108,6 +108,17 @@ def getBuild(deploy=False):
         name="Build")
 
 
+def syncAWS(pathFrom, pathTo, name, doStepIf=True, hideStepIf=False):
+    return shellCommand(
+        command=['aws', '--endpoint-url', '{{ s3_host }}', 's3', 'sync', util.Interpolate(pathFrom), util.Interpolate(pathTo)],
+        env={
+            "AWS_ACCESS_KEY_ID": util.Secret("s3.access_key"),
+            "AWS_SECRET_ACCESS_KEY": util.Secret("s3.secret_key")
+        },
+        name=name,
+        doStepIf=doStepIf,
+        hideStepIf=hideStepIf)
+
 def loadSigningKey():
     return shellCommand(
         command="scp {{ buildbot_scp_signing_key }} /dev/stdout | gpg --import",

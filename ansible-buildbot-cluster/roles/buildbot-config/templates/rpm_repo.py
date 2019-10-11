@@ -14,10 +14,9 @@ def getBuildPipeline():
         ],
         name='Prep repository structure')
 
-    repo_fetch = common.shellCommand(
-        command=util.Interpolate(
-            "scp -r {{ buildbot_scp_rpms_fetch }}/* %(prop:rpm_repo_fragment)s/unstable/el/7/noarch/%(prop:pkg_major_version)s/"
-        ),
+    repo_fetch = common.syncAWS(
+        pathFrom="s3://public/builds/{{ rpms_fragment }}",
+        pathTo="%(prop:rpm_repo_fragment)s/unstable/el/7/noarch/%(prop:pkg_major_version)s/",
         name='Fetch packages')
 
     repo_build = common.shellCommand(

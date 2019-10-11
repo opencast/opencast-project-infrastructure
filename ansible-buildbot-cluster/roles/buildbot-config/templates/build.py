@@ -48,22 +48,19 @@ def getBuildPipeline():
         name="Prep relevant directories on buildmaster")
 
     stampVersion = common.shellCommand(
-        command=util.Interpolate("mkdir -p build && echo '%(prop:got_revision)s' | tee build/revision.txt"),
+        command=util.Interpolate("echo '%(prop:got_revision)s' | tee revision.txt"),
         name="Stamping the build")
 
-    # Note: We're using a string here because using the array disables shell globbing!
-    uploadTarballs = common.shellCommand(
-        command=util.Interpolate(
-            "scp build/* {{ buildbot_scp_builds }}"),
-        name="Upload build to buildmaster")
+    uploadTarballs = common.syncAWS(
+        pathFrom="build",
+        pathTo="s3://public/builds/{{ builds_fragment }}",
+        name="Upload build to S3")
 
-    updateBuild = steps.MasterShellCommand(
-        command=util.Interpolate(
-            "rm -f {{ deployed_builds_symlink }} && ln -s {{ deployed_builds }} {{ deployed_builds_symlink }}"
-        ),
-        flunkOnFailure=True,
-        name="Deploy Build")
-
+    updateBuild = common.copyAWS(
+        pathFrom="revision.txt",
+        pathTo="s3://public/builds/%(prop:branch_pretty)s/latest.txt",
+        name="Update latest build marker in S3")
+    
     updateCrowdin = common.shellCommand(
         command=util.Interpolate(
             "if [ -f .upload-crowdin.sh ]; then CROWDIN_API_KEY='%(secret:crowdin.key)s' bash .upload-crowdin.sh; fi"),
@@ -79,7 +76,6 @@ def getBuildPipeline():
     f_build.addStep(common.getWorkerPrep(deploy={{ deploy_snapshots }}))
     f_build.addStep(common.getBuild(deploy={{ deploy_snapshots }}))
     f_build.addStep(buildTarballs)
-    f_build.addStep(masterPrep)
     f_build.addStep(stampVersion)
     f_build.addStep(uploadTarballs)
     f_build.addStep(updateBuild)

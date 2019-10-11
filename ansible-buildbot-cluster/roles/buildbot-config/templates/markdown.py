@@ -103,27 +103,22 @@ def getBuildPipeline():
         flunkOnFailure=True,
         name="Prep relevant directories on buildmaster")
 
-    upload = common.shellSequence(
-        commands=[
-            common.shellArg(
-                command=util.Interpolate(
-                    "scp -r admin/site {{ buildbot_scp_markdown }}/admin"),
-                haltOnFailure=False,
-                logfile='admin'),
-            common.shellArg(
-                command=util.Interpolate(
-                    "scp -r developer/site {{ buildbot_scp_markdown }}/developer"
-                ),
-                haltOnFailure=False,
-                logfile='developer'),
-            common.shellArg(
-                command=util.Interpolate(
-                    "scp -r user/site {{ buildbot_scp_markdown }}/user"),
-                haltOnFailure=False,
-                logfile='user'),
-        ],
-        workdir="build/docs/guides",
-        name="Upload Markdown docs to buildmaster",
+    uploadAdmin = common.syncAWS(
+        pathFrom="docs/guides/admin/site",
+        pathTo="s3://public/builds/{{ markdown_fragment }}/admin",
+        name="Upload admin to S3",
+        doStepIf=lambda step: step.getProperty("npmConfigExists") == "True")
+
+    uploadDev = common.syncAWS(
+        pathFrom="docs/guides/developer/site",
+        pathTo="s3://public/builds/{{ markdown_fragment }}/developer",
+        name="Upload developer to S3",
+        doStepIf=lambda step: step.getProperty("npmConfigExists") == "True")
+
+    uploadUser = common.syncAWS(
+        pathFrom="docs/guides/user/site",
+        pathTo="s3://public/builds/{{ markdown_fragment }}/user",
+        name="Upload user to S3",
         doStepIf=lambda step: step.getProperty("npmConfigExists") == "True")
 
     updateMarkdown = steps.MasterShellCommand(
@@ -134,9 +129,11 @@ def getBuildPipeline():
         name="Deploy Markdown")
 
     f_build = __getBasePipeline()
-    f_build.addStep(masterPrep)
-    f_build.addStep(upload)
-    f_build.addStep(updateMarkdown)
+    #f_build.addStep(masterPrep)
+    f_build.addStep(uploadAdmin)
+    f_build.addStep(uploadDev)
+    f_build.addStep(uploadUser)
+    #f_build.addStep(updateMarkdown)
     f_build.addStep(common.getClean())
 
     return f_build

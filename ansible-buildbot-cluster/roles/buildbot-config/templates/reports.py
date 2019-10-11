@@ -57,34 +57,15 @@ def getPullRequestPipeline():
 
 def getBuildPipeline():
 
-    masterPrep = steps.MasterShellCommand(
-        command=["mkdir", "-p",
-                 util.Interpolate(
-                     os.path.normpath("{{ deployed_reports }}")),
-                 util.Interpolate(
-                     os.path.normpath("{{ deployed_reports_symlink_base }}")),
-                 util.Interpolate(
-                     os.path.normpath("{{ deployed_javadocs_symlink_base }}")),
-                 util.Interpolate(
-                     os.path.normpath("{{ deployed_coverage_symlink_base }}"))
-                 ],
-        flunkOnFailure=True,
-        name="Prep relevant directories on buildmaster")
+    uploadSite = common.syncAWS(
+        pathFrom="target/staging",
+        pathTo="s3://public/builds/{{ reports_fragment }}",
+        name="Upload mvn site to S3")
 
-    uploadSite = common.shellSequence(
-        commands=[
-            common.shellArg(
-                command=util.Interpolate(
-                    "scp -r target/staging/* {{ buildbot_scp_reports }}"
-                ),
-                logfile="site"),
-            common.shellArg(
-                command=util.Interpolate(
-                    "scp -r target/site/cobertura {{ buildbot_scp_reports }}/cobertura"
-                ),
-                logfile="cobertura")
-        ],
-        name="Upload site report to buildmaster")
+    uploadCoverage = common.syncAWS(
+        pathFrom="target/site/cobertura",
+        pathTo="s3://public/builds/{{ coverage_fragment }}",
+        name="Upload Cobertura report to S3")
 
     updateSite = steps.MasterShellCommand(
         command=util.Interpolate(
@@ -99,9 +80,9 @@ def getBuildPipeline():
         name="Deploy Reports")
 
     f_build = __getBasePipeline()
-    f_build.addStep(masterPrep)
+    #f_build.addStep(masterPrep)
     f_build.addStep(uploadSite)
-    f_build.addStep(updateSite)
+    #f_build.addStep(updateSite)
     f_build.addStep(common.getClean())
 
     return f_build
