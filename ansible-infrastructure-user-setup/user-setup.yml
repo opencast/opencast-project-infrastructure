@@ -52,15 +52,25 @@
       user:
         name: "{{ item }}"
       loop: "{{ bots }}"
+      when: "'qa' in group_names"
 
-    - name: add vmusers groups uos servers
+    - name: add vmusers groups on uos servers
       become: true
       user:
         name: '{{ item }}'
         groups: vmusers
         append: true
-      loop: '{{ admins + bots }}'
+      loop: '{{ admins }}'
       when: "'uos' in group_names"
+
+    - name: add vmusers groups to bots accounts on uos servers
+      become: true
+      user:
+        name: '{{ item }}'
+        groups: vmusers
+        append: true
+      loop: '{{ bots }}'
+      when: "'uos' in group_names and 'qa' in group_names"
 
     - name: set up admin authorized keys
       become: true
@@ -79,8 +89,8 @@
         key: "{{ lookup('file', 'pub-keys/' ~ item ~ '-' ~ \
               inventory_hostname.split('.') | first ~ '.pub' ) }}"
         exclusive: true
-      tags: test
       loop: "{{ bots }}"
+      when: "'qa' in group_names"
 
     - name: remove old users
       become: true
