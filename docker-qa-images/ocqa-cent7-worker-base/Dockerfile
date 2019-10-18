@@ -1,4 +1,4 @@
-FROM greglogan/ocqa-cent7-deploy:v2.4.0
+FROM greglogan/ocqa-cent7-deploy:v2.5.0
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 # Adapted from https://github.com/buildbot/buildbot/blob/v1.7.0/worker/Dockerfile
@@ -22,6 +22,6 @@ RUN  curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/release
          bc && \
      # Install required python packages, and twisted
      pip3.6 install --upgrade pip setuptools && \
-     pip3.6 install buildbot-worker==2.4.0
+     pip3.6 install buildbot-worker==2.5.0
 
 

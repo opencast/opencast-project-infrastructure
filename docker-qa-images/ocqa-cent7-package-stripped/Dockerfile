@@ -31,6 +31,6 @@ RUN yum update -y && \
          bc && \
      # Install required python packages, and twisted
     pip3.6 install --upgrade pip setuptools && \
-    pip3.6 install buildbot-worker==2.4.0 && \
+    pip3.6 install buildbot-worker==2.5.0 && \
     yum clean all
 
