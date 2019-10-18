@@ -110,6 +110,9 @@ s3_secret_key: FAKE_SECRET_KEY
 #Where the master configs live
 buildbot_config_master: "{{ buildbot_home }}/buildbot-config"
 
+#Where the scripts and whatnot needed for the worker live
+buildbot_config_worker: "{{ buildbot_home }}/worker-config"
+
 #Where the secret files live
 buildbot_secrets_master: "{{ buildbot_config_master }}/secrets"
 
