@@ -58,27 +58,6 @@ def getBuildPipeline():
         workdir="build",
         name="Get rpm script revision")
 
-    latestRpms = common.copyAWS(
-        pathFrom="s3://public/builds/%(prop:branch_pretty)s/latest.txt",
-        pathTo="latest.txt",
-        name="Fetch latest build marker")
-
-    rpmsTarballVersion = steps.SetPropertyFromCommand(
-        command='cat latest.txt',
-        # Note: We're overwriting this value to set it to the built revision rather than whatever it defaults to
-        property="got_revision",
-        flunkOnFailure=True,
-        haltOnFailure=True,
-        name="Get build tarball revision")
-
-    rpmsTarballShortVersion = steps.SetPropertyFromCommand(
-        command=util.Interpolate(
-            'cat latest.txt | cut -c -9'),
-        property="short_revision",
-        flunkOnFailure=True,
-        haltOnFailure=True,
-        name="Get build tarball short revision")
-
     rpmsSetup = common.shellSequence(
         commands=[
             common.shellArg(
@@ -170,9 +149,8 @@ def getBuildPipeline():
     f_package_rpms.addStep(common.getPreflightChecks())
     f_package_rpms.addStep(rpmsClone)
     f_package_rpms.addStep(rpmsVersion)
-    f_package_rpms.addStep(latestRpms)
-    f_package_rpms.addStep(rpmsTarballVersion)
-    f_package_rpms.addStep(rpmsTarballShortVersion)
+    f_package_rpms.addStep(common.getLatestBuildRevision())
+    f_package_rpms.addStep(common.getShortBuildRevision())
     f_package_rpms.addStep(rpmsSetup)
     f_package_rpms.addStep(rpmsFetch)
     f_package_rpms.addStep(rpmsPrep)

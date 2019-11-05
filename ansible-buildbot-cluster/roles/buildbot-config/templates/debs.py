@@ -25,27 +25,6 @@ def getBuildPipeline():
         workdir="build",
         name="Get Debian script revision")
 
-    latestDebs = common.copyAWS(
-        pathFrom="s3://public/builds/%(prop:branch_pretty)s/latest.txt",
-        pathTo="latest.txt",
-        name="Fetch latest build marker")
-
-    debsTarballVersion = steps.SetPropertyFromCommand(
-        command='cat latest.txt',
-        # Note: We're overwriting this value to set it to the built revision rather than whatever it defaults to
-        property="got_revision",
-        flunkOnFailure=True,
-        haltOnFailure=True,
-        name="Get build tarball revision")
-
-    debsTarballShortVersion = steps.SetPropertyFromCommand(
-        command=util.Interpolate(
-            'cat latest.txt | cut -c -9'),
-        property="short_revision",
-        flunkOnFailure=True,
-        haltOnFailure=True,
-        name="Get build tarball short revision")
-
     debsFetch = common.syncAWS(
         pathFrom="s3://public/builds/{{ builds_fragment }}",
         pathTo="binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/",
@@ -108,9 +87,8 @@ def getBuildPipeline():
     f_package_debs.addStep(common.getPreflightChecks())
     f_package_debs.addStep(debsClone)
     f_package_debs.addStep(debsVersion)
-    f_package_debs.addStep(latestDebs)
-    f_package_debs.addStep(debsTarballVersion)
-    f_package_debs.addStep(debsTarballShortVersion)
+    f_package_debs.addStep(common.getLatestBuildRevision())
+    f_package_debs.addStep(common.getShortBuildRevision())
     f_package_debs.addStep(debsFetch)
     f_package_debs.addStep(common.loadSigningKey())
     f_package_debs.addStep(debsBuild)

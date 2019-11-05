@@ -125,6 +125,35 @@ def _AWSStep(command, pathFrom, pathTo, name, doStepIf=True, hideStepIf=False):
         doStepIf=doStepIf,
         hideStepIf=hideStepIf)
 
+
+def getLatestBuildRevision():
+    pathFrom = "s3://public/builds/%(prop:branch_pretty)s/latest.txt"
+    pathTo = "-"
+    command = 'cp'
+    return steps.SetPropertyFromCommand(
+        command=['aws', '--endpoint-url', '{{ s3_host }}', 's3', command, util.Interpolate(pathFrom), util.Interpolate(pathTo)],
+        env={
+            "AWS_ACCESS_KEY_ID": util.Secret("s3.access_key"),
+            "AWS_SECRET_ACCESS_KEY": util.Secret("s3.secret_key")
+        },
+        # Note: We're overwriting this value to set it to the built revision rather than whatever it defaults to
+        property="got_revision",
+        flunkOnFailure=True,
+        haltOnFailure=True,
+        name="Get latest build version")
+
+@util.renderer
+def _getShortBuildRevision(props):
+    return props.getProperty("got_revision")[:9]
+
+def getShortBuildRevision():
+    return steps.SetProperty(
+        property="short_revision",
+        value=_getShortBuildRevision,
+        flunkOnFailure=True,
+        haltOnFailure=True,
+        name="Get build tarball short revision")
+
 def loadSigningKey():
     return shellCommand(
         command="scp {{ buildbot_scp_signing_key }} /dev/stdout | gpg --import",

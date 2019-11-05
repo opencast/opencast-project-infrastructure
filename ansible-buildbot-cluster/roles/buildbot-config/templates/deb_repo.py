@@ -42,6 +42,8 @@ def getBuildPipeline():
     f_deb_repo.addStep(common.getPreflightChecks())
     f_deb_repo.addStep(repo_prep)
     f_deb_repo.addStep(repo_clean)
+    f_deb_repo.addStep(common.getLatestBuildRevision())
+    f_deb_repo.addStep(common.getShortBuildRevision())
     f_deb_repo.addStep(repo_fetch)
     f_deb_repo.addStep(repo_copy)
     f_deb_repo.addStep(common.loadSigningKey())

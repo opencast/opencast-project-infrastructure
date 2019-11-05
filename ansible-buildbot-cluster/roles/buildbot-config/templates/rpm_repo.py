@@ -30,6 +30,8 @@ def getBuildPipeline():
     f_rpm_repo = util.BuildFactory()
     f_rpm_repo.addStep(common.getPreflightChecks())
     f_rpm_repo.addStep(repo_prep)
+    f_rpm_repo.addStep(common.getLatestBuildRevision())
+    f_rpm_repo.addStep(common.getShortBuildRevision())
     f_rpm_repo.addStep(repo_fetch)
     f_rpm_repo.addStep(common.loadSigningKey())
     f_rpm_repo.addStep(repo_build)
