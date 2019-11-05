@@ -13,8 +13,8 @@
     name: "{{ item }}"
     state: absent
   with_items:
-    - "ocqa-deb9-worker:{{ docker_image_tag }}"
-    - "ocqa-cent7-worker:{{ docker_image_tag }}"
-    - "{{ docker_image_user }}/ocqa-deb9-worker-base:{{ docker_image_tag }}"
-    - "{{ docker_image_user }}/ocqa-cent7-worker-base:{{ docker_image_tag }}"
+    - "ocqa-deb9-worker:{{ docker_worker_image_tag }}"
+    - "ocqa-cent7-worker:{{ docker_worker_image_tag }}"
+    - "{{ docker_image_user }}/ocqa-deb9-worker-base:{{ docker_worker_image_tag }}"
+    - "{{ docker_image_user }}/ocqa-cent7-worker-base:{{ docker_worker_image_tag }}"
   become: yes
