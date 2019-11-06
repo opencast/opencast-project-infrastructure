@@ -26,10 +26,9 @@ def getBuildPipeline():
         command=['ansible-galaxy', 'install', '-r', 'requirements.yml'],
         name="Installing Ansible dependencies")
 
-    secrets = common.shellCommand(
-        command=['scp',
-                 util.Interpolate("{{ buildbot_scp_deploy_key }}"),
-                 util.Interpolate("%(prop:builddir)s/%(prop:deploy_env)s")],
+    secrets = common.copyAWS(
+        pathFrom=util.Interpolate("s3://private/{{ groups['master'][0] }}/env/%(prop:deploy_env)s"),
+        pathTo=util.Interpolate=util.Interpolate("%(prop:builddir)s/%(prop:deploy_env)s"),
         name="Fetching deploy key")
 
     params = [

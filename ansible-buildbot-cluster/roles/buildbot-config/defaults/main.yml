@@ -224,14 +224,5 @@ deployed_javadocs_symlink: "{{ deployed_javadocs_symlink_base }}/%(prop:branch_p
 
 #Don't change these, change the paths and whatnot above
 
-#Where to find the signing key
-buildbot_scp_signing_key: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ buildbot_secrets_master }}/signing.key"
-
-#Where to find the maven settings
-buildbot_scp_settings: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ buildbot_secrets_master }}/settings.xml"
-
-#Where to find the deploy key.  Note that this has a Interpolatable piece at the end
-buildbot_scp_deploy_key: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ buildbot_secrets_master}}/%(prop:deploy_env)s"
-
 #Where to scp the demo media deployment script to
 buildbot_scp_deploy_script: "{{ buildbot_user }}@%(prop:deploy_env)s.{{ infra_domain }}:opencast-ingest.sh"

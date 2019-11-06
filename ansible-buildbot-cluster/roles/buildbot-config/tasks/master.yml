@@ -66,13 +66,45 @@
   with_items:
     - { src: "secrets/changehook.passwd", dest: "{{ buildbot_config_master }}/changehook.passwd" }
     - { src: "secrets/crowdin.key", dest: "{{ buildbot_secrets_master }}/crowdin.key" }
-    - { src: "secrets/signing.key", dest: "{{ buildbot_secrets_master }}/signing.key" }
     - { src: "secrets/repo.username", dest: "{{ buildbot_secrets_master }}/repo.username" }
     - { src: "secrets/repo.password", dest: "{{ buildbot_secrets_master }}/repo.password" }
+    - { src: "secrets/s3.access_key", dest: "{{ buildbot_secrets_master }}/s3.access_key" }
+    - { src: "secrets/s3.secret_key", dest: "{{ buildbot_secrets_master }}/s3.secret_key" }
+    #The follow files then get uploaded to S3 and deleted!
+    - { src: "secrets/signing.key", dest: "{{ buildbot_secrets_master }}/signing.key" }
     - { src: "secrets/stable", dest: "{{ buildbot_secrets_master }}/stable" }
     - { src: "secrets/legacy", dest: "{{ buildbot_secrets_master }}/legacy" }
     - { src: "secrets/develop", dest: "{{ buildbot_secrets_master }}/develop" }
     - { src: "secrets/settings.xml", dest: "{{ buildbot_secrets_master }}/settings.xml" }
-    - { src: "secrets/s3.access_key", dest: "{{ buildbot_secrets_master }}/s3.access_key" }
-    - { src: "secrets/s3.secret_key", dest: "{{ buildbot_secrets_master }}/s3.secret_key" }
+
+- name: Distributing private support files into S3
+  aws_s3:
+    aws_access_key: "{{ s3_access_key }}"
+    aws_secret_key: "{{ s3_secret_key }}"
+    s3_url: "{{ s3_host }}"
+    mode: put
+    overwrite: "always"
+    permission: "private"
+    bucket: "private"
+    object: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  become: yes
+  with_items:
+    - { src: "{{ buildbot_secrets_master }}/signing.key", dest: "/key/signing.key" }
+    - { src: "{{ buildbot_secrets_master }}/stable", dest: "/env/stable" }
+    - { src: "{{ buildbot_secrets_master }}/legacy", dest: "/env/legacy" }
+    - { src: "{{ buildbot_secrets_master }}/develop", dest: "/env/develop" }
+    - { src: "{{ buildbot_secrets_master }}/settings.xml", dest: "/mvn/settings.xml" }
+
+- name: Removing private support files from local disk
+  file:
+    path: "{{ item }}"
+    state: absent
+  become: yes
+  with_items:
+    - "{{ buildbot_secrets_master }}/signing.key"
+    - "{{ buildbot_secrets_master }}/stable"
+    - "{{ buildbot_secrets_master }}/legacy"
+    - "{{ buildbot_secrets_master }}/develop"
+    - "{{ buildbot_secrets_master }}/settings.xml"
 

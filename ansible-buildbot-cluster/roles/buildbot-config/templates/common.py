@@ -81,8 +81,9 @@ def getWorkerPrep(deploy=False):
             logfile='deps')
     ]
     if deploy:
-        commandsAry.append(shellArg(
-            command="scp {{ buildbot_scp_settings }} settings.xml",
+        commandsAry.append(copyAWS(
+            pathFrom="s3://private/{{ groups['master'][0] }}/mvn/settings.xml"
+            pathTo="settings.xml",
             logfile="settings"))
     return shellSequence(
         commands=commandsAry,
@@ -155,10 +156,16 @@ def getShortBuildRevision():
         name="Get build tarball short revision")
 
 def loadSigningKey():
+    pathFrom = "s3://private/{{ groups['master'][0] }}/key/signing.key"
+    pathTo = "-"
+    command = 'cp'
     return shellCommand(
-        command="scp {{ buildbot_scp_signing_key }} /dev/stdout | gpg --import",
+        command=util.Interpolate("aws --endpoint-url {{ s3_host }} s3 " + command + " " + pathFrom + " " + pathTo + " | gpg --import"),
+        env={
+            "AWS_ACCESS_KEY_ID": util.Secret("s3.access_key"),
+            "AWS_SECRET_ACCESS_KEY": util.Secret("s3.secret_key")
+        },
         name="Load signing key")
-
 
 def unloadSigningKey():
     return shellCommand(
