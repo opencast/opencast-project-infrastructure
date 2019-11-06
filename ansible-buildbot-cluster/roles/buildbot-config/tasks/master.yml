@@ -83,11 +83,12 @@
     aws_secret_key: "{{ s3_secret_key }}"
     s3_url: "{{ s3_host }}"
     mode: put
+    encrypt: no
     overwrite: "always"
-    permission: "private"
+    permission: [] #prevents a warning about PutObjectAcl not being implemented by minio
     bucket: "private"
-    object: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+    src: "{{ item.src }}"
+    object: "{{ item.dest }}"
   become: yes
   with_items:
     - { src: "{{ buildbot_secrets_master }}/signing.key", dest: "/key/signing.key" }

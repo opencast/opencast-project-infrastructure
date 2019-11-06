@@ -27,8 +27,8 @@ def getBuildPipeline():
         name="Installing Ansible dependencies")
 
     secrets = common.copyAWS(
-        pathFrom=util.Interpolate("s3://private/{{ groups['master'][0] }}/env/%(prop:deploy_env)s"),
-        pathTo=util.Interpolate=util.Interpolate("%(prop:builddir)s/%(prop:deploy_env)s"),
+        pathFrom="s3://private/{{ groups['master'][0] }}/env/%(prop:deploy_env)s",
+        pathTo="%(prop:builddir)s/%(prop:deploy_env)s",
         name="Fetching deploy key")
 
     params = [
