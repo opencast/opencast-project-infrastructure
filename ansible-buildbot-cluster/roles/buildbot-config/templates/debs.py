@@ -103,7 +103,7 @@ def getBuildPipeline():
         ],
         env={
             "NAME": "Buildbot",
-            "EMAIL": "buildbot@ci.opencast.org",
+            "EMAIL": "buildbot@{{ groups['master'][0] }}",
             "SIGNING_KEY": util.Interpolate("%(prop:signing_key)s")
         },
         name="Build debs")
