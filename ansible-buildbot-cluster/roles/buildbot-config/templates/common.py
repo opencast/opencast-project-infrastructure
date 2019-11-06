@@ -108,9 +108,15 @@ def getBuild(deploy=False):
         name="Build")
 
 
+def copyAWS(pathFrom, pathTo, name, doStepIf=True, hideStepIf=False):
+    return _AWSStep("cp", pathFrom, pathTo, name, doStepIf, hideStepIf)
+
 def syncAWS(pathFrom, pathTo, name, doStepIf=True, hideStepIf=False):
+    return _AWSStep("sync", pathFrom, pathTo, name, doStepIf, hideStepIf)
+
+def _AWSStep(command, pathFrom, pathTo, name, doStepIf=True, hideStepIf=False):
     return shellCommand(
-        command=['aws', '--endpoint-url', '{{ s3_host }}', 's3', 'sync', util.Interpolate(pathFrom), util.Interpolate(pathTo)],
+        command=['aws', '--endpoint-url', '{{ s3_host }}', 's3', command, util.Interpolate(pathFrom), util.Interpolate(pathTo)],
         env={
             "AWS_ACCESS_KEY_ID": util.Secret("s3.access_key"),
             "AWS_SECRET_ACCESS_KEY": util.Secret("s3.secret_key")

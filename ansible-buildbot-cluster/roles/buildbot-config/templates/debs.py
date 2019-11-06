@@ -25,7 +25,7 @@ def getBuildPipeline():
         workdir="build",
         name="Get Debian script revision")
 
-    latestDebs = common.syncAWS(
+    latestDebs = common.copyAWS(
         pathFrom="s3://public/builds/%(prop:branch_pretty)s/latest.txt",
         pathTo="latest.txt",
         name="Fetch latest build marker")

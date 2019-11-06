@@ -58,7 +58,7 @@ def getBuildPipeline():
         workdir="build",
         name="Get rpm script revision")
 
-    latestRpms = common.syncAWS(
+    latestRpms = common.copyAWS(
         pathFrom="s3://public/builds/%(prop:branch_pretty)s/latest.txt",
         pathTo="latest.txt",
         name="Fetch latest build marker")
