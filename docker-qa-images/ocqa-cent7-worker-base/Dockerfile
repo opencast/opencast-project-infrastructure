@@ -5,6 +5,7 @@ MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 COPY buildbot.tac /builder/buildbot.tac
 COPY crowdin.repo /etc/yum.repos.d/crowdin.repo
+COPY aws-config /builder/.aws/config
 
      # Test runs produce a great quantity of dead grandchild processes.  In a
      # non-docker environment, these are automatically reaped by init (process 1),
@@ -22,6 +23,6 @@ RUN  curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/release
          bc && \
      # Install required python packages, and twisted
      pip3.6 install --upgrade pip setuptools && \
-     pip3.6 install buildbot-worker==2.5.0
+     pip3.6 install awscli buildbot-worker==2.5.0
 
 

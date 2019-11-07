@@ -97,6 +97,11 @@ signing_key: FAKE_KEY
 #The signing key to use.  This ID *must* match the key above.
 signing_key_id: FAKE_KEY_ID
 
+#The access key to use with the S3 provider
+s3_access_key: FAKE_ACCESS_KEY
+#The secret access key to use with the S3 provider
+s3_secret_key: FAKE_SECRET_KEY
+
 
 #################
 # Disk Settings #
@@ -104,6 +109,9 @@ signing_key_id: FAKE_KEY_ID
 
 #Where the master configs live
 buildbot_config_master: "{{ buildbot_home }}/buildbot-config"
+
+#Where the scripts and whatnot needed for the worker live
+buildbot_config_worker: "{{ buildbot_home }}/worker-config"
 
 #Where the secret files live
 buildbot_secrets_master: "{{ buildbot_config_master }}/secrets"

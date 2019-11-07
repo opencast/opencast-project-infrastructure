@@ -84,6 +84,9 @@ write_through: False
 #Where the ansible deploy targets live
 infra_domain: "opencast.org"
 
+#Where the S3 server lives
+s3_host: "https://s3.{{ infra_domain }}"
+
 #######################
 # Networking Settings #
 #######################
@@ -220,45 +223,6 @@ deployed_javadocs_symlink: "{{ deployed_javadocs_symlink_base }}/%(prop:branch_p
 #####################
 
 #Don't change these, change the paths and whatnot above
-
-#Where to push builds on the master
-buildbot_scp_builds: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_builds }}"
-
-#Where to get the latest build for a given branch
-buildbot_scp_builds_fetch: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_builds_symlink }}"
-
-#Where to push reports on the master
-buildbot_scp_reports: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_reports }}"
-
-#Where to push reports on the master
-buildbot_scp_javadocs: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_javadocs }}"
-
-#Where to push reports on the master
-buildbot_scp_markdown: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_markdown }}"
-
-#Where to push coverage reports on the master
-buildbot_scp_coverage: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_coverage }}"
-
-#Where to push built debs on the master
-buildbot_scp_debs: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_debs }}"
-
-#Where to fetch the latest deb build from
-buildbot_scp_debs_fetch: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_debs_symlink }}"
-
-#Where to push built rpms on the master
-buildbot_scp_rpms: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_rpms }}"
-
-#Where to fetch the latest rpm build from
-buildbot_scp_rpms_fetch: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ deployed_rpms_symlink }}"
-
-#Where to find the signing key
-buildbot_scp_signing_key: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ buildbot_secrets_master }}/signing.key"
-
-#Where to find the maven settings
-buildbot_scp_settings: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ buildbot_secrets_master }}/settings.xml"
-
-#Where to find the deploy key.  Note that this has a Interpolatable piece at the end
-buildbot_scp_deploy_key: "{{ buildbot_user }}@{{ groups['master'][0] }}:{{ buildbot_secrets_master}}/%(prop:deploy_env)s"
 
 #Where to scp the demo media deployment script to
 buildbot_scp_deploy_script: "{{ buildbot_user }}@%(prop:deploy_env)s.{{ infra_domain }}:opencast-ingest.sh"

@@ -81,8 +81,9 @@ def getWorkerPrep(deploy=False):
             logfile='deps')
     ]
     if deploy:
-        commandsAry.append(shellArg(
-            command="scp {{ buildbot_scp_settings }} settings.xml",
+        commandsAry.append(copyAWS(
+            pathFrom="s3://private/{{ groups['master'][0] }}/mvn/settings.xml",
+            pathTo="settings.xml",
             logfile="settings"))
     return shellSequence(
         commands=commandsAry,
@@ -108,11 +109,63 @@ def getBuild(deploy=False):
         name="Build")
 
 
-def loadSigningKey():
-    return shellCommand(
-        command="scp {{ buildbot_scp_signing_key }} /dev/stdout | gpg --import",
-        name="Load signing key")
+def copyAWS(pathFrom, pathTo, name, doStepIf=True, hideStepIf=False):
+    return _AWSStep("cp", pathFrom, pathTo, name, doStepIf, hideStepIf)
 
+def syncAWS(pathFrom, pathTo, name, doStepIf=True, hideStepIf=False):
+    return _AWSStep("sync", pathFrom, pathTo, name, doStepIf, hideStepIf)
+
+def _AWSStep(command, pathFrom, pathTo, name, doStepIf=True, hideStepIf=False):
+    return shellCommand(
+        command=['aws', '--endpoint-url', '{{ s3_host }}', 's3', command, util.Interpolate(pathFrom), util.Interpolate(pathTo)],
+        env={
+            "AWS_ACCESS_KEY_ID": util.Secret("s3.access_key"),
+            "AWS_SECRET_ACCESS_KEY": util.Secret("s3.secret_key")
+        },
+        name=name,
+        doStepIf=doStepIf,
+        hideStepIf=hideStepIf)
+
+
+def getLatestBuildRevision():
+    pathFrom = "s3://public/builds/%(prop:branch_pretty)s/latest.txt"
+    pathTo = "-"
+    command = 'cp'
+    return steps.SetPropertyFromCommand(
+        command=['aws', '--endpoint-url', '{{ s3_host }}', 's3', command, util.Interpolate(pathFrom), util.Interpolate(pathTo)],
+        env={
+            "AWS_ACCESS_KEY_ID": util.Secret("s3.access_key"),
+            "AWS_SECRET_ACCESS_KEY": util.Secret("s3.secret_key")
+        },
+        # Note: We're overwriting this value to set it to the built revision rather than whatever it defaults to
+        property="got_revision",
+        flunkOnFailure=True,
+        haltOnFailure=True,
+        name="Get latest build version")
+
+@util.renderer
+def _getShortBuildRevision(props):
+    return props.getProperty("got_revision")[:9]
+
+def getShortBuildRevision():
+    return steps.SetProperty(
+        property="short_revision",
+        value=_getShortBuildRevision,
+        flunkOnFailure=True,
+        haltOnFailure=True,
+        name="Get build tarball short revision")
+
+def loadSigningKey():
+    pathFrom = "s3://private/{{ groups['master'][0] }}/key/signing.key"
+    pathTo = "-"
+    command = 'cp'
+    return shellCommand(
+        command=util.Interpolate("aws --endpoint-url {{ s3_host }} s3 " + command + " " + pathFrom + " " + pathTo + " | gpg --import"),
+        env={
+            "AWS_ACCESS_KEY_ID": util.Secret("s3.access_key"),
+            "AWS_SECRET_ACCESS_KEY": util.Secret("s3.secret_key")
+        },
+        name="Load signing key")
 
 def unloadSigningKey():
     return shellCommand(

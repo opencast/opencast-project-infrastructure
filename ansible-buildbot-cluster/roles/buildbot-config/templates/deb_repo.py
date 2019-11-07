@@ -20,10 +20,9 @@ def getBuildPipeline():
         ),
         name='Clean repository stucture')
 
-    repo_fetch = common.shellCommand(
-        command=util.Interpolate(
-            "scp -r {{ buildbot_scp_debs_fetch }}/* %(prop:deb_repo_fragment)s/mini-dinstall/incoming"
-        ),
+    repo_fetch = common.syncAWS(
+        pathFrom="s3://public/builds/{{ debs_fragment }}",
+        pathTo="%(prop:deb_repo_fragment)s/mini-dinstall/incoming",
         name='Fetch packages')
 
     # this file needs to be in the cwd for it to be picked up with mini-dinstall
@@ -43,6 +42,8 @@ def getBuildPipeline():
     f_deb_repo.addStep(common.getPreflightChecks())
     f_deb_repo.addStep(repo_prep)
     f_deb_repo.addStep(repo_clean)
+    f_deb_repo.addStep(common.getLatestBuildRevision())
+    f_deb_repo.addStep(common.getShortBuildRevision())
     f_deb_repo.addStep(repo_fetch)
     f_deb_repo.addStep(repo_copy)
     f_deb_repo.addStep(common.loadSigningKey())
