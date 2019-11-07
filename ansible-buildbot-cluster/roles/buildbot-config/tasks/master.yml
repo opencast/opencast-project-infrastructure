@@ -91,11 +91,11 @@
     object: "{{ item.dest }}"
   become: yes
   with_items:
-    - { src: "{{ buildbot_secrets_master }}/signing.key", dest: "/key/signing.key" }
-    - { src: "{{ buildbot_secrets_master }}/stable", dest: "/env/stable" }
-    - { src: "{{ buildbot_secrets_master }}/legacy", dest: "/env/legacy" }
-    - { src: "{{ buildbot_secrets_master }}/develop", dest: "/env/develop" }
-    - { src: "{{ buildbot_secrets_master }}/settings.xml", dest: "/mvn/settings.xml" }
+    - { src: "{{ buildbot_secrets_master }}/signing.key", dest: "{{ groups['master'][0] }}/key/signing.key" }
+    - { src: "{{ buildbot_secrets_master }}/stable", dest: "{{ groups['master'][0] }}/env/stable" }
+    - { src: "{{ buildbot_secrets_master }}/legacy", dest: "{{ groups['master'][0] }}/env/legacy" }
+    - { src: "{{ buildbot_secrets_master }}/develop", dest: "{{ groups['master'][0] }}/env/develop" }
+    - { src: "{{ buildbot_secrets_master }}/settings.xml", dest: "{{ groups['master'][0] }}/mvn/settings.xml" }
 
 - name: Removing private support files from local disk
   file:
