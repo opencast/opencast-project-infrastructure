@@ -31,6 +31,10 @@ def getBuildPipeline():
         pathTo="%(prop:builddir)s/%(prop:deploy_env)s",
         name="Fetching deploy key")
 
+    permissions = common.shellCommand(
+        command=['chmod', '600', util.Interpolate("%(prop:builddir)s/%(prop:deploy_env)s")],
+        name="Fixing deploy key permissions")
+
     params = [
         "deb_repo_suite=%(prop:deploy_suite)s",
         "oc_deb_repo_url=http://%(prop:package_repo_host)s/debian",
@@ -93,6 +97,7 @@ def getBuildPipeline():
     f_ansible.addStep(version)
     f_ansible.addStep(deps)
     f_ansible.addStep(secrets)
+    f_ansible.addStep(permissions)
     f_ansible.addStep(deploy)
     f_ansible.addStep(copy)
     f_ansible.addStep(sleep)
