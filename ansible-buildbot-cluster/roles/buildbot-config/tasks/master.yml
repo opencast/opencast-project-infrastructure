@@ -68,8 +68,10 @@
     - { src: "secrets/crowdin.key", dest: "{{ buildbot_secrets_master }}/crowdin.key" }
     - { src: "secrets/repo.username", dest: "{{ buildbot_secrets_master }}/repo.username" }
     - { src: "secrets/repo.password", dest: "{{ buildbot_secrets_master }}/repo.password" }
-    - { src: "secrets/s3.access_key", dest: "{{ buildbot_secrets_master }}/s3.access_key" }
-    - { src: "secrets/s3.secret_key", dest: "{{ buildbot_secrets_master }}/s3.secret_key" }
+    - { src: "secrets/s3.public_access_key", dest: "{{ buildbot_secrets_master }}/s3.public_access_key" }
+    - { src: "secrets/s3.public_secret_key", dest: "{{ buildbot_secrets_master }}/s3.public_secret_key" }
+    - { src: "secrets/s3.private_access_key", dest: "{{ buildbot_secrets_master }}/s3.private_access_key" }
+    - { src: "secrets/s3.private_secret_key", dest: "{{ buildbot_secrets_master }}/s3.private_secret_key" }
     #The follow files then get uploaded to S3 and deleted!
     - { src: "secrets/signing.key", dest: "{{ buildbot_secrets_master }}/signing.key" }
     - { src: "secrets/stable", dest: "{{ buildbot_secrets_master }}/stable" }
@@ -79,8 +81,8 @@
 
 - name: Distributing private support files into S3
   aws_s3:
-    aws_access_key: "{{ s3_access_key }}"
-    aws_secret_key: "{{ s3_secret_key }}"
+    aws_access_key: "{{ private_s3_access_key }}"
+    aws_secret_key: "{{ private_s3_secret_key }}"
     s3_url: "{{ s3_host }}"
     mode: put
     encrypt: no

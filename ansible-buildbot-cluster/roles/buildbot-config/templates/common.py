@@ -109,18 +109,18 @@ def getBuild(deploy=False):
         name="Build")
 
 
-def copyAWS(pathFrom, pathTo, name, doStepIf=True, hideStepIf=False):
-    return _AWSStep("cp", pathFrom, pathTo, name, doStepIf, hideStepIf)
+def copyAWS(pathFrom, pathTo, name, doStepIf=True, hideStepIf=False, access=util.Secret("s3.public_access_key"), secret=util.Secret("s3.public_secret_key")):
+    return _AWSStep("cp", pathFrom, pathTo, name, doStepIf, hideStepIf, access, secret)
 
-def syncAWS(pathFrom, pathTo, name, doStepIf=True, hideStepIf=False):
-    return _AWSStep("sync", pathFrom, pathTo, name, doStepIf, hideStepIf)
+def syncAWS(pathFrom, pathTo, name, doStepIf=True, hideStepIf=False, access=util.Secret("s3.public_access_key"), secret=util.Secret("s3.public_secret_key")):
+    return _AWSStep("sync", pathFrom, pathTo, name, doStepIf, hideStepIf, access, secret)
 
-def _AWSStep(command, pathFrom, pathTo, name, doStepIf=True, hideStepIf=False):
+def _AWSStep(command, pathFrom, pathTo, name, doStepIf=True, hideStepIf=False, access=util.Secret("s3.public_access_key"), secret=util.Secret("s3.public_secret_key")):
     return shellCommand(
         command=['aws', '--endpoint-url', '{{ s3_host }}', 's3', command, util.Interpolate(pathFrom), util.Interpolate(pathTo)],
         env={
-            "AWS_ACCESS_KEY_ID": util.Secret("s3.access_key"),
-            "AWS_SECRET_ACCESS_KEY": util.Secret("s3.secret_key")
+            "AWS_ACCESS_KEY_ID": access,
+            "AWS_SECRET_ACCESS_KEY": secret
         },
         name=name,
         doStepIf=doStepIf,
@@ -134,8 +134,8 @@ def getLatestBuildRevision():
     return steps.SetPropertyFromCommand(
         command=['aws', '--endpoint-url', '{{ s3_host }}', 's3', command, util.Interpolate(pathFrom), util.Interpolate(pathTo)],
         env={
-            "AWS_ACCESS_KEY_ID": util.Secret("s3.access_key"),
-            "AWS_SECRET_ACCESS_KEY": util.Secret("s3.secret_key")
+            "AWS_ACCESS_KEY_ID": util.Secret("s3.public_access_key"),
+            "AWS_SECRET_ACCESS_KEY": util.Secret("s3.public_secret_key")
         },
         # Note: We're overwriting this value to set it to the built revision rather than whatever it defaults to
         property="got_revision",
@@ -162,8 +162,8 @@ def loadSigningKey():
     return shellCommand(
         command=util.Interpolate("aws --endpoint-url {{ s3_host }} s3 " + command + " " + pathFrom + " " + pathTo + " | gpg --import"),
         env={
-            "AWS_ACCESS_KEY_ID": util.Secret("s3.access_key"),
-            "AWS_SECRET_ACCESS_KEY": util.Secret("s3.secret_key")
+            "AWS_ACCESS_KEY_ID": util.Secret("s3.private_access_key"),
+            "AWS_SECRET_ACCESS_KEY": util.Secret("s3.private_secret_key")
         },
         name="Load signing key")
 

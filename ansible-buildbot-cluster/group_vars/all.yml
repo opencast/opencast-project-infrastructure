@@ -97,10 +97,13 @@ signing_key: FAKE_KEY
 #The signing key to use.  This ID *must* match the key above.
 signing_key_id: FAKE_KEY_ID
 
-#The access key to use with the S3 provider
-s3_access_key: FAKE_ACCESS_KEY
-#The secret access key to use with the S3 provider
-s3_secret_key: FAKE_SECRET_KEY
+#The access keys to use with the S3 provider's public bucket
+public_s3_access_key: FAKE_ACCESS_KEY
+public_s3_secret_key: FAKE_SECRET_KEY
+
+#The access keys to use with the S3 provider's private bucket
+private_s3_access_key: FAKE_ACCESS_KEY
+private_s3_secret_key: FAKE_SECRET_KEY
 
 
 #################
