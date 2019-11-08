@@ -77,7 +77,6 @@ def getSchedulers(pretty_branch_name, git_branch_name):
     ]
 
     forceBuilders = [
-        pretty_branch_name + " Build",
         pretty_branch_name + " Reports",
         pretty_branch_name + " Markdown",
         pretty_branch_name + " Database Tests",
@@ -110,30 +109,32 @@ def getSchedulers(pretty_branch_name, git_branch_name):
         forceBuilders.append(pretty_branch_name + " Ansible Deploy")
 {% endif %}
 
+    forceParams = [
+        util.CodebaseParameter(
+            "",
+            label="Main repository",
+            # will generate a combo box
+            branch=util.FixedParameter(
+                name="branch",
+                default=git_branch_name,
+            ),
+            # will generate nothing in the form, but revision, repository,
+            # and project are needed by buildbot scheduling system so we
+            # need to pass a value ("")
+            revision=util.FixedParameter(name="revision", default="HEAD"),
+            repository=util.FixedParameter(
+                name="repository", default="{{ source_repo_url }}"),
+            project=util.FixedParameter(name="project", default=""),
+        ),
+    ]
+
     # Note: This is a hack, but we need a unique name for the force schedulers, and it can't have special characters in it...
-    forceScheduler = schedulers.ForceScheduler(
-        name="ForceBuildCommits" + pretty_branch_name[0],
+    forceBuild = schedulers.ForceScheduler(
+        name="ForceBuild" + pretty_branch_name[0],
         buttonName="Force Build",
         label="Force Build Settings",
-        builderNames=forceBuilders,
-        codebases=[
-            util.CodebaseParameter(
-                "",
-                label="Main repository",
-                # will generate a combo box
-                branch=util.FixedParameter(
-                    name="branch",
-                    default=git_branch_name,
-                ),
-                # will generate nothing in the form, but revision, repository,
-                # and project are needed by buildbot scheduling system so we
-                # need to pass a value ("")
-                revision=util.FixedParameter(name="revision", default="HEAD"),
-                repository=util.FixedParameter(
-                    name="repository", default="{{ source_repo_url }}"),
-                project=util.FixedParameter(name="project", default=""),
-            ),
-        ],
+        builderNames=[pretty_branch_name + " Build"],
+        codebases=forceParams,
 
         # will generate a text input
         reason=util.StringParameter(
@@ -147,5 +148,37 @@ def getSchedulers(pretty_branch_name, git_branch_name):
         # input for user to type his name
         username=util.UserNameParameter(label="your name:", size=80))
 
-    scheduler_list.append(forceScheduler)
+    scheduler_list.append(forceBuild)
+
+    forceOther = schedulers.ForceScheduler(
+        name="ForceBuildOther" + pretty_branch_name[0],
+        buttonName="Force Build",
+        label="Force Build Settings",
+        builderNames=forceBuilders,
+        codebases=forceParams,
+
+        # will generate a text input
+        reason=util.StringParameter(
+            name="reason",
+            label="Reason:",
+            required=False,
+            size=80,
+            default=""),
+
+        # in case you don't require authentication this will display
+        # input for user to type his name
+        username=util.UserNameParameter(label="your name:", size=80))
+
+    scheduler_list.append(forceOther)
+
+{% if package_all %}
+    forcePackage = schedulers.Dependent(
+        name=pretty_branch_name + " Force Packaging Generation",
+        upstream=forceBuild,
+        builderNames=[
+            pretty_branch_name + " Debian Packaging",
+            pretty_branch_name + " RPM Packaging"
+        ])
+    scheduler_list.append(forcePackage)
+{% endif %}
     return scheduler_list
