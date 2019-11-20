@@ -84,7 +84,7 @@ def getWorkerPrep(deploy=False):
         commandsAry.append(copyAWS(
             pathFrom="s3://private/{{ groups['master'][0] }}/mvn/settings.xml",
             pathTo="settings.xml",
-            logfile="settings"))
+            name="settings"))
     return shellSequence(
         commands=commandsAry,
         name="Build Prep")
