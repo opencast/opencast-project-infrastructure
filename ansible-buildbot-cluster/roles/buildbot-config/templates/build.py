@@ -18,7 +18,7 @@ def __getBasePipeline():
 def getPullRequestPipeline():
 
     f_build = __getBasePipeline()
-    f_build.addStep(common.getWorkerPrep(deploy=False))
+    f_build.addStep(common.getWorkerPrep())
     f_build.addStep(common.getBuild(deploy=False))
     f_build.addStep(common.getClean())
 
@@ -72,9 +72,13 @@ def getBuildPipeline():
         hideStepIf={{ not push_crowdin }},
         name="Update Crowdin translation keys")
 
+
     f_build = __getBasePipeline()
-    f_build.addStep(common.getWorkerPrep(deploy={{ deploy_snapshots }}))
+    f_build.addStep(common.getWorkerPrep())
+    if {{ deploy_snapshots }}:
+        f_build.addStep(common.loadMavenSettings())
     f_build.addStep(common.getBuild(deploy={{ deploy_snapshots }}))
+    f_build.addStep(common.unloadMavenSettings())
     f_build.addStep(buildTarballs)
     f_build.addStep(stampVersion)
     f_build.addStep(uploadTarballs)

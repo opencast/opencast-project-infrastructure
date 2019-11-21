@@ -69,7 +69,7 @@ def getClone():
         name="Clone/Checkout")
 
 
-def getWorkerPrep(deploy=False):
+def getWorkerPrep():
     mvn = getMavenBase()
     mvn.extend(['dependency:go-offline', '-fn'])
     commandsAry=[
@@ -80,11 +80,6 @@ def getWorkerPrep(deploy=False):
             command=mvn,
             logfile='deps')
     ]
-    if deploy:
-        commandsAry.append(copyAWS(
-            pathFrom="s3://private/{{ groups['master'][0] }}/mvn/settings.xml",
-            pathTo="settings.xml",
-            name="settings"))
     return shellSequence(
         commands=commandsAry,
         name="Build Prep")
@@ -173,6 +168,17 @@ def unloadSigningKey():
         alwaysRun=True,
         name="Key cleanup")
 
+def loadMavenSettings():
+    return copyAWS(
+            pathFrom="s3://private/{{ groups['master'][0] }}/mvn/settings.xml",
+            pathTo="settings.xml",
+            name="Fetching maven settings")
+
+def unloadMavenSettings():
+    return shellCommand(
+        command=['rm', '-rfv', 'settings.xml'],
+        alwaysRun=True,
+        name="Settings Cleanup")
 
 def getClean():
     return shellSequence(
