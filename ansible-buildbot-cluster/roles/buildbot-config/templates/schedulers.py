@@ -25,8 +25,7 @@ def getPullRequestSchedulers():
         change_filter=util.ChangeFilter(category="pull"))
 
 
-def getSchedulers(pretty_branch_name, git_branch_name):
-
+def _getBasicSchedulers(pretty_branch_name, git_branch_name):
     commits = schedulers.AnyBranchScheduler(
         name=pretty_branch_name + " Quick Build",
         change_filter=util.ChangeFilter(
@@ -70,22 +69,19 @@ def getSchedulers(pretty_branch_name, git_branch_name):
         ])
 {% endif %}
 
-    scheduler_list = [
-        commits,
-        reports,
-        package
-    ]
+    return commits, reports, package
 
-    forceBuilders = [
-        pretty_branch_name + " Reports",
-        pretty_branch_name + " Markdown",
-        pretty_branch_name + " Database Tests",
-        pretty_branch_name + " Debian Packaging",
-        pretty_branch_name + " RPM Packaging"
-    ]
 
-{% if groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | list | length > 0 or
-      groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder') | list | length > 0 %}
+def getSchedulers(pretty_branch_name, git_branch_name):
+
+    #TODO: This is all spaghetti, and should be refactored to something based on an Ansible/Python dictionary and some logic...
+
+    commits, reports, package = _getBasicSchedulers(pretty_branch_name, git_branch_name)
+
+    scheduler_list = [ commits, reports, package ]
+
+{# Only defining the repository building and ansible deployment builders if the appropriate bits are present #}
+{% if buildbot_has_repo_builder %}
     repo = schedulers.Dependent(
         name=pretty_branch_name + ' Repository Generation',
         upstream=package,
@@ -95,9 +91,6 @@ def getSchedulers(pretty_branch_name, git_branch_name):
         ])
     scheduler_list.append(repo)
 
-    forceBuilders.append(pretty_branch_name + " Debian Repository")
-    forceBuilders.append(pretty_branch_name + " RPM Repository")
-
     if pretty_branch_name in deployables:
         deploy = schedulers.Dependent(
             name=pretty_branch_name + " Ansible Deploy",
@@ -106,6 +99,22 @@ def getSchedulers(pretty_branch_name, git_branch_name):
 
         scheduler_list.append(deploy)
 
+{% endif %}
+
+
+    forceBuilders = [
+        pretty_branch_name + " Reports",
+        pretty_branch_name + " Markdown",
+        pretty_branch_name + " Database Tests",
+        pretty_branch_name + " Debian Packaging",
+        pretty_branch_name + " RPM Packaging"
+    ]
+
+{# Only defining the force repository building and ansible deployment builders if the appropriate bits are present #}
+{% if buildbot_has_repo_builder %}
+    forceBuilders.append(pretty_branch_name + " Debian Repository")
+    forceBuilders.append(pretty_branch_name + " RPM Repository")
+    if pretty_branch_name in deployables:
         forceBuilders.append(pretty_branch_name + " Ansible Deploy")
 {% endif %}
 
@@ -180,5 +189,23 @@ def getSchedulers(pretty_branch_name, git_branch_name):
             pretty_branch_name + " RPM Packaging"
         ])
     scheduler_list.append(forcePackage)
+
+    forceRepo = schedulers.Dependent(
+        name=pretty_branch_name + " Force Repository Generation",
+        upstream=forceBuild,
+        builderNames=[
+            pretty_branch_name + " Debian Repository",
+            pretty_branch_name + " RPM Repository",
+        ])
+    scheduler_list.append(forceRepo)
+
+    if pretty_branch_name in deployables:
+        forceAnsible = schedulers.Dependent(
+            name=pretty_branch_name + " Force Ansible Deploy",
+            upstream=forceBuild,
+            builderNames=[
+                pretty_branch_name + " Ansible Deploy"
+            ])
+        scheduler_list.append(forceAnsible)
 {% endif %}
     return scheduler_list
