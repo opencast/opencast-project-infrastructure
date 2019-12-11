@@ -21,5 +21,6 @@ doBuildWorker() {
 
 doBuildWorker deb9
 doBuildWorker cent7
-
+doBuildWorker deb10
+doBuildWorker cent8
 

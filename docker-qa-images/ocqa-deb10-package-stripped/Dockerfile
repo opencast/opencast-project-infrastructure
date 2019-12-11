@@ -1,4 +1,4 @@
-FROM debian:9
+FROM debian:10
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 COPY buildbot.tac /builder/buildbot.tac
