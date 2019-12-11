@@ -1,16 +1,12 @@
 FROM greglogan/ocqa-cent8-run:v2.5.0
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
-COPY *.rpm /root/
-
 # Build deps
 RUN yum install -y \
         tar gzip bzip2 unzip \
         git \
-#        maven \
+        maven \
         curl wget \
         java-1.8.0-openjdk-devel && \
-    yum install -y /root/*.rpm && \
-    rm -f /root/*.rpm && \
     yum clean all
 

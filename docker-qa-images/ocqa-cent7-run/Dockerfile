@@ -1,7 +1,7 @@
 FROM centos:7
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
-COPY *.rpm /root/
+COPY *.repo /etc/yum.repos.d/
 
 RUN yum update -y && \
     yum install -y epel-release && \
@@ -11,13 +11,11 @@ RUN yum update -y && \
         tesseract \
         tesseract-langpack-deu \
         nmap-ncat \
-#       synfig \
-#       ffmpeg \
+        synfig \
+        ffmpeg \
         sox \
         hunspell \
         hunspell-en \
         java-1.8.0-openjdk && \
-    yum install -y /root/*.rpm && \
-    rm -f /root/*.rpm && \
     yum clean all
 

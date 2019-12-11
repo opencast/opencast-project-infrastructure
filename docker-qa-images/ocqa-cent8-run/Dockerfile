@@ -1,7 +1,9 @@
 FROM centos:8
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
-COPY *.rpm /root/
+#Not in stable yet
+#COPY opencast.repo /etc/yum.repos.d/
+COPY opencast-testing.repo /etc/yum.repos.d/
 
 RUN yum update -y && \
     yum install -y epel-release && \
@@ -11,13 +13,13 @@ RUN yum update -y && \
         tesseract \
         tesseract-langpack-deu \
         nmap-ncat \
-#       synfig \
-#       ffmpeg \
-        sox \
+# not built yet due to lack of time
+#        synfig \
+        ffmpeg \
+# not built yet due to dependency issues
+#        sox \
         hunspell \
         hunspell-en \
         java-1.8.0-openjdk && \
-    yum install -y /root/*.rpm && \
-    rm -f /root/*.rpm && \
     yum clean all
 

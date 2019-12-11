@@ -23,7 +23,7 @@ RUN yum update -y && \
          # Python deps
          python36 \
          python36-devel \
-         python36-pip \
+         python3-pip \
          #Bits for buildbot worker
          gcc \
          openssl-devel \

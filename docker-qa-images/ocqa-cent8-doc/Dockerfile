@@ -1,15 +1,14 @@
 FROM greglogan/ocqa-cent8-build:v2.5.0
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
-RUN curl -sL -o '/tmp/nodesource-release-el7-1.noarch.rpm' 'https://rpm.nodesource.com/pub_8.x/el/7/x86_64/nodesource-release-el7-1.noarch.rpm' && \
-    rpm -i --nosignature --force '/tmp/nodesource-release-el7-1.noarch.rpm' && \
-    rm -f '/tmp/nodesource-release-el7-1.noarch.rpm' && \
-    # Build deps
-    yum install -y \
+COPY nodesource-el8.repo /etc/yum.repos.d/
+COPY NODESOURCE-GPG-SIGNING-KEY-EL /etc/pki/rpm-gpg/
+
+RUN yum install -y \
      # Python deps
         python36 \
         python36-devel \
-        python36-pip \
+        python3-pip \
      # Packages for building docs
         nodejs \
      # For SQL script testing
