@@ -48,7 +48,7 @@ for policy in *json; do
 
 done
 
-# make public bucket public
-minio-mc policy set public "${REMOTE}/public"
+# make public bucket public (read access only)
+minio-mc policy set download "${REMOTE}/public"
 
 rm -irf "${TMPDIR}"
