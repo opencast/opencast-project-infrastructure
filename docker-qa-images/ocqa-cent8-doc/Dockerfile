@@ -14,6 +14,5 @@ RUN yum install -y \
      # For SQL script testing
         mysql && \
     yum clean all && \
-    pip3.6 install --upgrade pip setuptools && \
     pip3.6 install mkdocs markdown_inline_graphviz_extension mkdocs-windmill
 
