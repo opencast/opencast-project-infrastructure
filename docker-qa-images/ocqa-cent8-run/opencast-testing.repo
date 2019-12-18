@@ -3,11 +3,11 @@ name = Opencast el 8 Test Repository
 baseurl  = https://pkg.opencast.org/rpms/testing/el/8/x86_64
 enabled  = 1
 gpgcheck = 1
-gpgkey = https://pkg.opencast.org/gpgkeys/opencast-el8-rpm.opencast.org.key
+gpgkey = https://pkg.opencast.org/gpgkeys/opencast-el7-rpm.opencast.org.key
 
 [opencast-testing-noarch]
 name = Opencast el 8 Test Repository - noarch
 baseurl  = https://pkg.opencast.org/rpms/testing/el/8/noarch
 enabled  = 1
 gpgcheck = 1
-
+gpgkey = https://pkg.opencast.org/gpgkeys/opencast-el7-rpm.opencast.org.key

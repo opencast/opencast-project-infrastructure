@@ -3,11 +3,11 @@ name = Opencast el 8 Repository
 baseurl  = https://pkg.opencast.org/rpms/release/el/8/x86_64
 enabled  = 1
 gpgcheck = 1
-gpgkey = https://pkg.opencast.org/gpgkeys/opencast-el8-rpm.opencast.org.key
+gpgkey = https://pkg.opencast.org/gpgkeys/opencast-el7-rpm.opencast.org.key
 
 [opencast-noarch]
 name = Opencast el 8 Repository - noarch
 baseurl  = https://pkg.opencast.org/rpms/release/el/8/noarch
 enabled  = 1
 gpgcheck = 1
-
+gpgkey = https://pkg.opencast.org/gpgkeys/opencast-el7-rpm.opencast.org.key
