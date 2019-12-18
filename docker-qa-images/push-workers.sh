@@ -3,7 +3,7 @@
 set -uxe
 
 DOCKER_OWNER=greglogan
-TAG=v2.5.0
+TAG=v2.5.1
 
 doPush() {
   bash push-container.sh $DOCKER_OWNER $1 $2 $TAG

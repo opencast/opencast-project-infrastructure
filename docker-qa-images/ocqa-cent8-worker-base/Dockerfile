@@ -1,4 +1,4 @@
-FROM greglogan/ocqa-cent8-deploy:v2.5.0
+FROM greglogan/ocqa-cent8-deploy:v2.5.1
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 # Adapted from https://github.com/buildbot/buildbot/blob/v1.7.0/worker/Dockerfile
@@ -22,6 +22,6 @@ RUN  curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/release
          # bc for the database test script
          bc && \
      # Install required python packages, and twisted
-     pip3.6 install awscli buildbot-worker==2.5.0
+     pip3.6 install awscli buildbot-worker==2.5.1
 
 
