@@ -1,5 +1,4 @@
 [fileserver]
-develop.{{ infra_domain }}
 
 [database]
 develop.{{ infra_domain }}

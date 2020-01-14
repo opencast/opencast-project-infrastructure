@@ -1,18 +1,17 @@
 [fileserver]
-legacy.{{ infra_domain }}
 
 [database]
-legacy.{{ infra_domain }}
+stable.{{ infra_domain }}
 
 [activemq]
-legacy.{{ infra_domain }}
+stable.{{ infra_domain }}
 
 [admin]
 
 [adminpresentation]
 
 [allinone]
-legacy.{{ infra_domain }}
+stable.{{ infra_domain }}
 
 [worker]
 
