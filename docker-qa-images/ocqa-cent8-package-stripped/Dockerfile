@@ -30,6 +30,6 @@ RUN yum update -y && \
          # bc for the database test script
          bc && \
      # Install required python packages, and twisted
-    pip3.6 install buildbot-worker==2.5.1 && \
+    pip3.6 install buildbot-worker==2.6.0 && \
     yum clean all
 

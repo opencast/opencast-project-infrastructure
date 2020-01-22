@@ -1,4 +1,4 @@
-FROM greglogan/ocqa-cent7-run:v2.5.1
+FROM greglogan/ocqa-cent7-run:v2.6.0
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 # Build deps

@@ -1,4 +1,4 @@
-FROM greglogan/ocqa-cent7-build:v2.5.1
+FROM greglogan/ocqa-cent7-build:v2.6.0
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 COPY nodesource-el7.repo /etc/yum.repos.d/

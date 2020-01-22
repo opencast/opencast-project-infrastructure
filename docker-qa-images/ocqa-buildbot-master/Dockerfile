@@ -2,7 +2,7 @@
 
 # This overlay adds a few missing bits required for Opencast's use of BuildBot, notably requests (to power Github)
 
-FROM        buildbot/buildbot-master:v2.5.1
+FROM        buildbot/buildbot-master:v2.6.0
 MAINTAINER  Greg Logan
 
 RUN \
