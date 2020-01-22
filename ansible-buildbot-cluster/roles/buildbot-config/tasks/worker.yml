@@ -1,6 +1,14 @@
 ---
 
-- name: Ensure Buildbot directories exists and has the right permissions
+- name: Ensure Buildbot worker directories are empty
+  file:
+    state: absent
+    path: "{{ item.path }}"
+  become: yes
+  with_items:
+    - { path: "{{ buildbot_config_worker }}", mode: "0700" }
+
+- name: Ensure Buildbot worker directories exists and has the right permissions
   file:
     state: directory
     path: "{{ item.path }}"
