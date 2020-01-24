@@ -25,7 +25,8 @@ RUN apt-get update && \
         synfig \
         sox \
         hunspell \
-        hunspell-en-us &&\
+        hunspell-en-us \
+        ffmpeg-dist &&\
     apt-get install -y -t unstable openjdk-8-jre && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*

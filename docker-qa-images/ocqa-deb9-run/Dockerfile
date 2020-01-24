@@ -22,6 +22,7 @@ RUN apt-get update && \
         sox \
         hunspell \
         hunspell-en-us \
+        ffmpeg-dist \
         openjdk-8-jre && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
