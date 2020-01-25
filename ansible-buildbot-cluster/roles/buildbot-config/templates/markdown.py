@@ -3,7 +3,88 @@
 
 import os.path
 from buildbot.plugins import steps, util
+from buildbot.process import buildstep, logobserver
+from twisted.internet import defer
 import common
+
+
+class GenerateMarkdownCommands(buildstep.ShellMixin, steps.BuildStep):
+
+    def __init__(self, **kwargs):
+        kwargs = self.setupShellMixin(kwargs)
+        super().__init__(**kwargs)
+        self.observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.observer)
+
+    def extract_targets(self, stdout):
+        targets = []
+        for line in stdout.split('\n'):
+            target = str(line.strip())
+            if target:
+                targets.append(target)
+        return targets
+
+    @defer.inlineCallbacks
+    def run(self):
+        # run the command to get the list of targets
+        cmd = yield self.makeRemoteShellCommand()
+        yield self.runCommand(cmd)
+
+        # if the command passes extract the list of stages
+        result = cmd.results()
+        if result == util.SUCCESS:
+            # create a ShellCommand for each stage and add them to the build
+            self.build.addStepsAfterCurrentStep([
+                common.shellCommand(
+                    command=['mkdocs', 'build'],
+                    name="Build " + target[:-1] + " docs",
+                    workdir="build/docs/guides/" + target,
+                    env={
+                        "LC_ALL": "en_US.utf-8",
+                        "LANG": "en_US.utf-8"
+                    },
+                    haltOnFailure=False,
+                    flunkOnFailure=True)
+                for target in self.extract_targets(self.observer.getStdout())
+            ])
+        return result
+
+
+class GenerateS3Commands(buildstep.ShellMixin, steps.BuildStep):
+
+    def __init__(self, **kwargs):
+        kwargs = self.setupShellMixin(kwargs)
+        super().__init__(**kwargs)
+        self.observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.observer)
+
+    def extract_targets(self, stdout):
+        targets = []
+        for line in stdout.split('\n'):
+            target = str(line.strip())
+            if target:
+                targets.append(target)
+        return targets
+
+    @defer.inlineCallbacks
+    def run(self):
+        # run the command to get the list of targets
+        cmd = yield self.makeRemoteShellCommand()
+        yield self.runCommand(cmd)
+
+        # if the command passes extract the list of stages
+        result = cmd.results()
+        if result == util.SUCCESS:
+            # create a ShellCommand for each stage and add them to the build
+            self.build.addStepsAfterCurrentStep([
+                common.syncAWS(
+                    pathFrom="docs/guides/" + target + "/site",
+                    pathTo="s3://public/builds/{{ markdown_fragment }}/" + target,
+                    name="Upload " + target[:-1] + " to S3",
+                    doStepIf=lambda step: step.getProperty("npmConfigExists") == "True")
+                for target in self.extract_targets(self.observer.getStdout())
+            ])
+        return result
 
 
 def __getBasePipeline():
@@ -50,27 +131,12 @@ def __getBasePipeline():
         doStepIf=lambda step: step.getProperty("npmConfigExists") == "True" and step.getProperty("gruntConfigExists") != "True",
         hideStepIf=lambda results, step: not (step.getProperty("npmConfigExists") == "True" and step.getProperty("gruntConfigExists") != "True"))
 
-    build = common.shellSequence(
-        commands=[
-            common.shellArg(
-                command='cd admin && mkdocs build && cd ..',
-                haltOnFailure=False,
-                logfile='admin'),
-            common.shellArg(
-                command='cd developer && mkdocs build && cd ..',
-                haltOnFailure=False,
-                logfile='developer'),
-            common.shellArg(
-                command='cd user && mkdocs build && cd ..',
-                haltOnFailure=False,
-                logfile='user'),
-        ],
-        env={
-            "LC_ALL": "en_US.utf-8",
-            "LANG": "en_US.utf-8"
-        },
+    build = GenerateMarkdownCommands(
+        command='ls -d */',
+        name="Determining available docs",
         workdir="build/docs/guides",
-        name="Build Markdown docs")
+        haltOnFailure=True,
+        flunkOnFailure=True)
 
     f_build = util.BuildFactory()
     f_build.addStep(common.getClone())
@@ -78,6 +144,8 @@ def __getBasePipeline():
     f_build.addStep(grunt)
     f_build.addStep(gruntCheck)
     f_build.addStep(npmCheck)
+    #This is important, otherwise node_modules gets included as a doc build target
+    f_build.addStep(common.getClean())
     f_build.addStep(build)
 
     return f_build
@@ -103,23 +171,13 @@ def getBuildPipeline():
         flunkOnFailure=True,
         name="Prep relevant directories on buildmaster")
 
-    uploadAdmin = common.syncAWS(
-        pathFrom="docs/guides/admin/site",
-        pathTo="s3://public/builds/{{ markdown_fragment }}/admin",
-        name="Upload admin to S3",
-        doStepIf=lambda step: step.getProperty("npmConfigExists") == "True")
+    upload = GenerateS3Commands(
+        command='ls -d */',
+        name="Determining available docs for upload",
+        workdir="build/docs/guides",
+        haltOnFailure=True,
+        flunkOnFailure=True)
 
-    uploadDev = common.syncAWS(
-        pathFrom="docs/guides/developer/site",
-        pathTo="s3://public/builds/{{ markdown_fragment }}/developer",
-        name="Upload developer to S3",
-        doStepIf=lambda step: step.getProperty("npmConfigExists") == "True")
-
-    uploadUser = common.syncAWS(
-        pathFrom="docs/guides/user/site",
-        pathTo="s3://public/builds/{{ markdown_fragment }}/user",
-        name="Upload user to S3",
-        doStepIf=lambda step: step.getProperty("npmConfigExists") == "True")
 
     updateMarkdown = steps.MasterShellCommand(
         command=util.Interpolate(
@@ -130,9 +188,7 @@ def getBuildPipeline():
 
     f_build = __getBasePipeline()
     #f_build.addStep(masterPrep)
-    f_build.addStep(uploadAdmin)
-    f_build.addStep(uploadDev)
-    f_build.addStep(uploadUser)
+    f_build.addStep(upload)
     #f_build.addStep(updateMarkdown)
     f_build.addStep(common.getClean())
 
