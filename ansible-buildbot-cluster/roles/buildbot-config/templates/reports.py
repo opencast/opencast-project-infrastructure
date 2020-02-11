@@ -40,6 +40,8 @@ def __getBasePipeline():
     f_build.addStep(common.getPreflightChecks())
     f_build.addStep(common.getClone())
     f_build.addStep(common.getWorkerPrep())
+    f_build.addStep(common.setTimezone())
+    f_build.addStep(common.setLocale())
     f_build.addStep(common.getBuild())
     f_build.addStep(checkSpaces)
     f_build.addStep(site)

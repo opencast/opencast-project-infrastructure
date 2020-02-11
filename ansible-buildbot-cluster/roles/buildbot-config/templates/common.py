@@ -2,6 +2,7 @@
 # ex: set filetype=python:
 
 from buildbot.plugins import steps, util
+import random
 
 
 def shellCommand(command, name, workdir="build", env={}, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, alwaysRun=False, doStepIf=True, hideStepIf=False):
@@ -101,6 +102,12 @@ def getBuild(deploy=False):
                 command=command,
                 logfile='build')
         ],
+        env={
+            "LANG": util.Interpolate("%(prop:LANG)s"),
+            "LC_ALL": util.Interpolate("%(prop:LANG)s"),
+            "LANGUAGE": util.Interpolate("%(prop:LANG)s"),
+            "TZ": util.Interpolate("%(prop:TZ)s")
+        },
         name="Build")
 
 
@@ -181,6 +188,28 @@ def unloadMavenSettings():
         command=['rm', '-rfv', 'settings.xml'],
         alwaysRun=True,
         name="Settings Cleanup")
+
+def setTimezone():
+    offsetHour = random.randint(-12,14)
+    offsetMin = random.choice(["00","15","30","45"]).zfill(2)
+    if offsetHour >= 0:
+        tz = "UTC+" + str(offsetHour).zfill(2) + ":" + offsetMin
+    else:
+        tz = "UTC" + str(offsetHour).zfill(2) + ":" + offsetMin
+    return steps.SetProperty(
+        property="TZ",
+        value=tz,
+        flunkOnFailure=True,
+        haltOnFailure=True,
+        name="Generate timezone offset for testing")
+
+def setLocale():
+    return steps.SetProperty(
+        property="LANG",
+        value=random.choice(["en_US.utf8", "de_DE.utf8", "es_ES.utf8", "fr_FR.utf8"]),
+        flunkOnFailure=True,
+        haltOnFailure=True,
+        name="Generate locale for testing")
 
 def getClean():
     return shellSequence(

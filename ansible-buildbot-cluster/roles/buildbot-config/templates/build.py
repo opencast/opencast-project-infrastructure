@@ -11,6 +11,8 @@ def __getBasePipeline():
     f_build = util.BuildFactory()
     f_build.addStep(common.getPreflightChecks())
     f_build.addStep(common.getClone())
+    f_build.addStep(common.setLocale())
+    f_build.addStep(common.setTimezone())
 
     return f_build
 
