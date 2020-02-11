@@ -3,7 +3,8 @@ MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 COPY *.repo /etc/yum.repos.d/
 
-RUN yum update -y && \
+RUN sed -i '/override_install_langs/d' /etc/yum.conf && \
+    yum update -y && \
     yum install -y epel-release && \
     yum install -y \
         bash \
