@@ -11,7 +11,7 @@ RUN yum update -y && \
         bash \
      # Run deps
         tesseract \
-        tesseract-langpack-deu \
+#        tesseract-langpack-deu \
         nmap-ncat \
 # not built yet due to lack of time
 #        synfig \
@@ -19,7 +19,7 @@ RUN yum update -y && \
 # not built yet due to dependency issues
 #        sox \
         hunspell \
-        hunspell-en \
+#        hunspell-en \
         java-1.8.0-openjdk && \
     yum clean all
 

@@ -17,12 +17,12 @@ RUN apt-get update && \
         locales \
      # Run deps
         tesseract-ocr \
-        tesseract-ocr-eng \
+#        tesseract-ocr-eng \
         netcat \
         synfig \
         sox \
         hunspell \
-        hunspell-en-us \
+#        hunspell-en-us \
         ffmpeg-dist \
         openjdk-8-jre && \
     apt-get clean && \

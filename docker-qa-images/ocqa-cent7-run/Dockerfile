@@ -10,13 +10,13 @@ RUN sed -i '/override_install_langs/d' /etc/yum.conf && \
         bash \
      # Run deps
         tesseract \
-        tesseract-langpack-deu \
+#        tesseract-langpack-deu \
         nmap-ncat \
         synfig \
         ffmpeg \
         sox \
         hunspell \
-        hunspell-en \
+#        hunspell-en \
         java-1.8.0-openjdk && \
     yum clean all
 
