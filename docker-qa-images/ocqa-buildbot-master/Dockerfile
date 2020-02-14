@@ -5,20 +5,22 @@
 FROM        buildbot/buildbot-master:v2.6.0
 MAINTAINER  Greg Logan
 
-RUN \
-    # install cairo for build badges
-    apk add --no-cache \
+# install cairo for build badges
+RUN apk add --no-cache \
         zlib-dev \
         jpeg-dev \
         build-base \
         python3-dev \
         cairo \
-        ttf-dejavu && \
+        ttf-dejavu \
+        # required for manhole debug
+        libffi-dev
     # install extra pip dependencies not present in upstream image
-    pip3 install requests \
+RUN pip3 install requests \
                 urllib3[secure] \
                 txrequests \
                 docker \
-                buildbot-badges && \
+                buildbot-badges \
+                cryptography pyasn1 bcrypt && \
     rm -r /root/.cache
 
