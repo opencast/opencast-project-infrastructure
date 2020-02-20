@@ -3,6 +3,11 @@ MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 COPY buildbot.tac /builder/buildbot.tac
 
+#JDK8 is not present in buster, but lives in unstable instead
+COPY debian-unstable.list /etc/apt/sources.list.d/
+#This file prevents the whole system from upgrading due to the above configuration
+COPY 99defaultrelease /etc/apt/apt.conf.d/
+
 RUN apt-get update && \
     apt-get dist-upgrade -y && \
     apt-get install -y \
@@ -12,13 +17,14 @@ RUN apt-get update && \
         python-pip \
      # Package building deps
         dpkg-dev \
-        debhelper \
         devscripts \
-        dh-exec \
      # Repository generator
         mini-dinstall \
      # bc for the database test script
         bc && \
+    apt-get install -y -t unstable \
+        debhelper \
+        dh-exec && \
      # Test runs produce a great quantity of dead grandchild processes.  In a
      # non-docker environment, these are automatically reaped by init (process 1),
      # so we need to simulate that here.  See https://github.com/Yelp/dumb-init

@@ -19,7 +19,7 @@ RUN apt-get update && \
         libyaml-dev \
         nodejs \
      # For SQL script testsing
-        mysql-client && \
+        mariadb-client && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     pip install mkdocs markdown_inline_graphviz_extension mkdocs-windmill
