@@ -1,4 +1,4 @@
-FROM greglogan/ocqa-deb9-deploy:v2.6.0
+FROM greglogan/ocqa-deb10-deploy:latest
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 # Adapted from https://github.com/buildbot/buildbot/blob/v1.7.0/worker/Dockerfile

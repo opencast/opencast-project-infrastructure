@@ -3,7 +3,7 @@
 set -uxe
 
 DOCKER_OWNER=greglogan
-TAG=v2.6.0
+TAG=latest
 
 doBuild() {
   bash build-container.sh $DOCKER_OWNER $1 $2 $TAG
@@ -24,3 +24,4 @@ doBuildWorker cent7
 doBuildWorker deb10
 doBuildWorker cent8
 
+bash build-container.sh $DOCKER_OWNER buildbot master $TAG

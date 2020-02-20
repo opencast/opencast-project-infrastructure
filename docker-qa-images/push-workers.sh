@@ -3,7 +3,7 @@
 set -uxe
 
 DOCKER_OWNER=greglogan
-TAG=v2.6.0
+TAG=latest
 
 doPush() {
   bash push-container.sh $DOCKER_OWNER $1 $2 $TAG
@@ -20,6 +20,8 @@ doPushWorker() {
 }
 
 doPushWorker deb9
+doPushWorker deb10
 doPushWorker cent7
+doPushWorker cent8
 
-
+bash push-container.sh $DOCKER_OWNER buildbot master $TAG
