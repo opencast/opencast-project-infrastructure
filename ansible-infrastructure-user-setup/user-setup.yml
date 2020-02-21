@@ -14,27 +14,23 @@
     - name: install epel (rh)
       become: true
       package:
-        state=present
-        name={{ item }}
-      loop:
-        - epel-release
+        state: present
+        name: epel-release
       when: >
         ansible_os_family == 'RedHat'
-        and ansible_distribution_major_version|int < 8
 
     - name: install base tools
       become: true
       package:
-        state: present
-        name: '{{ item }}'
-      loop:
-        - git
-        - htop
-        - nload
-        - vim
-        - zsh
+        state: latest
+        name:
+          - git
+          - htop
+          - nload
+          - vim
+          - zsh
 
-    - name: Ensure group wheel exists
+    - name: ensure group wheel exists
       group:
         name: wheel
         state: present
