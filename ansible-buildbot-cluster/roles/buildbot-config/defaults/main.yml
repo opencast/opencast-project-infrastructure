@@ -235,5 +235,5 @@ buildbot_scp_deploy_script: "{{ buildbot_user }}@%(prop:deploy_env)s.{{ infra_do
 ########################################
 
 #Defines whether to enable repository building, which requires at least one worker with the repo_builder or only_repo_builder parameter set to true
-buildbot_has_repo_builder: "groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | list | length > 0 or
-                            groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder') | list | length > 0"
+has_repo_builder: "{{ groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | list | length > 0 or
+                            groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder') | list | length > 0 }}"

@@ -45,38 +45,30 @@ repo_workers = list(filter(lambda a: a, [
 
 def getPullRequestBuilder():
 
-    f_pr_build = build.getPullRequestPipeline()
-
-    f_pr_reports = reports.getPullRequestPipeline()
-
-    f_pr_markdown = markdown.getPullRequestPipeline()
-
-    f_pr_db = database.getPullRequestPipeline()
-
     b_pr_build = util.BuilderConfig(
             name="Pull Request Build",
             workernames=workers,
-            factory=f_pr_build,
+            factory=build.getPullRequestPipeline(),
             collapseRequests=True,
             locks=[mvn_lock.access('exclusive')])
 
     b_pr_reports = util.BuilderConfig(
             name="Pull Request Reports",
             workernames=workers,
-            factory=f_pr_reports,
+            factory=reports.getPullRequestPipeline(),
             collapseRequests=True,
             locks=[mvn_lock.access('exclusive')])
 
     b_pr_markdown = util.BuilderConfig(
             name="Pull Request Markdown",
             workernames=workers,
-            factory=f_pr_markdown,
+            factory=markdown.getPullRequestPipeline(),
             collapseRequests=True)
 
     b_pr_db = util.BuilderConfig(
             name="Pull Request Database Tests",
             workernames=workers,
-            factory=f_pr_db,
+            factory=database.getPullRequestPipeline(),
             collapseRequests=True,
             locks=[db_lock.access('exclusive')])
 
@@ -85,14 +77,9 @@ def getPullRequestBuilder():
     ]
 
 
-def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version, pkg_minor_version):
+def getBuildersForBranch(props):
 
-    props = {
-        'pkg_major_version': pkg_major_version,
-        'pkg_minor_version': pkg_minor_version,
-        'branch_pretty': pretty_branch_name,
-        'signing_key': '{{ signing_key_id }}'
-    }
+    pretty_branch_name = props['branch_pretty']
 
     deb_props = dict(props)
     deb_props['image'] = "debian"
@@ -100,28 +87,10 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
     cent_props = dict(props)
     cent_props['image'] = "centos"
 
-    f_build = build.getBuildPipeline()
-
-    f_reports = reports.getBuildPipeline()
-
-    f_markdown = markdown.getBuildPipeline()
-
-    f_db = database.getBuildPipeline()
-
-    f_package_debs = debs.getBuildPipeline()
-
-    f_package_rpms = rpms.getBuildPipeline()
-
-    f_repo_debs = deb_repo.getBuildPipeline()
-
-    f_repo_rpms = rpm_repo.getBuildPipeline()
-
-    f_ansible_deploy = ansible.getBuildPipeline()
-
     b_build = util.BuilderConfig(
             name=pretty_branch_name + " Build",
             workernames=workers,
-            factory=f_build,
+            factory=build.getBuildPipeline(),
             properties=props,
             collapseRequests=True,
             locks=[mvn_lock.access('exclusive')])
@@ -129,7 +98,7 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
     b_reports = util.BuilderConfig(
             name=pretty_branch_name + " Reports",
             workernames=workers,
-            factory=f_reports,
+            factory=reports.getBuildPipeline(),
             properties=props,
             collapseRequests=True,
             locks=[mvn_lock.access('exclusive')])
@@ -137,14 +106,14 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
     b_markdown = util.BuilderConfig(
             name=pretty_branch_name + " Markdown",
             workernames=workers,
-            factory=f_markdown,
+            factory=markdown.getBuildPipeline(),
             properties=props,
             collapseRequests=True)
 
     b_db = util.BuilderConfig(
             name=pretty_branch_name + " Database Tests",
             workernames=workers,
-            factory=f_db,
+            factory=database.getBuildPipeline(),
             properties=props,
             collapseRequests=True,
             locks=[db_lock.access('exclusive')])
@@ -152,7 +121,7 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
     b_package_debs = util.BuilderConfig(
             name=pretty_branch_name + " Debian Packaging",
             workernames=workers,
-            factory=f_package_debs,
+            factory=debs.getBuildPipeline(),
             properties=deb_props,
             collapseRequests=True,
             locks=[deb_lock.access('exclusive')])
@@ -160,7 +129,7 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
     b_package_rpms = util.BuilderConfig(
             name=pretty_branch_name + " RPM Packaging",
             workernames=workers,
-            factory=f_package_rpms,
+            factory=rpms.getBuildPipeline(),
             properties=cent_props,
             collapseRequests=True,
             locks=[rpm_lock.access('exclusive')])
@@ -173,7 +142,7 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
         b_repo_debs = util.BuilderConfig(
             name=pretty_branch_name + " Debian Repository",
             workernames=repo_workers,
-            factory=f_repo_debs,
+            factory=deb_repo.getBuildPipeline(),
             properties=deb_props,
             collapseRequests=True,
             locks=[deb_lock.access('exclusive')])
@@ -181,7 +150,7 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
         b_repo_rpms = util.BuilderConfig(
             name=pretty_branch_name + " RPM Repository",
             workernames=repo_workers,
-            factory=f_repo_rpms,
+            factory=rpm_repo.getBuildPipeline(),
             properties=cent_props,
             collapseRequests=True,
             locks=[rpm_lock.access('exclusive')])
@@ -189,16 +158,8 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
         builders.append(b_repo_debs)
         builders.append(b_repo_rpms)
 
-        deployables = {}
-{% for branch in opencast %}
-{%   if 'server' in opencast[branch] %}
-        deployables['{{ branch }}'] = "{{ opencast[branch]['server'] }}"
-{%   endif %}
-{% endfor %}
-
-        if pretty_branch_name in deployables:
+        if props['deploy_env']:
             deploy_props = dict(props)
-            deploy_props['deploy_env'] = deployables[pretty_branch_name]
             deploy_props['deploy_suite'] = '{{ repo_deploy_suite }}'
             deploy_props['package_repo_host'] = "{{ repo_host }}"
             deploy_props['key_url'] = "{{ key_url }}"
@@ -207,7 +168,7 @@ def getBuildersForBranch(pretty_branch_name, git_branch_name, pkg_major_version,
             b_ansible_deploy = util.BuilderConfig(
                 name=pretty_branch_name + " Ansible Deploy",
                 workernames=workers,
-                factory=f_ansible_deploy,
+                factory=ansible.getBuildPipeline(),
                 properties=deploy_props,
                 collapseRequests=True)
 
