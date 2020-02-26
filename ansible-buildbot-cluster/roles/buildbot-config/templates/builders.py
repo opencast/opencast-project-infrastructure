@@ -81,12 +81,6 @@ def getBuildersForBranch(props):
 
     pretty_branch_name = props['branch_pretty']
 
-    deb_props = dict(props)
-    deb_props['image'] = "debian"
-
-    cent_props = dict(props)
-    cent_props['image'] = "centos"
-
     b_build = util.BuilderConfig(
             name=pretty_branch_name + " Build",
             workernames=workers,
@@ -122,7 +116,7 @@ def getBuildersForBranch(props):
             name=pretty_branch_name + " Debian Packaging",
             workernames=workers,
             factory=debs.getBuildPipeline(),
-            properties=deb_props,
+            properties=props,
             collapseRequests=True,
             locks=[deb_lock.access('exclusive')])
 
@@ -130,7 +124,7 @@ def getBuildersForBranch(props):
             name=pretty_branch_name + " RPM Packaging",
             workernames=workers,
             factory=rpms.getBuildPipeline(),
-            properties=cent_props,
+            properties=props,
             collapseRequests=True,
             locks=[rpm_lock.access('exclusive')])
 
@@ -143,7 +137,7 @@ def getBuildersForBranch(props):
             name=pretty_branch_name + " Debian Repository",
             workernames=repo_workers,
             factory=deb_repo.getBuildPipeline(),
-            properties=deb_props,
+            properties=props,
             collapseRequests=True,
             locks=[deb_lock.access('exclusive')])
 
@@ -151,7 +145,7 @@ def getBuildersForBranch(props):
             name=pretty_branch_name + " RPM Repository",
             workernames=repo_workers,
             factory=rpm_repo.getBuildPipeline(),
-            properties=cent_props,
+            properties=props,
             collapseRequests=True,
             locks=[rpm_lock.access('exclusive')])
 
