@@ -11,7 +11,8 @@ RUN apt-get update && \
         git \
         maven \
         curl wget \
-        openjdk-8-jdk && \
+        openjdk-8-jdk \
+        firefox-esr && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

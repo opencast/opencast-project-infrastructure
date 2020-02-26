@@ -7,6 +7,7 @@ RUN yum install -y \
         git \
         maven \
         curl wget \
-        java-1.8.0-openjdk-devel && \
+        java-1.8.0-openjdk-devel \
+        firefox && \
     yum clean all
 
