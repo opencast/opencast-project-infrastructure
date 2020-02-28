@@ -71,15 +71,10 @@ def getClone():
 
 
 def getWorkerPrep():
-    mvn = getMavenBase()
-    mvn.extend(['dependency:go-offline', '-fn'])
     commandsAry=[
         shellArg(
             command=['git', 'clean', '-fdx'],
             logfile='clean'),
-        shellArg(
-            command=mvn,
-            logfile='deps')
     ]
     return shellSequence(
         commands=commandsAry,
