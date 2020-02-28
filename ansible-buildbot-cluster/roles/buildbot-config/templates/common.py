@@ -388,7 +388,7 @@ def setTimezone():
 def setLocale():
     return steps.SetProperty(
         property="LANG",
-        value=random.choice(["en_US.utf8", "de_DE.utf8", "es_ES.utf8", "fr_FR.utf8"]),
+        value="en_US.utf8", #random.choice(["en_US.utf8", "de_DE.utf8", "es_ES.utf8", "fr_FR.utf8"]),
         flunkOnFailure=True,
         haltOnFailure=True,
         name="Generate locale for testing")
