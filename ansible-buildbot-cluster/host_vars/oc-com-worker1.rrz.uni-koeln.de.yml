@@ -4,3 +4,4 @@ login_user: greglogan
 id: 1
 name: oc-com-worker
 docker_image_user: "greglogan"
+s3_host: https://s3.tik.uni-stuttgart.de:8082

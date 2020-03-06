@@ -10,4 +10,4 @@ image: package-stripped
 disk_base: /srv/www
 deb_repo_fragment: "{{ disk_base }}/pkg.opencast.org/debs"
 rpm_repo_fragment: "{{ disk_base }}/pkg.opencast.org/rpms"
-
+s3_host: https://s3.tik.uni-stuttgart.de:8082
