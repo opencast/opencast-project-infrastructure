@@ -55,12 +55,12 @@ def getBuildPipeline():
 
     uploadTarballs = common.syncAWS(
         pathFrom="build",
-        pathTo="s3://public/builds/{{ builds_fragment }}",
+        pathTo="s3://{{ s3_public_bucket }}/builds/{{ builds_fragment }}",
         name="Upload build to S3")
 
     updateBuild = common.copyAWS(
         pathFrom="revision.txt",
-        pathTo="s3://public/builds/%(prop:branch_pretty)s/latest.txt",
+        pathTo="s3://{{ s3_public_bucket }}/builds/%(prop:branch_pretty)s/latest.txt",
         name="Update latest build marker in S3")
     
     updateCrowdin = common.shellCommand(

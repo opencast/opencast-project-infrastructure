@@ -176,7 +176,7 @@ def getBuildPipeline():
         name="Installing Ansible dependencies")
 
     secrets = common.copyAWS(
-        pathFrom="s3://private/{{ groups['master'][0] }}/env/%(prop:deploy_env)s",
+        pathFrom="s3://{{ s3_private_bucket }}/{{ groups['master'][0] }}/env/%(prop:deploy_env)s",
         pathTo="%(prop:builddir)s/%(prop:deploy_env)s",
         access=util.Secret("s3.private_access_key"),
         secret=util.Secret("s3.private_secret_key"),

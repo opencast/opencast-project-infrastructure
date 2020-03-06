@@ -26,7 +26,7 @@ def getBuildPipeline():
         name="Get Debian script revision")
 
     debsFetch = common.syncAWS(
-        pathFrom="s3://public/builds/{{ builds_fragment }}",
+        pathFrom="s3://{{ s3_public_bucket }}/builds/{{ builds_fragment }}",
         pathTo="binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/",
         name="Fetch build from S3")
 
@@ -79,7 +79,7 @@ def getBuildPipeline():
 
     debsUpload = common.syncAWS(
         pathFrom="outputs/%(prop:got_revision)s",
-        pathTo="s3://public/builds/{{ debs_fragment }}",
+        pathTo="s3://{{ s3_public_bucket }}/builds/{{ debs_fragment }}",
         name="Upload debs to buildmaster")
 
 

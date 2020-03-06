@@ -125,7 +125,7 @@ def _AWSStep(command, pathFrom, pathTo, name, doStepIf=True, hideStepIf=False, a
 
 
 def getLatestBuildRevision():
-    pathFrom = "s3://public/builds/%(prop:branch_pretty)s/latest.txt"
+    pathFrom = "s3://{{ s3_public_bucket }}/builds/%(prop:branch_pretty)s/latest.txt"
     pathTo = "-"
     command = 'cp'
     return steps.SetPropertyFromCommand(
@@ -153,7 +153,7 @@ def getShortBuildRevision():
         name="Get build tarball short revision")
 
 def loadSigningKey():
-    pathFrom = "s3://private/{{ groups['master'][0] }}/key/signing.key"
+    pathFrom = "s3://{{ s3_private_bucket }}/{{ groups['master'][0] }}/key/signing.key"
     pathTo = "-"
     command = 'cp'
     return shellCommand(
@@ -172,7 +172,7 @@ def unloadSigningKey():
 
 def loadMavenSettings():
     return copyAWS(
-            pathFrom="s3://private/{{ groups['master'][0] }}/mvn/settings.xml",
+            pathFrom="s3://{{ s3_private_bucket }}/{{ groups['master'][0] }}/mvn/settings.xml",
             pathTo="settings.xml",
             access=util.Secret("s3.private_access_key"),
             secret=util.Secret("s3.private_secret_key"),

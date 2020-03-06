@@ -21,7 +21,7 @@ def getBuildPipeline():
         name='Clean repository stucture')
 
     repo_fetch = common.syncAWS(
-        pathFrom="s3://public/builds/{{ debs_fragment }}",
+        pathFrom="s3://{{ s3_public_bucket }}/builds/{{ debs_fragment }}",
         pathTo="%(prop:deb_repo_fragment)s/mini-dinstall/incoming",
         name='Fetch packages')
 
