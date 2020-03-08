@@ -16,6 +16,8 @@ build.opencast.org
 nexus.opencast.org
 develop.opencast.org
 pkg.opencast.org
+register.opencast.org
+test.annotation.opencast.org
 
 [eth]
 stable.opencast.org
