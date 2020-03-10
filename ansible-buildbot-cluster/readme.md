@@ -21,6 +21,15 @@ These playbooks make use of `passwordstore` lookups, so make sure you have acces
 Unless your default `PASSWORD\_STORE\_DIR` environment variable points at that copy, you will need to modify the
 command above to look like `PASSWORD\_STORE\_DIR=~/opencast/opencast-accounts ansible-playbook...`
 
+Deploying Secrets to S3
+-----------------------
+
+Our current infrastructure makes use of a private S3 bucket to store secrets.  The `public_s3_access_key` and
+`public_s3_secret_key` are used by the CI system and the `private_` prefixed versions are used *during the deploy process*.
+This means that those keys need to be set, however our current infrastructure provider assigned a key to each user, which makes
+saving these in the main credential an issue.  As such, when deploying please either set the locally, or use the `AWS_ACCESS_KEY`
+and `AWS_SECRET_KEY` environment variables.  Any example script can be found at `deploy.sh`.
+
 
 GitHub Setup
 ============

@@ -72,14 +72,22 @@
     - { src: "secrets/repo.password", dest: "{{ buildbot_secrets_master }}/repo.password" }
     - { src: "secrets/s3.public_access_key", dest: "{{ buildbot_secrets_master }}/s3.public_access_key" }
     - { src: "secrets/s3.public_secret_key", dest: "{{ buildbot_secrets_master }}/s3.public_secret_key" }
-    - { src: "secrets/s3.private_access_key", dest: "{{ buildbot_secrets_master }}/s3.private_access_key" }
-    - { src: "secrets/s3.private_secret_key", dest: "{{ buildbot_secrets_master }}/s3.private_secret_key" }
-    #The follow files then get uploaded to S3 and deleted!
-    - { src: "secrets/signing.key", dest: "{{ buildbot_secrets_master }}/signing.key" }
-    - { src: "secrets/stable", dest: "{{ buildbot_secrets_master }}/stable" }
-    - { src: "secrets/legacy", dest: "{{ buildbot_secrets_master }}/legacy" }
-    - { src: "secrets/develop", dest: "{{ buildbot_secrets_master }}/develop" }
-    - { src: "secrets/settings.xml", dest: "{{ buildbot_secrets_master }}/settings.xml" }
+
+  #The following files then get uploaded to S3 next
+- name: Template Buildbot private support files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: 0600
+  connection: local
+  with_items:
+    - { src: "secrets/signing.key", dest: "temp/signing.key" }
+    - { src: "secrets/stable", dest: "temp/stable" }
+    - { src: "secrets/legacy", dest: "temp/legacy" }
+    - { src: "secrets/develop", dest: "temp/develop" }
+    - { src: "secrets/settings.xml", dest: "temp/settings.xml" }
 
 - name: Distributing private support files into S3
   aws_s3:
@@ -93,23 +101,16 @@
     bucket: "private"
     src: "{{ item.src }}"
     object: "{{ item.dest }}"
-  become: yes
+  connection: local
   with_items:
-    - { src: "{{ buildbot_secrets_master }}/signing.key", dest: "{{ groups['master'][0] }}/key/signing.key" }
-    - { src: "{{ buildbot_secrets_master }}/stable", dest: "{{ groups['master'][0] }}/env/stable" }
-    - { src: "{{ buildbot_secrets_master }}/legacy", dest: "{{ groups['master'][0] }}/env/legacy" }
-    - { src: "{{ buildbot_secrets_master }}/develop", dest: "{{ groups['master'][0] }}/env/develop" }
-    - { src: "{{ buildbot_secrets_master }}/settings.xml", dest: "{{ groups['master'][0] }}/mvn/settings.xml" }
+    - { src: "temp/signing.key", dest: "{{ groups['master'][0] }}/key/signing.key" }
+    - { src: "temp/stable", dest: "{{ groups['master'][0] }}/env/stable" }
+    - { src: "temp/legacy", dest: "{{ groups['master'][0] }}/env/legacy" }
+    - { src: "temp/develop", dest: "{{ groups['master'][0] }}/env/develop" }
+    - { src: "temp/settings.xml", dest: "{{ groups['master'][0] }}/mvn/settings.xml" }
 
 - name: Removing private support files from local disk
   file:
-    path: "{{ item }}"
+    path: "temp"
     state: absent
-  become: yes
-  with_items:
-    - "{{ buildbot_secrets_master }}/signing.key"
-    - "{{ buildbot_secrets_master }}/stable"
-    - "{{ buildbot_secrets_master }}/legacy"
-    - "{{ buildbot_secrets_master }}/develop"
-    - "{{ buildbot_secrets_master }}/settings.xml"
-
+  connection: local

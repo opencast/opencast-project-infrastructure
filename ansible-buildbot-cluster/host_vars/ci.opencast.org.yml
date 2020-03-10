@@ -17,6 +17,8 @@ rpm_repo_fragment: "/srv/www/pkg.opencast.org/rpms"
 deb_repo_fragment: "/srv/www/pkg.opencast.org/debs"
 
 s3_host: https://s3.tik.uni-stuttgart.de:8082
+s3_public_bucket: opencast-community
+s3_private_bucket: oepncast-community-private
 
 crowdin_api_key: "{{ lookup('passwordstore', 'crowdin.com/api-key') }}"
 
@@ -38,5 +40,3 @@ repo_password: "{{ lookup('passwordstore', 'pkg.opencast.org/qaservers/pass') }}
 public_s3_access_key: "{{ lookup('passwordstore', 's3.tik.uni-stuttgart.de/access_key') }}"
 public_s3_secret_key: "{{ lookup('passwordstore', 's3.tik.uni-stuttgart.de/secret_key') }}"
 
-private_s3_access_key: "{{ lookup('passwordstore', 's3.tik.uni-stuttgart.de/access_key') }}"
-private_s3_secret_key: "{{ lookup('passwordstore', 's3.tik.uni-stuttgart.de/secret_key') }}"
