@@ -50,15 +50,6 @@
       loop: "{{ bots }}"
       when: "'qa' in group_names"
 
-    - name: add vmusers groups to bots accounts on uos servers
-      become: true
-      user:
-        name: '{{ item }}'
-        groups: vmusers
-        append: true
-      loop: '{{ bots }}'
-      when: "'uos' in group_names and 'qa' in group_names"
-
     - name: set up admin authorized keys
       become: true
       authorized_key:
