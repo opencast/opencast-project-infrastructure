@@ -7,6 +7,9 @@
     admins:
       - lars
       - greglogan
+    #remove_user:
+    #  - lkiesow
+    #  - rrolf
     bots:
       - buildbot
 
