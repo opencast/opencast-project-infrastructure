@@ -42,6 +42,6 @@ sudo systemctl restart activemq.service || :
 sudo systemctl start opencast.service
 
 # Wait until Opencast is up before ingesting media
-sleep 300
+sleep 180
 cd /home/opencast
 ./opencast-ingest.sh
