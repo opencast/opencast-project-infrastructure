@@ -18,7 +18,7 @@ version="{{opencast_develop_version}}"
 cd ~
 
 # Get latest opencast
-curl -s -O "http://build.opencast.org/builds/${branch}/opencast-dist-allinone-${version}.tar.gz"
+curl -s -O "https://s3.opencast.org/public/daily/opencast-dist-allinone-${version}.tar.gz"
 tar xf opencast-dist-allinone-*.tar.gz
 rm opencast-dist-allinone-*.tar.gz
 
