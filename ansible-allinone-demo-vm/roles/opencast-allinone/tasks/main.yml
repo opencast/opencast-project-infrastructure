@@ -19,8 +19,6 @@
     name: '{{item.name}}'
     description: 'Opencast EL 7: {{ item.name }}'
     baseurl: '{{item.baseurl}}'
-    username: '{{opencast_rpm_repo_username}}'
-    password: '{{opencast_rpm_repo_password}}'
     enabled: true
     gpgcheck: true
     gpgkey: https://pkg.opencast.org/gpgkeys/opencast-el7-rpm.opencast.org.key
@@ -47,8 +45,7 @@
 
 - name: install deb repository
   apt_repository:
-    repo: "deb https://{{opencast_rpm_repo_username}}\
-           :{{opencast_rpm_repo_password}}@pkg.opencast.org/debian {{item}}"
+    repo: "deb https://pkg.opencast.org/debian {{item}}"
     state: present
     filename: opencast
   loop:
