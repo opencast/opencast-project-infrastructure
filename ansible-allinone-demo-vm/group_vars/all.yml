@@ -1,9 +1,0 @@
----
-
-# server configuration
-opencast_develop_branch: develop
-opencast_develop_version: 9-SNAPSHOT
-opencast_stable_branch: r8.x
-opencast_stable_version: 8-SNAPSHOT
-opencast_legacy_branch: r7.x
-opencast_legacy_version: 7-SNAPSHOT

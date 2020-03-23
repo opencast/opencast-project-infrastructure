@@ -1,24 +1,10 @@
 #!/bin/sh
 set -uex
 
-{% if 'legacy' in inventory_hostname %}
-branch="{{opencast_legacy_branch}}"
-version="{{opencast_legacy_version}}"
-
-{% elif 'stable' in inventory_hostname %}
-branch="{{opencast_stable_branch}}"
-version="{{opencast_stable_version}}"
-
-{% else %}
-branch="{{opencast_develop_branch}}"
-version="{{opencast_develop_version}}"
-
-{% endif %}
-
 cd ~
 
 # Get latest opencast
-curl -s -O "https://s3.opencast.org/public/daily/opencast-dist-allinone-${version}.tar.gz"
+curl -s -O "https://s3.opencast.org/public/daily/opencast-dist-allinone-{{version}}.tar.gz"
 tar xf opencast-dist-allinone-*.tar.gz
 rm opencast-dist-allinone-*.tar.gz
 
