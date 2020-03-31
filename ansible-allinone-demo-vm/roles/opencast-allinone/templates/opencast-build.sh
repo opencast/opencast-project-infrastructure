@@ -16,6 +16,10 @@ rm -rf /srv/opencast/opencast-dist-allinone
 mv opencast-dist-allinone /srv/opencast/
 sed -i 's#^org.opencastproject.server.url=.*$#org.opencastproject.server.url=https://{{inventory_hostname}}#' /srv/opencast/opencast-dist-allinone/etc/custom.properties
 
+# Configure LTI
+sed -i 's_<!-- \(<ref.*oauthProtectedResourceFilter.*/>\) -->_\1_' /srv/opencast/opencast-dist-allinone/etc/security/mh_default_org.xml
+sed -i 's_#oauth_oauth_' /srv/opencast/opencast-dist-allinone/etc/org.opencastproject.kernel.security.OAuthConsumerDetailsService.cfg
+
 # Ensure access to log files
 mkdir -p /srv/opencast/opencast-dist-allinone/data/log
 chcon -Rt httpd_sys_content_t /srv/opencast/opencast-dist-allinone/data/log || :
