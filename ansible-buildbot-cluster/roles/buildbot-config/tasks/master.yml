@@ -72,14 +72,21 @@
     - { src: "secrets/repo.password", dest: "{{ buildbot_secrets_master }}/repo.password" }
     - { src: "secrets/s3.public_access_key", dest: "{{ buildbot_secrets_master }}/s3.public_access_key" }
     - { src: "secrets/s3.public_secret_key", dest: "{{ buildbot_secrets_master }}/s3.public_secret_key" }
+    - { src: "secrets/s3.private_access_key", dest: "{{ buildbot_secrets_master }}/s3.private_access_key" }
+    - { src: "secrets/s3.private_secret_key", dest: "{{ buildbot_secrets_master }}/s3.private_secret_key" }
+
+- name: Ensure local temp directory exists
+  file:
+    path: "temp"
+    state: directory
+    mode: 0700
+  connection: local
 
   #The following files then get uploaded to S3 next
 - name: Template Buildbot private support files
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    owner: "{{ buildbot_user }}"
-    group: "{{ buildbot_user }}"
     mode: 0600
   connection: local
   with_items:
@@ -98,7 +105,7 @@
     encrypt: no
     overwrite: "always"
     permission: [] #prevents a warning about PutObjectAcl not being implemented by minio
-    bucket: "private"
+    bucket: "{{ s3_private_bucket }}"
     src: "{{ item.src }}"
     object: "{{ item.dest }}"
   connection: local
