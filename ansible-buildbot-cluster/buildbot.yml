@@ -7,8 +7,8 @@
   roles:
     #We're becoming here because the docker role does not become inside of itself
     - { role: geerlingguy.docker, become: yes }
-    - docker-tcp-connectable
-    - buildbot-base
+    - { role: docker-tcp-connectable }
+    - { role: buildbot-base }
     - { role: buildbot-keysync, tags: [ rekey ] }
     - { role: autossh, when: "'master' not in group_names", tags: [ rekey ] }
     - { role: buildbot-id-mapping, tags: [ buildbot, reconfig ] }
