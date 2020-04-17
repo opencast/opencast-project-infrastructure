@@ -98,6 +98,9 @@ s3_private_bucket: "private"
 #Whether to enable and expose the debug port, or not
 debug_enabled: False
 
+#Whether to enable auth, or leave things wide open
+enable_auth: True
+
 #######################
 # Networking Settings #
 #######################
