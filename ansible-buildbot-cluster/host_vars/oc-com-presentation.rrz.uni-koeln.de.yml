@@ -4,4 +4,3 @@ login_user: greglogan
 id: 2
 name: oc-com-presentation
 docker_image_user: "greglogan"
-s3_host: https://s3.tik.uni-stuttgart.de:8082
