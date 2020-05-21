@@ -19,6 +19,7 @@ doBuildWorker() {
   doBuild $1 package-stripped
 }
 
+doBuild buildbot master
 doBuildWorker deb9
 doBuildWorker cent7
 doBuildWorker deb10

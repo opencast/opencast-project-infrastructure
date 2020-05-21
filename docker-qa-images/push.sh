@@ -19,6 +19,7 @@ doPushWorker() {
   doPush $1 package-stripped
 }
 
+doPush buildbot master
 doPushWorker deb9
 doPushWorker deb10
 doPushWorker cent7
