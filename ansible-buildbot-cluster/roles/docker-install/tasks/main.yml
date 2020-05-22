@@ -1,0 +1,21 @@
+---
+
+- import_tasks: debian.yml
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- import_tasks: centos.yml
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Amazon'
+
+- name: Ensuring Docker is started and enabled
+  service:
+    name: docker
+    state: started
+    enabled: yes
+  become: yes
+
+- name: Install docker python libraries
+  pip:
+    name: [docker, docker-compose]
+    executable: pip3
+    state: latest
+  become: yes
