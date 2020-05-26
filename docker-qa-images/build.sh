@@ -9,20 +9,8 @@ doBuild() {
   bash build-container.sh $DOCKER_OWNER $1 $2 $TAG
 }
 
-doBuildWorker() {
-  doBuild $1 run
-  doBuild $1 build
-  doBuild $1 doc
-  doBuild $1 package
-  doBuild $1 deploy
-  doBuild $1 worker-base
-  doBuild $1 package-stripped
-}
-
 doBuild buildbot master
-doBuildWorker deb9
-doBuildWorker cent7
-doBuildWorker deb10
-doBuildWorker cent8
-
-bash build-container.sh $DOCKER_OWNER buildbot master $TAG
+doBuild deb9 worker-base
+doBuild deb10 worker-base
+doBuild cent7 worker-base
+doBuild cent8 worker-base

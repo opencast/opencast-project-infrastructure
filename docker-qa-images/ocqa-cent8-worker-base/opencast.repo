@@ -1,5 +1,5 @@
 [opencast]
-name = Opencast el 8 Repository
+name = Opencast el 8 Repositorys
 baseurl  = https://pkg.opencast.org/rpms/release/el/8/x86_64
 enabled  = 1
 gpgcheck = 1

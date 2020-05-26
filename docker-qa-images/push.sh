@@ -9,20 +9,8 @@ doPush() {
   bash push-container.sh $DOCKER_OWNER $1 $2 $TAG
 }
 
-doPushWorker() {
-  doPush $1 worker-base
-  doPush $1 deploy
-  doPush $1 package
-  doPush $1 doc
-  doPush $1 build
-  doPush $1 run
-  doPush $1 package-stripped
-}
-
 doPush buildbot master
-doPushWorker deb9
-doPushWorker deb10
-doPushWorker cent7
-doPushWorker cent8
-
-bash push-container.sh $DOCKER_OWNER buildbot master $TAG
+doPush deb9 worker-base
+doPush deb10 worker-base
+doPush cent7 worker-base
+doPush cent8 worker-base
