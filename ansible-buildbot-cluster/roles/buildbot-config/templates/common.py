@@ -71,7 +71,7 @@ def getClone():
 
 
 def getWorkerPrep():
-    commandsAry=[
+    commandsAry = [
         shellArg(
             command=['git', 'clean', '-fdx'],
             logfile='clean'),
@@ -84,9 +84,9 @@ def getWorkerPrep():
 def getBuild(deploy=False):
     command = getMavenBase()
     if not deploy:
-      command.extend(['clean', 'install'])
+        command.extend(['clean', 'install'])
     else:
-      command.extend(['clean', 'deploy', '-P', 'none', '-s', 'settings.xml'])
+        command.extend(['clean', 'deploy', '-P', 'none', '-s', 'settings.xml'])
     return shellSequence(
         commands=[
             shellArg(
@@ -109,8 +109,10 @@ def getBuild(deploy=False):
 def copyAWS(pathFrom, pathTo, name, doStepIf=True, hideStepIf=False, access=util.Secret("s3.public_access_key"), secret=util.Secret("s3.public_secret_key")):
     return _AWSStep("cp", pathFrom, pathTo, name, doStepIf, hideStepIf, access, secret)
 
+
 def syncAWS(pathFrom, pathTo, name, doStepIf=True, hideStepIf=False, access=util.Secret("s3.public_access_key"), secret=util.Secret("s3.public_secret_key")):
     return _AWSStep("sync", pathFrom, pathTo, name, doStepIf, hideStepIf, access, secret)
+
 
 def _AWSStep(command, pathFrom, pathTo, name, doStepIf=True, hideStepIf=False, access=util.Secret("s3.public_access_key"), secret=util.Secret("s3.public_secret_key")):
     return shellCommand(
@@ -140,9 +142,11 @@ def getLatestBuildRevision():
         haltOnFailure=True,
         name="Get latest build version")
 
+
 @util.renderer
 def _getShortBuildRevision(props):
     return props.getProperty("got_revision")[:9]
+
 
 def getShortBuildRevision():
     return steps.SetProperty(
@@ -151,6 +155,7 @@ def getShortBuildRevision():
         flunkOnFailure=True,
         haltOnFailure=True,
         name="Get build tarball short revision")
+
 
 def loadSigningKey():
     pathFrom = "s3://{{ s3_private_bucket }}/{{ groups['master'][0] }}/key/signing.key"
@@ -164,19 +169,22 @@ def loadSigningKey():
         },
         name="Load signing key")
 
+
 def unloadSigningKey():
     return shellCommand(
         command=['rm', '-rf', '/builder/.gnupg'],
         alwaysRun=True,
         name="Key cleanup")
 
+
 def loadMavenSettings():
     return copyAWS(
-            pathFrom="s3://{{ s3_private_bucket }}/{{ groups['master'][0] }}/mvn/settings.xml",
-            pathTo="settings.xml",
-            access=util.Secret("s3.private_access_key"),
-            secret=util.Secret("s3.private_secret_key"),
-            name="Fetching maven settings")
+        pathFrom="s3://{{ s3_private_bucket }}/{{ groups['master'][0] }}/mvn/settings.xml",
+        pathTo="settings.xml",
+        access=util.Secret("s3.private_access_key"),
+        secret=util.Secret("s3.private_secret_key"),
+        name="Fetching maven settings")
+
 
 def unloadMavenSettings():
     return shellCommand(
@@ -184,9 +192,10 @@ def unloadMavenSettings():
         alwaysRun=True,
         name="Settings Cleanup")
 
+
 def setTimezone():
-    offsetHour = random.randint(-12,14)
-    offsetMin = random.choice(["00","15","30","45"]).zfill(2)
+    offsetHour = random.randint(-12, 14)
+    offsetMin = random.choice(["00", "15", "30", "45"]).zfill(2)
     if offsetHour >= 0:
         tz = "UTC+" + str(offsetHour).zfill(2) + ":" + offsetMin
     else:
@@ -198,6 +207,7 @@ def setTimezone():
         haltOnFailure=True,
         name="Generate timezone offset for testing")
 
+
 def setLocale():
     return steps.SetProperty(
         property="LANG",
@@ -205,6 +215,7 @@ def setLocale():
         flunkOnFailure=True,
         haltOnFailure=True,
         name="Generate locale for testing")
+
 
 def getClean():
     return shellSequence(

@@ -1,8 +1,7 @@
 # -*- python -*-
 # ex: set filetype=python:
 
-from buildbot.plugins import steps, util
-import os.path
+from buildbot.plugins import util
 import common
 
 
@@ -38,17 +37,6 @@ def getBuildPipeline():
         haltOnFailure=True,
         name="Building the tarballs")
 
-    masterPrep = steps.MasterShellCommand(
-        command=["mkdir", "-p",
-                 util.Interpolate(
-                     os.path.normpath("{{ deployed_builds }}")),
-                 util.Interpolate(
-                     os.path.normpath("{{ deployed_builds_symlink_base }}"))
-
-                 ],
-        flunkOnFailure=True,
-        name="Prep relevant directories on buildmaster")
-
     stampVersion = common.shellCommand(
         command=util.Interpolate("echo '%(prop:got_revision)s' | tee revision.txt"),
         name="Stamping the build")
@@ -62,7 +50,7 @@ def getBuildPipeline():
         pathFrom="revision.txt",
         pathTo="s3://{{ s3_public_bucket }}/builds/%(prop:branch_pretty)s/latest.txt",
         name="Update latest build marker in S3")
-    
+
     updateCrowdin = common.shellCommand(
         command=util.Interpolate(
             "if [ -f .upload-crowdin.sh ]; then CROWDIN_API_KEY='%(secret:crowdin.key)s' bash .upload-crowdin.sh; fi"),
@@ -73,7 +61,6 @@ def getBuildPipeline():
         doStepIf={{ push_crowdin }},
         hideStepIf={{ not push_crowdin }},
         name="Update Crowdin translation keys")
-
 
     f_build = __getBasePipeline()
     f_build.addStep(common.getWorkerPrep())

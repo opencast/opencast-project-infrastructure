@@ -1,7 +1,6 @@
 # -*- python -*-
 # ex: set filetype=python:
 
-import os.path
 from buildbot.plugins import steps, util
 import common
 
@@ -143,7 +142,6 @@ def getBuildPipeline():
         pathFrom="specs/RPMS/noarch",
         pathTo="s3://public/builds/{{ rpms_fragment }}",
         name="Upload rpms to buildmaster")
-
 
     f_package_rpms = util.BuildFactory()
     f_package_rpms.addStep(common.getPreflightChecks())

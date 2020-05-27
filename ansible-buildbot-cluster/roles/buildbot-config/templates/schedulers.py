@@ -3,6 +3,7 @@
 
 from buildbot.plugins import schedulers, util
 
+
 def _getAnyBranchScheduler(name, builderNames, change_filter=None, properties=dict()):
     return schedulers.AnyBranchScheduler(
         name=name,
@@ -11,6 +12,7 @@ def _getAnyBranchScheduler(name, builderNames, change_filter=None, properties=di
         builderNames=builderNames,
         properties=properties,
         change_filter=change_filter)
+
 
 def _getForceScheduler(props, prefix, builderNames):
     pretty_branch_name = props['branch_pretty']
@@ -54,16 +56,17 @@ def _getForceScheduler(props, prefix, builderNames):
         # input for user to type his name
         username=util.UserNameParameter(label="your name:", size=80))
 
+
 def getPullRequestScheduler():
-    #NB: We're returning a list here since master.cfg is using List.extend()
+    # NB: We're returning a list here since master.cfg is using List.extend()
     return [_getAnyBranchScheduler(name="Pull Requests",
-                                  builderNames=[
-                                      "Pull Request Build",
-                                      "Pull Request Reports",
-                                      "Pull Request Markdown",
-                                      "Pull Request Database Tests"
-                                  ],
-                                  change_filter=util.ChangeFilter(category="pull"))]
+                                   builderNames=[
+                                       "Pull Request Build",
+                                       "Pull Request Reports",
+                                       "Pull Request Markdown",
+                                       "Pull Request Database Tests"
+                                   ],
+                                   change_filter=util.ChangeFilter(category="pull"))]
 
 
 def _getBasicSchedulers(props):
@@ -120,7 +123,7 @@ def getSchedulers(props):
 
     commits, reports, package = _getBasicSchedulers(props)
 
-    scheduler_list = [ commits, reports, package ]
+    scheduler_list = [commits, reports, package]
 
     if props['has_repo_builder']:
         repo = schedulers.Dependent(

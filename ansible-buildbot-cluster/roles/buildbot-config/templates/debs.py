@@ -1,7 +1,6 @@
 # -*- python -*-
 # ex: set filetype=python:
 
-import os.path
 from buildbot.plugins import steps, util
 import common
 
@@ -81,7 +80,6 @@ def getBuildPipeline():
         pathFrom="outputs/%(prop:got_revision)s",
         pathTo="s3://{{ s3_public_bucket }}/builds/{{ debs_fragment }}",
         name="Upload debs to buildmaster")
-
 
     f_package_debs = util.BuildFactory()
     f_package_debs.addStep(common.getPreflightChecks())

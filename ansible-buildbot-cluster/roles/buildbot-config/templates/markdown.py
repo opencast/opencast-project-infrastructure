@@ -144,7 +144,7 @@ def __getBasePipeline():
     f_build.addStep(grunt)
     f_build.addStep(gruntCheck)
     f_build.addStep(npmCheck)
-    #This is important, otherwise node_modules gets included as a doc build target
+    # This is important, otherwise node_modules gets included as a doc build target
     f_build.addStep(common.getClean())
     f_build.addStep(build)
 
@@ -177,7 +177,6 @@ def getBuildPipeline():
         workdir="build/docs/guides",
         haltOnFailure=True,
         flunkOnFailure=True)
-
 
     updateMarkdown = steps.MasterShellCommand(
         command=util.Interpolate(

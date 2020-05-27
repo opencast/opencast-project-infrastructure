@@ -2,7 +2,7 @@
 
 - name: Clear current Buildbot user ssh key
   file:
-    name: "{{ buildbot_home}}/{{ item }}"
+    name: "{{ buildbot_home }}/{{ item }}"
     state: absent
   become: yes
   with_items:
@@ -43,7 +43,7 @@
 
 - name: Fetch Buildbot SSH keys
   fetch:
-    src: "{{buildbot_home}}/.ssh/{{ item }}"
+    src: "{{buildbot_home }}/.ssh/{{ item }}"
     dest: ".ssh/{{ inventory_hostname }}/{{ item }}"
     flat: yes
   when: '"localhost" != ansible_host and buildbot_user != ansible_user'
