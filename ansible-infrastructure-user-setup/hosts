@@ -12,12 +12,12 @@ legacy.openast.org
 
 [uos]
 pyca.opencast.org
-build.opencast.org
 nexus.opencast.org
 develop.opencast.org
 pkg.opencast.org
 register.opencast.org
-test.annotation.opencast.org
+test.annotate.opencast.org
+stats.opencast.org
 
 [eth]
 stable.opencast.org
