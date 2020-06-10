@@ -73,7 +73,6 @@ RUN apt-get install -y -t unstable \
     apt-get clean
 
 RUN apt-get install -y -t unstable gcc-8-base && apt-get clean
-RUN apt-get install -y -t unstable openjdk-8-jre-headless && apt-get clean
 RUN apt-get install -y -t unstable openjdk-8-jdk && apt-get clean
 
     # Markdown doc generation bits
