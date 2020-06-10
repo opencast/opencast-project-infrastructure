@@ -15,8 +15,7 @@ RUN sed -i '/override_install_langs/d' /etc/yum.conf
 
 # Install the dependencies
 RUN yum install -y epel-release &&\
-    yum update -y && \
-    yum clean all
+    yum update -y
 
 RUN yum install -y \
         bash \
@@ -47,19 +46,26 @@ RUN yum install -y \
      ## For SQL script testing
         mysql \
      # Package building deps
-        createrepo \
-        rpmdevtools \
-        rpmlint \
-        yum-utils \
-        rpm-sign \
+     # Moved below, causes yum to crash and corrupt its db if it's here
+#        createrepo \
+#        rpmdevtools \
+#        rpmlint \
+#        yum-utils \
+#        rpm-sign \
      # Bits for buildbot worker
          gcc \
          openssl-devel \
      # Crowdin
          crowdin \
      # bc for the database test script
-         bc && \
-    yum clean all
+         bc
+
+RUN yum install -y \
+        createrepo \
+        rpmdevtools \
+        rpmlint \
+        yum-utils \
+        rpm-sign
 
     # Markdown doc generation bits
 RUN pip3.6 install --no-cache-dir mkdocs markdown_inline_graphviz_extension mkdocs-windmill
