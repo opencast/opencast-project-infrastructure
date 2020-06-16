@@ -43,7 +43,6 @@ RUN apt-get install -y \
      # Doc deps
      ## Python deps
         python3-pip \
-        python-pip \
      ## Packages for building docs
         libyaml-dev \
         nodejs \
