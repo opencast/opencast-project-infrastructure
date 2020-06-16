@@ -12,5 +12,8 @@ doPush() {
 doPush buildbot master
 doPush deb9 worker-base
 doPush deb10 worker-base
+doPush ubu16 worker-base
+doPush ubu18 worker-base
+doPush ubu20 worker-base
 doPush cent7 worker-base
 doPush cent8 worker-base

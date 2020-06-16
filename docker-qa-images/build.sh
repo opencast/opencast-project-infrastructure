@@ -10,6 +10,9 @@ doBuild() {
 }
 
 doBuild buildbot master
+doBuild ubu16 worker-base
+doBuild ubu18 worker-base
+doBuild ubu20 worker-base
 doBuild deb9 worker-base
 doBuild deb10 worker-base
 doBuild cent7 worker-base
