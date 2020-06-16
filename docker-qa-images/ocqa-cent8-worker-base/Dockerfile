@@ -28,7 +28,7 @@ RUN yum install -y \
 # not built yet due to dependency issues
 #        sox \
         hunspell \
-        java-1.8.0-openjdk \
+        java-1.8.0-openjdk-headless \
      # Build deps
         tar gzip bzip2 unzip \
         git \

@@ -32,7 +32,7 @@ RUN apt-get install -y \
         sox \
         hunspell \
         ffmpeg-dist \
-        openjdk-8-jre \
+        openjdk-8-jre-headless \
      # Build deps
         tar gzip bzip2 unzip \
         git \
