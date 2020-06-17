@@ -6,20 +6,15 @@
     pull: yes
     state: present
     restarted: yes
-  #become: yes
+  become: yes
 
-# Lame workaround to avoid having to get the docker python plugin installed
-# Currently requires py3, but these playbooks break with 3 (specifically on CentOS related to yum/dnf)...
 - name: Start Databases
-  shell: "docker-compose up -d"
-  args:
-    chdir: "{{ buildbot_home }}"
-  #docker_compose:
-  #  project_src: "{{ buildbot_home }}"
-  #  pull: yes
-  #  state: present
-  #  restarted: yes
-  #become: yes
+  docker_compose:
+    project_src: "{{ buildbot_home }}"
+    pull: yes
+    state: present
+    restarted: yes
+  become: yes
 
 - name: Start Autossh
   systemd:
