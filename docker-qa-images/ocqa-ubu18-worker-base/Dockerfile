@@ -76,5 +76,5 @@ RUN  curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/release
 
 COPY buildbot.tac /builder/buildbot.tac
      # Install required python packages, and twisted
-RUN pip3 install --no-cache-dir buildbot-worker==2.7.0
+RUN pip3 install --no-cache-dir buildbot-worker==2.8.2
 
