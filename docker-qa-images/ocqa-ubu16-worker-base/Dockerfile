@@ -68,10 +68,16 @@ RUN pip3 install --no-cache-dir ansible paramiko
     # Buildbot s3 deploy bits
 RUN pip3 install --no-cache-dir awscli
 
-     # Test runs produce a great quantity of dead grandchild processes.  In a
-     # non-docker environment, these are automatically reaped by init (process 1),
-     # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
-RUN  curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.1/dumb-init_1.2.1_amd64 && \
+RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen && \
+    sed -i -e 's/# es_ES.UTF-8 UTF-8/es_ES.UTF-8 UTF-8/' /etc/locale.gen && \
+    sed -i -e 's/# fr_FR.UTF-8 UTF-8/fr_FR.UTF-8 UTF-8/' /etc/locale.gen && \
+    locale-gen
+
+    # Test runs produce a great quantity of dead grandchild processes.  In a
+    # non-docker environment, these are automatically reaped by init (process 1),
+    # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
+RUN curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.1/dumb-init_1.2.1_amd64 && \
      chmod +x /usr/local/bin/dumb-init
 
 COPY buildbot.tac /builder/buildbot.tac

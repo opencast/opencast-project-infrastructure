@@ -59,6 +59,9 @@ RUN yum install -y \
          bc && \
     yum clean all
 
+# The base CentOS image strips the locales out, this reinstalls them
+RUN yum reinstall -y glibc-common
+
     # Markdown doc generation bits
 RUN pip3.6 install --no-cache-dir mkdocs markdown_inline_graphviz_extension mkdocs-windmill
     # Ansible deploy bits
