@@ -10,7 +10,8 @@
 
 - name: Updating Docker images
   docker_image:
-    name: "ocqa-{{ item }}-worker:{{ docker_worker_image_tag }}"
+    name: "ocqa-{{ item }}-worker"
+    tag: "{{ docker_worker_image_tag }}"
     source: pull
     state: absent
   with_items:
@@ -19,9 +20,11 @@
 
 - name: Updating Docker images
   docker_image:
-    name: "{{ docker_image_user }}/ocqa-{{ item }}-worker-base:{{ docker_worker_image_tag }}"
+    name: "{{ docker_image_user }}/ocqa-{{ item }}-worker-base"
+    tag: "{{ docker_worker_image_tag }}"
     source: pull
     state: present
+    force: yes
   when: "'workers' in group_names"
   with_items:
     - "{{ docker_worker_images }}"
@@ -29,8 +32,10 @@
 
 - name: Updating Docker master image
   docker_image:
-    name: "{{ docker_image_user }}/ocqa-buildbot-master:{{ docker_image_tag }}"
+    name: "{{ docker_image_user }}/ocqa-buildbot-master"
+    tag: "{{ docker_image_tag }}"
     source: pull
     state: present
+    force: yes
   when: "'master' in group_names"
   become: yes
