@@ -13,9 +13,23 @@
     enabled: yes
   become: yes
 
+- name: Updating pip
+  pip:
+    name: [pip]
+#    executable: pip3
+    state: latest
+  become: yes
+
+- name: Updating setuptools
+  pip:
+    name: [setuptools]
+#    executable: pip3
+    state: latest
+  become: yes
+
 - name: Install docker python libraries
   pip:
     name: [docker, docker-compose]
-    executable: pip3
+#    executable: pip3
     state: latest
   become: yes

@@ -13,6 +13,6 @@
 
 - name: Installing Docker
   yum:
-    name: [docker-ce, gcc]
+    name: [docker-ce, gcc, python-devel, python3-devel]
     state: latest
   become: yes
