@@ -9,6 +9,19 @@ doBuild() {
   bash build-container.sh $DOCKER_OWNER $1 $2 $TAG
 }
 
+for i in 16.04 18.04 20.04
+do
+  docker pull ubuntu:$i
+done
+for i in 9 10
+do
+  docker pull debian:$i
+done
+for i in 7 8
+do
+  docker pull centos:$i
+done
+
 doBuild buildbot master
 doBuild ubu16 worker-base
 doBuild ubu18 worker-base
