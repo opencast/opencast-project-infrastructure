@@ -7,7 +7,7 @@ docker_image_user: "greglogan"
 source_rpm_repo_url: "https://github.com/gregorydlogan/opencast-rpmbuild.git"
 
 send_mail_notifications: True
-send_gh_notifications: True
+send_gh_notifications: False
 push_crowdin: True
 deploy_tags: True
 
