@@ -50,6 +50,8 @@ services:
       - "127.0.0.1:3307:3306"
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
+      - MYSQL_ROOT_HOST=%
+      - MYSQL_INITDB_SKIP_TZINFO=1
 
   mysql56:
     image: mysql:5.6
@@ -59,6 +61,7 @@ services:
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
       - MYSQL_ROOT_HOST=%
+      - MYSQL_INITDB_SKIP_TZINFO=1
 
   mysql57:
     image: mysql:5.7
@@ -68,4 +71,5 @@ services:
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
       - MYSQL_ROOT_HOST=%
+      - MYSQL_INITDB_SKIP_TZINFO=1
 {% endif %}
