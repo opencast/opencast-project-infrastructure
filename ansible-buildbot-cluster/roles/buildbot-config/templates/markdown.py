@@ -40,8 +40,8 @@ class GenerateMarkdownCommands(buildstep.ShellMixin, steps.BuildStep):
                     name="Build " + target[:-1] + " docs",
                     workdir="build/docs/guides/" + target,
                     env={
-                        "LC_ALL": "en_US.utf-8",
-                        "LANG": "en_US.utf-8"
+                        "LC_ALL": "C.UTF-8",
+                        "LANG": "C.UTF-8"
                     },
                     haltOnFailure=False,
                     flunkOnFailure=True)
