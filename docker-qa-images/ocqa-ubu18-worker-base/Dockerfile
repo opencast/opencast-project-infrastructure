@@ -62,7 +62,7 @@ RUN apt-get install -y \
      apt-get clean
 
     # Markdown doc generation bits
-RUN pip3 install --no-cache-dir mkdocs markdown_inline_graphviz_extension mkdocs-windmill
+RUN pip3 install --upgrade --no-cache-dir mkdocs markdown_inline_graphviz_extension mkdocs-windmill six
     # Ansible deploy bits
 RUN pip3 install --no-cache-dir ansible paramiko
     # Buildbot s3 deploy bits
