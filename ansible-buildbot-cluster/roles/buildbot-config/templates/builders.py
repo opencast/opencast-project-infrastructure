@@ -2,6 +2,7 @@
 # ex: set filetype=python:
 
 from buildbot.plugins import util
+import random
 import build
 import reports
 import markdown
@@ -81,6 +82,12 @@ def getBuildersForBranch(props):
 
     pretty_branch_name = props['branch_pretty']
 
+    deb_props = dict(props)
+    deb_props['image'] = random.choice({{ docker_debian_worker_images }})
+
+    cent_props = dict(props)
+    cent_props['image'] = random.choice({{ docker_centos_worker_images }})
+
     b_build = util.BuilderConfig(
         name=pretty_branch_name + " Build",
         workernames=workers,
@@ -116,7 +123,7 @@ def getBuildersForBranch(props):
         name=pretty_branch_name + " Debian Packaging",
         workernames=workers,
         factory=debs.getBuildPipeline(),
-        properties=props,
+        properties=deb_props,
         collapseRequests=True,
         locks=[deb_lock.access('exclusive')])
 
@@ -124,7 +131,7 @@ def getBuildersForBranch(props):
         name=pretty_branch_name + " RPM Packaging",
         workernames=workers,
         factory=rpms.getBuildPipeline(),
-        properties=props,
+        properties=cent_props,
         collapseRequests=True,
         locks=[rpm_lock.access('exclusive')])
 
@@ -137,7 +144,7 @@ def getBuildersForBranch(props):
             name=pretty_branch_name + " Debian Repository",
             workernames=repo_workers,
             factory=deb_repo.getBuildPipeline(),
-            properties=props,
+            properties=deb_props,
             collapseRequests=True,
             locks=[deb_lock.access('exclusive')])
 
@@ -145,7 +152,7 @@ def getBuildersForBranch(props):
             name=pretty_branch_name + " RPM Repository",
             workernames=repo_workers,
             factory=rpm_repo.getBuildPipeline(),
-            properties=props,
+            properties=cent_props,
             collapseRequests=True,
             locks=[rpm_lock.access('exclusive')])
 
