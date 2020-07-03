@@ -16,6 +16,7 @@ COPY opencast.list /etc/apt/sources.list.d
 COPY opencast-test.list /etc/apt/sources.list.d
 COPY nodesource.list /etc/apt/sources.list.d
 COPY crowdin.list /etc/apt/sources.list.d
+COPY stretch-backports.list /etc/apt/sources.list.d
 
 COPY aws-config /builder/.aws/config
 
@@ -33,12 +34,14 @@ RUN apt-get install -y \
         hunspell \
         ffmpeg-dist \
         openjdk-8-jre \
+        openjdk-11-jre \
      # Build deps
         tar gzip bzip2 unzip \
         git \
         maven \
         curl wget \
         openjdk-8-jdk \
+        openjdk-11-jdk \
         firefox-esr \
      # Doc deps
      ## Python deps

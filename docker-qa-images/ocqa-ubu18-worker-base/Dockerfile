@@ -33,12 +33,14 @@ RUN apt-get install -y \
         hunspell \
         ffmpeg-dist \
         openjdk-8-jre \
+        openjdk-11-jre \
      # Build deps
         tar gzip bzip2 unzip \
         git \
         maven \
         curl wget \
         openjdk-8-jdk \
+        openjdk-11-jdk \
         firefox \
      # Doc deps
      ## Python deps

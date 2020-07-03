@@ -28,12 +28,14 @@ RUN yum install -y \
         sox \
         hunspell \
         java-1.8.0-openjdk \
+        java-11-openjdk \
      # Build deps
         tar gzip bzip2 unzip \
         git \
         maven \
         curl wget \
         java-1.8.0-openjdk-devel \
+        java-11-openjdk-devel \
         firefox \
      # Doc deps
      ## Python deps for markdown

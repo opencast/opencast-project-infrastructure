@@ -5,7 +5,7 @@ MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 ARG         DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
-    apt-get install -y apt-transport-https gnupg curl && \
+    apt-get install -y apt-transport-https gnupg curl software-properties-common && \
     apt-get clean
 
 RUN curl -fsSL https://pkg.opencast.org/gpgkeys/opencast-deb.key | apt-key add -
@@ -16,6 +16,8 @@ COPY opencast.list /etc/apt/sources.list.d
 COPY opencast-test.list /etc/apt/sources.list.d
 COPY nodesource.list /etc/apt/sources.list.d
 COPY crowdin.list /etc/apt/sources.list.d
+
+RUN add-apt-repository ppa:openjdk-r/ppa
 
 COPY aws-config /builder/.aws/config
 
@@ -33,12 +35,14 @@ RUN apt-get install -y \
         hunspell \
         ffmpeg-dist \
         openjdk-8-jre \
+        openjdk-11-jre \
      # Build deps
         tar gzip bzip2 unzip \
         git \
         maven \
         curl wget \
         openjdk-8-jdk \
+        openjdk-11-jdk \
         firefox \
      # Doc deps
      ## Python deps
