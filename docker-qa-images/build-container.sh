@@ -13,7 +13,7 @@ LATEST_TAG="$1/ocqa-$2-$3:latest"
 IMAGE_TAG="$1/ocqa-$2-$3:$4"
 
 cd ocqa-$2-$3
-docker build -t "$LATEST_TAG" .
+docker build -t "$LATEST_TAG" . --no-cache
 if [ $# -eq 4 -a "latest" != $4 ]; then
   docker tag $LATEST_TAG $IMAGE_TAG
 fi

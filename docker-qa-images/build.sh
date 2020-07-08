@@ -7,6 +7,7 @@ TAG=latest
 
 doBuild() {
   bash build-container.sh $DOCKER_OWNER $1 $2 $TAG
+  docker image prune -f
 }
 
 for i in 16.04 18.04 20.04
