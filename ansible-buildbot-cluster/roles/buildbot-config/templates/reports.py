@@ -31,8 +31,11 @@ def __getBasePipeline():
         '-Dcheckstyle.skip=true',
         '-P "none,!frontend"'
     ])
+    #Building reports with JDK 8
+    env=common.getJDKSetting(8)
     site = common.shellCommand(
         command=command,
+        env=env,
         name="Build site report")
 
     f_build = util.BuildFactory()

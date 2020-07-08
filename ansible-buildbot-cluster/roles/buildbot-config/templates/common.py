@@ -80,6 +80,13 @@ def getWorkerPrep():
         commands=commandsAry,
         name="Build Prep")
 
+def getJDKSetting(jdk=8):
+    jdk={
+        "JAVA_HOME": "/usr/lib/jvm/java-1." + str(jdk) + ".0-openjdk-amd64",
+        "PATH": ["/usr/lib/jvm/java-1." + str(jdk) + ".0-openjdk-amd64/bin", "${PATH}"]
+    }
+    return jdk
+
 
 def getBuild(deploy=False, jdk=8):
     command = getMavenBase()
@@ -87,6 +94,11 @@ def getBuild(deploy=False, jdk=8):
         command.extend(['clean', 'install'])
     else:
         command.extend(['clean', 'deploy', '-P', 'none', '-s', 'settings.xml'])
+    env=getJDKSetting(jdk)
+    env["LANG"] = util.Interpolate("%(prop:LANG)s"),
+    env["LC_ALL"] = util.Interpolate("%(prop:LANG)s"),
+    env["LANGUAGE"] = util.Interpolate("%(prop:LANG)s"),
+    env["TZ"] = util.Interpolate("%(prop:TZ)s"),
     return shellSequence(
         commands=[
             shellArg(
@@ -97,14 +109,7 @@ def getBuild(deploy=False, jdk=8):
                 command=command,
                 logfile='build')
         ],
-        env={
-            "LANG": util.Interpolate("%(prop:LANG)s"),
-            "LC_ALL": util.Interpolate("%(prop:LANG)s"),
-            "LANGUAGE": util.Interpolate("%(prop:LANG)s"),
-            "TZ": util.Interpolate("%(prop:TZ)s"),
-            "JAVA_HOME": "/usr/lib/jvm/java-1." + str(jdk) + ".0-openjdk-amd64",
-            "PATH": ["/usr/lib/jvm/java-1." + str(jdk) + ".0-openjdk-amd64/bin", "${PATH}"]
-        },
+        env=env,
         name="Build")
 
 
