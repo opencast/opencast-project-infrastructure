@@ -81,7 +81,7 @@ def getWorkerPrep():
         name="Build Prep")
 
 
-def getBuild(deploy=False):
+def getBuild(deploy=False, jdk=8):
     command = getMavenBase()
     if not deploy:
         command.extend(['clean', 'install'])
@@ -101,7 +101,9 @@ def getBuild(deploy=False):
             "LANG": util.Interpolate("%(prop:LANG)s"),
             "LC_ALL": util.Interpolate("%(prop:LANG)s"),
             "LANGUAGE": util.Interpolate("%(prop:LANG)s"),
-            "TZ": util.Interpolate("%(prop:TZ)s")
+            "TZ": util.Interpolate("%(prop:TZ)s"),
+            "JAVA_HOME": "/usr/lib/jvm/java-1." + str(jdk) + ".0-openjdk-amd64",
+            "PATH": ["/usr/lib/jvm/java-1." + str(jdk) + ".0-openjdk-amd64/bin", "${PATH}"]
         },
         name="Build")
 
