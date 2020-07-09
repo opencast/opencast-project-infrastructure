@@ -2,6 +2,7 @@
 # ex: set filetype=python:
 
 from buildbot.plugins import schedulers, util
+import common
 
 
 def _getAnyBranchScheduler(name, builderNames, change_filter=None, properties=dict()):
@@ -58,14 +59,14 @@ def _getForceScheduler(props, prefix, builderNames):
 
 
 def getPullRequestScheduler():
+    builderNames = [ "Pull Request " + build_type + " JDK " + str(jdk) for build_type in [ 'Build', 'Reports' ] for jdk in common.getJDKBuilds()]
+    builderNames.extend([
+        "Pull Request Markdown",
+        "Pull Request Database Tests"
+    ])
     # NB: We're returning a list here since master.cfg is using List.extend()
     return [_getAnyBranchScheduler(name="Pull Requests",
-                                   builderNames=[
-                                       "Pull Request Build",
-                                       "Pull Request Reports",
-                                       "Pull Request Markdown",
-                                       "Pull Request Database Tests"
-                                   ],
+                                   builderNames=builderNames,
                                    change_filter=util.ChangeFilter(category="pull"))]
 
 
@@ -75,26 +76,31 @@ def _getBasicSchedulers(props):
 
     branch_cf = util.ChangeFilter(category=None, branch_re=git_branch_name)
 
-    commits = _getAnyBranchScheduler(
+    schedDict = {}
+
+    for build_type in [ "Build", "Reports" ]:
+        for jdk in common.getJDKBuilds():
+            sched = _getAnyBranchScheduler(
+                name=pretty_branch_name + " " + build_type + " JDK " + str(jdk),
+                change_filter=branch_cf,
+                properties=props,
+                builderNames=[
+                    pretty_branch_name + " " + build_type + " JDK " + str(jdk),
+            ])
+            schedDict[build_type + str(jdk)] = sched
+
+    sched = _getAnyBranchScheduler(
         name=pretty_branch_name + " Quick Build",
         change_filter=branch_cf,
         properties=props,
         builderNames=[
-            pretty_branch_name + " Build",
             pretty_branch_name + " Markdown",
             pretty_branch_name + " Database Tests"
         ])
-
-    reports = _getAnyBranchScheduler(
-        name=pretty_branch_name + " Reports",
-        change_filter=branch_cf,
-        properties=props,
-        builderNames=[
-            pretty_branch_name + " Reports",
-        ])
+    schedDict["markdowndb"] = sched
 
     if props['package_all']:
-        package = schedulers.Nightly(
+        sched = schedulers.Nightly(
             name=pretty_branch_name + ' Package Generation',
             change_filter=branch_cf,
             hour={{nightly_build_hour}},
@@ -104,8 +110,9 @@ def _getBasicSchedulers(props):
                 pretty_branch_name + " Debian Packaging",
                 pretty_branch_name + " RPM Packaging",
             ])
+        schedDict['package'] = sched
     else:
-        package = schedulers.Dependent(
+        sched = schedulers.Dependent(
             name=pretty_branch_name + " Packaging Generation",
             upstream=commits,
             properties=props,
@@ -113,22 +120,22 @@ def _getBasicSchedulers(props):
                 pretty_branch_name + " Debian Packaging",
                 pretty_branch_name + " RPM Packaging"
             ])
+        schedDict['package'] = sched
 
-    return commits, reports, package
+    return schedDict
 
 
 def getSchedulers(props):
 
     pretty_branch_name = props['branch_pretty']
 
-    commits, reports, package = _getBasicSchedulers(props)
-
-    scheduler_list = [commits, reports, package]
+    sched_dict = _getBasicSchedulers(props)
+    scheduler_list = list(sched_dict.values())
 
     if props['has_repo_builder']:
         repo = schedulers.Dependent(
             name=pretty_branch_name + ' Repository Generation',
-            upstream=package,
+            upstream=sched_dict['package'],
             properties=props,
             builderNames=[
                 pretty_branch_name + " Debian Repository",
@@ -137,21 +144,20 @@ def getSchedulers(props):
         scheduler_list.append(repo)
 
         if props['deploy_env']:
-            deploy = schedulers.Dependent(
+            scheduler_list.append(schedulers.Dependent(
                 name=pretty_branch_name + " Ansible Deploy",
                 upstream=repo,
                 properties=props,
-                builderNames=[pretty_branch_name + " Ansible Deploy"])
+                builderNames=[pretty_branch_name + " Ansible Deploy"]))
 
-            scheduler_list.append(deploy)
+    forceBuilders = [pretty_branch_name + " Reports JDK " + str(jdk) for jdk in common.getJDKBuilds()]
 
-    forceBuilders = [
-        pretty_branch_name + " Reports",
+    forceBuilders.extend([
         pretty_branch_name + " Markdown",
         pretty_branch_name + " Database Tests",
         pretty_branch_name + " Debian Packaging",
         pretty_branch_name + " RPM Packaging"
-    ]
+    ])
 
     if props['has_repo_builder']:
         forceBuilders.append(pretty_branch_name + " Debian Repository")
@@ -159,7 +165,8 @@ def getSchedulers(props):
         if props['deploy_env']:
             forceBuilders.append(pretty_branch_name + " Ansible Deploy")
 
-    forceBuild = _getForceScheduler(props, "ForceBuild", [pretty_branch_name + " Build"])
+    forceBuildNames = [pretty_branch_name + " Build JDK " + str(jdk) for jdk in common.getJDKBuilds()]
+    forceBuild = _getForceScheduler(props, "ForceBuild", forceBuildNames)
     scheduler_list.append(forceBuild)
 
     forceOther = _getForceScheduler(props, "ForceBuildOther", forceBuilders)

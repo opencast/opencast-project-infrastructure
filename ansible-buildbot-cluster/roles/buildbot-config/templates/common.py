@@ -80,6 +80,12 @@ def getWorkerPrep():
         commands=commandsAry,
         name="Build Prep")
 
+
+#TODO: Generalize this and use it
+def getJDKBuilds():
+    return [8, 11]
+
+
 @util.renderer
 def getMavenEnv(props):
     jdk = props.getProperty("jdk")
