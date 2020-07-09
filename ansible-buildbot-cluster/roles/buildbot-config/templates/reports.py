@@ -32,7 +32,7 @@ def __getBasePipeline():
         '-P "none,!frontend"'
     ])
     #Building reports with JDK 8
-    env=common.getJDKSetting(8)
+    env=common.getMavenEnv
     site = common.shellCommand(
         command=command,
         env=env,

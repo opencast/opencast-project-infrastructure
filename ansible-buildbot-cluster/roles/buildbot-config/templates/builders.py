@@ -88,11 +88,14 @@ def getBuildersForBranch(props):
     cent_props = dict(props)
     cent_props['image'] = random.choice({{ docker_centos_worker_images }})
 
+    jdk8_props = dict(props)
+    jdk8_props['jdk'] = 8
+
     b_build = util.BuilderConfig(
         name=pretty_branch_name + " Build",
         workernames=workers,
         factory=build.getBuildPipeline(),
-        properties=props,
+        properties=jdk8_props,
         collapseRequests=True,
         locks=[mvn_lock.access('exclusive')])
 
@@ -100,7 +103,7 @@ def getBuildersForBranch(props):
         name=pretty_branch_name + " Reports",
         workernames=workers,
         factory=reports.getBuildPipeline(),
-        properties=props,
+        properties=jdk8_props,
         collapseRequests=True,
         locks=[mvn_lock.access('exclusive')])
 
