@@ -87,6 +87,12 @@ def getBuildersForBranch(props):
     cent_props = dict(props)
     cent_props['image'] = random.choice({{ docker_centos_worker_images }})
 
+    el7_props = dict(props)
+    el7_props['image'] = "cent7"
+
+    el8_props = dict(props)
+    el8_props['image'] = "cent8"
+
     builders = []
 
     for jdk in common.getJDKBuilds():
@@ -125,10 +131,18 @@ def getBuildersForBranch(props):
         locks=[deb_lock.access('exclusive')]))
 
     builders.append(util.BuilderConfig(
-        name=pretty_branch_name + " RPM Packaging",
+        name=pretty_branch_name + " el7 RPM Packaging",
         workernames=workers,
         factory=rpms.getBuildPipeline(),
-        properties=cent_props,
+        properties=el7_props,
+        collapseRequests=True,
+        locks=[rpm_lock.access('exclusive')]))
+
+    builders.append(util.BuilderConfig(
+        name=pretty_branch_name + " el8 RPM Packaging",
+        workernames=workers,
+        factory=rpms.getBuildPipeline(),
+        properties=el8_props,
         collapseRequests=True,
         locks=[rpm_lock.access('exclusive')]))
 

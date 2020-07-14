@@ -108,7 +108,8 @@ def _getBasicSchedulers(props):
             properties=props,
             builderNames=[
                 pretty_branch_name + " Debian Packaging",
-                pretty_branch_name + " RPM Packaging",
+                pretty_branch_name + " el7 RPM Packaging",
+                pretty_branch_name + " el8 RPM Packaging"
             ])
         schedDict['package'] = sched
     else:
@@ -118,7 +119,8 @@ def _getBasicSchedulers(props):
             properties=props,
             builderNames=[
                 pretty_branch_name + " Debian Packaging",
-                pretty_branch_name + " RPM Packaging"
+                pretty_branch_name + " el7 RPM Packaging",
+                pretty_branch_name + " el8 RPM Packaging"
             ])
         schedDict['package'] = sched
 
@@ -156,7 +158,8 @@ def getSchedulers(props):
         pretty_branch_name + " Markdown",
         pretty_branch_name + " Database Tests",
         pretty_branch_name + " Debian Packaging",
-        pretty_branch_name + " RPM Packaging"
+        pretty_branch_name + " el7 RPM Packaging",
+        pretty_branch_name + " el8 RPM Packaging"
     ])
 
     if props['has_repo_builder']:
@@ -179,7 +182,8 @@ def getSchedulers(props):
             properties=props,
             builderNames=[
                 pretty_branch_name + " Debian Packaging",
-                pretty_branch_name + " RPM Packaging"
+                pretty_branch_name + " el7 RPM Packaging",
+                pretty_branch_name + " el8 RPM Packaging"
             ])
         scheduler_list.append(forcePackage)
 

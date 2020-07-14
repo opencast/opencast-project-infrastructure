@@ -14,6 +14,7 @@ profiles = {
 @util.renderer
 def getRPMBuilds(props):
     builds = []
+    elvers = props.getProperty("image")[-1]
     for profile in profiles[props.getProperty('branch_pretty')]:
         builds.append(common.shellArg(
             command=[
@@ -30,7 +31,7 @@ def getRPMBuilds(props):
                 '--addsign',
                 '--key-id', util.Interpolate("%(prop:signing_key)s"),
                 util.Interpolate(
-                    "RPMS/noarch/opencast%(prop:pkg_major_version)s-" + profile + "-%(prop:pkg_major_version)s.x-%(prop:buildnumber)s.%(prop:short_revision)s.el7.noarch.rpm")
+                    "RPMS/noarch/opencast%(prop:pkg_major_version)s-" + profile + "-%(prop:pkg_major_version)s.x-%(prop:buildnumber)s.%(prop:short_revision)s.el" + elvers + ".noarch.rpm")
             ],
             logfile=profile + " signing"))
     return builds
