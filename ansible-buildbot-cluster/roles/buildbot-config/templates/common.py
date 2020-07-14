@@ -89,13 +89,18 @@ def getJDKBuilds():
 @util.renderer
 def getMavenEnv(props):
     jdk = props.getProperty("jdk")
+    image = props.getProperty("image")
+    if "deb" in image or "ubu" in image:
+        java_home = "/usr/lib/jvm/java-1." + str(jdk) + ".0-openjdk-amd64"
+    elif "cent" in image:
+        java_home = "/usr/lib/jvm/java-1." + str(jdk) + ".0-openjdk"
     env={
         "LANG": util.Interpolate("%(prop:LANG)s"),
         "LC_ALL": util.Interpolate("%(prop:LANG)s"),
         "LANGUAGE": util.Interpolate("%(prop:LANG)s"),
         "TZ": util.Interpolate("%(prop:TZ)s"),
-        "JAVA_HOME": "/usr/lib/jvm/java-1." + str(jdk) + ".0-openjdk-amd64",
-        "PATH": ["/usr/lib/jvm/java-1." + str(jdk) + ".0-openjdk-amd64/bin", "${PATH}"]
+        "JAVA_HOME": java_home,
+        "PATH": [ java_home + "/bin", "${PATH}" ]
     }
     return env
 
