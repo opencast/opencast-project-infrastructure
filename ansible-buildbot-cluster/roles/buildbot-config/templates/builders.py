@@ -45,30 +45,31 @@ repo_workers = list(filter(lambda a: a, [
 ]))
 
 
-def getPullRequestBuilder():
+def getPullRequestBuilder(props, pretty_branch_name):
 
     builders = []
 
-    for jdk in common.getJDKBuilds():
+    for jdk in common.getJDKBuilds(props, pretty_branch_name):
         jdk_props = dict()
         jdk_props['jdk'] = str(jdk)
         for build_type in ["Build", "Reports"]:
             builders.append(util.BuilderConfig(
-                name="Pull Request " + build_type + " JDK " + str(jdk),
+                name=pretty_branch_name + " Pull Request " + build_type + " JDK " + str(jdk),
                 workernames=workers,
                 factory=build.getPullRequestPipeline(),
                 collapseRequests=True,
+                properties=jdk_props,
                 locks=[mvn_lock.access('exclusive')]))
 
 
     builders.append(util.BuilderConfig(
-        name="Pull Request Markdown",
+        name=pretty_branch_name + " Pull Request Markdown",
         workernames=workers,
         factory=markdown.getPullRequestPipeline(),
         collapseRequests=True))
 
     builders.append(util.BuilderConfig(
-        name="Pull Request Database Tests",
+        name=pretty_branch_name + " Pull Request Database Tests",
         workernames=workers,
         factory=database.getPullRequestPipeline(),
         collapseRequests=True,
@@ -93,10 +94,10 @@ def getBuildersForBranch(props):
     el8_props = dict(props)
     el8_props['image'] = "cent8"
 
-    builders = []
+    builders = getPullRequestBuilder(props, pretty_branch_name)
 
-    for jdk in common.getJDKBuilds():
-        jdk_props = dict(props)
+    for jdk in common.getJDKBuilds(props, pretty_branch_name):
+        jdk_props = dict()
         jdk_props['jdk'] = str(jdk)
         for build_type in ["Build", "Reports"]:
             builders.append(util.BuilderConfig(

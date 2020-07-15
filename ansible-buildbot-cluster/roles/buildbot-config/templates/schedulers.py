@@ -58,16 +58,18 @@ def _getForceScheduler(props, prefix, builderNames):
         username=util.UserNameParameter(label="your name:", size=80))
 
 
-def getPullRequestScheduler():
-    builderNames = [ "Pull Request " + build_type + " JDK " + str(jdk) for build_type in [ 'Build', 'Reports' ] for jdk in common.getJDKBuilds()]
+def getPullRequestScheduler(props, pretty_branch_name):
+    builderNames = [ pretty_branch_name + " Pull Request " + build_type + " JDK " + str(jdk) for build_type in [ 'Build', 'Reports' ] for jdk in common.getJDKBuilds(props, pretty_branch_name)]
     builderNames.extend([
-        "Pull Request Markdown",
-        "Pull Request Database Tests"
+        pretty_branch_name + " Pull Request Markdown",
+        pretty_branch_name + " Pull Request Database Tests"
     ])
-    # NB: We're returning a list here since master.cfg is using List.extend()
-    return [_getAnyBranchScheduler(name="Pull Requests",
+
+    pull_cf=util.ChangeFilter(category="pull", filter_fn=lambda x: x.properties.getProperty('basename') in [ "r/" + pretty_branch_name.lower(), pretty_branch_name.lower() ] )
+
+    return _getAnyBranchScheduler(name=pretty_branch_name + " Pull Requests",
                                    builderNames=builderNames,
-                                   change_filter=util.ChangeFilter(category="pull"))]
+                                   change_filter=pull_cf)
 
 
 def _getBasicSchedulers(props):
@@ -78,14 +80,16 @@ def _getBasicSchedulers(props):
 
     schedDict = {}
 
+    schedDict['prs'] = getPullRequestScheduler(props, pretty_branch_name)
+
     for build_type in [ "Build", "Reports" ]:
-        for jdk in common.getJDKBuilds():
+        for jdk in common.getJDKBuilds(props, pretty_branch_name):
             sched = _getAnyBranchScheduler(
-                name=pretty_branch_name + " " + build_type + " JDK " + str(jdk),
+                name=common.getBuildWithJDK(pretty_branch_name, build_type, jdk),
                 change_filter=branch_cf,
                 properties=props,
                 builderNames=[
-                    pretty_branch_name + " " + build_type + " JDK " + str(jdk),
+                    common.getBuildWithJDK(pretty_branch_name, build_type, jdk),
             ])
             schedDict[build_type + str(jdk)] = sched
 
@@ -113,9 +117,10 @@ def _getBasicSchedulers(props):
             ])
         schedDict['package'] = sched
     else:
+        defaultJDK = common.getJDKBuilds(props, pretty_branch_name)[0]
         sched = schedulers.Dependent(
             name=pretty_branch_name + " Packaging Generation",
-            upstream=commits,
+            upstream=schedDict["Build" + str(defaultJDK)],
             properties=props,
             builderNames=[
                 pretty_branch_name + " Debian Packaging",
@@ -152,7 +157,11 @@ def getSchedulers(props):
                 properties=props,
                 builderNames=[pretty_branch_name + " Ansible Deploy"]))
 
-    forceBuilders = [pretty_branch_name + " Reports JDK " + str(jdk) for jdk in common.getJDKBuilds()]
+    forceBuildNames = [common.getBuildWithJDK(pretty_branch_name, "Build", jdk) for jdk in common.getJDKBuilds(props, pretty_branch_name)]
+    forceBuild = _getForceScheduler(props, "ForceBuild", forceBuildNames)
+    scheduler_list.append(forceBuild)
+
+    forceBuilders = [common.getBuildWithJDK(pretty_branch_name, "Reports", jdk) for jdk in common.getJDKBuilds(props, pretty_branch_name)]
 
     forceBuilders.extend([
         pretty_branch_name + " Markdown",
@@ -167,10 +176,6 @@ def getSchedulers(props):
         forceBuilders.append(pretty_branch_name + " RPM Repository")
         if props['deploy_env']:
             forceBuilders.append(pretty_branch_name + " Ansible Deploy")
-
-    forceBuildNames = [pretty_branch_name + " Build JDK " + str(jdk) for jdk in common.getJDKBuilds()]
-    forceBuild = _getForceScheduler(props, "ForceBuild", forceBuildNames)
-    scheduler_list.append(forceBuild)
 
     forceOther = _getForceScheduler(props, "ForceBuildOther", forceBuilders)
     scheduler_list.append(forceOther)

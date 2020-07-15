@@ -81,9 +81,12 @@ def getWorkerPrep():
         name="Build Prep")
 
 
-#TODO: Generalize this and use it
-def getJDKBuilds():
-    return [8, 11]
+def getJDKBuilds(props, pretty_branch_name):
+    return props['jdk']
+
+
+def getBuildWithJDK(prefix, build_type, jdk):
+    return prefix + " " + build_type + " JDK " + str(jdk)
 
 
 @util.renderer

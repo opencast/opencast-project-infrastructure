@@ -10,16 +10,19 @@ opencast:
   Develop:
     branch: 'develop'
     pom: '9'
+    jdk: [ '8', '11' ]
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     server: 'develop'
   8.x:
     branch: 'r/8.x'
     pom: '8'
+    jdk: [ '8' ]
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     server: 'stable'
   7.x:
     branch: 'r/7.x'
     pom: '7'
+    jdk: [ '8' ]
     profiles: [ "admin", "adminpresentation", "adminworker", "allinone", "ingest", "migration", "presentation", "worker" ]
     server: 'legacy'
 
