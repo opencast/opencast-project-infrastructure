@@ -20,7 +20,7 @@ class GenerateMarkdownCommands(buildstep.ShellMixin, steps.BuildStep):
         targets = []
         for line in stdout.split('\n'):
             target = str(line.strip())
-            if target:
+            if target and "node_modules" != target:
                 targets.append(target)
         return targets
 
@@ -63,7 +63,7 @@ class GenerateS3Commands(buildstep.ShellMixin, steps.BuildStep):
         targets = []
         for line in stdout.split('\n'):
             target = str(line.strip())
-            if target:
+            if target and "node_modules" != target:
                 targets.append(target)
         return targets
 
@@ -81,8 +81,7 @@ class GenerateS3Commands(buildstep.ShellMixin, steps.BuildStep):
                 common.syncAWS(
                     pathFrom="docs/guides/" + target + "/site",
                     pathTo="s3://public/builds/{{ markdown_fragment }}/" + target,
-                    name="Upload " + target[:-1] + " to S3",
-                    doStepIf=lambda step: step.getProperty("npmConfigExists") == "True")
+                    name="Upload " + target[:-1] + " to S3")
                 for target in self.extract_targets(self.observer.getStdout())
             ])
         return result
@@ -90,37 +89,18 @@ class GenerateS3Commands(buildstep.ShellMixin, steps.BuildStep):
 
 def __getBasePipeline():
 
-    enable = steps.SetPropertyFromCommand(
-        command='[ -f docs/guides/package.json ] && echo True || echo False',
-        property="npmConfigExists",
-        name="Check mkdocs version support")
-
-    grunt = steps.SetPropertyFromCommand(
-        command='[ -f docs/guides/Gruntfile.js ] && echo True || echo False',
-        property="gruntConfigExists",
-        name="Check Grunt config file existence")
-
-    gruntCheck = common.shellSequence(
+    npm_install = common.shellSequence(
         commands=[
             common.shellArg(
                 command=['npm', 'install'],
                 logfile='npm_install'),
-            common.shellArg(
-                command=['./node_modules/grunt/bin/grunt'],
-                haltOnFailure=False,
-                logfile='grunt'),
         ],
         workdir="build/docs/guides",
-        name="Check Markdown doc formatting with grunt",
-        haltOnFailure=False,
-        doStepIf=lambda step: step.getProperty("npmConfigExists") == "True" and step.getProperty("gruntConfigExists") == "True",
-        hideStepIf=lambda results, step: not (step.getProperty("npmConfigExists") == "True" and step.getProperty("gruntConfigExists") == "True"))
+        name="Running npm install",
+        haltOnFailure=True)
 
     npmCheck = common.shellSequence(
         commands=[
-            common.shellArg(
-                command=['npm', 'install'],
-                logfile='npm_install'),
             common.shellArg(
                 command=['npm', 'test'],
                 haltOnFailure=False,
@@ -129,25 +109,37 @@ def __getBasePipeline():
         workdir="build/docs/guides",
         name="Check Markdown doc formatting with markdown-cli",
         haltOnFailure=False,
-        doStepIf=lambda step: step.getProperty("npmConfigExists") == "True" and step.getProperty("gruntConfigExists") != "True",
-        hideStepIf=lambda results, step: not (step.getProperty("npmConfigExists") == "True" and step.getProperty("gruntConfigExists") != "True"))
+        doStepIf=lambda step: step.getProperty("pkg_major_version") == "7",
+        hideStepIf=lambda results, step: not (step.getProperty("pkg_major_version") == "7"))
 
-    build = GenerateMarkdownCommands(
+    build = common.shellCommand(
+        command=['.style-and-markdown-build.sh'],
+        name="Running tests and building docs",
+        env={
+            "LC_ALL": "en_US.UTF-8",
+            "LANG": "en_US.UTF-8",
+            "OC_CTYPE": "en_US.UTF-8",
+        },
+        haltOnFailure=False,
+        flunkOnFailure=True,
+        doStepIf=lambda step: step.getProperty("pkg_major_version") != "7",
+        hideStepIf=lambda results, step: not (step.getProperty("pkg_major_version") != "7"))
+
+    markdown = GenerateMarkdownCommands(
         command='ls -d */',
         name="Determining available docs",
         workdir="build/docs/guides",
         haltOnFailure=True,
-        flunkOnFailure=True)
+        flunkOnFailure=True,
+        doStepIf=lambda step: step.getProperty("pkg_major_version") == "7",
+        hideStepIf=lambda results, step: not (step.getProperty("pkg_major_version") == "7"))
 
     f_build = util.BuildFactory()
     f_build.addStep(common.getClone())
-    f_build.addStep(enable)
-    f_build.addStep(grunt)
-    f_build.addStep(gruntCheck)
+    f_build.addStep(npm_install)
     f_build.addStep(npmCheck)
-    # This is important, otherwise node_modules gets included as a doc build target
-    f_build.addStep(common.getClean())
     f_build.addStep(build)
+    f_build.addStep(markdown)
 
     return f_build
 
