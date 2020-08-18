@@ -5,7 +5,7 @@ MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 ARG         DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends apt-transport-https gnupg curl && \
+    apt-get install -y --no-install-recommends apt-transport-https gnupg curl ca-certificates && \
     apt-get clean
 
 RUN curl -fsSL https://pkg.opencast.org/gpgkeys/opencast-deb.key | apt-key add -
