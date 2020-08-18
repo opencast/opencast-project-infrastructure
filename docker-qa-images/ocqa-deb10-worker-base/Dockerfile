@@ -60,9 +60,9 @@ RUN apt-get install -y --no-install-recommends \
         mariadb-client \
      # Package building deps
         dpkg-dev \
-#        debhelper \
+        debhelper \
         devscripts \
-#        dh-exec \
+        dh-exec \
      # Repository generator
         mini-dinstall \
      # Database test script use
@@ -70,11 +70,6 @@ RUN apt-get install -y --no-install-recommends \
      # Crowdin
         crowdin3 && \
      apt-get clean
-
-RUN apt-get install -y --no-install-recommends -t unstable \
-        debhelper \
-        dh-exec && \
-    apt-get clean
 
 RUN apt-get install -y --no-install-recommends -t unstable gcc-8-base && apt-get clean
 RUN apt-get install -y --no-install-recommends -t unstable openjdk-8-jre && apt-get clean
