@@ -12,8 +12,9 @@
   docker_image:
     name: "ocqa-{{ item }}-worker"
     tag: "{{ docker_worker_image_tag }}"
-    source: pull
+    source: local
     state: absent
+    force_absent: yes
   with_items:
     - "{{ docker_worker_images }}"
   become: yes
@@ -24,7 +25,7 @@
     tag: "{{ docker_worker_image_tag }}"
     source: pull
     state: present
-    force: yes
+    force_tag: yes
   when: "'workers' in group_names"
   with_items:
     - "{{ docker_worker_images }}"
@@ -36,6 +37,6 @@
     tag: "{{ docker_image_tag }}"
     source: pull
     state: present
-    force: yes
+    force_tag: yes
   when: "'master' in group_names"
   become: yes
