@@ -61,6 +61,9 @@ RUN yum install -y \
          bc && \
     yum clean all
 
+RUN alternatives --set java java-1.8.0-openjdk.x86_64
+RUN alternatives --set javac java-1.8.0-openjdk.x86_64
+
 # The base CentOS image strips the locales out, this reinstalls them
 RUN yum reinstall -y glibc-common
 

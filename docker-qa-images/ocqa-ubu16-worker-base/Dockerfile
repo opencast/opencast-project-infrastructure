@@ -65,6 +65,8 @@ RUN apt-get install -y \
         crowdin3 && \
      apt-get clean
 
+RUN update-java-alternatives -s java-1.8.0-openjdk-amd64
+
     # Markdown doc generation bits
 RUN pip3 install --upgrade --no-cache-dir mkdocs markdown_inline_graphviz_extension mkdocs-windmill six
     # Ansible deploy bits
