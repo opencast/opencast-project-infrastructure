@@ -5,7 +5,7 @@ MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 ARG         DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
-    apt-get install -y apt-transport-https gnupg curl software-properties-common && \
+    apt-get install -y --no-install-recommends apt-transport-https gnupg curl software-properties-common && \
     apt-get clean
 
 RUN curl -fsSL https://pkg.opencast.org/gpgkeys/opencast-deb.key | apt-key add -
@@ -24,7 +24,7 @@ COPY aws-config /builder/.aws/config
 RUN apt-get update && \
     apt-get dist-upgrade -y
 
-RUN apt-get install -y \
+RUN apt-get install -y --no-install-recommends \
         bash \
         locales \
      # Run deps
