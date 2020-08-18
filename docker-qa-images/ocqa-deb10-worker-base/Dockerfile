@@ -50,6 +50,8 @@ RUN apt-get install -y --no-install-recommends \
         firefox-esr \
      # Doc deps
      ## Python deps
+        gcc \
+        python3-dev \
         python3-pip \
      ## Packages for building docs
         libyaml-dev \
@@ -80,12 +82,14 @@ RUN apt-get install -y --no-install-recommends -t unstable openjdk-8-jdk && apt-
 
 RUN update-java-alternatives -s java-1.8.0-openjdk-amd64
 
+RUN python3 -m pip --no-cache-dir install --upgrade pip
+RUN python3 -m pip --no-cache-dir install --upgrade setuptools
     # Markdown doc generation bits
-RUN pip3 install --upgrade --no-cache-dir mkdocs markdown_inline_graphviz_extension mkdocs-windmill six
+RUN python3 -m pip --no-cache-dir install mkdocs markdown_inline_graphviz_extension mkdocs-windmill six
     # Ansible deploy bits
-RUN pip3 install --no-cache-dir ansible paramiko
+RUN python3 -m pip --no-cache-dir install ansible paramiko
     # Buildbot s3 deploy bits
-RUN pip3 install --no-cache-dir awscli
+RUN python3 -m pip --no-cache-dir install awscli
 
 RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
     sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen && \
@@ -101,5 +105,5 @@ RUN curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases
 
 COPY buildbot.tac /builder/buildbot.tac
      # Install required python packages, and twisted
-RUN pip3 install --no-cache-dir buildbot-worker==2.8.2
+RUN python3 -m pip --no-cache-dir install buildbot-worker==2.8.2
 

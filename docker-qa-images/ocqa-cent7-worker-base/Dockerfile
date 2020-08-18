@@ -67,12 +67,15 @@ RUN alternatives --set javac java-1.8.0-openjdk.x86_64
 # The base CentOS image strips the locales out, this reinstalls them
 RUN yum reinstall -y glibc-common
 
+
+RUN python3.6 -m pip --no-cache-dir install --upgrade pip
+RUN python3.6 -m pip --no-cache-dir install --upgrade setuptools
     # Markdown doc generation bits
-RUN pip3.6 install --no-cache-dir mkdocs markdown_inline_graphviz_extension mkdocs-windmill
+RUN python3.6 -m pip --no-cache-dir install mkdocs markdown_inline_graphviz_extension mkdocs-windmill
     # Ansible deploy bits
-RUN pip3.6 install --no-cache-dir ansible paramiko
+RUN python3.6 -m pip --no-cache-dir install ansible paramiko
     # Buildbot s3 deploy bits
-RUN pip3.6 install --no-cache-dir awscli
+RUN python3.6 -m pip --no-cache-dir install awscli
 
      # Test runs produce a great quantity of dead grandchild processes.  In a
      # non-docker environment, these are automatically reaped by init (process 1),
@@ -82,5 +85,5 @@ RUN curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases
 
 COPY buildbot.tac /builder/buildbot.tac
     # Install required python packages, and twisted
-RUN pip3.6 install --no-cache-dir buildbot-worker==2.8.2
+RUN python3.6 -m pip --no-cache-dir install buildbot-worker==2.8.2
 

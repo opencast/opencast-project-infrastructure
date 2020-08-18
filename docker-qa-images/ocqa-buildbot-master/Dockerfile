@@ -16,11 +16,11 @@ RUN apk add --no-cache \
         # required for manhole debug
         libffi-dev
     # install extra pip dependencies not present in upstream image
-RUN pip3 install requests \
+RUN python3 -m pip --no-cache-dir install \
+                requests \
                 urllib3[secure] \
                 txrequests \
                 docker \
                 buildbot-badges \
-                cryptography pyasn1 bcrypt && \
-    rm -r /root/.cache
+                cryptography pyasn1 bcrypt
 
