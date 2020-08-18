@@ -42,13 +42,6 @@ def shellSequence(commands, name, workdir="build", env={}, haltOnFailure=True, f
         hideStepIf=hideStepIf)
 
 
-def getMavenBase():
-{% if skip_tests %}
-    return ['mvn', '-B', '-V', '-Dmaven.repo.local=/builder/m2', '-DskipTests']
-{% else %}
-    return ['mvn', '-B', '-V', '-Dmaven.repo.local=/builder/m2']
-{% endif %}
-
 
 def getPreflightChecks():
     return shellSequence(
@@ -108,12 +101,15 @@ def getMavenEnv(props):
     return env
 
 
-def getBuild(deploy=False, jdk=8):
-    command = getMavenBase()
-    if not deploy:
+def getBuild(override=None, name="Build", workdir="build"):
+    command = ['mvn', '-B', '-V', '-Dmaven.repo.local=/builder/m2']
+{% if skip_tests %}
+    command.append('-DskipTests')
+{% endif %}
+    if not override:
         command.extend(['clean', 'install'])
     else:
-        command.extend(['clean', 'deploy', '-P', 'none', '-s', 'settings.xml'])
+        command.extend(override)
     return shellSequence(
         commands=[
             shellArg(
@@ -125,7 +121,8 @@ def getBuild(deploy=False, jdk=8):
                 logfile='build')
         ],
         env=getMavenEnv,
-        name="Build")
+        workdir=workdir,
+        name=name)
 
 
 def copyAWS(pathFrom, pathTo, name, doStepIf=True, hideStepIf=False, access=util.Secret("s3.public_access_key"), secret=util.Secret("s3.public_secret_key")):

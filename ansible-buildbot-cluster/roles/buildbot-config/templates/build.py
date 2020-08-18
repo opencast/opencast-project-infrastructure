@@ -20,7 +20,7 @@ def getPullRequestPipeline():
 
     f_build = __getBasePipeline()
     f_build.addStep(common.getWorkerPrep())
-    f_build.addStep(common.getBuild(deploy=False))
+    f_build.addStep(common.getBuild())
     f_build.addStep(common.getClean())
 
     return f_build
@@ -28,14 +28,8 @@ def getPullRequestPipeline():
 
 def getBuildPipeline():
 
-    mvn = common.getMavenBase()
-    mvn.extend(['install', '-P', 'dist'])
-    buildTarballs = common.shellCommand(
-        command=mvn,
-        workdir="build/assemblies",
-        flunkOnFailure=True,
-        haltOnFailure=True,
-        name="Building the tarballs")
+    override = ['install', '-P', 'dist']
+    buildTarballs = common.getBuild(override=override, workdir="build/assemblies", name="Building the tarballs")
 
     stampVersion = common.shellCommand(
         command=util.Interpolate("echo '%(prop:got_revision)s' | tee revision.txt"),
@@ -64,9 +58,12 @@ def getBuildPipeline():
 
     f_build = __getBasePipeline()
     f_build.addStep(common.getWorkerPrep())
-    if {{ deploy_snapshots }}:
-        f_build.addStep(common.loadMavenSettings())
-    f_build.addStep(common.getBuild(deploy={{ deploy_snapshots }}))
+{% if deploy_snapshots %}
+    f_build.addStep(common.loadMavenSettings())
+    f_build.addStep(common.getBuild(override=['clean', 'deploy', '-P', 'none', '-s', 'settings.xml']))
+{% else %}
+    f_build.addStep(common.getBuild())
+{% endif %}
     f_build.addStep(common.unloadMavenSettings())
     f_build.addStep(buildTarballs)
     f_build.addStep(stampVersion)

@@ -24,19 +24,13 @@ def __getBasePipeline():
         workdir="build/docs/guides",
         name="Formatting checks")
 
-    command = common.getMavenBase()
-    command.extend([
+    reports = [
         'cobertura:cobertura', 'site', 'site:stage',
         '-Daggregate=true',
         '-Dcheckstyle.skip=true',
         '-P "none,!frontend"'
-    ])
-    #Building reports with JDK 8
-    env=common.getMavenEnv
-    site = common.shellCommand(
-        command=command,
-        env=env,
-        name="Build site report")
+    ]
+    site = common.getBuild(override=reports, name="Build site report")
 
     f_build = util.BuildFactory()
     f_build.addStep(common.getPreflightChecks())
