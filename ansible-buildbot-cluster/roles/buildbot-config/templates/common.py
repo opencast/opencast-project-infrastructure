@@ -87,9 +87,12 @@ def getMavenEnv(props):
     jdk = props.getProperty("jdk")
     image = props.getProperty("image")
     if "deb" in image or "ubu" in image:
-        java_home = "/usr/lib/jvm/java-1." + str(jdk) + ".0-openjdk-amd64"
+        java_home = "/usr/lib/jvm/java-" + str(jdk) + "-openjdk-amd64"
     elif "cent" in image:
-        java_home = "/usr/lib/jvm/java-1." + str(jdk) + ".0-openjdk"
+        if int(jdk) > 8:
+            java_home = "/usr/lib/jvm/java-" + str(jdk) + "-openjdk"
+        else:
+            java_home = "/usr/lib/jvm/java-1." + str(jdk) + ".0-openjdk"
     env={
         "LANG": util.Interpolate("%(prop:LANG)s"),
         "LC_ALL": util.Interpolate("%(prop:LANG)s"),
