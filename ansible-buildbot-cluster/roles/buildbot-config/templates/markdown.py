@@ -79,7 +79,7 @@ class GenerateS3Commands(buildstep.ShellMixin, steps.BuildStep):
             # create a ShellCommand for each stage and add them to the build
             self.build.addStepsAfterCurrentStep([
                 common.syncAWS(
-                    pathFrom="docs/guides/" + target + "/site",
+                    pathFrom="docs/guides/" + target,
                     pathTo="s3://public/builds/{{ markdown_fragment }}/" + target,
                     name="Upload " + target[:-1] + " to S3")
                 for target in self.extract_targets(self.observer.getStdout())
@@ -165,7 +165,7 @@ def getBuildPipeline():
         name="Prep relevant directories on buildmaster")
 
     upload = GenerateS3Commands(
-        command='ls -d */',
+        command='ls -d */site',
         name="Determining available docs for upload",
         workdir="build/docs/guides",
         haltOnFailure=True,
