@@ -81,7 +81,7 @@ class GenerateS3Commands(buildstep.ShellMixin, steps.BuildStep):
                 common.syncAWS(
                     pathFrom="docs/guides/" + target,
                     pathTo="s3://public/builds/{{ markdown_fragment }}/" + target,
-                    name="Upload " + target[:-1] + " to S3")
+                    name="Upload " + target.split("/")[0] + " to S3")
                 for target in self.extract_targets(self.observer.getStdout())
             ])
         return result
