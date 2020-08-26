@@ -25,7 +25,7 @@
     tag: "{{ docker_worker_image_tag }}"
     source: pull
     state: present
-    force_tag: yes
+    force_source: yes
   when: "'workers' in group_names"
   with_items:
     - "{{ docker_worker_images }}"
@@ -37,6 +37,6 @@
     tag: "{{ docker_image_tag }}"
     source: pull
     state: present
-    force_tag: yes
+    force_source: yes
   when: "'master' in group_names"
   become: yes
