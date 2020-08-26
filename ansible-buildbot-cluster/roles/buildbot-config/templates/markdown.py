@@ -113,7 +113,7 @@ def __getBasePipeline():
         hideStepIf=lambda results, step: not (step.getProperty("pkg_major_version") == "7"))
 
     build = common.shellCommand(
-        command=['.style-and-markdown-build.sh'],
+        command=['./.style-and-markdown-build.sh'],
         name="Running tests and building docs",
         env={
             "LC_ALL": "en_US.UTF-8",
