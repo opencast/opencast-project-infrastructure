@@ -31,6 +31,7 @@ RUN yum install -y \
         java-1.8.0-openjdk \
         java-11-openjdk \
      # Build deps
+        openssh-clients \
         tar gzip bzip2 unzip \
         git \
         maven \

@@ -36,6 +36,7 @@ RUN apt-get install -y --no-install-recommends \
         openjdk-8-jre \
         openjdk-11-jre \
      # Build deps
+        openssh-client \
         tar gzip bzip2 unzip \
         git \
         maven \
