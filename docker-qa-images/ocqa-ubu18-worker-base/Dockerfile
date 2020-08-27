@@ -45,7 +45,6 @@ RUN apt-get install -y --no-install-recommends \
         firefox \
      # Doc deps
      ## Python deps
-        gcc \
         python3-dev \
         python3-pip \
      ## Packages for building docs
@@ -54,6 +53,8 @@ RUN apt-get install -y --no-install-recommends \
      ## For SQL script testsing
         mysql-client \
      # Package building deps
+     # Note: build-essential is required for dpkg, gcc is required for python
+        build-essential \
         dpkg-dev \
         debhelper \
         devscripts \
