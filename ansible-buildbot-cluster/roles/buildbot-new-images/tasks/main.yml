@@ -8,7 +8,7 @@
     volumes: yes
   become: yes
 
-- name: Updating Docker images
+- name: Removing local builds of Docker images
   docker_image:
     name: "ocqa-{{ item }}-worker"
     tag: "{{ docker_worker_image_tag }}"
