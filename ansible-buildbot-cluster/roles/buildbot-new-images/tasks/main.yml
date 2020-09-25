@@ -19,11 +19,15 @@
     - "{{ docker_worker_images }}"
   become: yes
 
-- name: Updating Docker images
+- name: Building worker images
   docker_image:
-    name: "{{ docker_image_user }}/ocqa-{{ item }}-worker-base"
+    build:
+      path: "{{ buildbot_config_worker }}/workers/{{ item }}"
+      pull: yes
+      rm: yes
+    name: "{{ docker_image_user }}/ocqa-{{ item }}-worker"
     tag: "{{ docker_worker_image_tag }}"
-    source: pull
+    source: build
     state: present
     force_source: yes
   when: "'workers' in group_names"

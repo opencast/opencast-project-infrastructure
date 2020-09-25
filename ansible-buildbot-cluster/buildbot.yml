@@ -35,3 +35,9 @@
   handlers:
     - import_tasks: handlers/handlers.yml
 
+- hosts: workers
+  user: "{{ login_user }}"
+  roles:
+    - { role: buildbot-new-images, tags: [ buildbot, reconfig ] }
+  handlers:
+    - import_tasks: handlers/handlers.yml
