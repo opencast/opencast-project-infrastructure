@@ -22,6 +22,7 @@ COPY debian-unstable.list /etc/apt/sources.list.d/
 COPY debian-testing.list /etc/apt/sources.list.d/
 #This file prevents the whole system from upgrading due to the above configuration
 COPY 99defaultrelease /etc/apt/apt.conf.d/
+COPY releases.pref /etc/apt/preferences.d/
 
 COPY aws-config /builder/.aws/config
 
