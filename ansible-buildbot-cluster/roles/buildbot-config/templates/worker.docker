@@ -1,4 +1,4 @@
-FROM greglogan/ocqa-{{ item }}-worker-base:{{ docker_worker_image_tag }}
+FROM {{ docker_image_user }}/ocqa-{{ item }}-{{ docker_worker_base_image }}:{{ docker_worker_image_tag }}
 
 RUN groupadd -g {{ hostvars[inventory_hostname]['uid'] }} builder && \
     useradd -m -u {{ hostvars[inventory_hostname]['uid'] }} -g {{ hostvars[inventory_hostname]['gid'] }} -s /bin/bash -d /builder builder && \

@@ -25,7 +25,7 @@
       path: "{{ buildbot_config_worker }}/workers/{{ item }}"
       pull: yes
       rm: yes
-    name: "{{ docker_image_user }}/ocqa-{{ item }}-worker"
+    name: "ocqa-{{ item }}-worker"
     tag: "{{ docker_worker_image_tag }}"
     source: build
     state: present

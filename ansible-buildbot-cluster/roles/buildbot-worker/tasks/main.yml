@@ -8,7 +8,7 @@
     mode: 0600
     force: yes
   become: yes
-  when: "'master' not in group_names and hostvars[inventory_hostname]['image'] | default('worker-base') == 'worker-base'"
+  when: "'master' not in group_names and hostvars[inventory_hostname]['docker_worker_base_image'] | default('worker-base') == 'worker-base'"
   with_items:
     - { src: "docker-compose.yml", dest: "{{ buildbot_home }}/docker-compose.yml" }
   notify: "Start Databases"
@@ -36,7 +36,7 @@
     owner: "{{ buildbot_user }}"
     group: "{{ buildbot_user }}"
     mode: 0600
-  when: "hostvars[inventory_hostname]['image'] | default('worker-base') == 'worker-base'"
+  when: "hostvars[inventory_hostname]['docker_worker_base_image'] | default('worker-base') == 'worker-base'"
   become: yes
 
 
