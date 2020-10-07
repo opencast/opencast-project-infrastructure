@@ -50,7 +50,7 @@ def getPullRequestBuilder(props, pretty_branch_name):
     builders = []
 
     for jdk in common.getJDKBuilds(props, pretty_branch_name):
-        jdk_props = dict()
+        jdk_props = dict(props)
         jdk_props['jdk'] = str(jdk)
         for build_type in ["Build", "Reports"]:
             builders.append(util.BuilderConfig(
@@ -97,7 +97,7 @@ def getBuildersForBranch(props):
     builders = getPullRequestBuilder(props, pretty_branch_name)
 
     for jdk in common.getJDKBuilds(props, pretty_branch_name):
-        jdk_props = dict()
+        jdk_props = dict(props)
         jdk_props['jdk'] = str(jdk)
         for build_type in ["Build", "Reports"]:
             builders.append(util.BuilderConfig(
