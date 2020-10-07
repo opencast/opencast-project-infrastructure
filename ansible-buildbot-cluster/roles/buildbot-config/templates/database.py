@@ -29,17 +29,31 @@ def generateDBTestStep(dbname, dbport):
                 haltOnFailure=False,
                 logfile='newdb'),
             common.shellArg(
-                command='bash docs/upgrade/.test.sh ' + dbport,
-                haltOnFailure=False,
-                logfile=dbname),
-            common.shellArg(
                 command=util.Interpolate(
                     'echo "drop database opencast%(prop:buildnumber)s;" | ' + mysqlString),
                 haltOnFailure=False,
                 logfile='dropdb'),
         ],
         workdir="build/",
-        name="Test database scripts against " + dbname,
+        name="Test database generation script against " + dbname,
+        haltOnFailure=False,
+        flunkOnFailure=True,
+        doStepIf=lambda step: step.getProperty("pkg_major_version") < "9")
+
+
+def generateDBUpgradeStep(dbname, dbport):
+
+    mysqlString = "mysql -u root -h 127.0.0.1 -P " + dbport
+
+    return common.shellSequence(
+        commands=[
+            common.shellArg(
+                command='bash docs/upgrade/.test.sh ' + dbport,
+                haltOnFailure=False,
+                logfile=dbname),
+        ],
+        workdir="build/",
+        name="Test database upgrade scripts against " + dbname,
         haltOnFailure=False,
         flunkOnFailure=True)
 
@@ -49,8 +63,11 @@ def __getBasePipeline():
     f_build = util.BuildFactory()
     f_build.addStep(common.getClone())
     f_build.addStep(generateDBTestStep("maria", "3307"))
+    f_build.addStep(generateDBUpgradeStep("maria", "3307"))
     f_build.addStep(generateDBTestStep("mysql5.6", "3308"))
+    f_build.addStep(generateDBUpgradeStep("mysql5.6", "3308"))
     f_build.addStep(generateDBTestStep("mysql5.7", "3309"))
+    f_build.addStep(generateDBUpgradeStep("mysql5.7", "3309"))
     f_build.addStep(common.getClean())
 
     return f_build
