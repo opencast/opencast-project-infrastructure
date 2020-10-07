@@ -62,6 +62,7 @@ RUN apt-get install -y --no-install-recommends \
         devscripts \
         dh-exec \
         libdistro-info-perl \
+        fakeroot \
      # Repository generator
         mini-dinstall \
      # Database test script use
