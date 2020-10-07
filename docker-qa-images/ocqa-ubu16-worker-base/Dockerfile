@@ -61,6 +61,7 @@ RUN apt-get install -y --no-install-recommends \
         debhelper \
         devscripts \
         dh-exec \
+        libdistro-info-perl \
      # Repository generator
         mini-dinstall \
      # Database test script use
