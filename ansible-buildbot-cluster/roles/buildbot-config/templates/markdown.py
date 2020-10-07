@@ -20,7 +20,7 @@ class GenerateMarkdownCommands(buildstep.ShellMixin, steps.BuildStep):
         targets = []
         for line in stdout.split('\n'):
             target = str(line.strip())
-            if target and "node_modules" != target:
+            if target and "node_modules/" != target:
                 targets.append(target)
         return targets
 
@@ -63,7 +63,7 @@ class GenerateS3Commands(buildstep.ShellMixin, steps.BuildStep):
         targets = []
         for line in stdout.split('\n'):
             target = str(line.strip())
-            if target and "node_modules" != target:
+            if target and "node_modules/" != target:
                 targets.append(target)
         return targets
 
