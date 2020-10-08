@@ -38,7 +38,7 @@ def generateDBTestStep(dbname, dbport):
         name="Test database generation script against " + dbname,
         haltOnFailure=False,
         flunkOnFailure=True,
-        doStepIf=lambda step: step.getProperty("pkg_major_version") < "9")
+        doStepIf=lambda step: int(step.getProperty("pkg_major_version")) < 9)
 
 
 def generateDBUpgradeStep(dbname, dbport):

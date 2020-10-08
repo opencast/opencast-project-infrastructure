@@ -109,8 +109,8 @@ def __getBasePipeline():
         workdir="build/docs/guides",
         name="Check Markdown doc formatting with markdown-cli",
         haltOnFailure=False,
-        doStepIf=lambda step: step.getProperty("pkg_major_version") == "7",
-        hideStepIf=lambda results, step: not (step.getProperty("pkg_major_version") == "7"))
+        doStepIf=lambda step: int(step.getProperty("pkg_major_version")) == 7,
+        hideStepIf=lambda results, step: not (int(step.getProperty("pkg_major_version") )== 7))
 
     build = common.shellCommand(
         command=['./.style-and-markdown-build.sh'],
@@ -122,8 +122,8 @@ def __getBasePipeline():
         },
         haltOnFailure=False,
         flunkOnFailure=True,
-        doStepIf=lambda step: step.getProperty("pkg_major_version") != "7",
-        hideStepIf=lambda results, step: not (step.getProperty("pkg_major_version") != "7"))
+        doStepIf=lambda step: int(step.getProperty("pkg_major_version")) != 7,
+        hideStepIf=lambda results, step: not (int(step.getProperty("pkg_major_version")) != 7))
 
     markdown = GenerateMarkdownCommands(
         command='ls -d */',
@@ -131,8 +131,8 @@ def __getBasePipeline():
         workdir="build/docs/guides",
         haltOnFailure=True,
         flunkOnFailure=True,
-        doStepIf=lambda step: step.getProperty("pkg_major_version") == "7",
-        hideStepIf=lambda results, step: not (step.getProperty("pkg_major_version") == "7"))
+        doStepIf=lambda step: int(step.getProperty("pkg_major_version")) == 7,
+        hideStepIf=lambda results, step: not (int(step.getProperty("pkg_major_version")) == 7))
 
     f_build = util.BuildFactory()
     f_build.addStep(common.getClone())
