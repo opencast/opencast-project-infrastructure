@@ -15,8 +15,16 @@ done
 SERVER='http://localhost:8080'
 LOGIN='admin:opencast'
 
+# Ensure local Elasticsearch is empty
 curl -f -i -u "${LOGIN}" -X POST "${SERVER}/admin-ng/index/clearIndex"
 curl -f -i -u "${LOGIN}" -X POST "${SERVER}/api/clearIndex"
+
+# Don't have the user registration pop up every day
+# This is allowed to fail
+curl -i --request POST -u admin:opencast \
+  --header "Content-Type: application/json" \
+  --data '{"contactMe":false,"allowsStatistics":false,"allowsErrorReports":false,"agreedToPolicy":false}' \
+  "${SERVER}/admin-ng/adopter/statistics/registration"
 
 # Ingest media
 curl -f -i -s -D - -o /dev/null -u ${LOGIN} \
@@ -24,7 +32,8 @@ curl -f -i -s -D - -o /dev/null -u ${LOGIN} \
   -F flavor="presentation/source" \
   -F "BODY=@olaf-schulte-opencast.mp4" \
   -F title="About Opencast" \
-  -F creator="Olaf Schulte"
+  -F creator="Olaf Schulte" \
+  -F identifier=ID-about-opencast
 
 # Ingest media
 curl -f -i -s -D - -o /dev/null -u ${LOGIN} \
@@ -33,7 +42,8 @@ curl -f -i -s -D - -o /dev/null -u ${LOGIN} \
   -F "BODY=@ocpr-demo.mp4" \
   -F title="OCPR Demo" \
   -F description="Opencast quick Jira ticket and pull request creator, https://github.com/lkiesow/ocpr" \
-  -F creator="Lars Kiesow"
+  -F creator="Lars Kiesow" \
+  -F identifier=ID-ocpr-demo
 
 # opencast series ACL to be used for new series
 SERIESACL='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -46,6 +56,7 @@ SERIESXML='<?xml version="1.0"?>
   xmlns:dcterms="http://purl.org/dc/terms/" xmlns:oc="http://www.opencastproject.org/matterhorn/">
   <dcterms:title xml:lang="en">Blender Foundation Productions</dcterms:title>
   <dcterms:publisher>Blender Foundation</dcterms:publisher>
+  <dcterms:identifier>ID-blender-foundation</dcterms:identifier>
 </dublincore>'
 
 SERIESID="$(set -ue;
@@ -55,28 +66,28 @@ SERIESID="$(set -ue;
     --data-urlencode "acl=${SERIESACL}" \
   | sed 's_^.*<dcterms:identifier>\(.*\)</dcterms:identifier>.*$_\1_')"
 
-VIDEO_FILE_PRESENTATION=ToS-slides-4k-1920.mp4
-VIDEO_FILE_PRESENTER=ToS-4k-1920.mov
-
 # Ingest media
 curl -f -i -s -D - -o /dev/null -u ${LOGIN} \
   "${SERVER}/ingest/addMediaPackage/fast" \
   -F flavor="presenter/source" \
-  -F "BODY=@${VIDEO_FILE_PRESENTER}" \
+  -F "BODY=@ToS-4k-1920.mov" \
   -F title="Tears of Steel" \
   -F creator="Blender Foundation" \
-  -F isPartOf="${SERIESID}"
+  -F isPartOf="${SERIESID}" \
+  -F identifier=ID-tears-of-steel
+
 
 # Ingest media (Dualstream)
 curl -f -i -s -D - -o /dev/null -u ${LOGIN} \
   "${SERVER}/ingest/addMediaPackage/fast" \
   -F flavor="presentation/source" \
-  -F "BODY=@${VIDEO_FILE_PRESENTATION}" \
+  -F "BODY=@dualstream-presentation.mp4" \
   -F flavor="presenter/source" \
-  -F "BODY=@${VIDEO_FILE_PRESENTER}" \
-  -F title="Tears of Steel (Dualstream)" \
-  -F creator="Blender Foundation" \
-  -F isPartOf="${SERIESID}"
+  -F "BODY=@dualstream-presenter.mp4" \
+  -F title="Dual-Stream Demo" \
+  -F creator="Lars Kiesow" \
+  -F identifier=ID-dual-stream-demo
+
 
 # Ingest media
 curl -f -i -s -D - -o /dev/null -u ${LOGIN} \
@@ -86,4 +97,5 @@ curl -f -i -s -D - -o /dev/null -u ${LOGIN} \
   -F title="Sintel Trailer" \
   -F creator="Durian Open Movie Team" \
   -F description="Trailer for the Sintel open movie project" \
-  -F isPartOf="${SERIESID}"
+  -F isPartOf="${SERIESID}" \
+  -F identifier=ID-sintel-trailer
