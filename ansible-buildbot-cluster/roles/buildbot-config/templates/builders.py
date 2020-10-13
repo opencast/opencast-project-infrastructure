@@ -67,12 +67,14 @@ def getPullRequestBuilder(props, pretty_branch_name):
         name=pretty_branch_name + " Pull Request Markdown",
         workernames=workers,
         factory=markdown.getPullRequestPipeline(),
+        properties=props,
         collapseRequests=True))
 
     builders.append(util.BuilderConfig(
         name=pretty_branch_name + " Pull Request Database Tests",
         workernames=workers,
         factory=database.getPullRequestPipeline(),
+        properties=props,
         collapseRequests=True,
         locks=[db_lock.access('exclusive')]))
 
