@@ -123,6 +123,20 @@ def getBuild(override=None, name="Build", workdir="build"):
                 flunkOnFailure=False,
                 warnOnFailure=False),
             shellArg(
+                command=['sed', '-i', 's/captureTimeout: [0-9]*/captureTimeout: 120000/',
+                         'modules/admin-ui/src/test/resources/karma.conf.js'],
+                logfile='old-timeout',
+                haltOnFailure=False,
+                flunkOnFailure=False,
+                warnOnFailure=False),
+            shellArg(
+                command=['sed', '-i', 's/captureTimeout: [0-9]*/captureTimeout: 120000/',
+                         'modules/admin-ui-frontend/test/karma.conf.js'],
+                logfile='new-timeout',
+                haltOnFailure=False,
+                flunkOnFailure=False,
+                warnOnFailure=False),
+            shellArg(
                 command=command,
                 logfile='build')
         ],
