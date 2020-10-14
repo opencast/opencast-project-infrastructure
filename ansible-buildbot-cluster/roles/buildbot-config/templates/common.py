@@ -115,10 +115,13 @@ def getBuild(override=None, name="Build", workdir="build"):
         command.extend(override)
     return shellSequence(
         commands=[
-#            shellArg(
-#                command=['sed', '-i', 's/WARN/DEBUG/',
-#                         'docs/log4j/log4j.properties'],
-#                logfile='sed'),
+            shellArg(
+                command=['sed', '-i', 's/WARN/DEBUG/',
+                         'docs/log4j/log4j.properties'],
+                logfile='log-settings',
+                haltOnFailure=False,
+                flunkOnFailure=False,
+                warnOnFailure=False),
             shellArg(
                 command=command,
                 logfile='build')
