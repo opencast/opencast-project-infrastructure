@@ -67,7 +67,7 @@ RUN apt-get install -y --no-install-recommends \
      # Database test script use
         bc \
      # Crowdin
-        crowdin3 && \
+        crowdin && \
      apt-get clean
 
 RUN update-java-alternatives -s java-1.8.0-openjdk-amd64

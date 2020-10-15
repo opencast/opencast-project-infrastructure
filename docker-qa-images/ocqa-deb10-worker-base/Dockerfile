@@ -73,7 +73,7 @@ RUN apt-get install -y --no-install-recommends \
      # Database test script use
         bc \
      # Crowdin
-        crowdin3 && \
+        crowdin && \
      apt-get clean
 
 RUN apt-get install -y --no-install-recommends -t unstable gcc-8-base && apt-get clean
