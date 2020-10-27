@@ -78,7 +78,7 @@ RUN alternatives --set java java-1.8.0-openjdk.x86_64
 RUN alternatives --set javac java-1.8.0-openjdk.x86_64
 
 # The base CentOS image strips the locales out, this reinstalls them
-RUN yum reinstall -y glibc-common
+RUN yum install glibc-langpack-en glibc-langpack-de glibc-langpack-es glibc-langpack-fr
 
 RUN python3.6 -m pip --no-cache-dir install --upgrade pip
 RUN python3.6 -m pip --no-cache-dir install --upgrade setuptools
