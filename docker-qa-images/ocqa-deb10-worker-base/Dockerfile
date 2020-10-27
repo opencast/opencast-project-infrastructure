@@ -18,8 +18,7 @@ COPY nodesource.list /etc/apt/sources.list.d
 COPY crowdin.list /etc/apt/sources.list.d
 
 #JDK8 is not present in buster, but lives in unstable instead
-COPY debian-unstable.list /etc/apt/sources.list.d/
-COPY debian-testing.list /etc/apt/sources.list.d/
+COPY debian-oldstable.list /etc/apt/sources.list.d/
 #This file prevents the whole system from upgrading due to the above configuration
 COPY 99defaultrelease /etc/apt/apt.conf.d/
 COPY releases.pref /etc/apt/preferences.d/
@@ -80,9 +79,7 @@ RUN apt-get install -y --no-install-recommends \
         crowdin && \
      apt-get clean
 
-RUN apt-get install -y --no-install-recommends -t unstable gcc-8-base && apt-get clean
-RUN apt-get install -y --no-install-recommends -t unstable openjdk-8-jre && apt-get clean
-RUN apt-get install -y --no-install-recommends -t unstable openjdk-8-jdk && apt-get clean
+RUN apt-get install -y --no-install-recommends -t oldstable openjdk-8-jre openjdk-8-jdk && apt-get clean
 
 RUN update-java-alternatives -s java-1.8.0-openjdk-amd64
 

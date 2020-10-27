@@ -18,5 +18,5 @@ Pin-Priority: 400
 # installed version of the package
 
 Package: *
-Pin: release a=unstable
+Pin: release a=oldstable
 Pin-Priority: 50
