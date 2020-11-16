@@ -24,12 +24,12 @@ curl -f -i -u "${LOGIN}" -X POST "${SERVER}/api/clearIndex"
 curl -i --request POST -u admin:opencast \
   --header "Content-Type: application/json" \
   --data '{"contactMe":false,"allowsStatistics":false,"allowsErrorReports":false,"agreedToPolicy":false}' \
-  "${SERVER}/admin-ng/adopter/statistics/registration"
+  "${SERVER}/admin-ng/adopter/registration"
 
 # Ingest media
 curl -f -i -s -D - -o /dev/null -u ${LOGIN} \
   "${SERVER}/ingest/addMediaPackage/fast" \
-  -F flavor="presentation/source" \
+  -F flavor="presenter/source" \
   -F "BODY=@olaf-schulte-opencast.mp4" \
   -F title="About Opencast" \
   -F creator="Olaf Schulte" \
@@ -38,7 +38,7 @@ curl -f -i -s -D - -o /dev/null -u ${LOGIN} \
 # Ingest media
 curl -f -i -s -D - -o /dev/null -u ${LOGIN} \
   "${SERVER}/ingest/addMediaPackage/fast" \
-  -F flavor="presentation/source" \
+  -F flavor="presenter/source" \
   -F "BODY=@ocpr-demo.mp4" \
   -F title="OCPR Demo" \
   -F description="Opencast quick Jira ticket and pull request creator, https://github.com/lkiesow/ocpr" \
