@@ -11,7 +11,9 @@ RUN apt-get update && \
 RUN curl -fsSL https://pkg.opencast.org/gpgkeys/opencast-deb.key | apt-key add -
 RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 RUN curl -fsSL https://artifacts.crowdin.com/repo/GPG-KEY-crowdin | apt-key add -
+RUN apt-key adv --keyserver pool.sks-keyservers.net --recv-keys ED75B5A4483DA07C
 
+RUN echo "deb http://repo.aptly.info/ squeeze main" > /etc/apt/sources.list.d/aptly.list
 COPY opencast.list /etc/apt/sources.list.d
 COPY opencast-test.list /etc/apt/sources.list.d
 COPY nodesource.list /etc/apt/sources.list.d
@@ -69,6 +71,7 @@ RUN apt-get install -y --no-install-recommends \
         debhelper \
         devscripts \
         dh-exec \
+        aptly \
         libdistro-info-perl \
         fakeroot \
      # Repository generator
