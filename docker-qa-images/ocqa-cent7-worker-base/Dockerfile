@@ -6,8 +6,7 @@ COPY opencast-testing.repo /etc/yum.repos.d/
 COPY nodesource-el7.repo /etc/yum.repos.d/
 COPY crowdin.repo /etc/yum.repos.d/
 
-COPY NODESOURCE-GPG-SIGNING-KEY-EL /etc/pki/rpm-gpg/
-COPY GPG-KEY-crowdin /etc/pki/rpm-gpg/
+COPY keys/* /etc/pki/rpm-gpg/
 
 COPY aws-config /builder/.aws/config
 

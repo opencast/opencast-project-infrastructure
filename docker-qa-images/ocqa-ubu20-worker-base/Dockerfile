@@ -8,15 +8,14 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends apt-transport-https gnupg curl ca-certificates && \
     apt-get clean
 
-RUN curl -fsSL https://pkg.opencast.org/gpgkeys/opencast-deb.key | apt-key add -
-RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
-RUN curl -fsSL https://artifacts.crowdin.com/repo/GPG-KEY-crowdin | apt-key add -
-RUN apt-key adv --keyserver pool.sks-keyservers.net --recv-keys ED75B5A4483DA07C
+RUN mkdir /root/apt-keys
+COPY keys/* /root/apt-keys/
+RUN apt-key add /root/apt-keys/*
 
-RUN echo "deb http://repo.aptly.info/ squeeze main" > /etc/apt/sources.list.d/aptly.list
 COPY opencast.list /etc/apt/sources.list.d
 COPY opencast-test.list /etc/apt/sources.list.d
 COPY nodesource.list /etc/apt/sources.list.d
+COPY aptly.list /etc/apt/sources.list.d
 COPY crowdin.list /etc/apt/sources.list.d
 
 COPY aws-config /builder/.aws/config
