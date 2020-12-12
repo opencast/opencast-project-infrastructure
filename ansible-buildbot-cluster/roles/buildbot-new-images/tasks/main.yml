@@ -1,39 +1,7 @@
 ---
 
-- name: Pruning Docker containers and images
-  docker_prune:
-    containers: yes
-    images: yes
-    networks: yes
-    volumes: yes
-  become: yes
-
-- name: Removing local builds of Docker images
-  docker_image:
-    name: "ocqa-{{ item }}-worker"
-    tag: "{{ docker_worker_image_tag }}"
-    source: local
-    state: absent
-    force_absent: yes
-  with_items:
-    - "{{ docker_worker_images }}"
-  become: yes
-
-- name: Building worker images
-  docker_image:
-    build:
-      path: "{{ buildbot_config_worker }}/workers/{{ item }}"
-      pull: yes
-      rm: yes
-    name: "ocqa-{{ item }}-worker"
-    tag: "{{ docker_worker_image_tag }}"
-    source: build
-    state: present
-    force_source: yes
-  when: "'workers' in group_names"
-  with_items:
-    - "{{ docker_worker_images }}"
-  become: yes
+- include_tasks: update.yml
+  loop: "{{ docker_worker_images }}"
 
 - name: Updating Docker master image
   docker_image:
@@ -43,4 +11,12 @@
     state: present
     force_source: yes
   when: "'master' in group_names"
+  become: yes
+
+- name: Pruning Docker containers and images
+  docker_prune:
+    containers: yes
+    images: yes
+    networks: yes
+    volumes: yes
   become: yes
