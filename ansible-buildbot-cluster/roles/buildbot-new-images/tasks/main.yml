@@ -2,6 +2,8 @@
 
 - include_tasks: update.yml
   loop: "{{ docker_worker_images }}"
+  loop_control:
+    loop_var: distro
 
 - name: Updating Docker master image
   docker_image:

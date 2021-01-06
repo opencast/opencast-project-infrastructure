@@ -1,0 +1,11 @@
+---
+
+- name: Removing {{ item }}
+  docker_image:
+    name: "{{ item.split(':')[0] }}"
+    tag: "{{ item.split(':')[1] }}"
+    state: absent
+  become: yes
+  with_items:
+    - '{{ image["RepoTags"] }}'
+  when: 'not item.endswith(docker_worker_image_tag)'

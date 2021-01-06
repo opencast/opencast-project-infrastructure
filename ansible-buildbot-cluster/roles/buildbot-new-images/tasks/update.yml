@@ -1,12 +1,24 @@
 ---
 
-- name: Building {{ item }} worker image
+- name: Fetching current worker images
+  docker_image_info:
+    name: "ocqa-{{ distro }}-worker"
+  become: yes
+  register: worker_images
+
+- name: Fetching current worker base images
+  docker_image_info:
+    name: "greglogan/ocqa-{{ distro }}-worker-base"
+  become: yes
+  register: worker_base_images
+
+- name: Building {{ distro }} worker image
   docker_image:
     build:
-      path: "{{ buildbot_config_worker }}/workers/{{ item }}"
+      path: "{{ buildbot_config_worker }}/workers/{{ distro }}"
       pull: yes
       rm: yes
-    name: "ocqa-{{ item }}-worker"
+    name: "ocqa-{{ distro }}-worker"
     tag: "{{ docker_worker_image_tag }}"
     source: build
     state: present
@@ -19,3 +31,13 @@
     containers: yes
     images: yes
   become: yes
+
+- include_tasks: remove.yml
+  loop: "{{ worker_images.images }}"
+  loop_control:
+    loop_var: image
+
+- include_tasks: remove.yml
+  loop: "{{ worker_base_images.images }}"
+  loop_control:
+    loop_var: image
