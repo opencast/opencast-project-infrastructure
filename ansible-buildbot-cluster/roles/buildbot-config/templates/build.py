@@ -46,12 +46,7 @@ def getBuildPipeline():
         name="Update latest build marker in S3")
 
     updateCrowdin = common.shellCommand(
-        command=util.Interpolate(
-            "if [ -f .upload-crowdin.sh ]; then CROWDIN_API_KEY='%(secret:crowdin.key)s' bash .upload-crowdin.sh; fi"),
-        env={
-            "TRAVIS_PULL_REQUEST": "false",  # This is always false since the PR doesn't use this method
-            "TRAVIS_BRANCH": util.Interpolate("%(prop:branch)s")
-        },
+        command=util.Interpolate("echo api_key: '%(secret:crowdin.key)s' >> .crowdin.yaml; echo crowdin --config .crowdin.yaml upload sources -b %(prop:branch)s"),
         doStepIf={{ push_crowdin }},
         hideStepIf={{ not push_crowdin }},
         name="Update Crowdin translation keys")
