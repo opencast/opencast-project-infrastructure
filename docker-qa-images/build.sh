@@ -16,7 +16,7 @@ doBuild() {
   docker image prune -f
 }
 
-for i in 16.04 18.04 20.04
+for i in 18.04 20.04
 do
   docker pull ubuntu:$i
 done
@@ -30,7 +30,6 @@ do
 done
 
 doBuild buildbot master
-doBuild ubu16 worker-base
 doBuild ubu18 worker-base
 doBuild ubu20 worker-base
 doBuild deb9 worker-base
