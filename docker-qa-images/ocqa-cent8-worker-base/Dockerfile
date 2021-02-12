@@ -14,7 +14,7 @@ RUN sed -i '/override_install_langs/d' /etc/yum.conf
 
 # Last build date - this can be updated whenever there are security updates so
 # that everything is rebuilt
-ENV         security_updates_as_of 2020-12-07
+ENV         security_updates_as_of 2021-02-12
 
 # Install the dependencies
 RUN yum install -y epel-release &&\
@@ -82,7 +82,7 @@ RUN yum install -y glibc-langpack-en glibc-langpack-de glibc-langpack-es glibc-l
 RUN python3.6 -m pip --no-cache-dir install --upgrade pip
 RUN python3.6 -m pip --no-cache-dir install --upgrade setuptools
     # Markdown doc generation bits
-RUN python3.6 -m pip --no-cache-dir install mkdocs markdown_inline_graphviz_extension mkdocs-windmill
+RUN python3.6 -m pip --no-cache-dir install mkdocs markdown_inline_graphviz_extension mkdocs-windmill mkdocs-mermaid2-plugin
     # Ansible deploy bits
 RUN python3.6 -m pip --no-cache-dir install ansible paramiko
     # Buildbot s3 deploy bits

@@ -22,7 +22,7 @@ COPY aws-config /builder/.aws/config
 
 # Last build date - this can be updated whenever there are security updates so
 # that everything is rebuilt
-ENV         security_updates_as_of 2020-12-07
+ENV         security_updates_as_of 2021-02-12
 
 RUN apt-get update && \
     apt-get dist-upgrade -y
@@ -80,9 +80,9 @@ RUN update-java-alternatives -s java-1.8.0-openjdk-amd64
 RUN python3 -m pip --no-cache-dir install --upgrade pip
 RUN python3 -m pip --no-cache-dir install --upgrade setuptools
     # Markdown doc generation bits
-RUN python3 -m pip --no-cache-dir install mkdocs markdown_inline_graphviz_extension mkdocs-windmill six
+RUN python3 -m pip --no-cache-dir install mkdocs markdown_inline_graphviz_extension mkdocs-windmill six mkdocs-mermaid2-plugin
     # Ansible deploy bits
-RUN python3  -m pip --no-cache-dir install ansible paramiko
+RUN python3 -m pip --no-cache-dir install ansible paramiko
     # Buildbot s3 deploy bits
 RUN python3 -m pip --no-cache-dir install awscli
 
