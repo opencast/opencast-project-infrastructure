@@ -15,7 +15,6 @@ doTag() {
 }
 
 doTag buildbot master
-doTag ubu16 worker-base
 doTag ubu18 worker-base
 doTag ubu20 worker-base
 doTag deb9 worker-base
