@@ -68,14 +68,12 @@ RUN yum install -y \
 RUN alternatives --set java java-1.8.0-openjdk.x86_64
 RUN alternatives --set javac java-1.8.0-openjdk.x86_64
 
-RUN python3.6 -m pip --no-cache-dir install --upgrade pip
-RUN python3.6 -m pip --no-cache-dir install --upgrade setuptools
-    # Markdown doc generation bits
-RUN python3.6 -m pip --no-cache-dir install mkdocs markdown_inline_graphviz_extension mkdocs-windmill mkdocs-mermaid2-plugin
+RUN python3 -m pip --no-cache-dir install --upgrade pip
+RUN python3 -m pip --no-cache-dir install --upgrade setuptools
     # Ansible deploy bits
-RUN python3.6 -m pip --no-cache-dir install ansible paramiko
+RUN python3 -m pip --no-cache-dir install ansible paramiko
     # Buildbot s3 deploy bits
-RUN python3.6 -m pip --no-cache-dir install awscli
+RUN python3 -m pip --no-cache-dir install awscli
 
      # Test runs produce a great quantity of dead grandchild processes.  In a
      # non-docker environment, these are automatically reaped by init (process 1),
@@ -85,5 +83,5 @@ RUN curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases
 
 COPY buildbot.tac /builder/buildbot.tac
     # Install required python packages, and twisted
-RUN python3.6 -m pip --no-cache-dir install buildbot-worker==2.10.1
+RUN python3 -m pip --no-cache-dir install buildbot-worker==2.10.1
 

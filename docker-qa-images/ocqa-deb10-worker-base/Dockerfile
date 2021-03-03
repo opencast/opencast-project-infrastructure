@@ -87,8 +87,6 @@ RUN update-java-alternatives -s java-1.8.0-openjdk-amd64
 
 RUN python3 -m pip --no-cache-dir install --upgrade pip
 RUN python3 -m pip --no-cache-dir install --upgrade setuptools
-    # Markdown doc generation bits
-RUN python3 -m pip --no-cache-dir install mkdocs markdown_inline_graphviz_extension mkdocs-windmill six mkdocs-mermaid2-plugin
     # Ansible deploy bits
 RUN python3 -m pip --no-cache-dir install ansible paramiko
     # Buildbot s3 deploy bits
