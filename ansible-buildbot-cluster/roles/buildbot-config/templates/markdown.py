@@ -43,6 +43,7 @@ class GenerateMarkdownCommands(buildstep.ShellMixin, steps.BuildStep):
                         "LC_ALL": "en_US.utf8",
                         "LANG": "en_US.utf8",
                         "OC_CTYPE": "en_US.utf8",
+                        "PATH": "/builder/.local/bin:${PATH}"
                     },
                     haltOnFailure=False,
                     flunkOnFailure=True)
@@ -108,9 +109,18 @@ def __getBasePipeline():
         ],
         workdir="build/docs/guides",
         name="Check Markdown doc formatting with markdown-cli",
-        haltOnFailure=False,
-        doStepIf=lambda step: int(step.getProperty("pkg_major_version")) == 7,
-        hideStepIf=lambda results, step: not (int(step.getProperty("pkg_major_version") )== 7))
+        haltOnFailure=False)
+
+    pip_install = common.shellSequence(
+        commands=[
+            common.shellArg(
+                command=['python3', '-m', 'pip', 'install', '-r', 'requirements.txt'],
+                haltOnFailure=False,
+                logfile='markdown-cli'),
+        ],
+        workdir="build/docs/guides",
+        name="Running pip install",
+        haltOnFailure=True)
 
     build = common.shellCommand(
         command=['./.style-and-markdown-build.sh'],
@@ -119,25 +129,23 @@ def __getBasePipeline():
             "LC_ALL": "en_US.UTF-8",
             "LANG": "en_US.UTF-8",
             "OC_CTYPE": "en_US.UTF-8",
+            "PATH": "/builder/.local/bin:${PATH}"
         },
         haltOnFailure=False,
-        flunkOnFailure=True,
-        doStepIf=lambda step: int(step.getProperty("pkg_major_version")) != 7,
-        hideStepIf=lambda results, step: not (int(step.getProperty("pkg_major_version")) != 7))
+        flunkOnFailure=True)
 
     markdown = GenerateMarkdownCommands(
         command='ls -d */',
         name="Determining available docs",
         workdir="build/docs/guides",
         haltOnFailure=True,
-        flunkOnFailure=True,
-        doStepIf=lambda step: int(step.getProperty("pkg_major_version")) == 7,
-        hideStepIf=lambda results, step: not (int(step.getProperty("pkg_major_version")) == 7))
+        flunkOnFailure=True)
 
     f_build = util.BuildFactory()
     f_build.addStep(common.getClone())
     f_build.addStep(npm_install)
     f_build.addStep(npmCheck)
+    f_build.addStep(pip_install)
     f_build.addStep(build)
     f_build.addStep(markdown)
 
