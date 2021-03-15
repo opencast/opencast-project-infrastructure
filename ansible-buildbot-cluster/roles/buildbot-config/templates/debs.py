@@ -24,6 +24,11 @@ def getBuildPipeline():
         workdir="build",
         name="Get Debian script revision")
 
+    removeSymlinks = common.shellCommand(
+        command=['rm', '-rf', 'binaries', 'outputs'],
+        alwaysRun=True,
+        name="Prep cloned repo for CI use")
+
     debsFetch = common.syncAWS(
         pathFrom="s3://{{ s3_public_bucket }}/builds/{{ builds_fragment }}",
         pathTo="binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/",
@@ -87,6 +92,7 @@ def getBuildPipeline():
     f_package_debs.addStep(debsVersion)
     f_package_debs.addStep(common.getLatestBuildRevision())
     f_package_debs.addStep(common.getShortBuildRevision())
+    f_package_debs.addStep(removeSymlinks)
     f_package_debs.addStep(debsFetch)
     f_package_debs.addStep(common.loadSigningKey())
     f_package_debs.addStep(debsBuild)
