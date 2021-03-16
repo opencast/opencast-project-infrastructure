@@ -52,7 +52,7 @@ buildbot_home: /opt/buildbot
 docker_image_user: "opencast"
 
 #The version tag to use for all of the images
-docker_image_tag: "v2.10.1"
+docker_image_tag: "v3.0.2"
 
 #The version to use for the workers
 docker_worker_image_tag: "{{ docker_image_tag }}"
