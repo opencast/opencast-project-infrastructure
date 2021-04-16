@@ -55,15 +55,23 @@ def getPullRequestPipeline():
 
 def getBuildPipeline():
 
-    uploadSite = common.syncAWS(
-        pathFrom="target/staging",
-        pathTo="s3://public/builds/{{ reports_fragment }}",
-        name="Upload mvn site to S3")
+    compressSite = common.compressDir(
+        dirToCompress="target/staging",
+        outputFile="target/site.tar.bz2")
 
-    uploadCoverage = common.syncAWS(
-        pathFrom="target/site/cobertura",
+    compressCoverage = common.compressDir(
+        dirToCompress="target/site/cobertura",
+        outputFile="target/coverage.tar.bz2")
+
+    uploadSite = common.copyAWS(
+        pathFrom="target/site.tar.bz2",
+        pathTo="s3://public/builds/{{ reports_fragment }}",
+        name="Upload site report to S3")
+
+    uploadCoverage = common.copyAWS(
+        pathFrom="target/coverage.tar.bz2",
         pathTo="s3://public/builds/{{ coverage_fragment }}",
-        name="Upload Cobertura report to S3")
+        name="Upload coverage report to S3")
 
     updateSite = steps.MasterShellCommand(
         command=util.Interpolate(
@@ -78,8 +86,10 @@ def getBuildPipeline():
         name="Deploy Reports")
 
     f_build = __getBasePipeline()
-    #f_build.addStep(masterPrep)
+    f_build.addStep(compressSite)
+    f_build.addStep(compressCoverage)
     f_build.addStep(uploadSite)
+    f_build.addStep(uploadCoverage)
     #f_build.addStep(updateSite)
     f_build.addStep(common.getClean())
 

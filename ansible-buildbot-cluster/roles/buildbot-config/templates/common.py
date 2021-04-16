@@ -144,6 +144,12 @@ def getBuild(override=None, name="Build", workdir="build"):
         workdir=workdir,
         name=name)
 
+def compressDir(dirToCompress, outputFile, workdir="build"):
+    return shellCommand(
+         command=['tar', 'cjf', outputFile, dirToCompress],
+         workdir=workdir,
+         name=f"Compressing { dirToCompress }")
+
 
 def copyAWS(pathFrom, pathTo, name, doStepIf=True, hideStepIf=False, access=util.Secret("s3.public_access_key"), secret=util.Secret("s3.public_secret_key")):
     return _AWSStep("cp", pathFrom, pathTo, name, doStepIf, hideStepIf, access, secret)

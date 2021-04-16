@@ -51,6 +51,40 @@ class GenerateMarkdownCommands(buildstep.ShellMixin, steps.BuildStep):
             ])
         return result
 
+class GenerateCompressionCommands(buildstep.ShellMixin, steps.BuildStep):
+
+    def __init__(self, **kwargs):
+        kwargs = self.setupShellMixin(kwargs)
+        super().__init__(**kwargs)
+        self.observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.observer)
+
+    def extract_targets(self, stdout):
+        targets = []
+        for line in stdout.split('\n'):
+            target = str(line.strip())
+            if target and "node_modules/" != target:
+                targets.append(target)
+        return targets
+
+    @defer.inlineCallbacks
+    def run(self):
+        # run the command to get the list of targets
+        cmd = yield self.makeRemoteShellCommand()
+        yield self.runCommand(cmd)
+
+        # if the command passes extract the list of stages
+        result = cmd.results()
+        if result == util.SUCCESS:
+            # create a ShellCommand for each stage and add them to the build
+            self.build.addStepsAfterCurrentStep([
+                common.compressDir(
+                    dirToCompress="docs/guides/" + target,
+                    outputFile=target.split("/")[0] + ".tar.bz2")
+                for target in self.extract_targets(self.observer.getStdout())
+            ])
+        return result
+
 
 class GenerateS3Commands(buildstep.ShellMixin, steps.BuildStep):
 
@@ -79,9 +113,9 @@ class GenerateS3Commands(buildstep.ShellMixin, steps.BuildStep):
         if result == util.SUCCESS:
             # create a ShellCommand for each stage and add them to the build
             self.build.addStepsAfterCurrentStep([
-                common.syncAWS(
-                    pathFrom="docs/guides/" + target,
-                    pathTo="s3://public/builds/{{ markdown_fragment }}/" + target,
+                common.copyAWS(
+                    pathFrom=target.split("/")[0] + ".tar.bz2",
+                    pathTo="s3://public/builds/{{ markdown_fragment }}/" + target.split("/")[0] + ".tar.bz2",
                     name="Upload " + target.split("/")[0] + " to S3")
                 for target in self.extract_targets(self.observer.getStdout())
             ])
@@ -162,15 +196,12 @@ def getPullRequestPipeline():
 
 def getBuildPipeline():
 
-    masterPrep = steps.MasterShellCommand(
-        command=["mkdir", "-p",
-                 util.Interpolate(
-                     os.path.normpath("{{ deployed_markdown }}")),
-                 util.Interpolate(
-                     os.path.normpath("{{ deployed_markdown_symlink_base }}")),
-                 ],
-        flunkOnFailure=True,
-        name="Prep relevant directories on buildmaster")
+    compress = GenerateCompressionCommands(
+        command='ls -d */site',
+        name="Determining available docs for compression",
+        workdir="build/docs/guides",
+        haltOnFailure=True,
+        flunkOnFailure=True)
 
     upload = GenerateS3Commands(
         command='ls -d */site',
@@ -187,7 +218,7 @@ def getBuildPipeline():
         name="Deploy Markdown")
 
     f_build = __getBasePipeline()
-    #f_build.addStep(masterPrep)
+    f_build.addStep(compress)
     f_build.addStep(upload)
     #f_build.addStep(updateMarkdown)
     f_build.addStep(common.getClean())
