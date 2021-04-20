@@ -37,6 +37,7 @@ RUN yum install -y epel-release &&\
         curl wget \
         java-1.8.0-openjdk-devel \
         java-11-openjdk-devel \
+        java-13-openjdk-devel \
         firefox \
      # Doc deps
      ## Python deps for markdown

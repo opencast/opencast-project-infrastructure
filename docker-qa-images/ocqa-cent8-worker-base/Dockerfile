@@ -31,6 +31,7 @@ RUN yum install -y epel-release &&\
         hunspell \
         java-1.8.0-openjdk \
         java-11-openjdk \
+        java-13-openjdk \
      # Build deps
         openssh-clients \
         tar gzip bzip2 unzip \

@@ -10,7 +10,7 @@ opencast:
   Develop:
     branch: 'develop'
     pom: '10'
-    jdk: [ '11' ]
+    jdk: [ '11', '13' ]
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     server: 'develop'
   9.x:
