@@ -29,14 +29,3 @@
     - { path: "{{ buildbot_home }}/ansible", mode: "0700" }
     - { path: "{{ buildbot_home }}/builds", mode: "0700" }
 
-- name: Templating Maven settings
-  template:
-    src: settings.xml
-    dest: "{{ buildbot_home }}/m2/settings.xml"
-    owner: "{{ buildbot_user }}"
-    group: "{{ buildbot_user }}"
-    mode: 0600
-  when: "hostvars[inventory_hostname]['docker_worker_base_image'] | default('worker-base') == 'worker-base'"
-  become: yes
-
-

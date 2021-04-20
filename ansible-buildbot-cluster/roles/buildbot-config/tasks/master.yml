@@ -39,7 +39,6 @@
     - { src: "rpm_repo.py", dest: "{{ buildbot_config_master }}/rpm_repo.py" }
     - { src: "ansible.py", dest: "{{ buildbot_config_master }}/ansible.py" }
     - { src: "buildbot.conf", dest: "{{ buildbot_home }}/nginx-config/buildbot.conf" }
-    - { src: "nexus.conf", dest: "{{ buildbot_home }}/nginx-config/nexus.conf" }
   notify: "Start Buildbot"
 
 - name: Template Buildbot public support files
