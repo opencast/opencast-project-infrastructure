@@ -24,7 +24,7 @@ def getRPMBuilds(props):
                 '-bb', '--noclean',
                 util.Interpolate("SPECS/opencast%(prop:pkg_major_version)s.spec")
             ],
-            logfile=profile))
+            logname=profile))
         builds.append(common.shellArg(
             command=[
                 'rpmsign',
@@ -33,7 +33,7 @@ def getRPMBuilds(props):
                 util.Interpolate(
                     "RPMS/noarch/opencast%(prop:pkg_major_version)s-" + profile + "-%(prop:pkg_major_version)s.x-%(prop:buildnumber)s.%(prop:short_revision)s.el" + elvers + ".noarch.rpm")
             ],
-            logfile=profile + " signing"))
+            logname=profile + " signing"))
     return builds
 
 
@@ -63,18 +63,18 @@ def getBuildPipeline():
             common.shellArg(
                 # We're using a string here rather than an arg array since we need the shell functions
                 command='echo -e "%_topdir `pwd`" > ~/.rpmmacros',
-                logfile="rpmdev-setup"),
+                logname="rpmdev-setup"),
             common.shellArg(
                 command=[
                     'rpmdev-setuptree'
                 ],
-                logfile="rpmdev"),
+                logname="rpmdev"),
             common.shellArg(
                 command=[
                     'mkdir', '-p',
                     'BUILD/opencast/build',
                 ],
-                logfile="prep"),
+                logname="prep"),
             common.shellArg(
                 command=[
                     "ln", "-sr",
@@ -82,12 +82,12 @@ def getBuildPipeline():
                         "opencast%(prop:pkg_major_version)s.spec"),
                     "SPECS"
                 ],
-                logfile="specs"),
+                logname="specs"),
             common.shellArg(
                 # Same here
                 command=util.Interpolate(
                     "ln -sr opencast%(prop:pkg_major_version)s/* SOURCES"),
-                logfile="sources")
+                logname="sources")
         ],
         workdir="build/specs",
         name="Fetch built artifacts and build prep")
@@ -106,7 +106,7 @@ def getBuildPipeline():
                     util.Interpolate('s/srcversion .../srcversion %(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/g'),
                     util.Interpolate('opencast%(prop:pkg_major_version)s.spec')
                 ],
-                logfile='version'),
+                logname='version'),
             common.shellArg(
                 command=[
                     'rpmdev-bumpspec',
@@ -117,7 +117,7 @@ def getBuildPipeline():
                     ),
                     util.Interpolate('opencast%(prop:pkg_major_version)s.spec')
                 ],
-                logfile='rpmdev-bumpspec'),
+                logname='rpmdev-bumpspec'),
             common.shellArg(
                 command=[
                     'sed',
@@ -125,10 +125,10 @@ def getBuildPipeline():
                     util.Interpolate('s/2%%{?dist}/%(prop:buildnumber)s.%(prop:short_revision)s%%{?dist}/g'),
                     util.Interpolate('opencast%(prop:pkg_major_version)s.spec')
                 ],
-                logfile='buildnumber'),
+                logname='buildnumber'),
             common.shellArg(
                 command=['rm', '-f', 'BUILD/opencast/build/revision.txt'],
-                logfile="cleanup")
+                logname="cleanup")
         ],
         workdir="build/specs",
         name="Prepping rpms")

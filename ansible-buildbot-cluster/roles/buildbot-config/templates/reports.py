@@ -13,13 +13,13 @@ def __getBasePipeline():
                 command=util.Interpolate(
                     "(! grep -rnP '\t' modules assemblies pom.xml etc --include=pom.xml)"),
                 haltOnFailure=False,
-                logfile='Tab Check'),
+                logname='Tab Check'),
             common.shellArg(
                 command=util.Interpolate(
                     "(! grep -rn ' $' modules assemblies pom.xml etc --include=pom.xml)"
                 ),
                 haltOnFailure=False,
-                logfile='End Of Line Space Check')
+                logname='End Of Line Space Check')
         ],
         workdir="build/docs/guides",
         name="Formatting checks")

@@ -128,7 +128,7 @@ def __getBasePipeline():
         commands=[
             common.shellArg(
                 command=['npm', 'install'],
-                logfile='npm_install'),
+                logname='npm_install'),
         ],
         workdir="build/docs/guides",
         name="Running npm install",
@@ -139,7 +139,7 @@ def __getBasePipeline():
             common.shellArg(
                 command=['npm', 'test'],
                 haltOnFailure=False,
-                logfile='markdown-cli'),
+                logname='markdown-cli'),
         ],
         workdir="build/docs/guides",
         name="Check Markdown doc formatting with markdown-cli",
@@ -150,7 +150,7 @@ def __getBasePipeline():
             common.shellArg(
                 command=['python3', '-m', 'pip', 'install', '-r', 'requirements.txt'],
                 haltOnFailure=False,
-                logfile='markdown-cli'),
+                logname='markdown-cli'),
         ],
         workdir="build/docs/guides",
         name="Running pip install",

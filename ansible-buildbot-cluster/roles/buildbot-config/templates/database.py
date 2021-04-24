@@ -17,22 +17,22 @@ def generateDBTestStep(dbname, dbport):
             common.shellArg(
                 command='echo "select version()" | ' + mysqlString,
                 haltOnFailure=False,
-                logfile='version'),
+                logname='version'),
             common.shellArg(
                 command=util.Interpolate(
                     'echo "create database opencast%(prop:buildnumber)s;" | ' + mysqlString),
                 haltOnFailure=False,
-                logfile='createdb'),
+                logname='createdb'),
             common.shellArg(
                 command=util.Interpolate(
                     mysqlString + ' opencast%(prop:buildnumber)s < docs/scripts/ddl/mysql5.sql'),
                 haltOnFailure=False,
-                logfile='newdb'),
+                logname='newdb'),
             common.shellArg(
                 command=util.Interpolate(
                     'echo "drop database opencast%(prop:buildnumber)s;" | ' + mysqlString),
                 haltOnFailure=False,
-                logfile='dropdb'),
+                logname='dropdb'),
         ],
         workdir="build/",
         name="Test database generation script against " + dbname,
@@ -50,7 +50,7 @@ def generateDBUpgradeStep(dbname, dbport):
             common.shellArg(
                 command='bash docs/upgrade/.test.sh ' + dbport,
                 haltOnFailure=False,
-                logfile=dbname),
+                logname=dbname),
         ],
         workdir="build/",
         name="Test database upgrade scripts against " + dbname,

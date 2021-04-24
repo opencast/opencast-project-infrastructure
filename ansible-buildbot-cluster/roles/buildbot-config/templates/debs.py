@@ -48,31 +48,31 @@ def getBuildPipeline():
                         'Opencast revision %(prop:got_revision)s, packaged with Debian scripts version %(prop:deb_script_rev)s'
                     )
                 ],
-                logfile='dch'),
+                logname='dch'),
             common.shellArg(
                 command=[
                     'rm', '-f',
                     util.Interpolate("binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/revision.txt")
                 ],
-                logfile='cleanup'),
+                logname='cleanup'),
             common.shellArg(
                 command=util.Interpolate(
                     'echo "source library.sh\ndoOpencast %(prop:pkg_major_version)s.%(prop:pkg_minor_version)s %(prop:branch)s %(prop:got_revision)s" | tee build.sh'
                 ),
-                logfile='write'),
+                logname='write'),
             common.shellArg(
                 command=util.Interpolate(
                     'ln -s opencast-%(prop:pkg_major_version)s_%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s.orig.tar.xz opencast-%(prop:pkg_major_version)s_%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s-%(prop:buildnumber)s.orig.tar.xz'
                 ),
-                logfile='link'),
+                logname='link'),
             common.shellArg(
                 command=['bash', 'build.sh'],
-                logfile='build'),
+                logname='build'),
             common.shellArg(
                 command=util.Interpolate(
                     'echo "Opencast version %(prop:got_revision)s packaged with version %(prop:deb_script_rev)s" | tee outputs/%(prop:oc_commit)s/revision.txt'
                 ),
-                logfile='revision')
+                logname='revision')
         ],
         env={
             "NAME": "Buildbot",

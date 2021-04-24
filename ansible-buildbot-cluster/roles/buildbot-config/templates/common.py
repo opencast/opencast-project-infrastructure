@@ -19,10 +19,10 @@ def shellCommand(command, name, workdir="build", env={}, haltOnFailure=True, flu
         hideStepIf=hideStepIf)
 
 
-def shellArg(command, logfile, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True):
+def shellArg(command, logname, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True):
     return util.ShellArg(
         command=command,
-        logfile=logfile,
+        logname=logname,
         flunkOnFailure=flunkOnFailure,
         haltOnFailure=haltOnFailure,
         warnOnFailure=warnOnFailure)
@@ -48,7 +48,7 @@ def getPreflightChecks():
         commands=[
             shellArg(
                 command="df /builds -m | tail -n 1 | awk '$4 <= {{ minimum_build_diskspace }} { exit 1 }'",
-                logfile='freespace')
+                logname='freespace')
         ],
         name="Pre-flight checks")
 
@@ -67,7 +67,7 @@ def getWorkerPrep():
     commandsAry = [
         shellArg(
             command=['git', 'clean', '-fdx'],
-            logfile='clean'),
+            logname='clean'),
     ]
     return shellSequence(
         commands=commandsAry,
@@ -118,27 +118,27 @@ def getBuild(override=None, name="Build", workdir="build"):
             shellArg(
                 command=['sed', '-i', 's/WARN/DEBUG/',
                          'docs/log4j/log4j.properties'],
-                logfile='log-settings',
+                logname='log-settings',
                 haltOnFailure=False,
                 flunkOnFailure=False,
                 warnOnFailure=False),
             shellArg(
                 command=['sed', '-i', 's/captureTimeout: [0-9]*/captureTimeout: 120000/',
                          'modules/admin-ui/src/test/resources/karma.conf.js'],
-                logfile='old-timeout',
+                logname='old-timeout',
                 haltOnFailure=False,
                 flunkOnFailure=False,
                 warnOnFailure=False),
             shellArg(
                 command=['sed', '-i', 's/captureTimeout: [0-9]*/captureTimeout: 120000/',
                          'modules/admin-ui-frontend/test/karma.conf.js'],
-                logfile='new-timeout',
+                logname='new-timeout',
                 haltOnFailure=False,
                 flunkOnFailure=False,
                 warnOnFailure=False),
             shellArg(
                 command=command,
-                logfile='build')
+                logname='build')
         ],
         env=getMavenEnv,
         workdir=workdir,
@@ -267,7 +267,7 @@ def getClean():
         commands=[
             shellArg(
                 command=['git', 'clean', '-fdx'],
-                logfile='git')
+                logname='git')
         ],
         alwaysRun=True,
         name="Cleanup")
