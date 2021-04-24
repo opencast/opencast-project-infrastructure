@@ -6,7 +6,6 @@
   user: "{{ login_user }}"
   roles:
     - { role: buildbot-base }
-    - { role: docker-install }
     - { role: docker-tcp-connectable }
     - { role: buildbot-keysync, tags: [ rekey ] }
     - { role: autossh, when: "'master' not in group_names", tags: [ rekey ] }

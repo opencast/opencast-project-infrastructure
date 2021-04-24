@@ -7,16 +7,25 @@
     - "{{ ansible_distribution }}.yml"
     - "{{ ansible_os_family }}.yml"
 
-- name: Install EPEL release
-  yum:
-    name: epel-release
-    state: latest
-    update_cache: yes
-  become: yes
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+- import_tasks: debian.yml
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- import_tasks: centos.yml
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Amazon'
 
 - name: Install Buildbot system level dependencies
   package:
     name: "{{ lookup('vars', ansible_distribution_major_version) }}"
-    state: latest
+    state: present
   become: yes
+
+- name: Installing docker-compose
+  get_url:
+    url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64"
+    dest: /usr/bin/docker-compose
+    force: yes
+    owner: root
+    group: root
+    mode: 755
+  become: yes
+

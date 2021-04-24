@@ -1,9 +1,9 @@
 ---
 
-- name: Stopping Buildbot
-  docker_compose:
-    project_src: "{{ buildbot_home }}"
-    state: absent
+- name: Stopping Buildbot and databases
+  shell: docker-compose down
+  args:
+    chdir: "{{ buildbot_home }}"
   become: yes
 
 - name: Cleaning out built artifacts and database

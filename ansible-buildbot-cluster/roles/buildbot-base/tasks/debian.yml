@@ -13,8 +13,3 @@
     update_cache: yes
   become: yes
 
-- name: Installing Docker and compiler
-  apt:
-    name: [docker-ce, build-essential, python-dev, python3-dev]
-    state: latest
-  become: yes

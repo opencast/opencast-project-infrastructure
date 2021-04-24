@@ -1,4 +1,13 @@
 ---
+
+- name: Install EPEL release
+  yum:
+    name: epel-release
+    state: latest
+    update_cache: yes
+  become: yes
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
 - name: Adding Docker repository to yum config
   yum_repository:
     name: docker-ce-stable
@@ -13,6 +22,6 @@
 
 - name: Installing Docker
   yum:
-    name: [docker-ce, gcc, python-devel, python3-devel]
+    name: docker-ce
     state: latest
   become: yes

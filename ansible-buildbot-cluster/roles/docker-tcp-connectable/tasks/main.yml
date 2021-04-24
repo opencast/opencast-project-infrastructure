@@ -1,5 +1,14 @@
 ---
 
+- name: Ensuring Docker config directory is present
+  file:
+    path: /etc/docker
+    owner: root
+    group: root
+    mode: 755
+    state: directory
+  become: yes
+
 - name: Ensuring Docker is connectable via TCP
   copy:
     src: daemon.json

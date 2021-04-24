@@ -3,17 +3,17 @@
 "8":
   - "autossh"
   - "sudo"
-  - "python-pip"
-  - "python-passlib"
   - "python3"
-  - "python3-pip"
-  - "python3-dev"
+  - "docker-ce"
 
 "9":
   - "autossh"
   - "sudo"
-  - "python-pip"
-  - "python-passlib"
   - "python3"
-  - "python3-pip"
-  - "python3-dev"
+  - "docker-ce"
+
+"10":
+  - "autossh"
+  - "sudo"
+  - "python3"
+  - "docker-ce"

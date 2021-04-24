@@ -1,19 +1,22 @@
 ---
 
+- name: Stop Docker containers
+  shell: docker-compose down
+  args:
+    chdir: "{{ buildbot_home }}"
+  become: yes
+  ignore_errors: yes
+
 - name: Start Buildbot
-  docker_compose:
-    project_src: "{{ buildbot_home }}"
-    pull: yes
-    state: present
-    restarted: yes
+  shell: docker-compose up -d buildbot db proxy
+  args:
+    chdir: "{{ buildbot_home }}"
   become: yes
 
 - name: Start Databases
-  docker_compose:
-    project_src: "{{ buildbot_home }}"
-    pull: yes
-    state: present
-    restarted: yes
+  shell: docker-compose up -d maria mysql56 mysql57
+  args:
+    chdir: "{{ buildbot_home }}"
   become: yes
 
 - name: Start Autossh

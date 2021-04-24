@@ -6,19 +6,20 @@
     loop_var: distro
 
 - name: Updating Docker master image
-  docker_image:
-    name: "{{ docker_image_user }}/ocqa-buildbot-master"
-    tag: "{{ docker_image_tag }}"
-    source: pull
-    state: present
-    force_source: yes
+  shell: docker pull "{{ docker_image_user }}/ocqa-buildbot-master":"{{ docker_image_tag }}"
   when: "'master' in group_names"
   become: yes
 
-- name: Pruning Docker containers and images
-  docker_prune:
-    containers: yes
-    images: yes
-    networks: yes
-    volumes: yes
+- name: Updating images in docker-compose file
+  shell: docker-compose pull
+  args:
+    chdir: "{{ buildbot_home }}"
+  become: yes
+
+- name: Pruning Docker containers
+  shell: docker container prune -f
+  become: yes
+
+- name: Pruning Docker images
+  shell: docker image prune -f
   become: yes
