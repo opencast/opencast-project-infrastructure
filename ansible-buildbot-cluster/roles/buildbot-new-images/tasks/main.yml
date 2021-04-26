@@ -15,6 +15,7 @@
   args:
     chdir: "{{ buildbot_home }}"
   become: yes
+  notify: ["Stop Databases", "Start Databases"]
 
 - name: Pruning Docker containers
   shell: docker container prune -f

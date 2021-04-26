@@ -1,7 +1,7 @@
 ---
 
-- name: Stop Docker containers
-  shell: docker-compose down
+- name: Stop Buildbot
+  shell: docker-compose rm -sf buildbot db proxy
   args:
     chdir: "{{ buildbot_home }}"
   become: yes
@@ -9,6 +9,12 @@
 
 - name: Start Buildbot
   shell: docker-compose up -d buildbot db proxy
+  args:
+    chdir: "{{ buildbot_home }}"
+  become: yes
+
+- name: Stop Databases
+  shell: docker-compose rm -sf maria mysql56 mysql57
   args:
     chdir: "{{ buildbot_home }}"
   become: yes

@@ -11,23 +11,18 @@ services:
       - BUILDBOT_WORKER_PORT=9989
     depends_on:
       - db
-    ports:
-      - "{{ buildbot_port }}:{{ buildbot_port }}"
-      #Note: We're only exposing the worker port to localhost on the master node since comms are done via SSH tunnel
-      - "127.0.0.1:9989:9989"
-{% if debug_enabled %}
-      - "127.0.0.1:1234:1234"
-{% endif %}
-    network_mode: "host"
+    #Note: This needs to be host because the SSH tunnels are coming to the docker *host* rather than the container
+    network_mode: host
     volumes:
       - "{{ disk_base }}:{{ disk_base }}"
       - "{{ buildbot_home }}/buildbot-config:/var/lib/buildbot"
   proxy:
     image: "nginx:stable"
     restart: always
-    ports:
-      - "80:80"
-    network_mode: "host"
+    depends_on:
+      - buildbot
+    #This doesn't *need* to be host, but it's easier
+    network_mode: host
     volumes:
       - "{{ buildbot_home }}/nginx-config:/etc/nginx/conf.d"
       - "{{ disk_base }}:{{ disk_base }}"
