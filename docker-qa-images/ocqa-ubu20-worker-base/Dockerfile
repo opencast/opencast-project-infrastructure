@@ -68,7 +68,7 @@ RUN apt-get update && \
         libdistro-info-perl \
         fakeroot \
      # Repository generator
-        mini-dinstall \
+#        mini-dinstall \
      # Database test script use
         bc \
      # Crowdin
