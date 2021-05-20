@@ -43,7 +43,7 @@ RUN apt-get update && \
         ffmpeg-dist \
 #        openjdk-8-jre \
 	openjdk-11-jre \
-	openjdk-13-jre \
+#	openjdk-13-jre \
      # Build deps
         openssh-client \
         tar gzip bzip2 unzip \
@@ -52,7 +52,7 @@ RUN apt-get update && \
         curl wget \
 #        openjdk-8-jdk \
         openjdk-11-jdk \
-        openjdk-13-jdk \
+#        openjdk-13-jdk \
         firefox-esr \
      # Doc deps
      ## Python deps

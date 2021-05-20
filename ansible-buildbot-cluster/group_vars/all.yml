@@ -10,13 +10,13 @@ opencast:
   Develop:
     branch: 'develop'
     pom: '11'
-    jdk: [ '11', '13' ]
+    jdk: [ '11' ]
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     server: 'develop'
   10.x:
     branch: 'r/10.x'
     pom: '10'
-    jdk: [ '11', '13' ]
+    jdk: [ '11' ]
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     server: 'stable'
   9.x:
