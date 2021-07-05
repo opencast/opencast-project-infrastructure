@@ -9,7 +9,5 @@ fi
 set -uxe
 
 IMAGE_TAG="$1/ocqa-$2-$3:$4"
-cd ocqa-$2-$3
 docker push $IMAGE_TAG
-cd ..
 
