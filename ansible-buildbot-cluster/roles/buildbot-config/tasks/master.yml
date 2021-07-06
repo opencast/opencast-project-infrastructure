@@ -54,8 +54,6 @@
   with_items:
     - { src: "secrets/changehook.passwd", dest: "{{ buildbot_config_master }}/changehook.passwd" }
     - { src: "secrets/crowdin.key", dest: "{{ buildbot_secrets_master }}/crowdin.key" }
-    - { src: "secrets/repo.username", dest: "{{ buildbot_secrets_master }}/repo.username" }
-    - { src: "secrets/repo.password", dest: "{{ buildbot_secrets_master }}/repo.password" }
     - { src: "secrets/s3.public_access_key", dest: "{{ buildbot_secrets_master }}/s3.public_access_key" }
     - { src: "secrets/s3.public_secret_key", dest: "{{ buildbot_secrets_master }}/s3.public_secret_key" }
     - { src: "secrets/s3.private_access_key", dest: "{{ buildbot_secrets_master }}/s3.private_access_key" }
