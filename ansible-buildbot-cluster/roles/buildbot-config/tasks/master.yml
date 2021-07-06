@@ -38,20 +38,9 @@
     - { src: "deb_repo.py", dest: "{{ buildbot_config_master }}/deb_repo.py" }
     - { src: "rpm_repo.py", dest: "{{ buildbot_config_master }}/rpm_repo.py" }
     - { src: "ansible.py", dest: "{{ buildbot_config_master }}/ansible.py" }
+    - { src: "maintenance.py", dest: "{{ buildbot_config_master }}/maintenance.py" }
     - { src: "buildbot.conf", dest: "{{ buildbot_home }}/nginx-config/buildbot.conf" }
   notify: ["Stop Buildbot", "Start Buildbot"]
-
-- name: Template Buildbot public support files
-  template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    owner: "{{ buildbot_user }}"
-    group: "{{ buildbot_user }}"
-    mode: "{{ item.mode }}"
-    force: yes
-  become: yes
-  with_items:
-    - { src: "cleaner.py", dest: "{{ buildbot_home }}/cleaner.py", mode: "644" }
 
 - name: Template Buildbot private support files
   template:

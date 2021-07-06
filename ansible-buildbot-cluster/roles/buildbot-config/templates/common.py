@@ -151,17 +151,27 @@ def compressDir(dirToCompress, outputFile, workdir="build"):
          name=f"Compressing { dirToCompress }")
 
 
-def copyAWS(pathFrom, pathTo, name, doStepIf=True, hideStepIf=False, access=util.Secret("s3.public_access_key"), secret=util.Secret("s3.public_secret_key")):
-    return _AWSStep("cp", pathFrom, pathTo, name, doStepIf, hideStepIf, access, secret)
+def copyAWS(pathFrom, pathTo, name, doStepIf=True, hideStepIf=False):
+    return AWSStep(
+        ['s3', 'cp', util.Interpolate(pathFrom), util.Interpolate(pathTo)],
+        name, doStepIf, hideStepIf)
 
 
-def syncAWS(pathFrom, pathTo, name, doStepIf=True, hideStepIf=False, access=util.Secret("s3.public_access_key"), secret=util.Secret("s3.public_secret_key")):
-    return _AWSStep("sync", pathFrom, pathTo, name, doStepIf, hideStepIf, access, secret)
+def syncAWS(pathFrom, pathTo, name, doStepIf=True, hideStepIf=False):
+    return AWSStep(
+        ['s3', 'sync', util.Interpolate(pathFrom), util.Interpolate(pathTo)],
+        name, doStepIf, hideStepIf)
 
 
-def _AWSStep(command, pathFrom, pathTo, name, doStepIf=True, hideStepIf=False, access=util.Secret("s3.public_access_key"), secret=util.Secret("s3.public_secret_key")):
+def AWSStep(command, name, doStepIf=True, hideStepIf=False, access=util.Secret("s3.public_access_key"), secret=util.Secret("s3.public_secret_key")):
+    commandAry = list()
+    commandAry.extend(['aws', '--endpoint-url', '{{ s3_host }}']),
+    if type(command) == list:
+        commandAry.extend(command)
+    else:
+        commandAry.append(command)
     return shellCommand(
-        command=['aws', '--endpoint-url', '{{ s3_host }}', 's3', command, util.Interpolate(pathFrom), util.Interpolate(pathTo)],
+        command=commandAry,
         env={
             "AWS_ACCESS_KEY_ID": access,
             "AWS_SECRET_ACCESS_KEY": secret
