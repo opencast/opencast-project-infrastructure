@@ -17,8 +17,9 @@ RUN sed -i '/override_install_langs/d' /etc/yum.conf
 ENV         security_updates_as_of 2021-05-20
 
 # Install the dependencies
-RUN yum install -y epel-release &&\
-    yum install -y \
+RUN yum install -y epel-release
+
+RUN yum install -y \
         bash \
      # Run deps
         tesseract \
@@ -38,7 +39,10 @@ RUN yum install -y epel-release &&\
         java-1.8.0-openjdk-devel \
         java-11-openjdk-devel \
 #        java-13-openjdk-devel \
-        firefox \
+        firefox && \
+    yum clean all
+
+RUN yum install -y \
      # Doc deps
      ## Python deps for markdown
         python36 \
@@ -47,7 +51,10 @@ RUN yum install -y epel-release &&\
      ## Packages for building docs
         nodejs \
      ## For SQL script testing
-        mysql \
+        mysql && \
+    yum clean all
+
+RUN yum install -y \
      # Package building deps
         createrepo \
         rpmdevtools \
@@ -59,8 +66,8 @@ RUN yum install -y epel-release &&\
          openssl-devel \
      # Crowdin
          crowdin \
-     # bc for the database test script
-         bc && \
+     # jq for maintenance
+         jq && \
     yum clean all
 
 RUN alternatives --set java java-1.8.0-openjdk.x86_64

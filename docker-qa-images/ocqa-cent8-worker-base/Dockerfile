@@ -40,7 +40,11 @@ RUN yum install -y epel-release &&\
         curl wget \
         java-1.8.0-openjdk-devel \
         java-11-openjdk-devel \
-        firefox \
+#        java-13-openjdk-devel \
+        firefox && \
+    yum clean all
+
+RUN yum install -y \
      # Doc deps
      ## Python deps for markdown
         python36 \
@@ -49,28 +53,32 @@ RUN yum install -y epel-release &&\
      ## Packages for building docs
         nodejs \
      ## For SQL script testing
-        mysql \
+        mysql && \
+    yum clean all
+
+RUN yum install -y \
      # Package building deps
      # Moved below, causes yum to crash and corrupt its db if it's here
-#        createrepo \
-#        rpmdevtools \
-#        rpmlint \
-#        yum-utils \
-#        rpm-sign \
+        createrepo \
+        rpmdevtools \
+        rpmlint \
+        yum-utils \
+        rpm-sign \
      # Bits for buildbot worker
          gcc \
          openssl-devel \
      # Crowdin
          crowdin \
-     # bc for the database test script
-         bc
+     # jq for maintenance
+         jq && \
+    yum clean all
 
-RUN yum install -y \
-        createrepo \
-        rpmdevtools \
-        rpmlint \
-        yum-utils \
-        rpm-sign
+#RUN yum install -y \
+#        createrepo \
+#        rpmdevtools \
+#        rpmlint \
+#        yum-utils \
+#        rpm-sign
 
 RUN alternatives --set java java-1.8.0-openjdk.x86_64
 RUN alternatives --set javac java-1.8.0-openjdk.x86_64

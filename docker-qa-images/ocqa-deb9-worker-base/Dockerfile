@@ -25,8 +25,9 @@ COPY aws-config /builder/.aws/config
 # that everything is rebuilt
 ENV         security_updates_as_of 2021-05-20
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+RUN apt-get update
+
+RUN apt-get install -y --no-install-recommends \
         bash \
         locales \
      # Run deps
@@ -48,7 +49,10 @@ RUN apt-get update && \
         openjdk-8-jdk \
         openjdk-11-jdk \
 #        openjdk-13-jdk \
-        firefox-esr \
+        firefox-esr && \
+    apt-get clean
+
+RUN apt-get install -y --no-install-recommends \
      # Doc deps
      ## Python deps
         python3-dev \
@@ -56,8 +60,11 @@ RUN apt-get update && \
      ## Packages for building docs
         libyaml-dev \
         nodejs \
-     ## For SQL script testsing
-        mysql-client \
+     ## For SQL script testing
+        mysql-client && \
+    apt-get clean
+
+RUN apt-get install -y --no-install-recommends \
      # Package building deps
      # Note: build-essential is required for dpkg, gcc is required for python
         build-essential \
@@ -68,13 +75,11 @@ RUN apt-get update && \
         aptly \
         libdistro-info-perl \
         fakeroot \
-     # Repository generator
-#        mini-dinstall \
-     # Database test script use
-        bc \
+     # jq is used in the maintenance scripts
+        jq \
      # Crowdin
         crowdin && \
-     apt-get clean
+    apt-get clean
 
 RUN update-java-alternatives -s java-1.8.0-openjdk-amd64
 
