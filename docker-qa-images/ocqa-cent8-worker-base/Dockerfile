@@ -4,7 +4,6 @@ MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 COPY opencast.repo /etc/yum.repos.d/
 COPY opencast-testing.repo /etc/yum.repos.d/
 COPY nodesource-el8.repo /etc/yum.repos.d/
-COPY crowdin.repo /etc/yum.repos.d/
 
 COPY keys/* /etc/pki/rpm-gpg/
 
@@ -67,18 +66,17 @@ RUN yum install -y \
      # Bits for buildbot worker
          gcc \
          openssl-devel \
-     # Crowdin
-         crowdin \
      # jq for maintenance
          jq && \
     yum clean all
 
-#RUN yum install -y \
-#        createrepo \
-#        rpmdevtools \
-#        rpmlint \
-#        yum-utils \
-#        rpm-sign
+# Install crowdin
+RUN curl https://downloads.crowdin.com/cli/v2/crowdin-cli.zip -o /tmp/crowdin.zip && \
+    cd /tmp && \
+    unzip /tmp/crowdin.zip && \
+    mv 2.0.31/crowdin-cli.jar /usr/local/bin && \
+    rm -rf 2.0.31
+COPY crowdin /usr/local/bin/
 
 RUN alternatives --set java java-1.8.0-openjdk.x86_64
 RUN alternatives --set javac java-1.8.0-openjdk.x86_64
