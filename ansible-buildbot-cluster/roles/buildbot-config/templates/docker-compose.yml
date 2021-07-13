@@ -35,7 +35,7 @@ services:
     volumes:
       - "{{ buildbot_home }}/postgres-data:/var/lib/postgresql/data"
 
-{% if inventory_hostname in groups['workers'] %}
+{% if false and inventory_hostname in groups['workers'] %}
   maria:
     image: mariadb:10
     restart: always

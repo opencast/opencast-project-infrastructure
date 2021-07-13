@@ -15,7 +15,8 @@
   args:
     chdir: "{{ buildbot_home }}"
   become: yes
-  notify: ["Stop Databases", "Start Databases"]
+  #Database tests are turned off since we don't have any ddls to test with
+  #notify: ["Stop Databases", "Start Databases"]
 
 - name: Pruning Docker containers
   shell: docker container prune -f

@@ -24,4 +24,5 @@
   become: yes
   with_items:
     - { path: "{{ buildbot_home }}/builds", mode: "0755" }
-  notify: "Start Databases"
+  #Database tests are disabled right now
+  #notify: "Start Databases"
