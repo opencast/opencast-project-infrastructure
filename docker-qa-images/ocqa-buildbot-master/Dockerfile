@@ -7,11 +7,13 @@ MAINTAINER  Greg Logan
 
 # Last build date - this can be updated whenever there are security updates so
 # that everything is rebuilt
-ENV         security_updates_as_of 2021-07-09
+ENV         security_updates_as_of 2021-07-13
 
 # install cairo for build badges
 RUN apt-get update && \
     apt-get dist-upgrade -y
+
+RUN /buildbot_venv/bin/pip3 --no-cache-dir install docker
 
 #RUN apk add --no-cache \
 #        zlib-dev \

@@ -7,7 +7,6 @@ services:
     env_file:
       - db.env
     environment:
-      - BUILDBOT_CONFIG_DIR=config
       - BUILDBOT_WORKER_PORT=9989
     depends_on:
       - db
@@ -15,7 +14,7 @@ services:
     network_mode: host
     volumes:
       - "{{ disk_base }}:{{ disk_base }}"
-      - "{{ buildbot_home }}/buildbot-config:/var/lib/buildbot"
+      - "{{ buildbot_home }}/buildbot-config:/buildbot"
   proxy:
     image: "nginx:stable"
     restart: always

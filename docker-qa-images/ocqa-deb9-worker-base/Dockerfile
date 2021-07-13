@@ -23,7 +23,7 @@ COPY aws-config /builder/.aws/config
 
 # Last build date - this can be updated whenever there are security updates so
 # that everything is rebuilt
-ENV         security_updates_as_of 2021-07-09
+ENV         security_updates_as_of 2021-07-13
 
 RUN apt-get update
 
@@ -76,6 +76,7 @@ RUN apt-get install -y --no-install-recommends \
         aptly \
         libdistro-info-perl \
         fakeroot \
+        mini-dinstall \
      # jq is used in the maintenance scripts
         jq \
      # Crowdin
