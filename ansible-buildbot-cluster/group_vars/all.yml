@@ -25,11 +25,6 @@ opencast:
     jdk: [ '8', '11' ]
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     server: 'legacy'
-  8.x:
-    branch: 'r/8.x'
-    pom: '8'
-    jdk: [ '8' ]
-    profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
 
 
 #########################
