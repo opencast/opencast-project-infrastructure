@@ -93,19 +93,13 @@ def _getBasicSchedulers(props):
             ])
             schedDict[build_type + str(jdk)] = sched
 
-    builders = [pretty_branch_name + " Markdown"]
-    #Disable scheduling database tests for OC 10 and newer, leaving the builders in place
-    major = pretty_branch_name.split('.')[0]
-    if major != 'Develop' and int(major) < 10:
-      builders.append(pretty_branch_name + " Database Tests")
-
     sched = _getAnyBranchScheduler(
         name=pretty_branch_name + " Quick Build",
         change_filter=branch_cf,
         properties=props,
         builderNames=[
             pretty_branch_name + " Markdown",
-            pretty_branch_name + " Database Tests"
+#            pretty_branch_name + " Database Tests"
         ])
     schedDict["markdowndb"] = sched
 
