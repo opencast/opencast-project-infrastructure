@@ -22,7 +22,7 @@ def getRPMBuilds(props):
                 '--define', 'ocdist ' + profile,
                 '--define', util.Interpolate('tarversion %(prop:pkg_major_version)s-SNAPSHOT'),
                 '-bb', '--noclean',
-                util.Interpolate("SPECS/opencast%(prop:pkg_major_version)s.spec")
+                'opencast.spec'
             ],
             logname=profile))
         builds.append(common.shellArg(
@@ -31,7 +31,7 @@ def getRPMBuilds(props):
                 '--addsign',
                 '--key-id', util.Interpolate("%(prop:signing_key)s"),
                 util.Interpolate(
-                    "RPMS/noarch/opencast%(prop:pkg_major_version)s-" + profile + "-%(prop:pkg_major_version)s.x-%(prop:buildnumber)s.%(prop:short_revision)s.el" + elvers + ".noarch.rpm")
+                    "../RPMS/noarch/opencast-" + profile + "-%(prop:pkg_major_version)s.x-%(prop:buildnumber)s.%(prop:short_revision)s.el" + elvers + ".noarch.rpm")
             ],
             logname=profile + " signing"))
     return builds
@@ -41,10 +41,11 @@ def getBuildPipeline():
 
     rpmsClone = steps.Git(
         repourl="{{ source_rpm_repo_url }}",
-        branch="master",
+        branch=util.Property('branch'),
         alwaysUseLatest=True,
+        shallow=True,
         mode="full",
-        method="fresh",
+        method="clobber",
         flunkOnFailure=True,
         haltOnFailure=True,
         name="Cloning rpm packaging configs")
@@ -64,37 +65,13 @@ def getBuildPipeline():
                 # We're using a string here rather than an arg array since we need the shell functions
                 command='echo -e "%_topdir `pwd`" > ~/.rpmmacros',
                 logname="rpmdev-setup"),
-            common.shellArg(
-                command=[
-                    'rpmdev-setuptree'
-                ],
-                logname="rpmdev"),
-            common.shellArg(
-                command=[
-                    'mkdir', '-p',
-                    'BUILD/opencast/build',
-                ],
-                logname="prep"),
-            common.shellArg(
-                command=[
-                    "ln", "-sr",
-                    util.Interpolate(
-                        "opencast%(prop:pkg_major_version)s.spec"),
-                    "SPECS"
-                ],
-                logname="specs"),
-            common.shellArg(
-                # Same here
-                command=util.Interpolate(
-                    "ln -sr opencast%(prop:pkg_major_version)s/* SOURCES"),
-                logname="sources")
         ],
-        workdir="build/specs",
+        workdir="build/rpmbuild",
         name="Fetch built artifacts and build prep")
 
     rpmsFetch = common.syncAWS(
         pathFrom="s3://public/builds/{{ builds_fragment }}",
-        pathTo="specs/BUILD/opencast/build",
+        pathTo="rpmbuild/SOURCES",
         name="Fetch build from S3")
 
     rpmsPrep = common.shellSequence(
@@ -103,8 +80,8 @@ def getBuildPipeline():
                 command=[
                     'sed',
                     '-i',
-                    util.Interpolate('s/srcversion .../srcversion %(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/g'),
-                    util.Interpolate('opencast%(prop:pkg_major_version)s.spec')
+                    util.Interpolate('s/srcversion ..../srcversion %(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/g'),
+                    util.Interpolate('opencast.spec')
                 ],
                 logname='version'),
             common.shellArg(
@@ -115,7 +92,7 @@ def getBuildPipeline():
                     util.Interpolate(
                         'Opencast revision %(prop:got_revision)s, packaged with RPM scripts version %(prop:rpm_script_rev)s'
                     ),
-                    util.Interpolate('opencast%(prop:pkg_major_version)s.spec')
+                    util.Interpolate('opencast.spec')
                 ],
                 logname='rpmdev-bumpspec'),
             common.shellArg(
@@ -123,24 +100,24 @@ def getBuildPipeline():
                     'sed',
                     '-i',
                     util.Interpolate('s/2%%{?dist}/%(prop:buildnumber)s.%(prop:short_revision)s%%{?dist}/g'),
-                    util.Interpolate('opencast%(prop:pkg_major_version)s.spec')
+                    util.Interpolate('opencast.spec')
                 ],
                 logname='buildnumber'),
             common.shellArg(
                 command=['rm', '-f', 'BUILD/opencast/build/revision.txt'],
                 logname="cleanup")
         ],
-        workdir="build/specs",
+        workdir="build/rpmbuild/SPECS",
         name="Prepping rpms")
 
     rpmsBuild = common.shellSequence(
         commands=getRPMBuilds,
-        workdir="build/specs",
+        workdir="build/rpmbuild/SPECS",
         name="Build rpms")
 
     # Note: We're using a string here because using the array disables shell globbing!
     rpmsUpload = common.syncAWS(
-        pathFrom="specs/RPMS/noarch",
+        pathFrom="rpmbuild/RPMS/noarch",
         pathTo="s3://public/builds/{{ rpms_fragment }}",
         name="Upload rpms to buildmaster")
 

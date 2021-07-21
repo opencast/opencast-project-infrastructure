@@ -7,7 +7,6 @@ name: ci-opencast-org
 login_user: greglogan
 mail_to: "gregorydlogan@gmail.com"
 docker_image_user: "greglogan"
-source_rpm_repo_url: "https://github.com/gregorydlogan/opencast-rpm-specs.git"
 
 send_mail_notifications: True
 send_gh_notifications: True
