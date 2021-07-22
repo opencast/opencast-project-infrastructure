@@ -103,7 +103,7 @@ def _getBasicSchedulers(props):
         ])
     schedDict["markdowndb"] = sched
 
-    if props['package_all']:
+    if str(props['package_all']).lower() != 'true':
         sched = schedulers.Nightly(
             name=pretty_branch_name + ' Package Generation',
             change_filter=branch_cf,
@@ -139,7 +139,7 @@ def getSchedulers(props):
     sched_dict = _getBasicSchedulers(props)
     scheduler_list = list(sched_dict.values())
 
-    if props['has_repo_builder']:
+    if str(props['has_repo_builder']).lower() == 'true':
         repo = schedulers.Dependent(
             name=pretty_branch_name + ' Repository Generation',
             upstream=sched_dict['package'],
