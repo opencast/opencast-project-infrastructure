@@ -28,7 +28,7 @@ def getPullRequestPipeline():
 
 def getBuildPipeline():
 
-    override = ['install', '-P', 'dist']
+    override = ['install', '-T 1C', '-P', 'dist']
     buildTarballs = common.getBuild(override=override, workdir="build/assemblies", name="Building the tarballs")
 
     stampVersion = common.shellCommand(
@@ -55,7 +55,7 @@ def getBuildPipeline():
     f_build.addStep(common.getWorkerPrep())
 {% if deploy_snapshots %}
     f_build.addStep(common.loadMavenSettings())
-    f_build.addStep(common.getBuild(override=['clean', 'deploy', '-P', 'none', '-s', 'settings.xml']))
+    f_build.addStep(common.getBuild(override=['deploy', '-T 1C', '-Pnone', '-s', 'settings.xml']))
 {% else %}
     f_build.addStep(common.getBuild())
 {% endif %}
