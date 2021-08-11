@@ -19,7 +19,9 @@ COPY aptly.list /etc/apt/sources.list.d
 COPY crowdin.list /etc/apt/sources.list.d
 
 #JDK8 is not present in buster, but lives in unstable instead
-COPY debian-oldstable.list /etc/apt/sources.list.d/
+COPY debian-stretch.list /etc/apt/sources.list.d/
+#aptly 1.4 is in backports, but not main
+COPY debian-buster-backports.list /etc/apt/sources.list.d/
 #This file prevents the whole system from upgrading due to the above configuration
 COPY 99defaultrelease /etc/apt/apt.conf.d/
 COPY releases.pref /etc/apt/preferences.d/
