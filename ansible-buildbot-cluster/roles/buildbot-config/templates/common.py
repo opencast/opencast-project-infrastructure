@@ -236,8 +236,6 @@ def loadMavenSettings():
     return copyAWS(
         pathFrom="s3://{{ s3_private_bucket }}/{{ groups['master'][0] }}/mvn/settings.xml",
         pathTo="settings.xml",
-        access=util.Secret("s3.private_access_key"),
-        secret=util.Secret("s3.private_secret_key"),
         name="Fetching maven settings")
 
 
