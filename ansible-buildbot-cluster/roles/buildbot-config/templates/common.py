@@ -274,8 +274,8 @@ def getClean():
     return shellSequence(
         commands=[
             shellArg(
-                command=['git', 'clean', '-fdx'],
-                logname='git')
+                command=['rm', '-rf', '*'],
+                logname='rm')
         ],
         alwaysRun=True,
         name="Cleanup")
