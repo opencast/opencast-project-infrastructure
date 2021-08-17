@@ -19,7 +19,7 @@ COPY aptly.list /etc/apt/sources.list.d
 COPY crowdin.list /etc/apt/sources.list.d
 
 #JDK8 is not present in buster, but lives in unstable instead
-COPY debian-stretch.list /etc/apt/sources.list.d/
+COPY debian-unstable.list /etc/apt/sources.list.d/
 #aptly 1.4 is in backports, but not main
 COPY debian-buster-backports.list /etc/apt/sources.list.d/
 #This file prevents the whole system from upgrading due to the above configuration
@@ -89,7 +89,7 @@ RUN apt-get install -y --no-install-recommends \
         crowdin && \
      apt-get clean
 
-RUN apt-get install -y --no-install-recommends -t oldstable openjdk-8-jre openjdk-8-jdk && apt-get clean
+RUN apt-get install -y --no-install-recommends -t unstable openjdk-8-jre openjdk-8-jdk && apt-get clean
 
 RUN update-java-alternatives -s java-1.8.0-openjdk-amd64
 
