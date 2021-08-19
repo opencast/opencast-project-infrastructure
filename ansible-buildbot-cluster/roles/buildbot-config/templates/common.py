@@ -274,7 +274,7 @@ def getClean():
     return shellSequence(
         commands=[
             shellArg(
-                command=['rm', '-rf', '*'],
+                command=['rm', '-rf', util.Interpolate("%(prop:builddir)s")],
                 logname='rm')
         ],
         alwaysRun=True,
