@@ -1,6 +1,10 @@
 FROM debian:9
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
+#Needed to work around pip bug: https://githubmemory.com/repo/pypa/pip/issues/10219
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+
 # This will make apt-get install without question
 ARG         DEBIAN_FRONTEND=noninteractive
 
@@ -23,7 +27,7 @@ COPY aws-config /builder/.aws/config
 
 # Last build date - this can be updated whenever there are security updates so
 # that everything is rebuilt
-ENV         security_updates_as_of 2021-08-17
+ENV         security_updates_as_of 2021-08-23
 
 RUN apt-get update
 
