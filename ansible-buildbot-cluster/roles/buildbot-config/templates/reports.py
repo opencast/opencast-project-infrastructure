@@ -65,12 +65,12 @@ def getBuildPipeline():
 
     uploadSite = common.copyAWS(
         pathFrom="target/site.tar.bz2",
-        pathTo="s3://public/builds/{{ reports_fragment }}",
+        pathTo="s3://{{ s3_public_bucket }}/builds/{{ reports_fragment }}",
         name="Upload site report to S3")
 
     uploadCoverage = common.copyAWS(
         pathFrom="target/coverage.tar.bz2",
-        pathTo="s3://public/builds/{{ coverage_fragment }}",
+        pathTo="s3://{{ s3_public_bucket }}/builds/{{ coverage_fragment }}",
         name="Upload coverage report to S3")
 
     updateSite = steps.MasterShellCommand(

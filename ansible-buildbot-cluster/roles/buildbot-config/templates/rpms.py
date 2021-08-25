@@ -70,7 +70,7 @@ def getBuildPipeline():
         name="Fetch built artifacts and build prep")
 
     rpmsFetch = common.syncAWS(
-        pathFrom="s3://public/builds/{{ builds_fragment }}",
+        pathFrom="s3://{{ s3_public_bucket }}/builds/{{ builds_fragment }}",
         pathTo="rpmbuild/SOURCES",
         name="Fetch build from S3")
 
@@ -118,7 +118,7 @@ def getBuildPipeline():
     # Note: We're using a string here because using the array disables shell globbing!
     rpmsUpload = common.syncAWS(
         pathFrom="rpmbuild/RPMS/noarch",
-        pathTo="s3://public/builds/{{ rpms_fragment }}",
+        pathTo="s3://{{ s3_public_bucket }}/builds/{{ rpms_fragment }}",
         name="Upload rpms to buildmaster")
 
     f_package_rpms = util.BuildFactory()

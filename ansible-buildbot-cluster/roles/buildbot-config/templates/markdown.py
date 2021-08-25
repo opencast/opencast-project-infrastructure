@@ -115,7 +115,7 @@ class GenerateS3Commands(buildstep.ShellMixin, steps.BuildStep):
             self.build.addStepsAfterCurrentStep([
                 common.copyAWS(
                     pathFrom=target.split("/")[0] + ".tar.bz2",
-                    pathTo="s3://public/builds/{{ markdown_fragment }}/" + target.split("/")[0] + ".tar.bz2",
+                    pathTo="s3://{{ s3_public_bucket }}/builds/{{ markdown_fragment }}/" + target.split("/")[0] + ".tar.bz2",
                     name="Upload " + target.split("/")[0] + " to S3")
                 for target in self.extract_targets(self.observer.getStdout())
             ])

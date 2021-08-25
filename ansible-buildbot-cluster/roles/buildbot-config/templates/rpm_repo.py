@@ -15,7 +15,7 @@ def getBuildPipeline():
         name='Prep repository structure')
 
     repo_fetch = common.syncAWS(
-        pathFrom="s3://public/builds/{{ rpms_fragment }}",
+        pathFrom="s3://{{ s3_public_bucket }}/builds/{{ rpms_fragment }}",
         pathTo="%(prop:rpm_repo_fragment)s/unstable/el/7/noarch/%(prop:pkg_major_version)s/",
         name='Fetch packages')
 
