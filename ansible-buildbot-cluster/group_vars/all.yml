@@ -23,7 +23,8 @@ opencast:
     branch: 'r/9.x'
     pom: '9'
     jdk: [ '8', '11' ]
-    profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
+    profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ],
+    cores: '1',
     server: 'legacy'
 
 
