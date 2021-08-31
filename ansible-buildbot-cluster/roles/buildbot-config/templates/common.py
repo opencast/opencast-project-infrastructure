@@ -110,7 +110,7 @@ def getBuild(override=None, name="Build", workdir="build"):
     command.append('-DskipTests')
 {% endif %}
     if not override:
-        command.extend(['install', util.Interpolate('-T %(prop:cores)s'), '-Pnone'])
+        command.extend(['install', '-T', util.Interpolate('%(prop:cores)s'), '-Pnone'])
     else:
         command.extend(override)
     return shellSequence(
