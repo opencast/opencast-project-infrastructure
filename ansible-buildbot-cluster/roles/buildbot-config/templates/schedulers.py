@@ -62,7 +62,7 @@ def getPullRequestScheduler(props, pretty_branch_name):
     builderNames = [ pretty_branch_name + " Pull Request " + build_type + " JDK " + str(jdk) for build_type in [ 'Build', 'Reports' ] for jdk in common.getJDKBuilds(props, pretty_branch_name)]
     builderNames.extend([
         pretty_branch_name + " Pull Request Markdown",
-        pretty_branch_name + " Pull Request Database Tests"
+#        pretty_branch_name + " Pull Request Database Tests"
     ])
 
     pull_cf=util.ChangeFilter(category="pull", filter_fn=lambda x: x.properties.getProperty('basename') in [ "r/" + pretty_branch_name.lower(), pretty_branch_name.lower() ] )
