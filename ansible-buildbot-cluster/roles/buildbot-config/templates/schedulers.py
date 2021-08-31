@@ -165,7 +165,7 @@ def getSchedulers(props):
 
     forceBuilders.extend([
         pretty_branch_name + " Markdown",
-        pretty_branch_name + " Database Tests",
+#        pretty_branch_name + " Database Tests",
         pretty_branch_name + " Debian Packaging",
         pretty_branch_name + " el7 RPM Packaging",
         pretty_branch_name + " el8 RPM Packaging"

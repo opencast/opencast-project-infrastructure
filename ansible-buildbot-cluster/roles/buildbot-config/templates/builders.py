@@ -70,13 +70,13 @@ def getPullRequestBuilder(props, pretty_branch_name):
         properties=props,
         collapseRequests=True))
 
-    builders.append(util.BuilderConfig(
-        name=pretty_branch_name + " Pull Request Database Tests",
-        workernames=workers,
-        factory=database.getPullRequestPipeline(),
-        properties=props,
-        collapseRequests=True,
-        locks=[db_lock.access('exclusive')]))
+#    builders.append(util.BuilderConfig(
+#        name=pretty_branch_name + " Pull Request Database Tests",
+#        workernames=workers,
+#        factory=database.getPullRequestPipeline(),
+#        properties=props,
+#        collapseRequests=True,
+#        locks=[db_lock.access('exclusive')]))
 
     return builders
 
@@ -117,13 +117,13 @@ def getBuildersForBranch(props):
         properties=props,
         collapseRequests=True))
 
-    builders.append(util.BuilderConfig(
-        name=pretty_branch_name + " Database Tests",
-        workernames=workers,
-        factory=database.getBuildPipeline(),
-        properties=props,
-        collapseRequests=True,
-        locks=[db_lock.access('exclusive')]))
+#    builders.append(util.BuilderConfig(
+#        name=pretty_branch_name + " Database Tests",
+#        workernames=workers,
+#        factory=database.getBuildPipeline(),
+#        properties=props,
+#        collapseRequests=True,
+#        locks=[db_lock.access('exclusive')]))
 
     builders.append(util.BuilderConfig(
         name=pretty_branch_name + " Debian Packaging",
