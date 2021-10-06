@@ -53,15 +53,22 @@ def getPullRequestBuilder(props, pretty_branch_name):
     for jdk in common.getJDKBuilds(props, pretty_branch_name):
         jdk_props = dict(props)
         jdk_props['jdk'] = str(jdk)
-        for build_type in ["Build", "Reports"]:
-            builders.append(util.BuilderConfig(
-                name=pretty_branch_name + " Pull Request " + build_type + " JDK " + str(jdk),
-                workernames=workers,
-                factory=build.getPullRequestPipeline(),
-                collapseRequests=True,
-                properties=jdk_props,
-                locks=[mvn_lock.access('exclusive')]))
 
+        builders.append(util.BuilderConfig(
+            name=pretty_branch_name + " Pull Request Build JDK " + str(jdk),
+            workernames=workers,
+            factory=build.getPullRequestPipeline(),
+            collapseRequests=True,
+            properties=jdk_props,
+            locks=[mvn_lock.access('exclusive')]))
+
+        builders.append(util.BuilderConfig(
+            name=pretty_branch_name + " Pull Request Reports JDK " + str(jdk),
+            workernames=workers,
+            factory=reports.getPullRequestPipeline(),
+            collapseRequests=True,
+            properties=jdk_props,
+            locks=[mvn_lock.access('exclusive')]))
 
     builders.append(util.BuilderConfig(
         name=pretty_branch_name + " Pull Request Markdown",
@@ -99,16 +106,26 @@ def getBuildersForBranch(props):
     for jdk in common.getJDKBuilds(props, pretty_branch_name):
         jdk_props = dict(props)
         jdk_props['jdk'] = str(jdk)
-        for build_type in ["Build", "Reports"]:
-            builders.append(util.BuilderConfig(
-                name=pretty_branch_name + " " + build_type + " JDK " + str(jdk),
-                workernames=workers,
-                factory=build.getBuildPipeline(),
-                properties=jdk_props,
-                collapseRequests=True,
-                #A note on these locks: We want a single maven build per branch,
-                # AND a single maven build per worker
-                locks=[mvn_lock.access('exclusive'), branch_mvn_lock.access('exclusive')]))
+
+        builders.append(util.BuilderConfig(
+            name=pretty_branch_name + " Build JDK " + str(jdk),
+            workernames=workers,
+            factory=build.getBuildPipeline(),
+            properties=jdk_props,
+            collapseRequests=True,
+            #A note on these locks: We want a single maven build per branch,
+            # AND a single maven build per worker
+            locks=[mvn_lock.access('exclusive'), branch_mvn_lock.access('exclusive')]))
+
+        builders.append(util.BuilderConfig(
+            name=pretty_branch_name + " Reports JDK " + str(jdk),
+            workernames=workers,
+            factory=reports.getBuildPipeline(),
+            properties=jdk_props,
+            collapseRequests=True,
+            #A note on these locks: We want a single maven build per branch,
+            # AND a single maven build per worker
+            locks=[mvn_lock.access('exclusive'), branch_mvn_lock.access('exclusive')]))
 
     builders.append(util.BuilderConfig(
         name=pretty_branch_name + " Markdown",
