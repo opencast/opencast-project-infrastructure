@@ -34,7 +34,7 @@ RUN yum install -y epel-release &&\
         hunspell \
         java-1.8.0-openjdk \
         java-11-openjdk \
-#        java-13-openjdk \
+#        java-17-openjdk \
      # Build deps
         openssh-clients \
         tar gzip bzip2 unzip \
@@ -43,7 +43,7 @@ RUN yum install -y epel-release &&\
         curl wget \
         java-1.8.0-openjdk-devel \
         java-11-openjdk-devel \
-#        java-13-openjdk-devel \
+#        java-17-openjdk-devel \
         firefox && \
     yum clean all
 

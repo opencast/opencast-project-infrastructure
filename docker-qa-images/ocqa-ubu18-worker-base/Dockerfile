@@ -42,7 +42,7 @@ RUN apt-get install -y --no-install-recommends \
         ffmpeg-dist \
         openjdk-8-jre \
         openjdk-11-jre \
-#        openjdk-13-jre \
+#        openjdk-17-jre \
      # Build deps
         openssh-client \
         tar gzip bzip2 unzip \
@@ -51,7 +51,7 @@ RUN apt-get install -y --no-install-recommends \
         curl wget \
         openjdk-8-jdk \
         openjdk-11-jdk \
-#        openjdk-13-jdk \
+#        openjdk-17-jdk \
         firefox && \
     apt-get clean
 

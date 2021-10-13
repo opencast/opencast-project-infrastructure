@@ -42,7 +42,7 @@ RUN yum install -y \
         curl wget \
         java-1.8.0-openjdk-devel \
         java-11-openjdk-devel \
-#        java-13-openjdk-devel \
+#        java-17-openjdk-devel \
         firefox && \
     yum clean all
 
