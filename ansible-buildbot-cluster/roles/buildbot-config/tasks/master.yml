@@ -36,7 +36,6 @@
     - { src: "reports.py", dest: "{{ buildbot_config_master }}/reports.py" }
     - { src: "rpms.py", dest: "{{ buildbot_config_master }}/rpms.py" }
     - { src: "schedulers.py", dest: "{{ buildbot_config_master }}/schedulers.py" }
-    - { src: "deb_repo.py", dest: "{{ buildbot_config_master }}/deb_repo.py" }
     - { src: "rpm_repo.py", dest: "{{ buildbot_config_master }}/rpm_repo.py" }
     - { src: "ansible.py", dest: "{{ buildbot_config_master }}/ansible.py" }
     - { src: "maintenance.py", dest: "{{ buildbot_config_master }}/maintenance.py" }

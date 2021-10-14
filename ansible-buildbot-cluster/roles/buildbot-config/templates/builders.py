@@ -10,7 +10,6 @@ import markdown
 import database
 import debs
 import rpms
-import deb_repo
 import rpm_repo
 import ansible
 
@@ -169,13 +168,6 @@ def getBuildersForBranch(props):
             collapseRequests=True))
 
     if len(repo_workers) > 0:
-        builders.append(util.BuilderConfig(
-            name=pretty_branch_name + " Debian Repository",
-            workernames=repo_workers,
-            factory=deb_repo.getBuildPipeline(),
-            properties=deb_props,
-            collapseRequests=True,
-            locks=[deb_lock.access('exclusive')]))
 
         builders.append(util.BuilderConfig(
             name=pretty_branch_name + " RPM Repository",

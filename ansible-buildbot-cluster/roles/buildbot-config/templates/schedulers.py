@@ -145,7 +145,7 @@ def getSchedulers(props):
             upstream=sched_dict['package'],
             properties=props,
             builderNames=[
-                pretty_branch_name + " Debian Repository",
+#                pretty_branch_name + " Debian Repository",
                 pretty_branch_name + " RPM Repository",
             ])
         scheduler_list.append(repo)
@@ -172,7 +172,7 @@ def getSchedulers(props):
     ])
 
     if props['has_repo_builder']:
-        forceBuilders.append(pretty_branch_name + " Debian Repository")
+#        forceBuilders.append(pretty_branch_name + " Debian Repository")
         forceBuilders.append(pretty_branch_name + " RPM Repository")
         if props['deploy_env']:
             forceBuilders.append(pretty_branch_name + " Ansible Deploy")
@@ -197,7 +197,7 @@ def getSchedulers(props):
             upstream=forceBuild,
             properties=props,
             builderNames=[
-                pretty_branch_name + " Debian Repository",
+#                pretty_branch_name + " Debian Repository",
                 pretty_branch_name + " RPM Repository",
             ])
         scheduler_list.append(forceRepo)
