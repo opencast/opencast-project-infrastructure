@@ -84,7 +84,7 @@ def getBuildPipeline():
                 command=[
                     'sed',
                     '-i',
-                    util.Interpolate('s/srcversion ..../srcversion %(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/g'),
+                    util.Interpolate('s/define srcversion .*$/define srcversion %(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/g'),
                     util.Interpolate('opencast.spec')
                 ],
                 logname='version'),
