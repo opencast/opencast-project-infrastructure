@@ -1,0 +1,43 @@
+---
+
+- name: fail early if OS is not supported
+  assert:
+    that: ansible_os_family == 'Debian'
+
+- name: install repository dependencies
+  package:
+    state: present
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - sudo
+
+- name: add apt signing key for opencast repository
+  apt_key:
+    url: https://pkg.opencast.org/gpgkeys/opencast-deb.key
+    state: present
+
+- name: add apt signing key for opencast repository
+  apt_key:
+    url: https://pkg.opencast.org/gpgkeys/opencast-deb.key
+    state: present
+
+- name: install deb repository
+  apt_repository:
+    repo: "deb https://pkg.opencast.org/debian {{item}}"
+    state: present
+    filename: opencast
+  loop:
+    - stable/
+    - testing/
+
+- name: install opencast dependencies
+  package:
+    name:
+      - curl
+      - ffmpeg-dist
+      - hunspell
+      - netcat
+      - sox
+      - synfig
+      - tesseract-ocr

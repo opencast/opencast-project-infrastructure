@@ -2,7 +2,6 @@
 Description=Opencast
 After=local-fs.target
 After=network.target
-#After=remote-fs.target
 
 [Service]
 ExecStart=/srv/opencast/opencast-dist-allinone/bin/start-opencast server

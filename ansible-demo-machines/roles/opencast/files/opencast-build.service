@@ -4,9 +4,10 @@ After=local-fs.target
 After=network.target
 
 [Service]
-ExecStart=/home/opencast/opencast-build.sh
+ExecStart=/opt/opencast-build/opencast-build.sh
 User=opencast
 Group=opencast
+KillMode=process
 
 [Install]
 Also=opencast-build.timer

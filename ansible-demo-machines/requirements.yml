@@ -1,0 +1,10 @@
+---
+
+roles:
+  - lkiesow.dnf_autoupdate
+  - elan.opencast_firewalld
+  - elan.opencast_repository
+  - elan.opencast_user
+
+collections:
+  - community.crypto

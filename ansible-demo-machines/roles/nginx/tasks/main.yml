@@ -9,7 +9,7 @@
   file:
     path: /etc/nginx/ssl
     state: directory
-    mode: 0755
+    mode: '0755'
 
 - name: configure nginx mime types
   copy:
@@ -17,31 +17,27 @@
     dest: /etc/nginx/mime.types
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: initial configuration for certificates
   copy:
-    src: "{{item.key}}"
-    dest: /etc/nginx/{{item.value}}
+    src: '{{ item }}.pem'
+    dest: /etc/nginx/ssl/{{ inventory_hostname }}.{{ item }}
     owner: root
     group: root
     force: false
-    mode: 0640
+    mode: '0640'
   loop:
-    - {key: certificate.pem, value: "ssl/{{inventory_hostname}}.crt"}
-    - {key: key.pem, value: "ssl/{{inventory_hostname}}.key"}
+    - crt
+    - key
 
 - name: create diffie hellman ephemeral parameters for nginx
-  command: openssl dhparam -out /etc/nginx/ssl/dhparam.pem 2048
-  args:
-    creates: /etc/nginx/ssl/dhparam.pem
-
-- name: dhparam.pem file permission
-  file:
+  community.crypto.openssl_dhparam:
     path: /etc/nginx/ssl/dhparam.pem
+    size: 2048
     owner: root
     group: root
-    mode: 0640
+    mode: '0640'
 
 - name: configure nginx
   template:
@@ -54,12 +50,10 @@
 
 - name: install selinux config libs
   package:
-    name: libsemanage-python
-    state: present
+    name: python3-libsemanage
   when: >
-    ansible_distribution == 'CentOS'
-    or ansible_distribution == 'RedHat'
-    or ansible_distribution == 'Scientific'
+    ansible_os_family == 'RedHat'
+    and ansible_distribution_major_version >= '8'
 
 - name: allow httpd to act as reverse proxy
   become: true

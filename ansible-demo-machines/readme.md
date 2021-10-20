@@ -7,4 +7,4 @@ Opencast Test Server Set-up
 Deployment
 ----------
 
-    ansible-playbook install-opencast-demo-vm.yml [--limit ...]
+    ansible-playbook deploy.yml [--limit ...]
