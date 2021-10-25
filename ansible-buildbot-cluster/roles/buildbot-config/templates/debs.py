@@ -21,7 +21,7 @@ class GenerateCreateCommands(buildstep.ShellMixin, steps.BuildStep):
         for comp in ("stable", "testing", "unstable"):
             stepList.append(
                 steps.SetPropertyFromCommand(
-                    command=['curl', '-s', util.Interpolate(f'http://{{ repo_host }}:8000/api/repos/%(prop:pkg_major_version)s.x-{ comp }')],
+                    command=['curl', '-s', util.Interpolate(f'http://{{ repo_host }}:{{ repo_port }}/api/repos/%(prop:pkg_major_version)s.x-{ comp }')],
                     property=f"{ comp }_exists",
                     flunkOnFailure=True,
                     haltOnFailure=True,
@@ -75,7 +75,7 @@ class GenerateIngestCommands(buildstep.ShellMixin, steps.BuildStep):
             # create a ShellCommand for each stage and add them to the build
             self.build.addStepsAfterCurrentStep([
                 common.shellCommand(
-                    command=['curl', '-s', '-F', util.Interpolate(f'file=@outputs/%(prop:got_revision)s/{ target }'), util.Interpolate('http://{{ repo_host }}:8000/api/files/%(prop:pkg_major_version)s.x-%(prop:repo_component)s')],
+                    command=['curl', '-s', '-F', util.Interpolate(f'file=@outputs/%(prop:got_revision)s/{ target }'), util.Interpolate('http://{{ repo_host }}:{{ repo_port }}/api/files/%(prop:pkg_major_version)s.x-%(prop:repo_component)s')],
                     name=f"Uploading file { index + 1 }/{ len(targets) } to repo")
                 for index, target in enumerate(targets)
             ])
@@ -127,7 +127,7 @@ def aptly_command(endpoint, method="POST", data={}, name="", doStepIf=True):
         name=f"Invoking HTTP { method } on { endpoint }"
     return steps.HTTPStep(
         method=method,
-        url=util.Interpolate(f'http://{{ repo_host }}:8000/api/{ endpoint }'),
+        url=util.Interpolate(f'http://{{ repo_host }}:{{ repo_port }}/api/{ endpoint }'),
         headers={'Content-Type': 'application/json'},
         data=util.Interpolate(json.dumps(data)),
         haltOnFailure=True,
@@ -215,16 +215,21 @@ def getBuildPipeline():
         command="true",
         name="Ensuring repos exist")
 
-    debsUpload = GenerateIngestCommands(
-        command=util.Interpolate("ls outputs/%(prop:got_revision)s"),
-        name="Finding files to upload to the repo")
+    debsUpload = common.copyAWS(
+        pathFrom="outputs",
+        pathTo="s3://{ s3_public_bucket }}/",
+        name="Uploading packages to S3")
+
+#    debsUpload = GenerateIngestCommands(
+#        command=util.Interpolate("ls outputs/%(prop:got_revision)s"),
+#        name="Finding files to upload to the repo")
 
     debRepoIngest = aptly_command(
         endpoint='repos/%(prop:pkg_major_version)s.x-%(prop:repo_component)s/file/%(prop:pkg_major_version)s.x-%(prop:repo_component)s',
         name="Ingesting packages")
 
     debRepoPublish = GeneratePublishCommands(
-        command=util.Interpolate("curl -s http://{{ repo_host }}:8000/api/publish | jq -r '.[] | select(.Distribution==\"%(prop:pkg_major_version)s.x\")'"),
+        command=util.Interpolate("curl -s http://{{ repo_host }}:{{ repo_port }}/api/publish | jq -r '.[] | select(.Distribution==\"%(prop:pkg_major_version)s.x\")'"),
         name=util.Interpolate("Determining current publication status for %(prop:pkg_major_version)s.x"),
         haltOnFailure=True,
         flunkOnFailure=True)

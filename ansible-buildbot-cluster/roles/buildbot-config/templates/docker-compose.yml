@@ -41,8 +41,7 @@ services:
     restart: always
     #Only listening on localhost because *aptly does not have any auth at all*
     ports:
-#      - "127.0.0.1:8000:8000"
-      - "8000:8080"
+      - "127.0.0.1:8000:8000"
     volumes:
       - "{{ buildbot_home }}/aptly:/mnt/aptly/"
       - "{{ deb_repo_fragment }}:/mnt/repo/"

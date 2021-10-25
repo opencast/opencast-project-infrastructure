@@ -37,6 +37,9 @@ key_id: "048D039F1DAE53EA0357ED824917F260EA15B53F"
 #Where to find the deb and rpm packages
 repo_host: "pkg.opencast.org"
 
+#What port aptly lives on
+repo_port: "8000"
+
 #The repo suite to deploy Opencast from
 repo_deploy_suite: "unstable"
 
