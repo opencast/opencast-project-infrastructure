@@ -31,7 +31,7 @@ def getRPMBuilds(props):
                 '--addsign',
                 '--key-id', util.Interpolate("%(prop:signing_key)s"),
                 util.Interpolate(
-                    "../RPMS/noarch/opencast-" + profile + "-%(prop:pkg_major_version)s.x-%(prop:buildnumber)s.%(prop:short_revision)s.el" + elvers + ".noarch.rpm")
+                    "../RPMS/noarch/opencast-" + profile + "-%(prop:rpm_version)s.el" + elvers + ".noarch.rpm")
             ],
             logname=profile + " signing"))
     return builds
@@ -58,6 +58,10 @@ def getBuildPipeline():
         haltOnFailure=True,
         workdir="build",
         name="Get rpm script revision")
+
+    rpmsFullVersion = steps.SetProperty(
+        property="rpm_version",
+        value=util.Interpolate("%(prop:pkg_major_version)s.git%(prop:short_revision)s-%(prop:buildnumber)s"))
 
     rpmsSetup = common.shellSequence(
         commands=[
@@ -99,7 +103,15 @@ def getBuildPipeline():
                 command=[
                     'sed',
                     '-i',
-                    util.Interpolate('s/2%%{?dist}/%(prop:buildnumber)s.%(prop:short_revision)s%%{?dist}/g'),
+                    util.Interpolate("s/\(Version: *\) .*/\\1 %(prop:pkg_major_version)s.git%(prop:short_revision)s/"),
+                    util.Interpolate('opencast.spec')
+                ],
+                logname='version'),
+            common.shellArg(
+                command=[
+                    'sed',
+                    '-i',
+                    util.Interpolate('s/2%%{?dist}/%(prop:buildnumber)s%%{?dist}/g'),
                     util.Interpolate('opencast.spec')
                 ],
                 logname='buildnumber'),
@@ -127,6 +139,7 @@ def getBuildPipeline():
     f_package_rpms.addStep(rpmsVersion)
     f_package_rpms.addStep(common.getLatestBuildRevision())
     f_package_rpms.addStep(common.getShortBuildRevision())
+    f_package_rpms.addStep(rpmsFullVersion)
     f_package_rpms.addStep(rpmsSetup)
     f_package_rpms.addStep(rpmsFetch)
     f_package_rpms.addStep(rpmsPrep)
