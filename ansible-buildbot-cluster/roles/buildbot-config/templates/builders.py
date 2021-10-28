@@ -91,12 +91,6 @@ def getBuildersForBranch(props):
     cent_props = dict(props)
     cent_props['image'] = random.choice({{ docker_centos_worker_images }})
 
-    el7_props = dict(props)
-    el7_props['image'] = "cent7"
-
-    el8_props = dict(props)
-    el8_props['image'] = "cent8"
-
     builders = getPullRequestBuilder(props, pretty_branch_name)
 
     #Only one maven build, per branch, at a time
@@ -138,19 +132,21 @@ def getBuildersForBranch(props):
         properties=deb_props,
         collapseRequests=True))
 
-    builders.append(util.BuilderConfig(
-        name=pretty_branch_name + " el7 RPM Packaging",
-        workernames=workers,
-        factory=rpms.getBuildPipeline(),
-        properties=el7_props,
-        collapseRequests=True))
+    for distro in ("7", "8"):
+        el_props = dict(props)
+        el_props['image'] = f"cent{distro}"
 
-    builders.append(util.BuilderConfig(
-        name=pretty_branch_name + " el8 RPM Packaging",
-        workernames=workers,
-        factory=rpms.getBuildPipeline(),
-        properties=el8_props,
-        collapseRequests=True))
+        if "Develop" == pretty_branch_name:
+            #Set the RPM branch to master
+            el_props['rpmspec_override'] = "master"
+            #Override/set a bunch of the build props since the RPM's dont relaly have a develop...
+
+        builders.append(util.BuilderConfig(
+            name=pretty_branch_name + f" el{distro} RPM Packaging",
+            workernames=workers,
+            factory=rpms.getBuildPipeline(),
+            properties=el_props,
+            collapseRequests=True))
 
     if len(repo_workers) > 0:
         builders.append(util.BuilderConfig(

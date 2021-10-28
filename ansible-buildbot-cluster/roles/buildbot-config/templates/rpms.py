@@ -41,7 +41,7 @@ def getBuildPipeline():
 
     rpmsClone = steps.Git(
         repourl="{{ source_rpm_repo_url }}",
-        branch=util.Property('branch'),
+        branch=util.Interpolate("%(prop:rpmspec_override:-%(prop:branch)s)s"),
         alwaysUseLatest=True,
         shallow=True,
         mode="full",
