@@ -12,6 +12,7 @@ opencast:
     pom: '11'
     jdk: [ '11' ]
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
+    cores: '2'
     server: 'develop'
   10.x:
     branch: 'r/10.x'
