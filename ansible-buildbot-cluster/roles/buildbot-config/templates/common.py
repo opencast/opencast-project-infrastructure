@@ -116,13 +116,13 @@ def getBuild(override=None, name="Build", workdir="build"):
         command.extend(override)
     return shellSequence(
         commands=[
-            shellArg(
-                command=['sed', '-i', 's/WARN/DEBUG/',
-                         'docs/log4j/log4j.properties'],
-                logname='log-settings',
-                haltOnFailure=False,
-                flunkOnFailure=False,
-                warnOnFailure=False),
+#            shellArg(
+#                command=['sed', '-i', 's/WARN/DEBUG/',
+#                         'docs/log4j/log4j.properties'],
+#                logname='log-settings',
+#                haltOnFailure=False,
+#                flunkOnFailure=False,
+#                warnOnFailure=False),
             shellArg(
                 command=['sed', '-i', 's/captureTimeout: [0-9]*/captureTimeout: 120000/',
                          'modules/admin-ui/src/test/resources/karma.conf.js'],
