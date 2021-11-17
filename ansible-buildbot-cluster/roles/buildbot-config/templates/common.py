@@ -34,7 +34,7 @@ def shellSequence(commands, name, workdir="build", env={}, haltOnFailure=True, f
         name=name,
         workdir=workdir,
         env=env,
-        timeout=120,
+        timeout=240,
         flunkOnFailure=flunkOnFailure,
         haltOnFailure=haltOnFailure,
         warnOnFailure=warnOnFailure,
