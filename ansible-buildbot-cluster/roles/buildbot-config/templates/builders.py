@@ -117,6 +117,9 @@ def getBuildersForBranch(props):
             # AND a single maven build per worker
             locks=[mvn_lock.access('exclusive'), branch_mvn_lock.access('exclusive')]))
 
+        report_props = dict(jdk_props)
+        report_props['cores'] = '1'
+
         builders.append(util.BuilderConfig(
             name=pretty_branch_name + " Reports JDK " + str(jdk),
             workernames=workers,
