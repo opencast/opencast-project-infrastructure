@@ -12,7 +12,6 @@
     - { path: "{{ buildbot_home }}", mode: "0755" }
     - { path: "{{ buildbot_config_master }}", mode: "0755" }
     - { path: "{{ buildbot_secrets_master }}", mode: "0700" }
-    - { path: "{{ buildbot_home }}/aptly", mode: "0755" }
 
 - name: Template Buildbot configuration files
   template:
@@ -39,7 +38,6 @@
     - { src: "rpm_repo.py", dest: "{{ buildbot_config_master }}/rpm_repo.py" }
     - { src: "ansible.py", dest: "{{ buildbot_config_master }}/ansible.py" }
     - { src: "maintenance.py", dest: "{{ buildbot_config_master }}/maintenance.py" }
-    - { src: "aptly.conf", dest: "{{ buildbot_home }}/aptly/aptly.conf", mode: "0644" }
     - { src: "buildbot.conf", dest: "{{ buildbot_home }}/nginx-config/buildbot.conf" }
   notify: ["Stop Buildbot", "Start Buildbot"]
 
@@ -55,7 +53,6 @@
   with_items:
     - { src: "secrets/changehook.passwd", dest: "{{ buildbot_config_master }}/changehook.passwd" }
     - { src: "secrets/crowdin.key", dest: "{{ buildbot_secrets_master }}/crowdin.key" }
-    - { src: "secrets/signing.key", dest: "{{ buildbot_home }}/aptly/signing.key" } #This gets used by aptly for repo signing
     - { src: "secrets/s3.public_access_key", dest: "{{ buildbot_secrets_master }}/s3.public_access_key" }
     - { src: "secrets/s3.public_secret_key", dest: "{{ buildbot_secrets_master }}/s3.public_secret_key" }
     - { src: "secrets/s3.private_access_key", dest: "{{ buildbot_secrets_master }}/s3.private_access_key" }

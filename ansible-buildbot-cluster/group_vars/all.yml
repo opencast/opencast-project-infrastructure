@@ -141,5 +141,5 @@ buildbot_config_worker: "{{ buildbot_home }}/worker-config"
 buildbot_secrets_master: "{{ buildbot_config_master }}/secrets"
 
 #Where built artifacts of all types live
-disk_base: /var/www/buildbot
+disk_base: "{{ buildbot_home }}/s3"
 

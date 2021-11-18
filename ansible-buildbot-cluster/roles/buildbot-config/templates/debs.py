@@ -7,133 +7,6 @@ from twisted.internet import defer
 import common
 import json
 
-class GenerateCreateCommands(buildstep.ShellMixin, steps.BuildStep):
-
-    def __init__(self, **kwargs):
-        kwargs = self.setupShellMixin(kwargs)
-        super().__init__(**kwargs)
-        self.observer = logobserver.BufferLogObserver()
-        self.addLogObserver('stdio', self.observer)
-
-    @defer.inlineCallbacks
-    def run(self):
-        stepList = []
-        for comp in ("stable", "testing", "unstable"):
-            stepList.append(
-                steps.SetPropertyFromCommand(
-                    command=['curl', '-s', util.Interpolate(f'http://{{ repo_host }}:{{ repo_port }}/api/repos/%(prop:pkg_major_version)s.x-{ comp }')],
-                    property=f"{ comp }_exists",
-                    flunkOnFailure=True,
-                    haltOnFailure=True,
-                    name=f"Checking if { comp } repo exists")
-            ),
-            stepList.append(aptly_command(
-                data={
-                    "Name": f"%(prop:pkg_major_version)s.x-{comp}",
-                    "Comment": f"%(prop:pkg_major_version)s.x { comp } packages",
-                    "DefaultDistribution": "%(prop:pkg_major_version)s.x",
-                    "DefaultComponent": comp
-                },
-                #This looks stupid, and it is, but it also appears to be more or less the cleanest way of doing this
-                doStepIf=util.Interpolate(f"%(prop:{ comp }_exists)s") == util.Interpolate('{"error":"local repo with name %(prop:pkg_major_version)s.x-' + f'{ comp }' + ' not found"}'),
-                endpoint='repos',
-                name=util.Interpolate(f"Creating %(prop:pkg_major_version)s.x-{ comp }")))
-
-        # run the command to get the list of targets
-        cmd = yield self.makeRemoteShellCommand()
-        yield self.runCommand(cmd)
-
-        self.build.addStepsAfterCurrentStep(stepList)
-        return cmd.results()
-
-class GenerateIngestCommands(buildstep.ShellMixin, steps.BuildStep):
-
-    def __init__(self, **kwargs):
-        kwargs = self.setupShellMixin(kwargs)
-        super().__init__(**kwargs)
-        self.observer = logobserver.BufferLogObserver()
-        self.addLogObserver('stdio', self.observer)
-
-    def extract_targets(self, stdout):
-        targets = []
-        for line in stdout.split('\n'):
-            target = str(line.strip())
-            if target and "node_modules/" != target:
-                targets.append(target)
-        return targets
-
-    @defer.inlineCallbacks
-    def run(self):
-        # run the command to get the list of targets
-        cmd = yield self.makeRemoteShellCommand()
-        yield self.runCommand(cmd)
-
-        # if the command passes extract the list of stages
-        result = cmd.results()
-        if result == util.SUCCESS:
-            targets = self.extract_targets(self.observer.getStdout())
-            # create a ShellCommand for each stage and add them to the build
-            self.build.addStepsAfterCurrentStep([
-                common.shellCommand(
-                    command=['curl', '-s', '-F', util.Interpolate(f'file=@outputs/%(prop:got_revision)s/{ target }'), util.Interpolate('http://{{ repo_host }}:{{ repo_port }}/api/files/%(prop:pkg_major_version)s.x-%(prop:repo_component)s')],
-                    name=f"Uploading file { index + 1 }/{ len(targets) } to repo")
-                for index, target in enumerate(targets)
-            ])
-        return result
-
-class GeneratePublishCommands(buildstep.ShellMixin, steps.BuildStep):
-
-    def __init__(self, **kwargs):
-        kwargs = self.setupShellMixin(kwargs)
-        super().__init__(**kwargs)
-        self.observer = logobserver.BufferLogObserver()
-        self.addLogObserver('stdio', self.observer)
-
-    @defer.inlineCallbacks
-    def run(self):
-        # run the command to get the list of targets
-        cmd = yield self.makeRemoteShellCommand()
-        yield self.runCommand(cmd)
-
-        # if the command passes extract the list of stages
-        result = cmd.results()
-        if result == util.SUCCESS:
-            # create a ShellCommand for each stage and add them to the build
-            self.build.addStepsAfterCurrentStep([
-                aptly_command(
-                    endpoint="publish/:.",
-                    data={
-                        "SourceKind": "local",
-                        "Sources": [
-                            {"Name": "%(prop:pkg_major_version)s.x-stable"},
-                            {"Name": "%(prop:pkg_major_version)s.x-testing"},
-                            {"Name": "%(prop:pkg_major_version)s.x-unstable"},
-                        ],
-                        "Architectures": ["all","amd64"],
-                        "Distribution": "%(prop:pkg_major_version)s.x"
-                    },
-                    name=util.Interpolate("Publishing %(prop:pkg_major_version)s.x"))
-
-                if len(self.observer.getStdout()) == 0 else
-                aptly_command(
-                    method="PUT",
-                    endpoint="publish/:./%(prop:pkg_major_version)s.x",
-                    name=util.Interpolate("Republishing %(prop:pkg_major_version)s.x"))
-            ])
-        return result
-
-def aptly_command(endpoint, method="POST", data={}, name="", doStepIf=True):
-    if type(name) == str and len(name) == 0:
-        name=f"Invoking HTTP { method } on { endpoint }"
-    return steps.HTTPStep(
-        method=method,
-        url=util.Interpolate(f'http://{{ repo_host }}:{{ repo_port }}/api/{ endpoint }'),
-        headers={'Content-Type': 'application/json'},
-        data=util.Interpolate(json.dumps(data)),
-        haltOnFailure=True,
-        doStepIf=doStepIf,
-        name=name)
-
 
 def getBuildPipeline():
 
@@ -211,44 +84,52 @@ def getBuildPipeline():
         },
         name="Build debs")
 
-    debRepoCreate = GenerateCreateCommands(
-        command="true",
-        name="Ensuring repos exist")
+    debRepoClone = steps.Git(repourl="git@code.loganite.ca:opencast/debian-repo",
+                          branch="e/ci",
+                          alwaysUseLatest=True,
+                          mode="full",
+                          method="fresh",
+                          flunkOnFailure=True,
+                          haltOnFailure=True,
+                          name="Cloning deb repo configs")
 
-    debsUpload = common.copyAWS(
-        pathFrom="outputs",
-        pathTo="s3://{ s3_public_bucket }}/",
-        name="Uploading packages to S3")
+    debRepoLoadKeys = common.shellCommand(
+        command=['./build-keys'],
+        name="Loading signing keys")
 
-#    debsUpload = GenerateIngestCommands(
-#        command=util.Interpolate("ls outputs/%(prop:got_revision)s"),
-#        name="Finding files to upload to the repo")
+    debRepoCreate = common.shellCommand(
+        command=['./create-branch', util.Interpolate("%(prop:pkg_major_version)s.x")],
+        name=util.Interpolate("Ensuring %(prop:pkg_major_version)s.x repos exist"))
 
-    debRepoIngest = aptly_command(
-        endpoint='repos/%(prop:pkg_major_version)s.x-%(prop:repo_component)s/file/%(prop:pkg_major_version)s.x-%(prop:repo_component)s',
-        name="Ingesting packages")
 
-    debRepoPublish = GeneratePublishCommands(
-        command=util.Interpolate("curl -s http://{{ repo_host }}:{{ repo_port }}/api/publish | jq -r '.[] | select(.Distribution==\"%(prop:pkg_major_version)s.x\")'"),
-        name=util.Interpolate("Determining current publication status for %(prop:pkg_major_version)s.x"),
-        haltOnFailure=True,
-        flunkOnFailure=True)
+    debRepoIngest = common.shellCommand(
+        command=['./include-binaries', util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:repo_component)s"), util.Interpolate('outputs/%(prop:revision)s/*.changes')],
+        name=util.Interpolate(f"Adding build to %(prop:pkg_major_version)s.x-%(prop:repo_component)s"))
+
+    debRepoPublish = common.shellCommand(
+        command=["./publish-branch", util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:signing_key)s")],
+        name=util.Interpolate("Publishing %(prop:pkg_major_version)s.x"))
+
+    test = common.shellCommand(command="echo 'Public:' && gpg --list-keys && echo 'Private:' && gpg --list-secret-keys", name="test")
    
     f_package_debs = util.BuildFactory()
     f_package_debs.addStep(common.getPreflightChecks())
-    f_package_debs.addStep(debsClone)
-    f_package_debs.addStep(debsVersion)
-    f_package_debs.addStep(common.getLatestBuildRevision())
-    f_package_debs.addStep(common.getShortBuildRevision())
-    f_package_debs.addStep(removeSymlinks)
-    f_package_debs.addStep(debsFetch)
+#    f_package_debs.addStep(debsClone)
+#    f_package_debs.addStep(debsVersion)
+#    f_package_debs.addStep(common.getLatestBuildRevision())
+#    f_package_debs.addStep(common.getShortBuildRevision())
+#    f_package_debs.addStep(removeSymlinks)
+#    f_package_debs.addStep(debsFetch)
     f_package_debs.addStep(common.loadSigningKey())
-    f_package_debs.addStep(debsBuild)
-    f_package_debs.addStep(common.unloadSigningKey())
+#    f_package_debs.addStep(debsBuild)
+    f_package_debs.addStep(test)
+#    f_package_debs.addStep(debRepoClone)
+    f_package_debs.addStep(debRepoLoadKeys)
     f_package_debs.addStep(debRepoCreate)
-    f_package_debs.addStep(debsUpload)
+    f_package_debs.addStep(test)
     f_package_debs.addStep(debRepoIngest)
     f_package_debs.addStep(debRepoPublish)
-    f_package_debs.addStep(common.getClean())
+    f_package_debs.addStep(common.unloadSigningKey())
+#    f_package_debs.addStep(common.getClean())
 
     return f_package_debs
