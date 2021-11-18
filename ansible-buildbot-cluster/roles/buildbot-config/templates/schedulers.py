@@ -39,7 +39,7 @@ def _getForceScheduler(props, prefix, builderNames):
 
     # Note: This is a hack, but we need a unique name for the force schedulers, and it can't have special characters in it...
     return schedulers.ForceScheduler(
-        name=prefix + pretty_branch_name[0],
+        name=prefix + pretty_branch_name[0:2].replace('.', 'x'),
         buttonName="Force Build",
         label="Force Build Settings",
         builderNames=builderNames,
