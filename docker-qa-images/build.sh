@@ -24,10 +24,8 @@ for i in 9 10
 do
   docker pull debian:$i
 done
-for i in 7 8
-do
-  docker pull centos:$i
-done
+docker pull centos:7
+docker pull rockylinux/rockylinux:8
 
 doBuild buildbot master
 doBuild ubu18 worker-base
@@ -35,4 +33,4 @@ doBuild ubu20 worker-base
 doBuild deb9 worker-base
 doBuild deb10 worker-base
 doBuild cent7 worker-base
-doBuild cent8 worker-base
+doBuild rocky8 worker-base

@@ -24,4 +24,4 @@ doPush deb10 worker-base
 doPush ubu18 worker-base
 doPush ubu20 worker-base
 doPush cent7 worker-base
-doPush cent8 worker-base
+doPush rocky8 worker-base

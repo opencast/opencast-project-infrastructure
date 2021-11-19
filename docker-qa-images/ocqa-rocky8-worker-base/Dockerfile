@@ -1,4 +1,4 @@
-FROM centos:8
+FROM rockylinux/rockylinux:8
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 #Needed to work around pip bug: https://githubmemory.com/repo/pypa/pip/issues/10219
@@ -17,24 +17,23 @@ RUN sed -i '/override_install_langs/d' /etc/yum.conf
 
 # Last build date - this can be updated whenever there are security updates so
 # that everything is rebuilt
-ENV         security_updates_as_of 2021-08-23
+ENV         security_updates_as_of 2021-11-19
 
 # Install the dependencies
-RUN yum install -y epel-release &&\
-    yum install -y \
+RUN yum install -y epel-release
+
+RUN yum install -y \
         bash \
      # Run deps
         tesseract \
         nmap-ncat \
-# not built yet due to lack of time
 #        synfig \
         ffmpeg \
-# not built yet due to dependency issues
-#        sox \
+        sox \
         hunspell \
         java-1.8.0-openjdk \
         java-11-openjdk \
-#        java-17-openjdk \
+        java-17-openjdk \
      # Build deps
         openssh-clients \
         tar gzip bzip2 unzip \
@@ -43,7 +42,7 @@ RUN yum install -y epel-release &&\
         curl wget \
         java-1.8.0-openjdk-devel \
         java-11-openjdk-devel \
-#        java-17-openjdk-devel \
+        java-17-openjdk-devel \
         firefox && \
     yum clean all
 
@@ -61,7 +60,6 @@ RUN yum install -y \
 
 RUN yum install -y \
      # Package building deps
-     # Moved below, causes yum to crash and corrupt its db if it's here
         createrepo \
         rpmdevtools \
         rpmlint \
@@ -82,8 +80,8 @@ RUN curl https://downloads.crowdin.com/cli/v2/crowdin-cli.zip -o /tmp/crowdin.zi
     rm -rf 2.0.31
 COPY crowdin /usr/local/bin/
 
-RUN alternatives --set java java-1.8.0-openjdk.x86_64
-RUN alternatives --set javac java-1.8.0-openjdk.x86_64
+RUN alternatives --set java java-11-openjdk.x86_64
+RUN alternatives --set javac java-11-openjdk.x86_64
 
 # The base CentOS image strips the locales out, this reinstalls them
 RUN yum install -y glibc-langpack-en glibc-langpack-de glibc-langpack-es glibc-langpack-fr
@@ -103,5 +101,5 @@ RUN curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases
 
 COPY buildbot.tac /builder/buildbot.tac
     # Install required python packages, and twisted
-RUN python3 -m pip --no-cache-dir install buildbot-worker==3.3.0
+RUN python3 -m pip --no-cache-dir install buildbot-worker==3.4.0
 
