@@ -12,8 +12,6 @@ send_mail_notifications: True
 send_gh_notifications: True
 push_crowdin: True
 max_builds: 2
-rpm_repo_fragment: "/srv/www/pkg.opencast.org/rpms"
-deb_repo_fragment: "/srv/www/pkg.opencast.org/debs"
 
 s3_host: https://radosgw.public.os.wwu.de
 s3_public_bucket: opencast-ci
@@ -32,9 +30,6 @@ github_token:  "{{ lookup('passwordstore', 'github.com/api-token') }}"
 
 signing_key: "{{ lookup('passwordstore', 'gpg/nightly/key returnall=true') }}"
 signing_key_id: 048D039F1DAE53EA0357ED824917F260EA15B53F
-
-repo_username: "{{ lookup('passwordstore', 'pkg.opencast.org/qaservers/user') }}"
-repo_password: "{{ lookup('passwordstore', 'pkg.opencast.org/qaservers/pass') }}"
 
 public_s3_access_key: "{{ lookup('passwordstore', 'radosgw.public.os.wwu.de/access_key') }}"
 public_s3_secret_key: "{{ lookup('passwordstore', 'radosgw.public.os.wwu.de/secret_key') }}"
