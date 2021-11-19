@@ -103,12 +103,6 @@ github_hook_secret: FAKE_SECRET
 #The token used by the pullrequest poller and the status push.  If you are not using either of those then forget this key.
 github_token: FAKE_TOKEN
 
-#The credentials to use when installing the workers.  This is used to get an appropriate version of ffmpeg from the repo
-#These are defined here, but need to be overridden in the host vars
-repo_username: FAKE_USERNAME
-repo_password: FAKE_PASSWORD
-
-
 #The API key for crowdin uploads
 crowdin_api_key: FAKE_API_KEY
 
