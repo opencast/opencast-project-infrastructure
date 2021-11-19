@@ -34,6 +34,7 @@ RUN yum install -y \
         hunspell \
         java-1.8.0-openjdk \
         java-11-openjdk \
+        java-17-openjdk \
      # Build deps
         openssh-clients \
         tar gzip bzip2 unzip \
@@ -42,7 +43,7 @@ RUN yum install -y \
         curl wget \
         java-1.8.0-openjdk-devel \
         java-11-openjdk-devel \
-#        java-17-openjdk-devel \
+        java-17-openjdk-devel \
         firefox && \
     yum clean all
 
@@ -74,8 +75,8 @@ RUN yum install -y \
          jq && \
     yum clean all
 
-RUN alternatives --set java java-1.8.0-openjdk.x86_64
-RUN alternatives --set javac java-1.8.0-openjdk.x86_64
+RUN alternatives --set java java-11-openjdk.x86_64
+RUN alternatives --set javac java-11-openjdk.x86_64
 
 RUN python3 -m pip --no-cache-dir install --upgrade pip
 RUN python3 -m pip --no-cache-dir install --upgrade setuptools

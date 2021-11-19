@@ -42,7 +42,7 @@ RUN apt-get install -y --no-install-recommends \
         ffmpeg-dist \
         openjdk-8-jre \
         openjdk-11-jre \
-#        openjdk-17-jre \
+        openjdk-17-jre \
      # Build deps
         openssh-client \
         tar gzip bzip2 unzip \
@@ -51,7 +51,7 @@ RUN apt-get install -y --no-install-recommends \
         curl wget \
         openjdk-8-jdk \
         openjdk-11-jdk \
-#        openjdk-17-jdk \
+        openjdk-17-jdk \
         firefox && \
     apt-get clean
 
@@ -78,14 +78,13 @@ RUN apt-get install -y --no-install-recommends \
         aptly \
         libdistro-info-perl \
         fakeroot \
-        mini-dinstall \
      # jq is used in the maintenance scripts
         jq \
      # Crowdin
         crowdin && \
     apt-get clean
 
-RUN update-java-alternatives -s java-1.8.0-openjdk-amd64
+RUN update-java-alternatives -s java-1.11.0-openjdk-amd64
 
 RUN python3 -m pip --no-cache-dir install --upgrade pip
 RUN python3 -m pip --no-cache-dir install --upgrade setuptools

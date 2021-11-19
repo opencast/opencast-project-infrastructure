@@ -1,1 +1,1 @@
-deb https://pkg.opencast.org/debian stable/
+deb https://pkg.opencast.org/debian 10.x stable testing unstable
