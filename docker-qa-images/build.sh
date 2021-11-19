@@ -20,7 +20,7 @@ for i in 18.04 20.04
 do
   docker pull ubuntu:$i
 done
-for i in 9 10
+for i in 9 10 11
 do
   docker pull debian:$i
 done
@@ -32,5 +32,6 @@ doBuild ubu18 worker-base
 doBuild ubu20 worker-base
 doBuild deb9 worker-base
 doBuild deb10 worker-base
+doBuild deb11 worker-base
 doBuild cent7 worker-base
 doBuild rocky8 worker-base

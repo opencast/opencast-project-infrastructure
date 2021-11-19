@@ -29,5 +29,6 @@ doTag ubu18 worker-base
 doTag ubu20 worker-base
 doTag deb9 worker-base
 doTag deb10 worker-base
+doTag deb11 worker-base
 doTag cent7 worker-base
 doTag rocky8 worker-base
