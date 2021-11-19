@@ -23,6 +23,7 @@
 - hosts: workers
   user: "{{ login_user }}"
   roles:
+    - { role: s3_client }
     - { role: buildbot-worker, tags: [ buildbot ] }
   handlers:
     - import_tasks: handlers/handlers.yml

@@ -1,0 +1,8 @@
+---
+
+#Where the S3 server lives
+s3_host: "https://s3.{{ infra_domain }}"
+
+#Where to store public artifacts
+#This is assumed to be world readable
+s3_public_bucket: "public"

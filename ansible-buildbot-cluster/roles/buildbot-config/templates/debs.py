@@ -2,7 +2,10 @@
 # ex: set filetype=python:
 
 from buildbot.plugins import steps, util
+from buildbot.process import buildstep, logobserver
+from twisted.internet import defer
 import common
+import json
 
 
 def getBuildPipeline():
@@ -81,23 +84,52 @@ def getBuildPipeline():
         },
         name="Build debs")
 
-    debsUpload = common.syncAWS(
-        pathFrom="outputs/%(prop:got_revision)s",
-        pathTo="s3://{{ s3_public_bucket }}/builds/{{ debs_fragment }}",
-        name="Upload debs to buildmaster")
+    debRepoClone = steps.Git(repourl="git@code.loganite.ca:opencast/debian-repo",
+                          branch="e/ci",
+                          alwaysUseLatest=True,
+                          mode="full",
+                          method="fresh",
+                          flunkOnFailure=True,
+                          haltOnFailure=True,
+                          name="Cloning deb repo configs")
 
+    debRepoLoadKeys = common.shellCommand(
+        command=['./build-keys'],
+        name="Loading signing keys")
+
+    debRepoCreate = common.shellCommand(
+        command=['./create-branch', util.Interpolate("%(prop:pkg_major_version)s.x")],
+        name=util.Interpolate("Ensuring %(prop:pkg_major_version)s.x repos exist"))
+
+
+    debRepoIngest = common.shellCommand(
+        command=['./include-binaries', util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:repo_component)s"), util.Interpolate('outputs/%(prop:revision)s/*.changes')],
+        name=util.Interpolate(f"Adding build to %(prop:pkg_major_version)s.x-%(prop:repo_component)s"))
+
+    debRepoPublish = common.shellCommand(
+        command=["./publish-branch", util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:signing_key)s")],
+        name=util.Interpolate("Publishing %(prop:pkg_major_version)s.x"))
+
+    test = common.shellCommand(command="echo 'Public:' && gpg --list-keys && echo 'Private:' && gpg --list-secret-keys", name="test")
+   
     f_package_debs = util.BuildFactory()
     f_package_debs.addStep(common.getPreflightChecks())
-    f_package_debs.addStep(debsClone)
-    f_package_debs.addStep(debsVersion)
-    f_package_debs.addStep(common.getLatestBuildRevision())
-    f_package_debs.addStep(common.getShortBuildRevision())
-    f_package_debs.addStep(removeSymlinks)
-    f_package_debs.addStep(debsFetch)
+#    f_package_debs.addStep(debsClone)
+#    f_package_debs.addStep(debsVersion)
+#    f_package_debs.addStep(common.getLatestBuildRevision())
+#    f_package_debs.addStep(common.getShortBuildRevision())
+#    f_package_debs.addStep(removeSymlinks)
+#    f_package_debs.addStep(debsFetch)
     f_package_debs.addStep(common.loadSigningKey())
-    f_package_debs.addStep(debsBuild)
+#    f_package_debs.addStep(debsBuild)
+    f_package_debs.addStep(test)
+#    f_package_debs.addStep(debRepoClone)
+    f_package_debs.addStep(debRepoLoadKeys)
+    f_package_debs.addStep(debRepoCreate)
+    f_package_debs.addStep(test)
+    f_package_debs.addStep(debRepoIngest)
+    f_package_debs.addStep(debRepoPublish)
     f_package_debs.addStep(common.unloadSigningKey())
-    f_package_debs.addStep(debsUpload)
-    f_package_debs.addStep(common.getClean())
+#    f_package_debs.addStep(common.getClean())
 
     return f_package_debs
