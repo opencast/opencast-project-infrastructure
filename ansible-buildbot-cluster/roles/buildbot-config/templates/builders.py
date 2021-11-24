@@ -151,9 +151,12 @@ def getBuildersForBranch(props):
         properties=deb_props,
         collapseRequests=True))
 
-    for distro in ("7", "8"):
+    for distro in (7, 8):
         el_props = dict(props)
-        el_props['image'] = f"cent{distro}"
+        if 7 == distro:
+          el_props['image'] = f"cent{distro}"
+        elif 8 == distro:
+          el_props['image'] = f"rocky{distro}"
 
         if "Develop" == pretty_branch_name:
             #Set the RPM branch to master
