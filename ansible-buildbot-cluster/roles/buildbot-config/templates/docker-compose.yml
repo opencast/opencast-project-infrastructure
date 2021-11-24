@@ -34,17 +34,6 @@ services:
       - "127.0.0.1:5432:5432"
     volumes:
       - "{{ buildbot_home }}/postgres-data:/var/lib/postgresql/data"
-  deb_repo:
-    user: "{{ hostvars[inventory_hostname]['uid'] }}:{{ hostvars[inventory_hostname]['gid'] }}"
-    #This is hardcoded to latest because it *shouldn't* ever need to change
-    image: "{{ docker_image_user }}/ocqa-debian-repo-base:latest"
-    restart: always
-    #Only listening on localhost because *aptly does not have any auth at all*
-    ports:
-      - "127.0.0.1:8000:8000"
-    volumes:
-      - "{{ buildbot_home }}/aptly:/mnt/aptly/"
-      - "{{ deb_repo_fragment }}:/mnt/repo/"
 
 {% if false and inventory_hostname in groups['workers'] %}
   maria:
