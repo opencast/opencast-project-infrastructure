@@ -12,6 +12,12 @@
   become: yes
   when: create_buildbot_user
 
+- name: Unmounting {{ disk_base }} if mounted
+  mount:
+    path: "{{ disk_base }}"
+    state: unmounted
+  become: yes
+
 - name: Ensure required directories exist and have the right permissions
   file:
     state: directory
