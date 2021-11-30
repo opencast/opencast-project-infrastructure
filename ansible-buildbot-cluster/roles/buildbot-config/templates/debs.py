@@ -84,7 +84,7 @@ def getBuildPipeline():
         },
         name="Build debs")
 
-    debRepoClone = steps.Git(repourl="git@code.loganite.ca:opencast/debian-repo",
+    debRepoClone = steps.Git(repourl="{{ source_deb_packaging_repo_url }}",
                           branch="e/ci",
                           alwaysUseLatest=True,
                           mode="full",

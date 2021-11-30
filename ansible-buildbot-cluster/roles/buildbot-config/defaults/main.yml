@@ -22,6 +22,9 @@ nightly_build_hour: 3
 #Where to fetch the debian packaging build files from
 source_deb_repo_url: "https://github.com/gregorydlogan/debian-packaging.git"
 
+#Where to fetch the debian repository scripts from
+source_deb_packaging_repo_url: "https://github.com/gregorydlogan/debian-repo.git"
+
 #Where to fetch the rpm packaging build files from
 source_rpm_repo_url: "https://github.com/opencast/opencast-rpmbuild.git"
 
