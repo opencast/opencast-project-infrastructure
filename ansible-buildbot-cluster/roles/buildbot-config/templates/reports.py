@@ -25,7 +25,7 @@ def __getBasePipeline():
         name="Formatting checks")
 
     reports = [
-        'cobertura:cobertura', 'site', 'site:stage',
+        'site', 'site:stage',
         '-Daggregate=true',
         '-Dcheckstyle.skip=true',
         '-P "none,!frontend"'
