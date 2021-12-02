@@ -28,7 +28,7 @@ def __getBasePipeline():
         'site', 'site:stage',
         '-Daggregate=true',
         '-Dcheckstyle.skip=true',
-        '-P "none,!frontend"'
+        '-P', 'none,!frontend'
     ]
     site = common.getBuild(override=reports, name="Build site report")
 
