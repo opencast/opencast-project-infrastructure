@@ -65,7 +65,7 @@ def getPullRequestScheduler(props, pretty_branch_name):
 #        pretty_branch_name + " Pull Request Database Tests"
     ])
 
-    pull_cf=util.ChangeFilter(category="pull", filter_fn=lambda x: x.properties.getProperty('basename') in [ "r/" + pretty_branch_name.lower(), pretty_branch_name.lower() ] )
+    pull_cf=util.ChangeFilter(category="pull", branch_re=props['git_branch_name'])
 
     return _getAnyBranchScheduler(name=pretty_branch_name + " Pull Requests",
                                    builderNames=builderNames,
@@ -74,9 +74,8 @@ def getPullRequestScheduler(props, pretty_branch_name):
 
 def _getBasicSchedulers(props):
     pretty_branch_name = props['branch_pretty']
-    git_branch_name = props['git_branch_name']
 
-    branch_cf = util.ChangeFilter(category=None, branch_re=git_branch_name)
+    branch_cf = util.ChangeFilter(category=None, branch_re=props['git_branch_name'])
 
     schedDict = {}
 

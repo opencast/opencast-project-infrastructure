@@ -80,6 +80,9 @@ package_all: False
 #Set this to False to disable deploying snapshots from the branch builds
 deploy_snapshots: True
 
+#Set this to True to push PR tarballs to the appropriate directory on the S3 host
+push_prs: False
+
 #Set this to true to have the workers write through to the underlying disk, rather than keeping the builds in the container
 ##This is really only helpful in debugging
 write_through: False

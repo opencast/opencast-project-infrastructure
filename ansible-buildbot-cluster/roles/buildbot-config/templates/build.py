@@ -4,6 +4,16 @@
 from buildbot.plugins import util
 import common
 
+buildTarballs = common.getBuild(
+    override=['install', '-T 1C', '-P', 'dist'],
+    workdir="build/assemblies",
+    name="Building the tarballs")
+
+uploadTarballs = common.syncAWS(
+    pathFrom="build",
+    pathTo="s3://{{ s3_public_bucket }}/builds/{{ builds_fragment }}",
+    name="Upload build to S3")
+
 
 def __getBasePipeline():
 
@@ -21,24 +31,20 @@ def getPullRequestPipeline():
     f_build = __getBasePipeline()
     f_build.addStep(common.getWorkerPrep())
     f_build.addStep(common.getBuild())
+{% if push_prs | default(False) %}
+    f_build.addStep(buildTarballs)
+    f_build.addStep(uploadTarballs)
+{% endif %}
     f_build.addStep(common.getClean())
 
     return f_build
 
-
 def getBuildPipeline():
-
-    override = ['install', '-T 1C', '-P', 'dist']
-    buildTarballs = common.getBuild(override=override, workdir="build/assemblies", name="Building the tarballs")
 
     stampVersion = common.shellCommand(
         command=util.Interpolate("echo '%(prop:got_revision)s' | tee revision.txt"),
         name="Stamping the build")
 
-    uploadTarballs = common.syncAWS(
-        pathFrom="build",
-        pathTo="s3://{{ s3_public_bucket }}/builds/{{ builds_fragment }}",
-        name="Upload build to S3")
 
     updateBuild = common.copyAWS(
         pathFrom="revision.txt",
