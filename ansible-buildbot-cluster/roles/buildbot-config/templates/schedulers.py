@@ -160,7 +160,15 @@ def getSchedulers(props):
     forceBuild = _getForceScheduler(props, "ForceBuild", forceBuildNames)
     scheduler_list.append(forceBuild)
 
-    forceBuilders = [common.getBuildWithJDK(pretty_branch_name, "Reports", jdk) for jdk in common.getJDKBuilds(props)]
+    tag_sched = schedulers.AnyBranchScheduler(
+        name=pretty_branch_name + " Release",
+        #Note: The branch_regex here is matching something like "11.1", so we use the major version (11), plus a static .*
+        change_filter=util.ChangeFilter(category='tag', branch_re=props['pkg_major_version'] + ".*"),
+        properties=props,
+        builderNames=[pretty_branch_name + " Release"])
+    scheduler_list.append(tag_sched)
+
+    forceBuilders = [common.getBuildWithJDK(pretty_branch_name, "Reports", jdk) for jdk in common.getJDKBuilds(props, pretty_branch_name)]
 
     forceBuilders.extend([
         pretty_branch_name + " Markdown",

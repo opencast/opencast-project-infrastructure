@@ -12,6 +12,7 @@ import debs
 import rpms
 import rpm_repo
 import ansible
+import release
 
 
 #One of each of these per worker at a time
@@ -128,6 +129,19 @@ def getBuildersForBranch(props):
             #A note on these locks: We want a single maven build per branch,
             # AND a single maven build per worker
             locks=[mvn_lock.access('exclusive'), branch_mvn_lock.access('exclusive')]))
+
+    release_props = dict(props)
+    #We use the first listed JDK since that (should) be the lowest, most common version
+    release_props['jdk'] = str(common.getJDKBuilds(props)[0])
+    builders.append(util.BuilderConfig(
+        name=pretty_branch_name + " Release",
+        workernames=workers,
+        factory=release.getBuildPipeline(),
+        properties=release_props,
+        collapseRequests=True,
+        #Note: We want a single maven build per worker, but since this is a release we don't
+        # care if there are other maven builds running elsewhere
+        locks=[mvn_lock.access('exclusive')]))
 
     builders.append(util.BuilderConfig(
         name=pretty_branch_name + " Markdown",
