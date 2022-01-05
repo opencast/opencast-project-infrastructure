@@ -49,7 +49,7 @@ def getPullRequestBuilder(props, pretty_branch_name):
 
     builders = []
 
-    for jdk in common.getJDKBuilds(props, pretty_branch_name):
+    for jdk in common.getJDKBuilds(props):
         jdk_props = dict(props)
         jdk_props['jdk'] = str(jdk)
 
@@ -102,7 +102,7 @@ def getBuildersForBranch(props):
     #Only one maven build, per branch, at a time
     branch_mvn_lock = util.MasterLock(pretty_branch_name + "mvn_lock")
 
-    for jdk in common.getJDKBuilds(props, pretty_branch_name):
+    for jdk in common.getJDKBuilds(props):
         jdk_props = dict(props)
         jdk_props['jdk'] = str(jdk)
 

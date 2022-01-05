@@ -75,7 +75,7 @@ def getWorkerPrep():
         name="Build Prep")
 
 
-def getJDKBuilds(props, pretty_branch_name):
+def getJDKBuilds(props):
     return props['jdk']
 
 

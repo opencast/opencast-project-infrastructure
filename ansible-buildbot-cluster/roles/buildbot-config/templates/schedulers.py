@@ -59,7 +59,7 @@ def _getForceScheduler(props, prefix, builderNames):
 
 
 def getPullRequestScheduler(props, pretty_branch_name):
-    builderNames = [ pretty_branch_name + " Pull Request " + build_type + " JDK " + str(jdk) for build_type in [ 'Build', 'Reports' ] for jdk in common.getJDKBuilds(props, pretty_branch_name)]
+    builderNames = [ pretty_branch_name + " Pull Request " + build_type + " JDK " + str(jdk) for build_type in [ 'Build', 'Reports' ] for jdk in common.getJDKBuilds(props)]
     builderNames.extend([
         pretty_branch_name + " Pull Request Markdown",
 #        pretty_branch_name + " Pull Request Database Tests"
@@ -82,7 +82,7 @@ def _getBasicSchedulers(props):
     schedDict['prs'] = getPullRequestScheduler(props, pretty_branch_name)
 
     for build_type in [ "Build", "Reports" ]:
-        for jdk in common.getJDKBuilds(props, pretty_branch_name):
+        for jdk in common.getJDKBuilds(props):
             sched = _getAnyBranchScheduler(
                 name=common.getBuildWithJDK(pretty_branch_name, build_type, jdk),
                 change_filter=branch_cf,
@@ -116,7 +116,7 @@ def _getBasicSchedulers(props):
             ])
         schedDict['package'] = sched
     else:
-        defaultJDK = common.getJDKBuilds(props, pretty_branch_name)[0]
+        defaultJDK = common.getJDKBuilds(props)[0]
         sched = schedulers.Dependent(
             name=pretty_branch_name + " Packaging Generation",
             upstream=schedDict["Build" + str(defaultJDK)],
@@ -156,11 +156,11 @@ def getSchedulers(props):
                 properties=props,
                 builderNames=[pretty_branch_name + " Ansible Deploy"]))
 
-    forceBuildNames = [common.getBuildWithJDK(pretty_branch_name, "Build", jdk) for jdk in common.getJDKBuilds(props, pretty_branch_name)]
+    forceBuildNames = [common.getBuildWithJDK(pretty_branch_name, "Build", jdk) for jdk in common.getJDKBuilds(props)]
     forceBuild = _getForceScheduler(props, "ForceBuild", forceBuildNames)
     scheduler_list.append(forceBuild)
 
-    forceBuilders = [common.getBuildWithJDK(pretty_branch_name, "Reports", jdk) for jdk in common.getJDKBuilds(props, pretty_branch_name)]
+    forceBuilders = [common.getBuildWithJDK(pretty_branch_name, "Reports", jdk) for jdk in common.getJDKBuilds(props)]
 
     forceBuilders.extend([
         pretty_branch_name + " Markdown",
