@@ -145,6 +145,13 @@ def getBuild(override=None, name="Build", workdir="build"):
         workdir=workdir,
         name=name)
 
+def getTarballs():
+    return getBuild(
+        override=['install', '-T 1C', '-P', 'dist'],
+        workdir="build/assemblies",
+        name="Building the tarballs")
+
+
 def compressDir(dirToCompress, outputFile, workdir="build"):
     return shellCommand(
          command=['tar', 'cjf', outputFile, dirToCompress],
