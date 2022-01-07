@@ -73,7 +73,7 @@ def getBuildPipeline():
     f_build.addStep(common.getWorkerPrep())
     f_build.addStep(common.loadMavenSettings())
     f_build.addStep(common.loadSigningKey())
-    f_build.addStep(common.getBuild(override=['install', 'nexus-staging:deploy', 'nexus-staging:release', '-P', 'release,none', '-s', 'settings.xml']))
+    f_build.addStep(common.getBuild(override=['install', 'nexus-staging:deploy', 'nexus-staging:release', '-P', 'release,none', '-s', 'settings.xml', '-DstagingProgressTimeoutMinutes=10'], timeout=600))
     f_build.addStep(common.unloadSigningKey())
     f_build.addStep(common.getTarballs())
     #f_build.addStep(github_release)
