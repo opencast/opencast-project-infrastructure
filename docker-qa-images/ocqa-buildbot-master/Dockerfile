@@ -14,6 +14,7 @@ RUN apt-get update && \
     apt-get dist-upgrade -y
 
 RUN /buildbot_venv/bin/pip3 --no-cache-dir install docker
+RUN /buildbot_venv/bin/pip3 --no-cache-dir install PyGitHub
 
 #RUN apk add --no-cache \
 #        zlib-dev \

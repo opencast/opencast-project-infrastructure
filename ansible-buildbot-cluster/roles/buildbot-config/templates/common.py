@@ -28,13 +28,13 @@ def shellArg(command, logname, haltOnFailure=True, flunkOnFailure=True, warnOnFa
         warnOnFailure=warnOnFailure)
 
 
-def shellSequence(commands, name, workdir="build", env={}, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, alwaysRun=False, doStepIf=True, hideStepIf=False):
+def shellSequence(commands, name, workdir="build", env={}, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, alwaysRun=False, doStepIf=True, hideStepIf=False, timeout=240):
     return steps.ShellSequence(
         commands=commands,
         name=name,
         workdir=workdir,
         env=env,
-        timeout=240,
+        timeout=timeout,
         flunkOnFailure=flunkOnFailure,
         haltOnFailure=haltOnFailure,
         warnOnFailure=warnOnFailure,
@@ -75,7 +75,7 @@ def getWorkerPrep():
         name="Build Prep")
 
 
-def getJDKBuilds(props, pretty_branch_name):
+def getJDKBuilds(props):
     return props['jdk']
 
 
@@ -105,7 +105,7 @@ def getMavenEnv(props):
     return env
 
 
-def getBuild(override=None, name="Build", workdir="build"):
+def getBuild(override=None, name="Build", workdir="build", timeout=240):
     command = ['mvn', '-B', '-V', '-Dmaven.repo.local=/builder/m2']
 {% if skip_tests %}
     command.append('-DskipTests')
@@ -143,7 +143,15 @@ def getBuild(override=None, name="Build", workdir="build"):
         ],
         env=getMavenEnv,
         workdir=workdir,
-        name=name)
+        name=name,
+        timeout=timeout)
+
+def getTarballs():
+    return getBuild(
+        override=['install', '-T 1C', '-P', 'dist'],
+        workdir="build/assemblies",
+        name="Building the tarballs")
+
 
 def compressDir(dirToCompress, outputFile, workdir="build"):
     return shellCommand(

@@ -4,11 +4,6 @@
 from buildbot.plugins import util
 import common
 
-buildTarballs = common.getBuild(
-    override=['install', '-T 1C', '-P', 'dist'],
-    workdir="build/assemblies",
-    name="Building the tarballs")
-
 uploadTarballs = common.syncAWS(
     pathFrom="build",
     pathTo="s3://{{ s3_public_bucket }}/builds/{{ builds_fragment }}",
@@ -32,7 +27,7 @@ def getPullRequestPipeline():
     f_build.addStep(common.getWorkerPrep())
     f_build.addStep(common.getBuild())
 {% if push_prs | default(False) %}
-    f_build.addStep(buildTarballs)
+    f_build.addStep(common.getTarballs())
     f_build.addStep(uploadTarballs)
 {% endif %}
     f_build.addStep(common.getClean())
@@ -66,7 +61,7 @@ def getBuildPipeline():
     f_build.addStep(common.getBuild())
 {% endif %}
     f_build.addStep(common.unloadMavenSettings())
-    f_build.addStep(buildTarballs)
+    f_build.addStep(common.getTarballs())
     f_build.addStep(stampVersion)
     f_build.addStep(uploadTarballs)
     f_build.addStep(updateBuild)
