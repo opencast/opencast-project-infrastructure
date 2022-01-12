@@ -1,0 +1,40 @@
+---
+
+#Worker settings
+name: ci-opencast-org
+
+#Master settings
+login_user: greglogan
+mail_to: "gregorydlogan@gmail.com"
+docker_image_user: "greglogan"
+
+source_rpm_repo_url: "https://github.com/gregorydlogan/opencast-rpmbuild.git"
+
+send_mail_notifications: True
+send_gh_notifications: True
+push_crowdin: True
+max_builds: 2
+
+s3_host: https://radosgw.public.os.wwu.de
+s3_public_bucket: opencast-ci
+s3_private_bucket: opencast-ci
+
+crowdin_api_key: "{{ lookup('passwordstore', 'crowdin.com/api-key') }}"
+
+github_client_id: "{{ lookup('passwordstore', 'github.com/oauth-id') }}"
+github_client_secret:  "{{ lookup('passwordstore', 'github.com/oauth-secret') }}"
+
+github_hook_user: "{{ lookup('passwordstore', 'github.com/hook-user') }}"
+github_hook_pass: "{{ lookup('passwordstore', 'github.com/hook-pass') }}"
+github_hook_secret:  "{{ lookup('passwordstore', 'github.com/hook-secret') }}"
+
+github_token:  "{{ lookup('passwordstore', 'github.com/api-token') }}"
+
+signing_key: "{{ lookup('passwordstore', 'gpg/nightly/key returnall=true') }}"
+signing_key_id: 048D039F1DAE53EA0357ED824917F260EA15B53F
+
+public_s3_access_key: "{{ lookup('passwordstore', 'radosgw.public.os.wwu.de/access_key') }}"
+public_s3_secret_key: "{{ lookup('passwordstore', 'radosgw.public.os.wwu.de/secret_key') }}"
+
+private_s3_access_key: "{{ lookup('passwordstore', 'radosgw.public.os.wwu.de/access_key') }}"
+private_s3_secret_key: "{{ lookup('passwordstore', 'radosgw.public.os.wwu.de/secret_key') }}"

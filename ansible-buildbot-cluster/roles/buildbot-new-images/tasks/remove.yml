@@ -1,0 +1,15 @@
+---
+
+
+- name: Finding other {{ image }} images
+  shell: docker images -q --filter "before={{ image }}:{{ docker_worker_image_tag }}" {{ image }}
+  become: yes
+  register: worker_images
+
+- name: Removing other {{ image }} images
+  shell: docker rmi {{ item }}
+  become: yes
+  with_items:
+    - "{{ worker_images.stdout_lines }}"
+  when: worker_images.stdout_lines | length > 0
+

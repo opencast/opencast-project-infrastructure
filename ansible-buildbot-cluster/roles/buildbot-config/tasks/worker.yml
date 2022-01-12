@@ -1,0 +1,71 @@
+---
+
+- name: Ensure Buildbot worker directories are empty
+  file:
+    state: absent
+    path: "{{ item.path }}"
+  become: yes
+  with_items:
+    - { path: "{{ buildbot_config_worker }}", mode: "0700" }
+
+- name: Ensure Buildbot worker directories exists and has the right permissions
+  file:
+    state: directory
+    path: "{{ item.path }}"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: "{{ item.mode }}"
+  become: yes
+  with_items:
+    - { path: "{{ buildbot_config_worker }}", mode: "0700" }
+    - { path: "{{ buildbot_config_worker }}/envs", mode: "0700" }
+    - { path: "{{ buildbot_config_worker }}/workers", mode: "0700" }
+
+- name: Template Buildbot public support files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: "{{ item.mode }}"
+    force: yes
+  become: yes
+  with_items:
+    - { src: "opencast-ingest.sh", dest: "{{ buildbot_config_worker }}/opencast-ingest.sh", mode: "644" }
+    - { src: "envs/stable-allinone", dest: "{{ buildbot_config_worker }}/envs/stable-allinone", mode: "0644" }
+    - { src: "envs/develop-allinone", dest: "{{ buildbot_config_worker }}/envs/develop-allinone", mode: "0644" }
+    - { src: "envs/legacy-allinone", dest: "{{ buildbot_config_worker }}/envs/legacy-allinone", mode: "0644" }
+
+- name: Template Buildbot public support files
+  file:
+    state: directory
+    path: "{{ buildbot_config_worker }}/workers/{{ item }}"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: "0755"
+    force: yes
+  become: yes
+  with_items:
+    - "{{ docker_worker_images }}"
+
+- name: Template Buildbot public support files
+  template:
+    src: "worker.docker"
+    dest: "{{ buildbot_config_worker }}/workers/{{ item }}/Dockerfile"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: "0644"
+    force: yes
+  become: yes
+  with_items:
+    - "{{ docker_worker_images }}"
+
+- name: Adding ssh host config data to workers
+  blockinfile:
+    path: "{{ buildbot_home }}/.ssh/config"
+    create: yes
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: "0644"
+    block: "{{ lookup('template', 'roles/buildbot-config/templates/ssh_config') }}"
+  become: yes

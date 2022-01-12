@@ -1,16 +1,43 @@
 ---
 # vim: et:ts=2:sw=2:sts=2
-# This playbook deploys a BuildBot master and worker(s) configured for Opencast
+# This playbook deploys a Buildbot master and worker(s) configured for Opencast
+
+- hosts: all
+  user: "{{ login_user }}"
+  roles:
+    - { role: buildbot-base }
+    - { role: docker-tcp-connectable }
+    - { role: buildbot-keysync, tags: [ rekey ] }
+    - { role: autossh, when: "'master' not in group_names", tags: [ rekey ] }
+    - { role: buildbot-id-mapping, tags: [ buildbot, reconfig ] }
+  handlers:
+    - import_tasks: handlers/handlers.yml
 
 - hosts: master
   user: "{{ login_user }}"
-
   roles:
-    - buildbot-master
-    - buildbot-master-reconfig
+    - { role: buildbot-master-install, tags: [ buildbot ] }
+  handlers:
+    - import_tasks: handlers/handlers.yml
 
 - hosts: workers
   user: "{{ login_user }}"
-
   roles:
-    - buildbot-worker
+    - { role: s3_client }
+    - { role: buildbot-worker, tags: [ buildbot ] }
+  handlers:
+    - import_tasks: handlers/handlers.yml
+
+- hosts: all
+  user: "{{ login_user }}"
+  roles:
+    - { role: buildbot-config, tags: [ buildbot, reconfig ] }
+  handlers:
+    - import_tasks: handlers/handlers.yml
+
+- hosts: workers
+  user: "{{ login_user }}"
+  roles:
+    - { role: buildbot-new-images, tags: [ buildbot, reconfig ] }
+  handlers:
+    - import_tasks: handlers/handlers.yml

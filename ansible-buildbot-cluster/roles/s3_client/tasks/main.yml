@@ -1,0 +1,51 @@
+---
+
+- name: Install s3fs
+  apt:
+    name: s3fs
+    state: present
+  when: ansible_distribution == "Debian"
+  become: yes
+
+- name: Install s3fs
+  yum:
+    name: s3fs-fuse
+    state: present
+  when: ansible_distribution == "CentOS" or ansible_distribution == "Red Hat Enterprise Linux" or ansible_distribution == "Amazon"
+  become: yes
+
+- name: Unmounting S3, just in case
+  mount:
+    path: "{{ buildbot_home }}/s3"
+    state: unmounted
+  become: yes
+
+- name: Ensure required directories exists
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: 0755
+  become: yes
+  with_items:
+    - "{{ buildbot_home }}/s3"
+
+- name: Templating s3 auth file
+  template:
+    src: s3_auth
+    dest: "{{ buildbot_home }}/s3_auth"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: 0600
+  become: yes
+
+- name: Mounting S3
+  mount:
+    path: "{{ buildbot_home }}/s3"
+    src: "{{ s3_public_bucket }}"
+    fstype: fuse.s3fs
+    opts: "_netdev,allow_other,use_path_request_style,url={{ s3_host }}/,passwd_file={{ buildbot_home }}/s3_auth"
+    boot: yes
+    state: mounted
+  become: yes

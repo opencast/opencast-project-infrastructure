@@ -3,7 +3,10 @@ master
 workers
 
 [master]
-master.example.com
+ci.opencast.org
 
 [workers]
-worker.example.com
+ci.opencast.org
+oc-com-presentation.rrz.uni-koeln.de
+oc-com-worker1.rrz.uni-koeln.de
+pkg.opencast.org

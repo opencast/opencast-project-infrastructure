@@ -1,0 +1,28 @@
+---
+
+- include_tasks: update.yml
+  loop: "{{ docker_worker_images }}"
+  loop_control:
+    loop_var: distro
+
+- name: Updating Docker master image
+  shell: docker pull "{{ docker_image_user }}/ocqa-buildbot-master":"{{ docker_image_tag }}"
+  when: "'master' in group_names"
+  become: yes
+
+- name: Updating images in docker-compose file
+  shell: docker-compose pull
+  args:
+    chdir: "{{ buildbot_home }}"
+  become: yes
+  when: "'master' in group_names"
+  #Database tests are turned off since we don't have any ddls to test with
+  #notify: ["Stop Databases", "Start Databases"]
+
+- name: Pruning Docker containers
+  shell: docker container prune -f
+  become: yes
+
+- name: Pruning Docker images
+  shell: docker image prune -f
+  become: yes

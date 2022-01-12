@@ -1,0 +1,28 @@
+---
+
+- name: Stopping Buildbot and databases
+  shell: docker-compose down
+  args:
+    chdir: "{{ buildbot_home }}"
+  become: yes
+
+- name: Cleaning out build directory
+  file:
+    path: "{{ item }}"
+    state: absent
+  become: yes
+  with_items:
+    - "{{ buildbot_home }}/builds"
+
+- name: Ensure required directories exist and have the right permissions
+  file:
+    state: directory
+    path: "{{ item.path }}"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: "{{ item.mode }}"
+  become: yes
+  with_items:
+    - { path: "{{ buildbot_home }}/builds", mode: "0755" }
+  #Database tests are disabled right now
+  #notify: "Start Databases"

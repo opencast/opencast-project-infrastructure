@@ -1,0 +1,43 @@
+---
+
+- name: Stop Buildbot
+  shell: docker-compose rm -sf buildbot db proxy
+  args:
+    chdir: "{{ buildbot_home }}"
+  become: yes
+  ignore_errors: yes
+
+- name: Start Buildbot
+  shell: docker-compose up -d buildbot db proxy
+  args:
+    chdir: "{{ buildbot_home }}"
+  become: yes
+
+- name: Stop Databases
+  shell: docker-compose rm -sf maria mysql56 mysql57
+  args:
+    chdir: "{{ buildbot_home }}"
+  become: yes
+
+- name: Start Databases
+  shell: docker-compose up -d maria mysql56 mysql57
+  args:
+    chdir: "{{ buildbot_home }}"
+  become: yes
+
+- name: Start Autossh
+  systemd:
+    name: autossh
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+  become: yes
+  when: "'master' not in group_names"
+
+- name: Restart Docker
+  systemd:
+    name: docker
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+  become: yes

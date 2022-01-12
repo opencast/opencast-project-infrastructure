@@ -1,0 +1,108 @@
+---
+
+- name: Ensure required directories exist and have the right permissions
+  file:
+    state: directory
+    path: "{{ item.path }}"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: "{{ item.mode }}"
+  become: yes
+  with_items:
+    - { path: "{{ buildbot_home }}", mode: "0755" }
+    - { path: "{{ buildbot_config_master }}", mode: "0755" }
+    - { path: "{{ buildbot_secrets_master }}", mode: "0700" }
+
+- name: Template Buildbot configuration files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: "{{ item.mode | default(0600) }}"
+    force: yes
+  become: yes
+  with_items:
+    - { src: "docker-compose.yml", dest: "{{ buildbot_home }}/docker-compose.yml" }
+    - { src: "db.env", dest: "{{ buildbot_home }}/db.env" }
+    - { src: "master.cfg", dest: "{{ buildbot_config_master }}/master.cfg" }
+    - { src: "builders.py", dest: "{{ buildbot_config_master }}/builders.py" }
+    - { src: "build.py", dest: "{{ buildbot_config_master }}/build.py" }
+    - { src: "common.py", dest: "{{ buildbot_config_master }}/common.py" }
+    - { src: "debs.py", dest: "{{ buildbot_config_master }}/debs.py" }
+    - { src: "markdown.py", dest: "{{ buildbot_config_master }}/markdown.py" }
+    - { src: "database.py", dest: "{{ buildbot_config_master }}/database.py" }
+    - { src: "reports.py", dest: "{{ buildbot_config_master }}/reports.py" }
+    - { src: "rpms.py", dest: "{{ buildbot_config_master }}/rpms.py" }
+    - { src: "schedulers.py", dest: "{{ buildbot_config_master }}/schedulers.py" }
+    - { src: "rpm_repo.py", dest: "{{ buildbot_config_master }}/rpm_repo.py" }
+    - { src: "ansible.py", dest: "{{ buildbot_config_master }}/ansible.py" }
+    - { src: "maintenance.py", dest: "{{ buildbot_config_master }}/maintenance.py" }
+    - { src: "release.py", dest: "{{ buildbot_config_master }}/release.py" }
+    - { src: "buildbot.conf", dest: "{{ buildbot_home }}/nginx-config/buildbot.conf" }
+  notify: ["Stop Buildbot", "Start Buildbot"]
+  tags: just-config
+
+- name: Template Buildbot private support files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: 0600
+    force: yes
+  become: yes
+  with_items:
+    - { src: "secrets/changehook.passwd", dest: "{{ buildbot_config_master }}/changehook.passwd" }
+    - { src: "secrets/crowdin.key", dest: "{{ buildbot_secrets_master }}/crowdin.key" }
+    - { src: "secrets/s3.public_access_key", dest: "{{ buildbot_secrets_master }}/s3.public_access_key" }
+    - { src: "secrets/s3.public_secret_key", dest: "{{ buildbot_secrets_master }}/s3.public_secret_key" }
+    - { src: "secrets/s3.private_access_key", dest: "{{ buildbot_secrets_master }}/s3.private_access_key" }
+    - { src: "secrets/s3.private_secret_key", dest: "{{ buildbot_secrets_master }}/s3.private_secret_key" }
+
+- name: Ensure local temp directory exists
+  file:
+    path: "temp"
+    state: directory
+    mode: 0700
+  connection: local
+
+  #The following files then get uploaded to S3 next
+- name: Template Buildbot private support files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0600
+  connection: local
+  with_items:
+    - { src: "secrets/signing.key", dest: "temp/signing.key" }
+    - { src: "secrets/stable", dest: "temp/stable" }
+    - { src: "secrets/legacy", dest: "temp/legacy" }
+    - { src: "secrets/develop", dest: "temp/develop" }
+    - { src: "secrets/settings.xml", dest: "temp/settings.xml" }
+
+- name: Distributing private support files into S3
+  aws_s3:
+    aws_access_key: "{{ private_s3_access_key }}"
+    aws_secret_key: "{{ private_s3_secret_key }}"
+    s3_url: "{{ s3_host }}"
+    mode: put
+    encrypt: no
+    overwrite: "always"
+    permission: [] #prevents a warning about PutObjectAcl not being implemented by minio
+    bucket: "{{ s3_private_bucket }}"
+    src: "{{ item.src }}"
+    object: "{{ item.dest }}"
+  connection: local
+  with_items:
+    - { src: "temp/signing.key", dest: "{{ groups['master'][0] }}/key/signing.key" }
+    - { src: "temp/stable", dest: "{{ groups['master'][0] }}/env/stable" }
+    - { src: "temp/legacy", dest: "{{ groups['master'][0] }}/env/legacy" }
+    - { src: "temp/develop", dest: "{{ groups['master'][0] }}/env/develop" }
+    - { src: "temp/settings.xml", dest: "{{ groups['master'][0] }}/mvn/settings.xml" }
+
+- name: Removing private support files from local disk
+  file:
+    path: "temp"
+    state: absent
+  connection: local

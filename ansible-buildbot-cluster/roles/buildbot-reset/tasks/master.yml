@@ -1,0 +1,28 @@
+---
+
+- name: Stopping Buildbot and databases
+  shell: docker-compose down
+  args:
+    chdir: "{{ buildbot_home }}"
+  become: yes
+
+- name: Cleaning out built artifacts and database
+  file:
+    path: "{{ item }}"
+    state: absent
+  become: yes
+  with_items:
+    - "{{ buildbot_home }}/postgres-data"
+    - "{{ disk_base }}"
+
+- name: Ensure required directories exist and have the right permissions
+  file:
+    state: directory
+    path: "{{ item.path }}"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: "{{ item.mode }}"
+  become: yes
+  with_items:
+    - { path: "{{ disk_base }}", mode: "0755" }
+  notify: "Start Buildbot"

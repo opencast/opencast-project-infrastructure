@@ -1,0 +1,43 @@
+---
+
+- name: Ensuring Docker config directory is present
+  file:
+    path: /etc/docker
+    owner: root
+    group: root
+    mode: 755
+    state: directory
+  become: yes
+
+- name: Ensuring Docker is connectable via TCP
+  copy:
+    src: daemon.json
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: 0600
+    force: yes
+  become: yes
+  when: inventory_hostname in groups['workers']
+  notify: "Restart Docker"
+
+- name: Ensuring that Docker systemd override directory is present
+  file:
+    path: /etc/systemd/system/docker.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  become: yes
+  when: inventory_hostname in groups['workers']
+
+- name: Templating Docker systemd override
+  copy:
+    src: override.conf
+    dest: /etc/systemd/system/docker.service.d/override.conf
+    owner: root
+    group: root
+    mode: 0644
+  become: yes
+  when: inventory_hostname in groups['workers']
+  notify: "Restart Docker"

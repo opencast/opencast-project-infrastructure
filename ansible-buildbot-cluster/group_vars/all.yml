@@ -1,3 +1,134 @@
 ---
 
-login_user: root
+#############################
+# Opencast Related Settings #
+#############################
+
+#A nested dictionary of which branches to build.
+#The first level is the displayed name, with the branch and pom settings the git branch, and pom version
+opencast:
+  Develop:
+    branch: 'develop'
+    pom: '12'
+    jdk: [ '11' ]
+    profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
+    cores: '1'
+    server: 'develop'
+  11.x:
+    branch: 'r/11.x'
+    pom: '11'
+    jdk: [ '11' ]
+    profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
+    cores: '1'
+    server: 'stable'
+  10.x:
+    branch: 'r/10.x'
+    pom: '10'
+    jdk: [ '11' ]
+    profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
+    cores: '1'
+    server: 'legacy'
+
+
+#########################
+# User Related Settings #
+#########################
+
+#The user to log into the remote hosts as.  Override this with host variables.
+login_user: ansible
+
+#Set this to false if you already have a user set up, make sure to update buildbot_user
+create_buildbot_user: True
+
+#The buildbot user's name
+buildbot_user: buildbot
+
+#The buildbot user's home directory
+buildbot_home: /opt/buildbot
+
+
+#################################
+# Docker image related settings #
+#################################
+
+#The owner of the docker images (the opencast in opencast/ocqa-*)
+docker_image_user: "opencast"
+
+#The version tag to use for all of the images
+docker_image_tag: "v3.4.0"
+
+#The version to use for the workers
+docker_worker_image_tag: "{{ docker_image_tag }}"
+
+#The base image to use when building workers.  Override this if you need a worker-specific setting.
+docker_worker_base_image: "worker-base"
+
+#The list of possible Debian based distro images
+docker_debian_worker_images: ["deb9", "deb10", "deb11", "ubu18", "ubu20"]
+
+#The list of possible CentOS based distro images
+docker_centos_worker_images: ["cent7", "rocky8"]
+
+#The docker images currently supported
+docker_worker_images: "{{ docker_debian_worker_images + docker_centos_worker_images }}"
+
+#The version of docker compose to use
+docker_compose_version: 1.29.1
+
+#############
+# Auth bits #
+#############
+
+#The OAth bits.  These are used to power the login side of things for GitHub
+#These don't need to be right for testing, you just won't be able to log in
+#These are set here so the playbooks don't fail, but should be overridden in the host vars
+github_client_id: FAKE_ID
+github_client_secret: FAKE_SECRET
+
+#Your GitHub webook needs to look like this:
+#http://{{ github_hook_user }}:{{ github_hook_pass }}@{{ inventory_hostname }}/change_hook/github
+
+#These are strings for the GitHub webhook auth, see the bottom of https://docs.buildbot.net/latest/manual/cfg-wwwhooks.html#github-hook
+github_hook_user: FAKE_USER
+github_hook_pass: FAKE_PASS
+
+#The secret used by the webhook
+github_hook_secret: FAKE_SECRET
+
+#The token used by the pullrequest poller and the status push.  If you are not using either of those then forget this key.
+github_token: FAKE_TOKEN
+
+#The API key for crowdin uploads
+crowdin_api_key: FAKE_API_KEY
+
+#The raw GPG key to use for package and repository signing.
+signing_key: FAKE_KEY
+
+#The signing key to use.  This ID *must* match the key above.
+signing_key_id: FAKE_KEY_ID
+
+#The access keys for the ci cluster to use.  These must have write access to the public bucket, but can have read-only access to the private bucket.
+public_s3_access_key: FAKE_ACCESS_KEY
+public_s3_secret_key: FAKE_SECRET_KEY
+
+#The access keys used to deploy the CI cluster.  These need write permissions to both the public and private buckets.
+private_s3_access_key:
+private_s3_secret_key:
+
+
+#################
+# Disk Settings #
+#################
+
+#Where the master configs live
+buildbot_config_master: "{{ buildbot_home }}/buildbot-config"
+
+#Where the scripts and whatnot needed for the worker live
+buildbot_config_worker: "{{ buildbot_home }}/worker-config"
+
+#Where the secret files live
+buildbot_secrets_master: "{{ buildbot_config_master }}/secrets"
+
+#Where built artifacts of all types live
+disk_base: "{{ buildbot_home }}/s3"
+

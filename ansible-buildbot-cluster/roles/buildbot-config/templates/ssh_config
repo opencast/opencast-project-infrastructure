@@ -1,0 +1,8 @@
+Host develop.{{ infra_domain }}
+  User {{ buildbot_user }}
+
+Host stable.{{ infra_domain }}
+   User {{ buildbot_user }}
+
+Host legacy.{{ infra_domain }}
+   User {{ buildbot_user }}

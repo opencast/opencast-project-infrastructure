@@ -1,0 +1,20 @@
+---
+
+- name: Determine Buildbot UID
+  getent:
+    database: 'passwd'
+    key: '{{ buildbot_user }}'
+    split: ':'
+  register: 'uid'
+
+- name: Determine Buildbot GID
+  getent:
+    database: 'group'
+    key: '{{ buildbot_user }}'
+    split: ':'
+  register: 'gid'
+
+- name: Storing data
+  set_fact:
+   uid: "{{ uid['ansible_facts']['getent_passwd'][buildbot_user][1] }}"
+   gid: "{{ gid['ansible_facts']['getent_group'][buildbot_user][1] }}"

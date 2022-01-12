@@ -1,0 +1,12 @@
+---
+
+login_user: greglogan
+id: 4 
+name: pkg-opencast-org
+docker_image_user: "greglogan"
+repo_builder: True
+only_repo_builder: True
+docker_base_image: package-stripped
+disk_base: /srv/www
+deb_repo_fragment: "{{ disk_base }}/pkg.opencast.org/debs"
+rpm_repo_fragment: "{{ disk_base }}/pkg.opencast.org/rpms"

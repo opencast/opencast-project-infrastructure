@@ -1,0 +1,4 @@
+---
+
+- import_tasks: worker.yml
+  when: "'workers' in group_names"

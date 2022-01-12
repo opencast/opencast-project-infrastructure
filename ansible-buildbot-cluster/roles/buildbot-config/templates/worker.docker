@@ -1,0 +1,13 @@
+FROM {{ docker_image_user }}/ocqa-{{ item }}-{{ docker_worker_base_image }}:{{ docker_worker_image_tag }}
+
+RUN groupadd -g {{ hostvars[inventory_hostname]['uid'] }} builder && \
+    useradd -m -u {{ hostvars[inventory_hostname]['uid'] }} -g {{ hostvars[inventory_hostname]['gid'] }} -s /bin/bash -d /builder builder && \
+    mkdir -p /builder/.ssh /builds && \
+    chown -R builder:builder /builder /builds
+
+USER builder
+
+WORKDIR /builder
+
+CMD ["/usr/local/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]
+

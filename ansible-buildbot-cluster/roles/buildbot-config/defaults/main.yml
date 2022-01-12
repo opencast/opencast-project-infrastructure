@@ -1,0 +1,256 @@
+---
+
+#####################
+# Buildbot Settings #
+#####################
+
+#The Opencast repository URL
+source_repo_url: "https://github.com/{{ source_pr_owner }}/{{ source_pr_repo }}.git"
+
+#The pull request source's owner
+source_pr_owner: "opencast"
+
+#The pull request sources' repository name
+source_pr_repo:  "opencast"
+
+#How long a set of changes needs to be in place prior to starting a build (in seconds)
+stability_limit: 60
+
+#What hour to start the builds at
+nightly_build_hour: 3
+
+#Where to fetch the debian packaging build files from
+source_deb_repo_url: "https://github.com/gregorydlogan/debian-packaging.git"
+
+#Where to fetch the debian repository scripts from
+source_deb_packaging_repo_url: "https://github.com/gregorydlogan/debian-repo.git"
+
+#Where to fetch the rpm packaging build files from
+source_rpm_repo_url: "https://github.com/opencast/opencast-rpmbuild.git"
+
+#Where to fetch the ansible configuration management scripts from
+ansible_scripts_url: "https://github.com/opencast/oc-config-management.git"
+
+#Where to fetch the signing key for the generated packages.  Must match the signing key id below!
+key_url: "https://pkg.opencast.org/gpgkeys/automated.key"
+
+#The GPG key ID of the key above.  These must match!
+key_id: "048D039F1DAE53EA0357ED824917F260EA15B53F"
+
+#Where to find the deb and rpm packages
+repo_host: "pkg.opencast.org"
+
+#The repo suite to deploy Opencast from
+repo_deploy_suite: "unstable"
+
+#Who to send status mails to
+mail_to: "dev@opencast.org"
+
+#Set this to true to enable polling, instead of using a webhook
+enable_polling: False
+
+#Time between SCM polls (in minutes)
+poll_interval: 10
+
+#Number of days to keep artifacts around.  Note that this does *not* check against the available disk space!
+keep_artifacts: 7
+
+#The maximum number of builds, per branch, to keep around
+max_builds: 4
+
+#Whether to send the status emails
+send_mail_notifications: True
+
+#Whether to send the GitHub status pushes
+send_gh_notifications: True
+
+#Whether to push crowdin data on successful build.  Generally this should be False unless you're the golden master CI infrastructure.
+push_crowdin: False
+
+#Set this to True to skip tests during the Maven build.  Not something for production.
+skip_tests: False
+
+#Set this to the minimum amount of free disk space, in megabytes (ie, df -m), below which a build will abort on startup
+#Currently a combination of the main build and the reports build occupy about 5800 MB
+minimum_build_diskspace: 6000
+
+#Set this to True to package every build, as well as running nightly as needed
+package_all: False
+
+#Set this to False to disable deploying snapshots from the branch builds
+deploy_snapshots: True
+
+#Set this to True to push PR tarballs to the appropriate directory on the S3 host
+push_prs: False
+
+#Set this to true to have the workers write through to the underlying disk, rather than keeping the builds in the container
+##This is really only helpful in debugging
+write_through: False
+
+#Where the ansible deploy targets live
+infra_domain: "opencast.org"
+
+#Where the S3 server lives
+s3_host: "https://s3.{{ infra_domain }}"
+
+#Where to store public artifacts
+#This is assumed to be world readable
+s3_public_bucket: "public"
+
+#Where to store private bits
+#This is assumed to be readable by the CI system and no one else
+s3_private_bucket: "private"
+
+#Whether to enable and expose the debug port, or not
+debug_enabled: False
+
+#Whether to enable auth, or leave things wide open
+enable_auth: True
+
+#######################
+# Networking Settings #
+#######################
+
+#Which port to run buildbot on
+buildbot_port: 8010
+
+
+##################
+# Path Fragments #
+##################
+
+#URI fragments defining where things should end up, relative to a given root directory/URL
+artifacts_fragment: "%(prop:branch_pretty)s/%(prop:got_revision)s"
+builds_fragment: "{{ artifacts_fragment }}/build"
+reports_fragment: "{{ artifacts_fragment }}/reports"
+javadocs_fragment: "{{ artifacts_fragment }}/javadocs"
+markdown_fragment: "{{ artifacts_fragment }}/markdown"
+coverage_fragment: "{{ artifacts_fragment }}/coverage"
+debs_fragment: "{{ artifacts_fragment }}/debs"
+rpms_fragment: "{{ artifacts_fragment }}/rpms"
+repo_fragment: "{{ disk_base }}/repo" #This is relative to the buildbot base data directory
+deb_repo_fragment: "{{ repo_fragment }}/debs"
+rpm_repo_fragment: "{{ repo_fragment }}/rpms"
+
+#################
+# URL Settings #
+#################
+
+#Where Builbot lives, relative to the webserver root.  Leave this alone to have http://$servername/ be buildbot
+#String needs to start with a non-slash, and end with a slash (ie, buildbot/, not /buildbot or /builtbot/)
+buildbot_url: ""
+
+#Build url base
+url_base: /builds
+
+
+#Build url with build properties
+artifacts_url: "{{ url_base }}/{{ artifacts_fragment }}"
+
+#Build url for the reports
+reports_url: "{{ url_base }}/reports/%(prop:branch_pretty)s"
+#Build url for the debs
+debs_url: "{{ url_base }}/{{ debs_fragment }}"
+#Build url for the rpms
+rpms_url: "{{ url_base }}/{{ rpms_fragment }}"
+
+
+#################
+# Disk Settings #
+#################
+
+#This is the directory for buildbot's configuration files from *inside* the docker container.  This is used for the debian repo code.
+#Don't change this unless the structure of the container is changing too.
+buildbot_config: /var/lib/buildbot
+
+
+#Where the base of the build lives.  All of the artifacts for a given build live somewhere underneath this.
+build_base: "{{ disk_base }}/{{ artifacts_fragment }}"
+
+
+#Build location on master filesystem
+deployed_builds: "{{ disk_base }}/{{ builds_fragment }}"
+
+#The location on disk to where the build symlinks live
+deployed_builds_symlink_base: "{{ disk_base }}/builds"
+
+#The interpolatable location for each symlink
+deployed_builds_symlink: "{{ deployed_builds_symlink_base }}/%(prop:branch_pretty)s"
+
+
+#The location on disk to deploy the reports to
+deployed_reports: "{{ disk_base }}/{{ reports_fragment }}"
+
+#The location on disk to where the report symlinks live
+deployed_reports_symlink_base: "{{ disk_base }}/reports"
+
+#The interpolatable location for each symlink
+deployed_reports_symlink: "{{ deployed_reports_symlink_base }}/%(prop:branch_pretty)s"
+
+
+#The location on disk to deploy the markdown docs to
+deployed_markdown: "{{ disk_base }}/{{ markdown_fragment }}"
+
+#The location on disk to where the markdown symlinks live
+deployed_markdown_symlink_base: "{{ disk_base }}/markdown"
+
+#The interpolatable location for each symlink
+deployed_markdown_symlink: "{{ deployed_markdown_symlink_base }}/%(prop:branch_pretty)s"
+
+
+#The location on disk to deploy the coverage report to
+deployed_coverage: "{{ disk_base }}/{{ coverage_fragment }}"
+
+#The location on disk to where the coverage symlinks live
+deployed_coverage_symlink_base: "{{ disk_base }}/coverage"
+
+#The interpolatable location for each symlink
+deployed_coverage_symlink: "{{ deployed_coverage_symlink_base }}/%(prop:branch_pretty)s"
+
+
+#The location on disk to deploy the debs to
+deployed_debs: "{{ disk_base }}/{{ debs_fragment }}"
+
+#The location on disk to where the debs symlinks live
+deployed_debs_symlink_base: "{{ disk_base }}/debs"
+
+#The interpolatable location for each symlink
+deployed_debs_symlink: "{{ deployed_debs_symlink_base }}/%(prop:branch_pretty)s"
+
+
+#The location on disk to deploy the rpms to
+deployed_rpms: "{{ disk_base }}/{{ rpms_fragment }}"
+
+#The location on disk to where the rpm symlinks live
+deployed_rpms_symlink_base: "{{ disk_base }}/rpms"
+
+#The interpolatable location for each symlink
+deployed_rpms_symlink: "{{ deployed_rpms_symlink_base }}/%(prop:branch_pretty)s"
+
+
+#The location where the javadocs live on disk
+deployed_javadocs: "{{ disk_base }}/{{ javadocs_fragment }}"
+
+#The location on disk to where the javadocs symlinks live
+deployed_javadocs_symlink_base: "{{ disk_base }}/javadocs"
+
+#The interpolatable location for each symlink
+deployed_javadocs_symlink: "{{ deployed_javadocs_symlink_base }}/%(prop:branch_pretty)s"
+
+
+#####################
+# Buildbot Commands #
+#####################
+
+#Don't change these, change the paths and whatnot above
+
+#Where to scp the demo media deployment script to
+buildbot_scp_deploy_script: "{{ buildbot_user }}@%(prop:deploy_env)s.{{ infra_domain }}:opencast-ingest.sh"
+
+########################################
+# Buildbot configuration autodetection #
+########################################
+
+#Defines whether to enable repository building, which requires at least one worker with the repo_builder or only_repo_builder parameter set to true
+has_repo_builder: "{{ groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | list | length > 0 or
+                            groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder') | list | length > 0 }}"

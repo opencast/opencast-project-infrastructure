@@ -1,0 +1,35 @@
+---
+
+  #Note, we're using /bin/bash here rather than /sbin/nologin or /bin/false because we need to be able to log in!
+- name: Create Buildbot user
+  user:
+    name: '{{ buildbot_user }}'
+    password: "{{ lookup('password', '/dev/null encrypt=sha256_crypt length=32') }}"
+    update_password: always
+    home: "{{ buildbot_home }}"
+    groups: docker
+    shell: /bin/bash
+  become: yes
+  when: create_buildbot_user
+
+- name: Unmounting {{ disk_base }} if mounted
+  mount:
+    path: "{{ disk_base }}"
+    state: unmounted
+  become: yes
+
+- name: Ensure required directories exist and have the right permissions
+  file:
+    state: directory
+    path: "{{ item.path }}"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: "{{ item.mode }}"
+  become: yes
+  with_items:
+    - { path: "{{ buildbot_home }}", mode: "0755" }
+    - { path: "{{ disk_base }}", mode: "0755" }
+    - { path: "{{ buildbot_config_master }}", mode: "0755" }
+    - { path: "{{ buildbot_secrets_master }}", mode: "0700" }
+    - { path: "{{ buildbot_home }}/nginx-config", mode: "0755" }
+

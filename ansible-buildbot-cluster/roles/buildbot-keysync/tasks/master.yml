@@ -1,0 +1,80 @@
+---
+
+- name: Clear current Buildbot user ssh key
+  file:
+    name: "{{ buildbot_home }}/{{ item }}"
+    state: absent
+  become: yes
+  with_items:
+    - .ssh/id_rsa
+    - .ssh/id_rsa.pub
+    - .ssh/authorized_keys
+    - .ssh/known_hosts
+
+- name: Clear any local copy of ssh key
+  file:
+    name: ".ssh/{{ inventory_hostname }}"
+    state: absent
+  connection: local
+
+- name: Generate new Buildbot SSH key
+  user:
+    name: "{{ buildbot_user }}"
+    home: "{{ buildbot_home }}"
+    generate_ssh_key: yes
+    ssh_key_bits: 4096
+  when: '"localhost" != ansible_host and buildbot_user != ansible_user'
+  become: yes
+
+- name: Create local cache directory
+  file:
+    name: ".ssh/{{ inventory_hostname }}"
+    state: directory
+  connection: local
+
+- name: Adding local keys
+  shell: "cp group_vars/keys/{{ inventory_hostname }}/* .ssh/{{ inventory_hostname }}"
+  when: ("group_vars/keys/" ~ inventory_hostname) is directory
+  connection: local
+
+- name: Get Buildbot master sshd server key
+  shell: "ssh-keyscan {{ groups['master'][0] }} bitbucket.org github.com >> .ssh/{{ inventory_hostname }}/known_hosts"
+  connection: local
+
+- name: Fetch Buildbot SSH keys
+  fetch:
+    src: "{{buildbot_home }}/.ssh/{{ item }}"
+    dest: ".ssh/{{ inventory_hostname }}/{{ item }}"
+    flat: yes
+  when: '"localhost" != ansible_host and buildbot_user != ansible_user'
+  become: yes
+  with_items:
+    - id_rsa
+    - id_rsa.pub
+
+- name: Populate Buildbot master authorized_keys
+  authorized_key:
+    user: "{{ buildbot_user }}"
+    state: present
+    key: "{{ lookup('file', '.ssh/{{ inventory_hostname }}/id_rsa.pub') }}"
+    manage_dir: yes
+  when: '"localhost" != ansible_host and buildbot_user != ansible_user'
+  become: yes
+
+- name: Ensure ssh key directory exists
+  file:
+    path: "{{ buildbot_home }}/.ssh"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: 0750
+    state: directory
+  become: yes
+
+- name: Push Buildbot master known_hosts
+  copy:
+    src: ".ssh/{{ inventory_hostname }}/known_hosts"
+    dest: "{{ buildbot_home }}/.ssh/known_hosts"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: 0644
+  become: yes

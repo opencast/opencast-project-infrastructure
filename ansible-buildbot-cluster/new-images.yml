@@ -1,0 +1,15 @@
+---
+# vim: et:ts=2:sw=2:sts=2
+# This playbook cleans out an existing Buildbot deploy.
+
+
+- hosts: all
+  user: "{{ login_user }}"
+  tags:
+    - always
+  ignore_errors: True
+  roles:
+    - { role: buildbot-new-images }
+  handlers:
+    - import_tasks: handlers/handlers.yml
+

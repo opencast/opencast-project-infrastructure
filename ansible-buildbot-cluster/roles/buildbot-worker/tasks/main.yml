@@ -1,3 +1,32 @@
 ---
 
-- include: debian.yml
+#Database tests are disabled right now, so no need to template this
+#- name: Template docker-compose configuration file
+#  template:
+#    src: "{{ item.src }}"
+#    dest: "{{ item.dest }}"
+#    owner: "{{ buildbot_user }}"
+#    mode: 0600
+#    force: yes
+#  become: yes
+#  when: "'master' not in group_names and hostvars[inventory_hostname]['docker_worker_base_image'] | default('worker-base') == 'worker-base'"
+#  with_items:
+#    - { src: "docker-compose.yml", dest: "{{ buildbot_home }}/docker-compose.yml" }
+#  notify: "Start Databases"
+
+- name: Ensure Buildbot directories exists and has the right permissions
+  file:
+    state: directory
+    path: "{{ item.path }}"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: "{{ item.mode }}"
+  become: yes
+  with_items:
+    - { path: "{{ buildbot_home }}", mode: "0755" }
+    - { path: "{{ buildbot_home }}/buildbot-config", mode: "0700" }
+    - { path: "{{ buildbot_home }}/.ssh", mode: "0700" }
+    - { path: "{{ buildbot_home }}/m2", mode: "0700" }
+    - { path: "{{ buildbot_home }}/ansible", mode: "0700" }
+    - { path: "{{ buildbot_home }}/builds", mode: "0700" }
+

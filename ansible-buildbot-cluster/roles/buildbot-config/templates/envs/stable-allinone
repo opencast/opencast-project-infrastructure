@@ -1,0 +1,41 @@
+[fileserver]
+
+[database]
+stable.{{ infra_domain }}
+
+[activemq]
+stable.{{ infra_domain }}
+
+[admin]
+
+[adminpresentation]
+
+[allinone]
+stable.{{ infra_domain }}
+
+[worker]
+
+[presentation]
+
+[ingest]
+
+
+#These groups are used by the playbooks, please leave them alone.
+
+[opencast:children]
+admin
+adminpresentation
+allinone
+ingest
+worker
+presentation
+
+[admin_node:children]
+allinone
+admin
+adminpresentation
+
+[presentation_node:children]
+allinone
+presentation
+adminpresentation

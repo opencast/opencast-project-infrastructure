@@ -1,0 +1,27 @@
+---
+
+- name: Install EPEL release
+  yum:
+    name: epel-release
+    state: latest
+    update_cache: yes
+  become: yes
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: Adding Docker repository to yum config
+  yum_repository:
+    name: docker-ce-stable
+    file: "/etc/yum.repos.d/docker-ce.repo"
+    description: "Docker CE Stable"
+    baseurl: "https://download.docker.com/linux/centos/7/$basearch/stable"
+    gpgkey: "https://download.docker.com/linux/centos/gpg"
+    gpgcheck: yes
+    enabled: yes
+    state: present
+  become: yes
+
+- name: Installing Docker
+  yum:
+    name: docker-ce
+    state: latest
+  become: yes
