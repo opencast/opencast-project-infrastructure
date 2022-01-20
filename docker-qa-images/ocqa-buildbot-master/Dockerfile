@@ -15,6 +15,7 @@ RUN apt-get update && \
 
 RUN /buildbot_venv/bin/pip3 --no-cache-dir install docker
 RUN /buildbot_venv/bin/pip3 --no-cache-dir install PyGitHub
+RUN /buildbot_venv/bin/pip3 --no-cache-dir install boto3
 
 #RUN apk add --no-cache \
 #        zlib-dev \
