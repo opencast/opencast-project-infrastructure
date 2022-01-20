@@ -85,7 +85,6 @@ RUN python3 -m pip --no-cache-dir install ansible paramiko
     # Buildbot s3 deploy bits
 RUN python3 -m pip --no-cache-dir install awscli
     # Release deploy bits
-RUN python3 -m pip --no-cache-dir install PyGithub
 
      # Test runs produce a great quantity of dead grandchild processes.  In a
      # non-docker environment, these are automatically reaped by init (process 1),

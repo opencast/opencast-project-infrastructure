@@ -4,7 +4,7 @@
 from twisted.internet import defer
 from buildbot.process.results import SUCCESS
 from buildbot.plugins import steps, util
-from github import Github
+#from github import Github
 import common
 
 
