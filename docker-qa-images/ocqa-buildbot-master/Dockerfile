@@ -7,7 +7,7 @@ MAINTAINER  Greg Logan
 
 # Last build date - this can be updated whenever there are security updates so
 # that everything is rebuilt
-ENV         security_updates_as_of 2021-11-19
+ENV         security_updates_as_of 2022-01-20
 
 # install cairo for build badges
 RUN apt-get update && \
