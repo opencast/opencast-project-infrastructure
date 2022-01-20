@@ -1,7 +1,6 @@
 # -*- python -*-
 # ex: set filetype=python:
 
-from twisted.internet import defer
 from buildbot.process.results import SUCCESS
 from buildbot.plugins import steps, util
 #from github import Github
@@ -17,7 +16,6 @@ class GenerateGithubRelease(steps.BuildStep):
         self.name = release_name
         self.message = release_message
 
-    #@defer.inlineCallbacks
     def run(self):
         g = Github("{{ github_token }}")
 
@@ -27,13 +25,11 @@ class GenerateGithubRelease(steps.BuildStep):
         #release.upload_asset(path="./test.txt", content_type="application/txt")
         return SUCCESS
 
-    #@defer.inlineCallbacks
     def getCurrentSummary(self):
         return dict({
                  "step": f"Creating { self.tag } release named { self.name }"
                })
 
-    #@defer.inlineCallbacks
     def getResultSummary(self):
         return dict({
                  "step": f"Created { self.tag } release named { self.name }",
