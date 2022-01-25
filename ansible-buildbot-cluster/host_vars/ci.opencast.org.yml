@@ -13,7 +13,6 @@ source_rpm_repo_url: "https://github.com/gregorydlogan/opencast-rpmbuild.git"
 send_mail_notifications: True
 send_gh_notifications: True
 push_crowdin: True
-max_builds: 2
 
 s3_host: https://radosgw.public.os.wwu.de
 s3_public_bucket: opencast-ci

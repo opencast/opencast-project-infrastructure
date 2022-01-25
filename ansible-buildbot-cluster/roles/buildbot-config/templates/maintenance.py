@@ -5,42 +5,109 @@ import os.path
 from buildbot.plugins import steps, util
 from buildbot.process import buildstep, logobserver
 from twisted.internet import defer
+from buildbot.process.results import SUCCESS
 import common
+import boto3
+from botocore.config import Config
+from datetime import datetime, timedelta
 
 
-class GenerateDeleteCommands(buildstep.ShellMixin, steps.BuildStep):
+class GenerateDeleteCommands(steps.BuildStep):
 
-    def __init__(self, **kwargs):
-        kwargs = self.setupShellMixin(kwargs)
-        super().__init__(**kwargs)
-        self.observer = logobserver.BufferLogObserver()
-        self.addLogObserver('stdio', self.observer)
+    def contents_to_keys(self, contents):
+        return [ x['Key'] for x in contents['Contents'] ]
 
-    def extract_targets(self, stdout):
-        targets = []
-        for line in stdout.split('\n'):
-            target = str(line.strip())
-            if target and "node_modules/" != target:
-                targets.append(target)
-        return targets
+    def prefixes_to_keys(self, prefixes):
+        if "CommonPrefixes" in prefixes:
+          return [ x['Prefix'] for x in prefixes['CommonPrefixes'] ]
+        return []
 
-    @defer.inlineCallbacks
+    def clean_prefix(self, s3, vers, process_whitelist=True, before_date=None):
+        print(f"Processing { vers }")
+        vers_dir = s3.list_objects_v2(Bucket="{{ s3_public_bucket }}", Delimiter="/", Prefix=f"builds/{ vers }/")
+        candidate_hashes = self.prefixes_to_keys(vers_dir)
+        print(f"Found { len(candidate_hashes) } possible hashes to delete")
+        whitelist = s3.get_object(Bucket="{{ s3_public_bucket }}", Key=f"builds/{ vers }/latest.txt")['Body'].read().decode("utf-8").strip()
+        whitelist = f"builds/{ vers }/{ whitelist }/"
+        if process_whitelist:
+          candidate_hashes.remove(whitelist)
+        excluded_hashes = []
+        for hash in candidate_hashes:
+            #Find the first 1k results prefixed by the hash
+            objects_to_delete = s3.list_objects_v2(Bucket="{{ s3_public_bucket }}", Prefix=hash)
+            while True:
+                #Check if the stuff in this prefix is *earlier* than the before_date
+                if before_date is not None and before_date <= objects_to_delete['Contents'][0]['LastModified'].replace(tzinfo=None):
+                    #Exclude the whole prefix from further consideration
+                    excluded_hashes.append(hash)
+
+                #Figure out what should be deleted
+                delete_keys = {'Objects' : []}
+                if before_date is not None:
+                    delete_keys['Objects'] = [{'Key' : k} for k in filter(lambda obj: "/".join(obj.split('/')[:3]) + "/" not in excluded_hashes, [obj['Key'] for obj in objects_to_delete.get('Contents', [])])]
+                else:
+                    delete_keys['Objects'] = [{'Key' : k} for k in [obj['Key'] for obj in objects_to_delete.get('Contents', [])]]
+      
+                if len(delete_keys['Objects']) == 0:
+                    print("No keys to delete")
+                else:
+                    print(f"Removing { len(delete_keys['Objects']) } files")
+                    self.deleted += len(delete_keys['Objects'])
+                    #Actually delete things
+                    s3.delete_objects(Bucket="{{ s3_public_bucket }}", Delete=delete_keys)
+
+                #Are there more results after this?
+                if not objects_to_delete.get('Truncated'):
+                    break
+                objects_to_delete = s3.list_objects_v2(Bucket="{{ s3_public_bucket }}", Prefix=hash, ContinuationToken = objects_to_delete.get("ContinuationToken"))
+
+        if len(vers_dir['Contents']) == 1:
+            print("Removing latest.txt marker file")
+            for key in self.contents_to_keys(vers_dir):
+                s3.delete_object(Bucket="{{ s3_public_bucket }}", Key=key)
+                self.deleted += 1
+
+
     def run(self):
-        # run the command to get the list of targets
-        cmd = yield self.makeRemoteShellCommand()
-        yield self.runCommand(cmd)
+        self.deleted = 0
+        SUPPORTED_BRANCHES = [ {% for branch in opencast %}'{{ branch }}', {% endfor %} ]
 
-        # if the command passes extract the list of stages
-        result = cmd.results()
-        if result == util.SUCCESS:
-            # create a ShellCommand for each stage and add them to the build
-            self.build.addStepsAfterCurrentStep([
-                common.AWSStep(
-                    command=['s3', 'rm', 's3://{{ s3_public_bucket }}/builds/' + target],
-                    name="Removing " + target.split("/")[1])
-                for target in self.extract_targets(self.observer.getStdout())
-            ])
-        return result
+        # Retrieve the list of existing buckets
+        session = boto3.Session()
+        s3 = session.client('s3',
+            aws_access_key_id='{{ public_s3_access_key }}',
+            aws_secret_access_key='{{ public_s3_secret_key }}',
+            endpoint_url="{{ s3_host }}")
+
+        build_branches = self.prefixes_to_keys(s3.list_objects_v2(Bucket="{{ s3_public_bucket }}", Delimiter="/", Prefix="builds/"))
+        for branch in build_branches:
+            print(f"Checking if { branch } is still supported")
+            branch_name = branch.split('/')[1]
+            if branch_name in SUPPORTED_BRANCHES:
+                print(f"{ branch } is still supported")
+                continue
+            print(f"{ branch } is NOT supported")
+            self.clean_prefix(s3, branch_name, process_whitelist=False)
+
+        delete_before = datetime.utcnow() - timedelta(days={{ keep_artifacts }})
+
+        for vers in SUPPORTED_BRANCHES: 
+            self.clean_prefix(s3, vers, process_whitelist=True, before_date=delete_before)
+        return SUCCESS
+
+
+    def getCurrentSummary(self):
+        return dict({
+                 "step": "Cleaning S3 host: In Progress",
+                 "build": f"Removed { self.deleted } files"
+               })
+
+
+    def getResultSummary(self):
+        return dict({
+                 "step": "Cleaning S3 host: Done",
+                 "build": f"Removed { self.deleted } files"
+               })
 
 
 
@@ -60,24 +127,8 @@ def getPullRequestPipeline():
 
 def getBuildPipeline():
 
-    getDate = steps.SetPropertyFromCommand(
-        command="date +%Y-%m-%d -d '{{ keep_artifacts }} day ago'",
-        property="cutoff_date",
-        flunkOnFailure=True,
-        haltOnFailure=True,
-        name="Determine cutoff date")
-
-
-    cleanup = GenerateDeleteCommands(
-        command=util.Interpolate("aws --endpoint-url {{ s3_host }} s3api list-objects-v2 --bucket {{ s3_public_bucket }} --prefix builds/ --query 'Contents[?LastModified<=`%(prop:cutoff_date)s`].Key' | jq '.[] | split(\"/\")[1:3] | join(\"/\")' | sort | uniq"),
-        name="Determining cleanup targets",
-        env={
-            "AWS_ACCESS_KEY_ID": util.Secret("s3.public_access_key"),
-            "AWS_SECRET_ACCESS_KEY": util.Secret("s3.public_secret_key")
-        })
 
     f_build = __getBasePipeline()
-    f_build.addStep(getDate)
-    f_build.addStep(cleanup)
+    f_build.addStep(GenerateDeleteCommands(name="Clean S3 host"))
 
     return f_build

@@ -26,7 +26,7 @@ COPY aws-config /builder/.aws/config
 
 # Last build date - this can be updated whenever there are security updates so
 # that everything is rebuilt
-ENV         security_updates_as_of 2021-11-19
+ENV         security_updates_as_of 2022-01-20
 
 RUN apt-get update
 
@@ -92,7 +92,6 @@ RUN python3 -m pip --no-cache-dir install ansible paramiko
     # Buildbot s3 deploy bits
 RUN python3 -m pip --no-cache-dir install awscli
     # Release deploy bits
-RUN python3 -m pip --no-cache-dir install PyGithub
 
 RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
     sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen && \
