@@ -24,10 +24,10 @@ class GenerateDeleteCommands(steps.BuildStep):
 
     def clean_prefix(self, s3, vers, process_whitelist=True, before_date=None):
         print(f"Processing { vers }")
-        vers_dir = s3.list_objects_v2(Bucket="public", Delimiter="/", Prefix=f"builds/{ vers }/")
+        vers_dir = s3.list_objects_v2(Bucket="{{ s3_public_bucket }}", Delimiter="/", Prefix=f"builds/{ vers }/")
         candidate_hashes = self.prefixes_to_keys(vers_dir)
         print(f"Found { len(candidate_hashes) } possible hashes to delete")
-        whitelist = s3.get_object(Bucket="public", Key=f"builds/{ vers }/latest.txt")['Body'].read().decode("utf-8").strip()
+        whitelist = s3.get_object(Bucket="{{ s3_public_bucket }}", Key=f"builds/{ vers }/latest.txt")['Body'].read().decode("utf-8").strip()
         whitelist = f"builds/{ vers }/{ whitelist }/"
         if process_whitelist:
           candidate_hashes.remove(whitelist)
@@ -54,7 +54,7 @@ class GenerateDeleteCommands(steps.BuildStep):
                     print(f"Removing { len(delete_keys['Objects']) } files")
                     self.deleted += len(delete_keys['Objects'])
                     #Actually delete things
-                    s3.delete_objects(Bucket="public", Delete=delete_keys)
+                    s3.delete_objects(Bucket="{{ s3_public_bucket }}", Delete=delete_keys)
 
                 #Are there more results after this?
                 if not objects_to_delete.get('Truncated'):
@@ -66,7 +66,7 @@ class GenerateDeleteCommands(steps.BuildStep):
         if vers_dir['KeyCount'] == 1:
             print("Removing latest.txt marker file")
             for key in self.contents_to_keys(vers_dir):
-                s3.delete_object(Bucket="public", Key=key)
+                s3.delete_object(Bucket="{{ s3_public_bucket }}", Key=key)
                 self.deleted += 1
 
 
