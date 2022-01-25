@@ -61,9 +61,7 @@ class GenerateDeleteCommands(steps.BuildStep):
                     break
                 objects_to_delete = s3.list_objects_v2(Bucket="{{ s3_public_bucket }}", Prefix=hash, ContinuationToken = objects_to_delete.get("ContinuationToken"))
 
-        #NB: We use KeyCount here because for a normal, supported OC version the size of 'Contents' is *still* 1 since the directories are *prefixes*
-        #    If you screw this up it deletes the whole version tree instead :D
-        if vers_dir['KeyCount'] == 1:
+        if len(vers_dir['Contents']) == 1:
             print("Removing latest.txt marker file")
             for key in self.contents_to_keys(vers_dir):
                 s3.delete_object(Bucket="{{ s3_public_bucket }}", Key=key)
