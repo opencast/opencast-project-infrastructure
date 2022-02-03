@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -uxe
-
 DOCKER_OWNER=greglogan
 TAG=latest
 if [ $# -gt 1 ]; then
