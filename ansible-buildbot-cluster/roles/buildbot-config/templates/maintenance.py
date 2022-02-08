@@ -9,6 +9,7 @@ from buildbot.process.results import SUCCESS
 import common
 import boto3
 from botocore.config import Config
+from botocore.exceptions import ClientError
 from datetime import datetime, timedelta
 
 
@@ -27,10 +28,13 @@ class GenerateDeleteCommands(steps.BuildStep):
         vers_dir = s3.list_objects_v2(Bucket="{{ s3_public_bucket }}", Delimiter="/", Prefix=f"builds/{ vers }/")
         candidate_hashes = self.prefixes_to_keys(vers_dir)
         print(f"Found { len(candidate_hashes) } possible hashes to delete")
-        whitelist = s3.get_object(Bucket="{{ s3_public_bucket }}", Key=f"builds/{ vers }/latest.txt")['Body'].read().decode("utf-8").strip()
-        whitelist = f"builds/{ vers }/{ whitelist }/"
-        if process_whitelist:
-          candidate_hashes.remove(whitelist)
+        try:
+            whitelist = s3.get_object(Bucket="{{ s3_public_bucket }}", Key=f"builds/{ vers }/latest.txt")['Body'].read().decode("utf-8").strip()
+            whitelist = f"builds/{ vers }/{ whitelist }/"
+            if process_whitelist:
+                candidate_hashes.remove(whitelist)
+        except ClientError as ex:
+            print(f"NoSuchKey for builds/{ vers }/latest.txt, not whitelisting anything for { vers }")
         excluded_hashes = []
         for hash in candidate_hashes:
             #Find the first 1k results prefixed by the hash
@@ -61,7 +65,7 @@ class GenerateDeleteCommands(steps.BuildStep):
                     break
                 objects_to_delete = s3.list_objects_v2(Bucket="{{ s3_public_bucket }}", Prefix=hash, ContinuationToken = objects_to_delete.get("ContinuationToken"))
 
-        if len(vers_dir['Contents']) == 1:
+        if ('Contents' in vers_dir and len(vers_dir['Contents']) == 1) or ('KeyCount' in vers_dir and vers_dir['KeyCount'] == 1):
             print("Removing latest.txt marker file")
             for key in self.contents_to_keys(vers_dir):
                 s3.delete_object(Bucket="{{ s3_public_bucket }}", Key=key)
