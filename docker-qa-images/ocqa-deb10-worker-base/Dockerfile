@@ -112,6 +112,9 @@ RUN curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases
      chmod +x /usr/local/bin/dumb-init
 
 COPY buildbot.tac /builder/buildbot.tac
+     # Install future (and wheel), which are required by buildbot at the moment
+RUN python3 -m pip --no-cache-dir install wheel
+RUN python3 -m pip --no-cache-dir install future
      # Install required python packages, and twisted
-RUN python3 -m pip --no-cache-dir install future buildbot-worker==3.4.0
+RUN python3 -m pip --no-cache-dir install buildbot-worker==3.4.0
 
