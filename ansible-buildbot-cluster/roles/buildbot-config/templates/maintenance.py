@@ -23,8 +23,54 @@ class GenerateDeleteCommands(steps.BuildStep):
           return [ x['Prefix'] for x in prefixes['CommonPrefixes'] ]
         return []
 
+    def for_all_in_prefix(self, s3, prefix, fn, re_fn):
+        objects = s3.list_objects_v2(Bucket="{{ s3_public_bucket }}", Prefix=prefix)
+        while 'Contents' in objects and len(objects['Contents']) > 0:
+          fn(objects)
+
+          if not objects.get('Truncated'):
+              return re_fn(objects)
+          objects = s3.list_objects_v2(Bucket="{{ s3_public_bucket }}", Prefix=prefix, ContinuationToken = objects.get("ContinuationToken"))
+
+
+    def prefix_size(self, s3, prefix):
+        total = 0
+
+        for object in s3.Bucket("{{ s3_public_bucket }}").objects.filter(Prefix=prefix):
+            total = total + obj.size
+        return total
+
+
+    def clean_single_build_dir(self, s3, prefix, before_date=None):
+        def delete_keys(objects_to_delete):
+            #Check if the stuff in this prefix is *earlier* than the before_date
+            #NB: This is assuming that the first key in this prefix *is dated the same as everything else in this prefix*
+            if before_date is not None and before_date <= objects_to_delete['Contents'][0]['LastModified'].replace(tzinfo=None):
+                #Exclude the whole prefix from further consideration
+                excluded_hash = True
+
+            if not excluded_hash:
+                delete_keys = {'Objects' : []}
+                delete_keys['Objects'] = [{'Key' : k} for k in [obj['Key'] for obj in objects_to_delete.get('Contents', [])]]
+
+                print(f"Removing { len(delete_keys['Objects']) } files from { prefix }")
+                prefix_deleted += len(delete_keys['Objects'])
+                #Actually delete things
+                s3.delete_objects(Bucket="{{ s3_public_bucket }}", Delete=delete_keys)
+            else:
+                print(f"No keys to delete for prefix { prefix }")
+
+        def summarize(ignored):
+                print(f"Deleted a total of { prefix_deleted } files from { prefix }")
+                self.deleted += prefix_deleted
+
+        prefix_deleted = 0
+        self.for_all_in_prefix(s3, prefix, delete_keys, summarize)
+
+
     def clean_prefix(self, s3, vers, process_whitelist=True, before_date=None):
         print(f"Processing { vers }")
+        #NB: We're assuming here that we've never got more than 1k builds present!  Eventually they'd all get processed, but it would take *days*
         vers_dir = s3.list_objects_v2(Bucket="{{ s3_public_bucket }}", Delimiter="/", Prefix=f"builds/{ vers }/")
         candidate_hashes = self.prefixes_to_keys(vers_dir)
         print(f"Found { len(candidate_hashes) } possible hashes to delete")
@@ -37,33 +83,7 @@ class GenerateDeleteCommands(steps.BuildStep):
             print(f"NoSuchKey for builds/{ vers }/latest.txt, not whitelisting anything for { vers }")
         excluded_hashes = []
         for hash in candidate_hashes:
-            #Find the first 1k results prefixed by the hash
-            objects_to_delete = s3.list_objects_v2(Bucket="{{ s3_public_bucket }}", Prefix=hash)
-            while True:
-                #Check if the stuff in this prefix is *earlier* than the before_date
-                if before_date is not None and before_date <= objects_to_delete['Contents'][0]['LastModified'].replace(tzinfo=None):
-                    #Exclude the whole prefix from further consideration
-                    excluded_hashes.append(hash)
-
-                #Figure out what should be deleted
-                delete_keys = {'Objects' : []}
-                if before_date is not None:
-                    delete_keys['Objects'] = [{'Key' : k} for k in filter(lambda obj: "/".join(obj.split('/')[:3]) + "/" not in excluded_hashes, [obj['Key'] for obj in objects_to_delete.get('Contents', [])])]
-                else:
-                    delete_keys['Objects'] = [{'Key' : k} for k in [obj['Key'] for obj in objects_to_delete.get('Contents', [])]]
-      
-                if len(delete_keys['Objects']) == 0:
-                    print("No keys to delete")
-                else:
-                    print(f"Removing { len(delete_keys['Objects']) } files")
-                    self.deleted += len(delete_keys['Objects'])
-                    #Actually delete things
-                    s3.delete_objects(Bucket="{{ s3_public_bucket }}", Delete=delete_keys)
-
-                #Are there more results after this?
-                if not objects_to_delete.get('Truncated'):
-                    break
-                objects_to_delete = s3.list_objects_v2(Bucket="{{ s3_public_bucket }}", Prefix=hash, ContinuationToken = objects_to_delete.get("ContinuationToken"))
+            self.clean_single_build_dir(s3, hash, before_date)
 
         if ('Contents' in vers_dir and len(vers_dir['Contents']) == 1) or ('KeyCount' in vers_dir and vers_dir['KeyCount'] == 1):
             print("Removing latest.txt marker file")
