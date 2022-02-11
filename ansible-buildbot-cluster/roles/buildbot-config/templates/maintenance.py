@@ -29,22 +29,35 @@ class GenerateDeleteCommands(steps.BuildStep):
           fn(objects)
 
           if not objects.get('Truncated'):
-              return re_fn(objects)
+              return re_fn()
           objects = s3.list_objects_v2(Bucket="{{ s3_public_bucket }}", Prefix=prefix, ContinuationToken = objects.get("ContinuationToken"))
 
 
     def prefix_size(self, s3, prefix):
-        total = 0
+        def sum_of_sizes(objects):
+          nonlocal total
+          nonlocal date
+          # loop through the objects and add their sizes together, then add it to total
+          total += sum([ o['Size'] for o in objects['Contents']])
+          date = objects['Contents'][0]['LastModified']
 
-        for object in s3.Bucket("{{ s3_public_bucket }}").objects.filter(Prefix=prefix):
-            total = total + obj.size
-        return total
+        def summarize():
+          nonlocal total
+          nonlocal date
+          return {'date': date, 'size': total }
+
+        total = 0
+        date = 0
+        return self.for_all_in_prefix(s3, prefix, sum_of_sizes, summarize)
 
 
     def clean_single_build_dir(self, s3, prefix, before_date=None):
-        def delete_keys(objects_to_delete):
+        def clean_prefix(objects_to_delete):
+            nonlocal prefix
+            nonlocal prefix_deleted
             #Check if the stuff in this prefix is *earlier* than the before_date
             #NB: This is assuming that the first key in this prefix *is dated the same as everything else in this prefix*
+            excluded_hash = False
             if before_date is not None and before_date <= objects_to_delete['Contents'][0]['LastModified'].replace(tzinfo=None):
                 #Exclude the whole prefix from further consideration
                 excluded_hash = True
@@ -60,12 +73,14 @@ class GenerateDeleteCommands(steps.BuildStep):
             else:
                 print(f"No keys to delete for prefix { prefix }")
 
-        def summarize(ignored):
+        def summarize():
+                nonlocal prefix_deleted
+                nonlocal prefix
                 print(f"Deleted a total of { prefix_deleted } files from { prefix }")
                 self.deleted += prefix_deleted
 
         prefix_deleted = 0
-        self.for_all_in_prefix(s3, prefix, delete_keys, summarize)
+        self.for_all_in_prefix(s3, prefix, clean_prefix, summarize)
 
 
     def clean_prefix(self, s3, vers, process_whitelist=True, before_date=None):
@@ -82,14 +97,17 @@ class GenerateDeleteCommands(steps.BuildStep):
         except ClientError as ex:
             print(f"NoSuchKey for builds/{ vers }/latest.txt, not whitelisting anything for { vers }")
         excluded_hashes = []
+        remaining_prefixes = {}
         for hash in candidate_hashes:
             self.clean_single_build_dir(s3, hash, before_date)
+            remaining_prefixes[hash] = self.prefix_size(s3, hash)
 
         if ('Contents' in vers_dir and len(vers_dir['Contents']) == 1) or ('KeyCount' in vers_dir and vers_dir['KeyCount'] == 1):
             print("Removing latest.txt marker file")
             for key in self.contents_to_keys(vers_dir):
                 s3.delete_object(Bucket="{{ s3_public_bucket }}", Key=key)
                 self.deleted += 1
+        return remaining_prefixes
 
 
     def run(self):
@@ -115,8 +133,18 @@ class GenerateDeleteCommands(steps.BuildStep):
 
         delete_before = datetime.utcnow() - timedelta(days={{ keep_artifacts }})
 
+        remaining_prefixes = {}
         for vers in SUPPORTED_BRANCHES: 
-            self.clean_prefix(s3, vers, process_whitelist=True, before_date=delete_before)
+            remaining_prefixes.update(self.clean_prefix(s3, vers, process_whitelist=True, before_date=delete_before))
+        total_size = sum([ int(remaining_prefixes[prefix]['size']) for prefix in remaining_prefixes] )
+
+        pruning_list = sorted(remaining_prefixes, key=lambda x: (remaining_prefixes[x]['date'], remaining_prefixes[x]['size']))
+        while total_size >= {{ max_size | default(32)}} * 1073741824 and len(pruning_list) > 0:
+            prefix_to_prune = pruning_list.pop()
+            print(f"Pruning { prefix_to_prune } due to size limits")
+            self.clean_single_build_dir(s3, prefix_to_prune)
+            total_size -= remaining_prefixes[prefix_to_prune]['size']
+
         return SUCCESS
 
 

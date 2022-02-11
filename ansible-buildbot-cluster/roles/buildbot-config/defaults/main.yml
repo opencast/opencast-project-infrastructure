@@ -55,6 +55,10 @@ poll_interval: 10
 #Number of days to keep artifacts around.  Note that this does *not* check against the available disk space!
 keep_artifacts: 7
 
+#The maximum size that the build directory on the S3 storage should grow to, in GB
+#If this is exceeded Buildbot will start deleting builds, starting with the oldest
+max_artifacts_size: 32
+
 #Whether to send the status emails
 send_mail_notifications: True
 
