@@ -53,7 +53,7 @@ RUN yum install -y \
      ## Packages for building docs
         nodejs \
      ## For SQL script testing
-        mysql && \
+     #  mysql && \
     yum clean all
 
 RUN yum install -y \

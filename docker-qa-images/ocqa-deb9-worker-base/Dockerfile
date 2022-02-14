@@ -61,7 +61,7 @@ RUN apt-get install -y --no-install-recommends \
         libffi-dev \
         nodejs \
      ## For SQL script testing
-        mysql-client && \
+     #  mysql-client && \
     apt-get clean
 
 RUN apt-get install -y --no-install-recommends \

@@ -61,7 +61,7 @@ RUN apt-get install -y --no-install-recommends \
         libyaml-dev \
         nodejs \
      ## For SQL script testing
-        mariadb-client && \
+     #   mariadb-client && \
     apt-get clean
 
 RUN apt-get install -y --no-install-recommends \
