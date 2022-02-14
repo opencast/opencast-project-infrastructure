@@ -68,9 +68,7 @@ RUN yum install -y \
          gcc \
          openssl-devel \
      # Crowdin
-         crowdin \
-     # jq for maintenance
-         jq && \
+         crowdin && \
     yum clean all
 
 RUN alternatives --set java java-11-openjdk.x86_64

@@ -76,8 +76,8 @@ RUN apt-get install -y --no-install-recommends \
         aptly \
         libdistro-info-perl \
         fakeroot \
-     # jq is used in the maintenance scripts
-        jq \
+     # s3fs since aptly needs it
+        s3fs \
      # Crowdin
         crowdin && \
     apt-get clean

@@ -65,9 +65,7 @@ RUN yum install -y \
         rpm-sign \
      # Bits for buildbot worker
          gcc \
-         openssl-devel \
-     # jq for maintenance
-         jq && \
+         openssl-devel && \
     yum clean all
 
 # Install crowdin
