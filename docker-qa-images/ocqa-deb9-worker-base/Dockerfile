@@ -40,7 +40,6 @@ RUN apt-get install -y --no-install-recommends \
         sox \
         hunspell \
         ffmpeg-dist \
-        openjdk-8-jre \
         openjdk-11-jre \
      # Build deps
         openssh-client \
@@ -48,7 +47,6 @@ RUN apt-get install -y --no-install-recommends \
         git \
         maven \
         curl wget \
-        openjdk-8-jdk \
         openjdk-11-jdk \
         firefox-esr && \
     apt-get clean

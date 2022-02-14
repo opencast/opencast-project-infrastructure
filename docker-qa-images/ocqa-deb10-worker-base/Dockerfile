@@ -87,7 +87,7 @@ RUN apt-get install -y --no-install-recommends \
         crowdin && \
      apt-get clean
 
-RUN apt-get install -y --no-install-recommends -t unstable openjdk-8-jre openjdk-8-jdk openjdk-17-jre openjdk-17-jdk && apt-get clean
+RUN apt-get install -y --no-install-recommends -t unstable openjdk-17-jre openjdk-17-jdk && apt-get clean
 
 RUN update-java-alternatives -s java-1.11.0-openjdk-amd64
 
