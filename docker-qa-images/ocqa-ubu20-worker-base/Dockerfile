@@ -60,7 +60,7 @@ RUN apt-get install -y --no-install-recommends \
         python3-pip \
      ## Packages for building docs
         libyaml-dev \
-        nodejs \
+        nodejs && \
      ## For SQL script testing
      #  mysql-client && \
     apt-get clean

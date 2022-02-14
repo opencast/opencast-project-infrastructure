@@ -52,9 +52,9 @@ RUN yum install -y \
         python36-devel \
         python36-pip \
      ## Packages for building docs
-        nodejs \
+        nodejs && \
      ## For SQL script testing
-        mysql && \
+     #  mysql && \
     yum clean all
 
 RUN yum install -y \

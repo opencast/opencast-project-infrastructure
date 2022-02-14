@@ -59,7 +59,7 @@ RUN apt-get install -y --no-install-recommends \
      ## Packages for building docs
         libyaml-dev \
         libffi-dev \
-        nodejs \
+        nodejs && \
      ## For SQL script testing
      #  mysql-client && \
     apt-get clean

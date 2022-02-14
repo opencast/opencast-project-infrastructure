@@ -51,7 +51,7 @@ RUN yum install -y \
         python36-devel \
         python3-pip \
      ## Packages for building docs
-        nodejs \
+        nodejs && \
      ## For SQL script testing
      #  mysql && \
     yum clean all
