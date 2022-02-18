@@ -124,7 +124,11 @@ def getBuildPipeline():
 
     debRepoPublish = common.shellCommand(
         command=["./publish-branch", util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:signing_key)s")],
-        name=util.Interpolate("Publishing %(prop:pkg_major_version)s.x"))
+        name=util.Interpolate("Publishing %(prop:pkg_major_version)s.x"),
+        env={
+            "AWS_ACCESS_KEY_ID": util.Secret("s3.public_access_key"),
+            "AWS_SECRET_ACCESS_KEY": util.Secret("s3.public_secret_key")
+        })
 
     f_package_debs = util.BuildFactory()
     f_package_debs.addStep(common.getPreflightChecks())
