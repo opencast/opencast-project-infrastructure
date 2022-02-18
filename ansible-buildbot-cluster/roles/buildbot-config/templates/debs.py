@@ -85,7 +85,7 @@ def getBuildPipeline():
         name="Build debs")
 
     debRepoClone = steps.Git(repourl="{{ source_deb_packaging_repo_url }}",
-                          branch="e/ci",
+                          branch="{{ deb_packaging_repo_branch }}",
                           alwaysUseLatest=True,
                           mode="full",
                           method="fresh",
