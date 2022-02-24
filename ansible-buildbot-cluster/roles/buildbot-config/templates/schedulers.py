@@ -114,7 +114,6 @@ def _getBasicSchedulers(props):
                 pretty_branch_name + " el7 RPM Packaging",
                 pretty_branch_name + " el8 RPM Packaging"
             ])
-        schedDict['package'] = sched
     else:
         defaultJDK = common.getJDKBuilds(props)[0]
         sched = schedulers.Dependent(
@@ -126,7 +125,7 @@ def _getBasicSchedulers(props):
                 pretty_branch_name + " el7 RPM Packaging",
                 pretty_branch_name + " el8 RPM Packaging"
             ])
-        schedDict['package'] = sched
+    schedDict['package'] = sched
 
     return schedDict
 
@@ -144,7 +143,7 @@ def getSchedulers(props):
             upstream=sched_dict['package'],
             properties=props,
             builderNames=[
-#                pretty_branch_name + " Debian Repository",
+                pretty_branch_name + " Debian Packaging",
                 pretty_branch_name + " RPM Repository",
             ])
         scheduler_list.append(repo)
