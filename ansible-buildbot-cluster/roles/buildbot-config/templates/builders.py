@@ -163,7 +163,8 @@ def getBuildersForBranch(props):
         workernames=workers,
         factory=debs.getBuildPipeline(),
         properties=deb_props,
-        collapseRequests=True))
+        collapseRequests=True,
+        locks=[deb_lock.access('exclusive')]))
 
     for distro in (7, 8):
         el_props = dict(props)
