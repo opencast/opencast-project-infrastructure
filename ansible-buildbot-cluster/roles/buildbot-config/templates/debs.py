@@ -102,7 +102,7 @@ def getBuildPipeline():
         name="Deploying S3 auth details")
 
     s3Mount = common.shellCommand(
-        command=" ".join(["mkdir", "-p", "/builder/s3", "&&", "s3fs", "-o", "use_path_request_style", "-o", "url={{ s3_host }}/", "{{ s3_public_bucket }}", "/builder/s3"]),
+        command=" ".join(["mkdir", "-p", "/builder/s3", "&&", "s3fs", "-o", "use_path_request_style", "-o", "url={{ s3_host }}/", "{{ s3_public_bucket }}", "/builder/s3", "&&", "ls", "/builder/s3/"]),
         name="Mounting S3")
 
     s3Unmount = common.shellCommand(
