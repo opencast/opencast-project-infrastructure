@@ -92,7 +92,7 @@ class GenerateDeleteCommands(steps.BuildStep):
         try:
             whitelist = s3.get_object(Bucket="{{ s3_public_bucket }}", Key=f"builds/{ vers }/latest.txt")['Body'].read().decode("utf-8").strip()
             whitelist = f"builds/{ vers }/{ whitelist }/"
-            if process_whitelist:
+            if process_whitelist and whitelist in candidate_hashes:
                 candidate_hashes.remove(whitelist)
         except ClientError as ex:
             print(f"NoSuchKey for builds/{ vers }/latest.txt, not whitelisting anything for { vers }")
@@ -102,8 +102,8 @@ class GenerateDeleteCommands(steps.BuildStep):
             self.clean_single_build_dir(s3, hash, before_date)
             remaining_prefixes[hash] = self.prefix_size(s3, hash)
 
-        if ('Contents' in vers_dir and len(vers_dir['Contents']) == 1) or ('KeyCount' in vers_dir and vers_dir['KeyCount'] == 1):
-            print("Removing latest.txt marker file")
+        if ('Contents' in vers_dir and len(vers_dir['Contents']) == 1 or 'KeyCount' in vers_dir and vers_dir['KeyCount'] == 1) and 'CommonPrefixes' not in vers_dir:
+            print(f"Removing latest.txt marker file from { vers }")
             for key in self.contents_to_keys(vers_dir):
                 s3.delete_object(Bucket="{{ s3_public_bucket }}", Key=key)
                 self.deleted += 1
