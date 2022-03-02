@@ -22,7 +22,8 @@ db_lock = util.WorkerLock("db_lock", maxCount=1)
 #These are used for the repository generation builders
 #of which there must only be a single one running at a time across the whole cluster
 deb_lock = util.MasterLock("deb_lock", maxCount=1)
-rpm_lock = util.MasterLock("rpm_lock", maxCount=1)
+el7_lock = util.MasterLock("el7_lock", maxCount=1)
+el8_lock = util.MasterLock("el8_lock", maxCount=1)
 
 
 # We're doing the filter here to remove blank entries (ie, "") since some of these lines in some cases don't yield
@@ -168,10 +169,13 @@ def getBuildersForBranch(props):
 
     for distro in (7, 8):
         el_props = dict(props)
+        el_props['el_version'] = distro
         if 7 == distro:
           el_props['image'] = f"cent{distro}"
+          lock = el7_lock
         elif 8 == distro:
           el_props['image'] = f"rocky{distro}"
+          lock = el8_lock
 
         if "Develop" == pretty_branch_name:
             #Set the RPM branch to master
@@ -183,32 +187,23 @@ def getBuildersForBranch(props):
             workernames=workers,
             factory=rpms.getBuildPipeline(),
             properties=el_props,
-            collapseRequests=True))
+            collapseRequests=True,
+            locks=[lock.access('exclusive')]))
 
-    if len(repo_workers) > 0:
+    if props['deploy_env']:
+        deploy_props = dict(props)
+        deploy_props['deploy_suite'] = '{{ repo_deploy_suite }}'
+        deploy_props['package_repo_host'] = "{{ repo_host }}"
+        deploy_props['key_url'] = "{{ key_url }}"
+        deploy_props['key_id'] = "{{ key_id }}"
 
         builders.append(util.BuilderConfig(
-            name=pretty_branch_name + " RPM Repository",
-            workernames=repo_workers,
-            factory=rpm_repo.getBuildPipeline(),
-            properties=cent_props,
+            name=pretty_branch_name + " Ansible Deploy",
+            workernames=workers,
+            factory=ansible.getBuildPipeline(),
+            properties=deploy_props,
             collapseRequests=True,
-            locks=[rpm_lock.access('exclusive')]))
-
-        if props['deploy_env']:
-            deploy_props = dict(props)
-            deploy_props['deploy_suite'] = '{{ repo_deploy_suite }}'
-            deploy_props['package_repo_host'] = "{{ repo_host }}"
-            deploy_props['key_url'] = "{{ key_url }}"
-            deploy_props['key_id'] = "{{ key_id }}"
-
-            builders.append(util.BuilderConfig(
-                name=pretty_branch_name + " Ansible Deploy",
-                workernames=workers,
-                factory=ansible.getBuildPipeline(),
-                properties=deploy_props,
-                collapseRequests=True,
-                #Ensure that no one is changing the package databases while we're deploying!
-                locks=[deb_lock.access('exclusive'), rpm_lock.access('exclusive')]))
+            #Ensure that no one is changing the package databases while we're deploying!
+            locks=[deb_lock.access('exclusive'), el7_lock.access('exclusive'), el8_lock.access('exclusive')]))
 
     return builders
