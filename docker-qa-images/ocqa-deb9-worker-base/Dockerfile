@@ -72,7 +72,7 @@ RUN apt-get install -y --no-install-recommends \
         debhelper \
         devscripts \
         dh-exec \
-        aptly \
+        aptly=1.4.0 \
         libdistro-info-perl \
         fakeroot \
      # s3fs since aptly needs it
