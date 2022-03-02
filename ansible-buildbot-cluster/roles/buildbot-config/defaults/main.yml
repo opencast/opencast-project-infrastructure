@@ -251,10 +251,3 @@ deployed_javadocs_symlink: "{{ deployed_javadocs_symlink_base }}/%(prop:branch_p
 #Where to scp the demo media deployment script to
 buildbot_scp_deploy_script: "{{ buildbot_user }}@%(prop:deploy_env)s.{{ infra_domain }}:opencast-ingest.sh"
 
-########################################
-# Buildbot configuration autodetection #
-########################################
-
-#Defines whether to enable repository building, which requires at least one worker with the repo_builder or only_repo_builder parameter set to true
-has_repo_builder: "{{ groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | list | length > 0 or
-                            groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder') | list | length > 0 }}"

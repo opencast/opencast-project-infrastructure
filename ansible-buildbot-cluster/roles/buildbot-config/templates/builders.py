@@ -37,15 +37,6 @@ workers = list(filter(lambda a: a, [
                                    | selectattr('only_repo_builder', 'eq', 'False') | map(attribute='name') | join('\", \"') + '\"' }}
 ]))
 
-repo_workers = list(filter(lambda a: a, [
-    {{ '\"' + groups['workers'] | map('extract', hostvars)
-                                   | selectattr('repo_builder', 'defined') | selectattr('repo_builder')
-                                   | map(attribute='name') | join('\", \"') + '\"' }},
-    {{ '\"' + groups['workers'] | map('extract', hostvars)
-                                   | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder')
-                                   | map(attribute='name') | join('\", \"') + '\"' }}
-]))
-
 
 def getPullRequestBuilder(props, pretty_branch_name):
 
