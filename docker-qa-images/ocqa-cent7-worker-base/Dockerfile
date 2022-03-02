@@ -64,6 +64,7 @@ RUN yum install -y \
         rpmlint \
         yum-utils \
         rpm-sign \
+        s3fs-fuse \
      # Bits for buildbot worker
          gcc \
          openssl-devel \
