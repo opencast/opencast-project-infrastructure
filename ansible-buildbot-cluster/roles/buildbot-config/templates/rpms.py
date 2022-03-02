@@ -14,7 +14,6 @@ profiles = {
 @util.renderer
 def getRPMBuilds(props):
     builds = []
-    elvers = props.getProperty("image")[-1]
     for profile in profiles[props.getProperty('branch_pretty')]:
         builds.append(common.shellArg(
             command=[
@@ -31,7 +30,7 @@ def getRPMBuilds(props):
                 '--addsign',
                 '--key-id', util.Interpolate("%(prop:signing_key)s"),
                 util.Interpolate(
-                    "../RPMS/noarch/opencast-" + profile + "-%(prop:rpm_version)s.el" + elvers + ".noarch.rpm")
+                    "../RPMS/noarch/opencast-" + profile + "-%(prop:rpm_version)s.el%(prop:el_version)s.noarch.rpm")
             ],
             logname=profile + " signing"))
     return builds
@@ -127,11 +126,20 @@ def getBuildPipeline():
         workdir="build/rpmbuild/SPECS",
         name="Build rpms")
 
-    # Note: We're using a string here because using the array disables shell globbing!
+       # Note: We're using a string here because using the array disables shell globbing!
     rpmsUpload = common.syncAWS(
         pathFrom="rpmbuild/RPMS/noarch",
-        pathTo="s3://{{ s3_public_bucket }}/builds/{{ rpms_fragment }}",
-        name="Upload rpms to buildmaster")
+        pathTo="s3://{{ s3_public_bucket }}/repo/rpms/unstable/el/%(prop:el_version)s/noarch/",
+        name="Upload rpms to S3")
+
+    rpmsPrune = common.shellCommand(
+        command=util.Interpolate("ls -t /builder/s3/repo/rpms/unstable/el/%(prop:el_version)s/noarch | grep allinone | tail -n +6 | cut -f 4 -d '-' | while read version; do rm -f /builder/s3/repo/rpms/unstable/el/%(prop:el_version)s/noarch/*$version; done"),
+        name=util.Interpolate("Pruning %(prop:pkg_major_version)s unstable repository"))
+
+    repoMetadata = common.shellCommand(
+        command=['createrepo', '.'],
+        workdir=util.Interpolate("/builder/s3/repo/rpms/unstable/el/%(prop:el_version)s/noarch"),
+        name="Building repository")
 
     f_package_rpms = util.BuildFactory()
     f_package_rpms.addStep(common.getPreflightChecks())
@@ -147,6 +155,12 @@ def getBuildPipeline():
     f_package_rpms.addStep(rpmsBuild)
     f_package_rpms.addStep(common.unloadSigningKey())
     f_package_rpms.addStep(rpmsUpload)
+    f_package_rpms.addStep(common.deployS3fsSecrets())
+    f_package_rpms.addStep(common.mountS3fs())
+    f_package_rpms.addStep(rpmsPrune)
+    f_package_rpms.addStep(repoMetadata)
+    f_package_rpms.addStep(common.unmountS3fs())
+    f_package_rpms.addStep(common.cleanupS3Secrets())
     f_package_rpms.addStep(common.getClean())
 
     return f_package_rpms
