@@ -114,7 +114,6 @@ def _getBasicSchedulers(props):
                 pretty_branch_name + " el7 RPM Packaging",
                 pretty_branch_name + " el8 RPM Packaging"
             ])
-        schedDict['package'] = sched
     else:
         defaultJDK = common.getJDKBuilds(props)[0]
         sched = schedulers.Dependent(
@@ -126,7 +125,7 @@ def _getBasicSchedulers(props):
                 pretty_branch_name + " el7 RPM Packaging",
                 pretty_branch_name + " el8 RPM Packaging"
             ])
-        schedDict['package'] = sched
+    schedDict['package'] = sched
 
     return schedDict
 
@@ -138,23 +137,12 @@ def getSchedulers(props):
     sched_dict = _getBasicSchedulers(props)
     scheduler_list = list(sched_dict.values())
 
-    if str(props['has_repo_builder']).lower() == 'true':
-        repo = schedulers.Dependent(
-            name=pretty_branch_name + ' Repository Generation',
+    if props['deploy_env']:
+        scheduler_list.append(schedulers.Dependent(
+            name=pretty_branch_name + " Ansible Deploy",
             upstream=sched_dict['package'],
             properties=props,
-            builderNames=[
-#                pretty_branch_name + " Debian Repository",
-                pretty_branch_name + " RPM Repository",
-            ])
-        scheduler_list.append(repo)
-
-        if props['deploy_env']:
-            scheduler_list.append(schedulers.Dependent(
-                name=pretty_branch_name + " Ansible Deploy",
-                upstream=repo,
-                properties=props,
-                builderNames=[pretty_branch_name + " Ansible Deploy"]))
+            builderNames=[pretty_branch_name + " Ansible Deploy"]))
 
     forceBuildNames = [common.getBuildWithJDK(pretty_branch_name, "Build", jdk) for jdk in common.getJDKBuilds(props)]
     forceBuild = _getForceScheduler(props, "ForceBuild", forceBuildNames)
@@ -178,11 +166,8 @@ def getSchedulers(props):
         pretty_branch_name + " el8 RPM Packaging"
     ])
 
-    if props['has_repo_builder']:
-#        forceBuilders.append(pretty_branch_name + " Debian Repository")
-        forceBuilders.append(pretty_branch_name + " RPM Repository")
-        if props['deploy_env']:
-            forceBuilders.append(pretty_branch_name + " Ansible Deploy")
+    if props['deploy_env']:
+        forceBuilders.append(pretty_branch_name + " Ansible Deploy")
 
     forceOther = _getForceScheduler(props, "ForceBuildOther", forceBuilders)
     scheduler_list.append(forceOther)
@@ -199,20 +184,10 @@ def getSchedulers(props):
             ])
         scheduler_list.append(forcePackage)
 
-        forceRepo = schedulers.Dependent(
-            name=pretty_branch_name + " Force Repository Generation",
-            upstream=forceBuild,
-            properties=props,
-            builderNames=[
-#                pretty_branch_name + " Debian Repository",
-                pretty_branch_name + " RPM Repository",
-            ])
-        scheduler_list.append(forceRepo)
-
         if props['deploy_env']:
             forceAnsible = schedulers.Dependent(
                 name=pretty_branch_name + " Force Ansible Deploy",
-                upstream=forceBuild,
+                upstream=forcePackage,
                 properties=props,
                 builderNames=[
                     pretty_branch_name + " Ansible Deploy"

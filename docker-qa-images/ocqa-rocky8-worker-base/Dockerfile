@@ -17,7 +17,7 @@ RUN sed -i '/override_install_langs/d' /etc/yum.conf
 
 # Last build date - this can be updated whenever there are security updates so
 # that everything is rebuilt
-ENV         security_updates_as_of 2022-01-20
+ENV         security_updates_as_of 2022-03-07
 
 # Install the dependencies
 RUN yum install -y epel-release
@@ -31,7 +31,6 @@ RUN yum install -y \
         ffmpeg \
         sox \
         hunspell \
-        java-1.8.0-openjdk \
         java-11-openjdk \
         java-17-openjdk \
      # Build deps
@@ -40,7 +39,6 @@ RUN yum install -y \
         git \
         maven \
         curl wget \
-        java-1.8.0-openjdk-devel \
         java-11-openjdk-devel \
         java-17-openjdk-devel \
         firefox && \
@@ -53,9 +51,9 @@ RUN yum install -y \
         python36-devel \
         python3-pip \
      ## Packages for building docs
-        nodejs \
+        nodejs && \
      ## For SQL script testing
-        mysql && \
+     #  mysql && \
     yum clean all
 
 RUN yum install -y \
@@ -65,11 +63,10 @@ RUN yum install -y \
         rpmlint \
         yum-utils \
         rpm-sign \
+        s3fs-fuse \
      # Bits for buildbot worker
          gcc \
-         openssl-devel \
-     # jq for maintenance
-         jq && \
+         openssl-devel && \
     yum clean all
 
 # Install crowdin
@@ -102,5 +99,5 @@ RUN curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases
 
 COPY buildbot.tac /builder/buildbot.tac
     # Install required python packages, and twisted
-RUN python3 -m pip --no-cache-dir install buildbot-worker==3.4.0
+RUN python3 -m pip --no-cache-dir install future buildbot-worker==3.5.0
 

@@ -85,7 +85,7 @@ def getBuildPipeline():
         name="Build debs")
 
     debRepoClone = steps.Git(repourl="{{ source_deb_packaging_repo_url }}",
-                          branch="e/ci",
+                          branch="{{ deb_packaging_repo_branch }}",
                           alwaysUseLatest=True,
                           mode="full",
                           method="fresh",
@@ -103,12 +103,20 @@ def getBuildPipeline():
 
 
     debRepoIngest = common.shellCommand(
-        command=['./include-binaries', util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:repo_component)s"), util.Interpolate('outputs/%(prop:revision)s/*.changes')],
+        command=['./include-binaries', util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:repo_component)s"), util.Interpolate("outputs/%(prop:revision)s/opencast-%(prop:pkg_major_version)s_%(prop:pkg_major_version)s.x-%(prop:buildnumber)s-%(prop:short_revision)s_amd64.changes")],
         name=util.Interpolate(f"Adding build to %(prop:pkg_major_version)s.x-%(prop:repo_component)s"))
+
+    debRepoPrune = common.shellCommand(
+        command=['./clean-unstable-repo', util.Interpolate("%(prop:pkg_major_version)s.x")],
+        name=util.Interpolate(f"Pruning %(prop:pkg_major_version)s.x unstable repository"))
 
     debRepoPublish = common.shellCommand(
         command=["./publish-branch", util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:signing_key)s")],
-        name=util.Interpolate("Publishing %(prop:pkg_major_version)s.x"))
+        name=util.Interpolate("Publishing %(prop:pkg_major_version)s.x"),
+        env={
+            "AWS_ACCESS_KEY_ID": util.Secret("s3.public_access_key"),
+            "AWS_SECRET_ACCESS_KEY": util.Secret("s3.public_secret_key")
+        })
 
     f_package_debs = util.BuildFactory()
     f_package_debs.addStep(common.getPreflightChecks())
@@ -122,10 +130,15 @@ def getBuildPipeline():
     f_package_debs.addStep(debsBuild)
     f_package_debs.addStep(debRepoClone)
     f_package_debs.addStep(debRepoLoadKeys)
+    f_package_debs.addStep(common.deployS3fsSecrets())
+    f_package_debs.addStep(common.mountS3fs())
     f_package_debs.addStep(debRepoCreate)
     f_package_debs.addStep(debRepoIngest)
+    f_package_debs.addStep(debRepoPrune)
     f_package_debs.addStep(debRepoPublish)
     f_package_debs.addStep(common.unloadSigningKey())
+    f_package_debs.addStep(common.unmountS3fs())
+    f_package_debs.addStep(common.cleanupS3Secrets())
     f_package_debs.addStep(common.getClean())
 
     return f_package_debs

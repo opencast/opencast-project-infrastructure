@@ -26,7 +26,7 @@ COPY aws-config /builder/.aws/config
 
 # Last build date - this can be updated whenever there are security updates so
 # that everything is rebuilt
-ENV         security_updates_as_of 2022-01-20
+ENV         security_updates_as_of 2022-03-07
 
 RUN apt-get update
 
@@ -40,7 +40,6 @@ RUN apt-get install -y --no-install-recommends \
         sox \
         hunspell \
         ffmpeg-dist \
-        openjdk-8-jre \
         openjdk-11-jre \
         openjdk-17-jre \
      # Build deps
@@ -49,7 +48,6 @@ RUN apt-get install -y --no-install-recommends \
         git \
         maven \
         curl wget \
-        openjdk-8-jdk \
         openjdk-11-jdk \
         openjdk-17-jdk \
         firefox && \
@@ -62,9 +60,9 @@ RUN apt-get install -y --no-install-recommends \
         python3-pip \
      ## Packages for building docs
         libyaml-dev \
-        nodejs \
+        nodejs && \
      ## For SQL script testing
-        mysql-client && \
+     #  mysql-client && \
     apt-get clean
 
 RUN apt-get install -y --no-install-recommends \
@@ -75,11 +73,11 @@ RUN apt-get install -y --no-install-recommends \
         debhelper \
         devscripts \
         dh-exec \
-        aptly \
+        aptly=1.4.0 \
         libdistro-info-perl \
         fakeroot \
-     # jq is used in the maintenance scripts
-        jq \
+     # s3fs since aptly needs it
+        s3fs \
      # Crowdin
         crowdin && \
     apt-get clean
@@ -108,5 +106,5 @@ RUN curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases
 
 COPY buildbot.tac /builder/buildbot.tac
      # Install required python packages, and twisted
-RUN python3 -m pip --no-cache-dir install buildbot-worker==3.4.0
+RUN python3 -m pip --no-cache-dir install future buildbot-worker==3.5.0
 

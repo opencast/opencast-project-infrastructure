@@ -4,6 +4,10 @@
 from buildbot.plugins import util
 import common
 
+getBuildSize = common.shellCommand(
+    command=['du', '-ch'],
+    name='Getting current build dir size')
+
 uploadTarballs = common.syncAWS(
     pathFrom="build",
     pathTo="s3://{{ s3_public_bucket }}/builds/{{ builds_fragment }}",
@@ -26,6 +30,7 @@ def getPullRequestPipeline():
     f_build = __getBasePipeline()
     f_build.addStep(common.getWorkerPrep())
     f_build.addStep(common.getBuild())
+    f_build.addStep(getBuildSize)
 {% if push_prs | default(False) %}
     f_build.addStep(common.getTarballs())
     f_build.addStep(uploadTarballs)
@@ -60,8 +65,10 @@ def getBuildPipeline():
 {% else %}
     f_build.addStep(common.getBuild())
 {% endif %}
+    f_build.addStep(getBuildSize)
     f_build.addStep(common.unloadMavenSettings())
     f_build.addStep(common.getTarballs())
+    f_build.addStep(getBuildSize)
     f_build.addStep(stampVersion)
     f_build.addStep(uploadTarballs)
     f_build.addStep(updateBuild)

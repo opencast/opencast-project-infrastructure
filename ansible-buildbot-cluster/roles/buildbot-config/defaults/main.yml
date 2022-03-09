@@ -25,6 +25,9 @@ source_deb_repo_url: "https://github.com/gregorydlogan/debian-packaging.git"
 #Where to fetch the debian repository scripts from
 source_deb_packaging_repo_url: "https://github.com/gregorydlogan/debian-repo.git"
 
+#The branch in the packaging repo to use
+deb_packaging_repo_branch: "e/ci"
+
 #Where to fetch the rpm packaging build files from
 source_rpm_repo_url: "https://github.com/opencast/opencast-rpmbuild.git"
 
@@ -54,6 +57,10 @@ poll_interval: 10
 
 #Number of days to keep artifacts around.  Note that this does *not* check against the available disk space!
 keep_artifacts: 7
+
+#The maximum size that the build directory on the S3 storage should grow to, in GB
+#If this is exceeded Buildbot will start deleting builds, starting with the oldest
+max_artifacts_size: 32
 
 #Whether to send the status emails
 send_mail_notifications: True
@@ -244,10 +251,3 @@ deployed_javadocs_symlink: "{{ deployed_javadocs_symlink_base }}/%(prop:branch_p
 #Where to scp the demo media deployment script to
 buildbot_scp_deploy_script: "{{ buildbot_user }}@%(prop:deploy_env)s.{{ infra_domain }}:opencast-ingest.sh"
 
-########################################
-# Buildbot configuration autodetection #
-########################################
-
-#Defines whether to enable repository building, which requires at least one worker with the repo_builder or only_repo_builder parameter set to true
-has_repo_builder: "{{ groups['workers'] | map('extract', hostvars) | selectattr('repo_builder', 'defined') | selectattr('repo_builder') | list | length > 0 or
-                            groups['workers'] | map('extract', hostvars) | selectattr('only_repo_builder', 'defined') | selectattr('only_repo_builder') | list | length > 0 }}"

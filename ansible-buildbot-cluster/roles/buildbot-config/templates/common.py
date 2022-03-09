@@ -190,6 +190,27 @@ def AWSStep(command, name, doStepIf=True, hideStepIf=False, access=util.Secret("
         hideStepIf=hideStepIf)
 
 
+def deployS3fsSecrets():
+    return shellCommand(
+        command=util.Interpolate("echo '%(secret:s3.public_access_key)s:%(secret:s3.public_secret_key)s' > /builder/.passwd-s3fs && chmod 600 /builder/.passwd-s3fs"),
+        name="Deploying S3 auth details")
+
+def mountS3fs():
+    return shellCommand(
+        command=util.Interpolate(" ".join(["mkdir", "-p", "/builder/s3", "&&", "s3fs", "-o", "use_path_request_style", "-o", "url={{ s3_host }}/", "-o", "uid=%(prop:builder_uid)s,gid=%(prop:builder_gid)s,umask=0000", "{{ s3_public_bucket }}", "/builder/s3"])),
+        name="Mounting S3")
+
+def unmountS3fs():
+    return shellCommand(
+        command=["fusermount", "-u", "/builder/s3"],
+        name="Unmounting S3")
+
+def cleanupS3Secrets():
+    return shellCommand(
+        command=["rm", "-f", ".passwd-s3fs"],
+        name="Cleaning up S3 secrets")
+
+
 def getLatestBuildRevision():
     pathFrom = "s3://{{ s3_public_bucket }}/builds/%(prop:branch_pretty)s/latest.txt"
     pathTo = "-"

@@ -2,12 +2,12 @@
 
 # This overlay adds a few missing bits required for Opencast's use of BuildBot, notably requests (to power Github)
 
-FROM        buildbot/buildbot-master:v3.4.0
+FROM        buildbot/buildbot-master:v3.5.0
 MAINTAINER  Greg Logan
 
 # Last build date - this can be updated whenever there are security updates so
 # that everything is rebuilt
-ENV         security_updates_as_of 2022-01-20
+ENV         security_updates_as_of 2022-03-07
 
 # install cairo for build badges
 RUN apt-get update && \
