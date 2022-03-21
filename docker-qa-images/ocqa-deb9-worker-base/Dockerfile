@@ -89,7 +89,8 @@ RUN python3 -m pip --no-cache-dir install --upgrade setuptools
 RUN python3 -m pip --no-cache-dir install ansible paramiko
     # Buildbot s3 deploy bits
 RUN python3 -m pip --no-cache-dir install awscli
-    # Release deploy bits
+    # Vosk, notably without any language models
+RUN python3 -m pip --no-cache-dir install vosk webvtt-py
 
 RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
     sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen && \
