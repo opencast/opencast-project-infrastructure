@@ -154,7 +154,9 @@ def getSchedulers(props):
         change_filter=util.ChangeFilter(category='tag', branch_re=props['pkg_major_version'] + ".*"),
         properties=props,
         builderNames=[pretty_branch_name + " Release"])
+{% if deploy_tags | default(false) %}
     scheduler_list.append(tag_sched)
+{% endif %}
 
     forceBuilders = [common.getBuildWithJDK(pretty_branch_name, "Reports", jdk) for jdk in common.getJDKBuilds(props, pretty_branch_name)]
 

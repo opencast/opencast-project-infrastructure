@@ -111,6 +111,9 @@ debug_enabled: False
 #Whether to enable auth, or leave things wide open
 enable_auth: True
 
+#Set this to true to deploy tags, otherwise they are ignored
+deploy_tags: False
+
 #######################
 # Networking Settings #
 #######################

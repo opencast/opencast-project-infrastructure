@@ -122,6 +122,7 @@ def getBuildersForBranch(props):
             # AND a single maven build per worker
             locks=[mvn_lock.access('exclusive'), branch_mvn_lock.access('exclusive')]))
 
+{% if deploy_tags | default(false) %}
     release_props = dict(props)
     #We use the first listed JDK since that (should) be the lowest, most common version
     release_props['jdk'] = str(common.getJDKBuilds(props)[0])
@@ -134,6 +135,7 @@ def getBuildersForBranch(props):
         #Note: We want a single maven build per worker, but since this is a release we don't
         # care if there are other maven builds running elsewhere
         locks=[mvn_lock.access('exclusive')]))
+{% endif %}
 
     builders.append(util.BuilderConfig(
         name=pretty_branch_name + " Markdown",
