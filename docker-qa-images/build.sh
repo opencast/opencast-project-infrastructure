@@ -36,4 +36,4 @@ ls | grep worker-base | cut -f 2 -d "-" | while read image
 do
   doBuild $image worker-base
 done
-doPush buildbot master
+doBuild buildbot master
