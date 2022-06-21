@@ -21,10 +21,8 @@ COPY nodesource.list /etc/apt/sources.list.d
 COPY aptly.list /etc/apt/sources.list.d
 COPY crowdin.list /etc/apt/sources.list.d
 
-#JDK8 is not present in buster, but lives in unstable instead
-COPY debian-unstable.list /etc/apt/sources.list.d/
-#aptly 1.4 is in backports, but not main
-COPY debian-buster-backports.list /etc/apt/sources.list.d/
+#JDK17 is not present in buster, but lives in bullseye instead
+COPY debian-bullseye.list /etc/apt/sources.list.d/
 #This file prevents the whole system from upgrading due to the above configuration
 COPY 99defaultrelease /etc/apt/apt.conf.d/
 COPY releases.pref /etc/apt/preferences.d/
@@ -47,7 +45,7 @@ RUN apt-get install -y --no-install-recommends \
         sox \
         hunspell \
         ffmpeg-dist \
-	openjdk-11-jre \
+        openjdk-11-jre \
      # Build deps
         openssh-client \
         tar gzip bzip2 unzip \
@@ -87,7 +85,7 @@ RUN apt-get install -y --no-install-recommends \
         crowdin && \
      apt-get clean
 
-RUN apt-get install -y --no-install-recommends -t unstable openjdk-17-jre openjdk-17-jdk && apt-get clean
+RUN apt-get install -y --no-install-recommends -t bullseye openjdk-17-jre openjdk-17-jdk && apt-get clean
 
 RUN update-java-alternatives -s java-1.11.0-openjdk-amd64
 
