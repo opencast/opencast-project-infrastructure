@@ -106,7 +106,7 @@ def getMavenEnv(props):
 
 
 def getBuild(override=None, name="Build", workdir="build", timeout=240):
-    command = ['mvn', '-B', '-V', '-Dmaven.repo.local=/builder/m2']
+    command = ['mvn', '-B', '-V', '-Dmaven.repo.local=/builder/m2', '-Dsurefire.rerunFailingTestsCount=2']
 {% if skip_tests %}
     command.append('-DskipTests')
 {% endif %}
