@@ -14,22 +14,26 @@ doBuild() {
   docker image prune -f
 }
 
-for i in 18.04 20.04
+ls | grep ubu | cut -f 2 -d "-" | cut -c 4- | while read major
 do
-  docker pull ubuntu:$i
+  docker pull ubuntu:$major.04
 done
-for i in 9 10 11
-do
-  docker pull debian:$i
-done
-docker pull centos:7
-docker pull rockylinux/rockylinux:8
 
-doBuild buildbot master
-doBuild ubu18 worker-base
-doBuild ubu20 worker-base
-doBuild deb9 worker-base
-doBuild deb10 worker-base
-doBuild deb11 worker-base
-doBuild cent7 worker-base
-doBuild rocky8 worker-base
+ls | grep deb | cut -f 2 -d "-" | cut -c 4- | while read major
+do
+  docker pull debian:$major
+done
+
+ls | grep cent | cut -f 2 -d "-" | cut -c 5- | while read major
+do
+  docker pull centos:$major
+done
+
+docker pull rockylinux/rockylinux:8
+docker image prune -f
+
+ls | grep worker-base | cut -f 2 -d "-" | while read image
+do
+  doBuild $image worker-base
+done
+doPush buildbot master

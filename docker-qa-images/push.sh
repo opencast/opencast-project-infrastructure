@@ -16,11 +16,8 @@ doPush() {
   bash push-container.sh $DOCKER_OWNER $1 $2 $TAG
 }
 
+ls | grep worker-base | cut -f 2 -d "-" | while read image
+do
+  doPush $image worker-base
+done
 doPush buildbot master
-doPush deb9 worker-base
-doPush deb10 worker-base
-doPush deb11 worker-base
-doPush ubu18 worker-base
-doPush ubu20 worker-base
-doPush cent7 worker-base
-doPush rocky8 worker-base
