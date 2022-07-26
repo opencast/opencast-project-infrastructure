@@ -100,7 +100,8 @@ def getMavenEnv(props):
         "LANGUAGE": util.Interpolate("%(prop:LANG)s"),
         "TZ": util.Interpolate("%(prop:TZ)s"),
         "JAVA_HOME": java_home,
-        "PATH": [ java_home + "/bin", "${PATH}" ]
+        "PATH": [ java_home + "/bin", "${PATH}" ],
+        "CI": "true"
     }
     return env
 
@@ -277,8 +278,8 @@ def unloadMavenSettings():
 
 
 def setTimezone():
-    offsetHour = random.randint(-12, 14)
-    offsetMin = random.choice(["00", "15", "30", "45"]).zfill(2)
+    offsetHour = random.randint(-6, 2) #random.randint(-12, 14)
+    offsetMin = "00" #random.choice(["00", "15", "30", "45"]).zfill(2)
     if offsetHour >= 0:
         tz = "UTC+" + str(offsetHour).zfill(2) + ":" + offsetMin
     else:
