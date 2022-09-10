@@ -1,0 +1,91 @@
+---
+
+- name: Ensuring epel is installed
+  package:
+    name: "epel-release"
+    state: present
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: Installing git and python
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - python3-virtualenv
+    - python38
+    - python3-passlib
+    - git
+    - sqlite
+
+- name: Cloning adopter reg service
+  git:
+    #repo: https://github.com/opencast/adopter-registration-server.git
+    repo: https://github.com/gregorydlogan/adopter-registration-server.git
+    dest: "{{ adopter_reg_home}}"
+    force: yes
+
+- name: Creating python venv
+  command:
+    cmd: python3.8 -m venv {{ adopter_reg_venv }}
+    creates: "{{ adopter_reg_venv }}"
+
+- name: Updating python venv
+  pip:
+    name: "{{ item }}"
+    state: latest
+    executable: "{{ adopter_reg_venv }}/bin/pip3"
+  with_items:
+    - pip
+    - setuptools
+
+- name: Installing dependencies
+  pip:
+    requirements: "{{ adopter_reg_home }}/requirements.txt"
+    executable: "{{ adopter_reg_venv }}/bin/pip3"
+
+- name: Templating systemd unit file
+  template:
+    src: oc-reg-server.service
+    dest: /etc/systemd/system/oc-reg-server.service
+    owner: root
+    group: root
+    mode: 0644
+  become: yes
+
+- name: Generating Flask key
+  lineinfile:
+    path: "{{ adopter_reg_home }}/app/__init__.py"
+    search_string: "super secret key"
+    line: "app.secret_key = '{{ lookup('community.general.random_string', length=32, special=false) }}'"
+  become: yes
+
+- name: Updating password salt
+  lineinfile:
+    path: "{{ adopter_reg_home }}/config.py"
+    search_string: "SECURITY_PASSWORD_SALT = 'CHANGE_ME'"
+    line: "    SECURITY_PASSWORD_SALT = '{{ reg_server_salt }}'"
+
+- name: Enabling and starting systemd unit  
+  systemd:
+    name: oc-reg-server
+    state: started
+    enabled: yes
+    daemon_reload: yes
+  become: yes
+
+- name: Ensuring the database file exists
+  uri:
+    url:  http://{{ inventory_hostname }}/admin
+    return_content: yes
+  delegate_to: 127.0.0.1
+  become: no
+
+    #- name: Removing hardcoded superuser
+    #  command: sqlite3 {{ adopter_reg_home }}/instance/app.db 'DELETE FROM user WHERE email="admin"'
+
+- name: Removing generated user to update its password
+  command: sqlite3 {{ adopter_reg_home }}/instance/app.db 'DELETE FROM user WHERE email="{{ reg_server_user }}"'
+
+#Magic hash generation c/o https://nerdoftheherd.com/news/2021/12/30/ansible-mosquitto-password-hash/
+- name: Adding user
+  command: sqlite3 {{ adopter_reg_home }}/instance/app.db "INSERT INTO user VALUES(2,'{{ reg_server_user }}','{{ reg_server_pass | password_hash('pbkdf2-sha512', reg_server_salt) }}','2022-08-12 21:08:30.978482','2022-08-12 21:48:24.346835','127.0.0.1','127.0.0.1',2,1);"
