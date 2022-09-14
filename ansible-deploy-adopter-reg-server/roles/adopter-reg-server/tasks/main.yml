@@ -68,7 +68,7 @@
 - name: Enabling and starting systemd unit  
   systemd:
     name: oc-reg-server
-    state: started
+    state: restarted
     enabled: yes
     daemon_reload: yes
   become: yes
@@ -80,12 +80,12 @@
   delegate_to: 127.0.0.1
   become: no
 
-    #- name: Removing hardcoded superuser
-    #  command: sqlite3 {{ adopter_reg_home }}/instance/app.db 'DELETE FROM user WHERE email="admin"'
+- name: Removing hardcoded superuser
+  command: sqlite3 {{ adopter_reg_home }}/instance/app.db 'DELETE FROM user WHERE email="admin"'
 
 - name: Removing generated user to update its password
   command: sqlite3 {{ adopter_reg_home }}/instance/app.db 'DELETE FROM user WHERE email="{{ reg_server_user }}"'
 
 #Magic hash generation c/o https://nerdoftheherd.com/news/2021/12/30/ansible-mosquitto-password-hash/
 - name: Adding user
-  command: sqlite3 {{ adopter_reg_home }}/instance/app.db "INSERT INTO user VALUES(2,'{{ reg_server_user }}','{{ reg_server_pass | password_hash('pbkdf2-sha512', reg_server_salt) }}','2022-08-12 21:08:30.978482','2022-08-12 21:48:24.346835','127.0.0.1','127.0.0.1',2,1);"
+  command: sqlite3 {{ adopter_reg_home }}/instance/app.db "INSERT INTO user VALUES(2,'{{ reg_server_user }}','{{ reg_server_pass }}','1970-01-01 00:00:00.00000','1970-01-01 00:00:00.00000','','','',1);"
