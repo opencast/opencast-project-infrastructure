@@ -81,11 +81,11 @@
   become: no
 
 - name: Removing hardcoded superuser
-  command: sqlite3 {{ adopter_reg_home }}/instance/app.db 'DELETE FROM user WHERE email="admin"'
+  command: sqlite3 {{ adopter_reg_home }}/instance/app.db 'DELETE FROM user WHERE email="admin"; DELETE FROM roles_users WHERE user_id=1'
 
 - name: Removing generated user to update its password
-  command: sqlite3 {{ adopter_reg_home }}/instance/app.db 'DELETE FROM user WHERE email="{{ reg_server_user }}"'
+  command: sqlite3 {{ adopter_reg_home }}/instance/app.db 'DELETE FROM user WHERE email="{{ reg_server_user }}"; DELETE FROM roles_users WHERE user_id={{ opencast_user_db_id }};'
 
-#Magic hash generation c/o https://nerdoftheherd.com/news/2021/12/30/ansible-mosquitto-password-hash/
-- name: Adding user
-  command: sqlite3 {{ adopter_reg_home }}/instance/app.db "INSERT INTO user VALUES(2,'{{ reg_server_user }}','{{ reg_server_pass }}','1970-01-01 00:00:00.00000','1970-01-01 00:00:00.00000','','','',1);"
+  #Role ID 1 is superuser
+- name: Adding user and role
+  command: sqlite3 {{ adopter_reg_home }}/instance/app.db "INSERT INTO user VALUES({{ opencast_user_db_id }},'{{ reg_server_user }}','{{ reg_server_pass }}','1970-01-01 00:00:00.00000','1970-01-01 00:00:00.00000','','','',1); INSERT INTO roles_users VALUES({{ opencast_user_db_id }},1)"
