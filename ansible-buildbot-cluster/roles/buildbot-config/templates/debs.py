@@ -108,7 +108,8 @@ def getBuildPipeline():
 
     debRepoPrune = common.shellCommand(
         command=['./clean-unstable-repo', util.Interpolate("%(prop:pkg_major_version)s.x")],
-        name=util.Interpolate(f"Pruning %(prop:pkg_major_version)s.x unstable repository"))
+        name=util.Interpolate(f"Pruning %(prop:pkg_major_version)s.x unstable repository"),
+        alwaysRun=True)
 
     debRepoPublish = common.shellCommand(
         command=["./publish-branch", util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:signing_key)s")],
