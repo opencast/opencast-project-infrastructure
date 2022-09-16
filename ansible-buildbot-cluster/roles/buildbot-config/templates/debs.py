@@ -73,7 +73,7 @@ def getBuildPipeline():
                 logname='build'),
             common.shellArg(
                 command=util.Interpolate(
-                    'echo "Opencast version %(prop:got_revision)s packaged with version %(prop:deb_script_rev)s" | tee outputs/%(prop:oc_commit)s/revision.txt'
+                    'echo "Opencast version %(prop:got_revision)s packaged with version %(prop:deb_script_rev)s" | tee outputs/%(prop:deb_script_rev)s/revision.txt'
                 ),
                 logname='revision')
         ],
@@ -103,7 +103,7 @@ def getBuildPipeline():
 
 
     debRepoIngest = common.shellCommand(
-        command=['./include-binaries', util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:repo_component)s"), util.Interpolate("outputs/%(prop:revision)s/opencast-%(prop:pkg_major_version)s_%(prop:pkg_major_version)s.x-%(prop:buildnumber)s-%(prop:short_revision)s_amd64.changes")],
+        command=['./include-binaries', util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:repo_component)s"), util.Interpolate("outputs/%(prop:deb_script_rev)s/opencast-%(prop:pkg_major_version)s_%(prop:pkg_major_version)s.x-%(prop:buildnumber)s-%(prop:short_revision)s_amd64.changes")],
         name=util.Interpolate(f"Adding build to %(prop:pkg_major_version)s.x-%(prop:repo_component)s"))
 
     debRepoPrune = common.shellCommand(
