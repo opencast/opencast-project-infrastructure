@@ -2,10 +2,32 @@
 
 - hosts: all
   become: true
+  tasks:
+  - name: Ensuring epel is installed
+    package:
+      name: "epel-release"
+      state: present
+
+  - name: Installing git and python
+    package:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - python3-virtualenv
+      - python38
+      - python3-passlib
+      - git
+      - sqlite
+      #These are for nginx
+      - python3-libsemanage
+      - checkpolicy
+
+- hosts: all
+  become: true
   roles:
-    - adopter-reg-server
     - nginxinc.nginx
     - nginxinc.nginx_config
+    - adopter-reg-server
   vars:
     - reg_server_user: "opencast"
     - reg_server_pass: "{{ lookup('passwordstore', 'register.opencast.org/opencast') }}"

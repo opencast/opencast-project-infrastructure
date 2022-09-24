@@ -1,22 +1,5 @@
 ---
 
-- name: Ensuring epel is installed
-  package:
-    name: "epel-release"
-    state: present
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
-
-- name: Installing git and python
-  package:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - python3-virtualenv
-    - python38
-    - python3-passlib
-    - git
-    - sqlite
-
 - name: Cloning adopter reg service
   git:
     #repo: https://github.com/opencast/adopter-registration-server.git
