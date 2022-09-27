@@ -22,6 +22,21 @@
       - python3-libsemanage
       - checkpolicy
 
+  - name: allow httpd to act as reverse proxy
+    seboolean:
+      name: httpd_can_network_relay
+      state: true
+      persistent: true
+    become: true
+
+  - name: create diffie hellman ephemeral parameters for nginx
+    community.crypto.openssl_dhparam:
+      path: /etc/nginx/ssl/dhparam.pem
+      size: 2048
+      owner: root
+      group: root
+      mode: '0640'
+
 - hosts: all
   become: true
   roles:
@@ -44,24 +59,44 @@
             - core:
                 listen:
                   - address: 0.0.0.0
-                    port: 80
+                    port: 443
+                    http2: true
+                    ssl: true
                 client_max_body_size: 0
                 server_name: "{{ inventory_hostname }}"
+              ssl:
+                certificate_key: /etc/nginx/ssl/{{ inventory_hostname }}.key
+                certificate: /etc/nginx/ssl/{{ inventory_hostname }}.crt
+                #session_cache:
+                   #builtin:
+                     #enable: true
+                     #size: 50m
+                dhparam: /etc/nginx/ssl/dhparam.pem
+                prefer_server_ciphers: true
+                ciphers: "HIGH:!aNULL:!MD5:!3DES"
               locations:
               - location:  /
                 proxy:
                   pass: http://localhost:8080
-                    #redirect:
-                    #original: http://$host
-                    #replacement: https://$host
-                    #set_header:
-                    #- field: Host
-                    #  value: $host
-                    #- field: X-Real-IP
-                    #  value: $remote_addr
-                    #- field: X-Forwarded-For
-                    #  value: $proxy_add_x_forwarded_for
-                    #- field: X-Forwarded-Proto
-                    #  value: $scheme
+                  cookie_path:
+                    - path: /
+                      replacement: '"/; HTTPOnly; Secure"'
                   buffering: false
                   request_buffering: false
+              headers:
+                add_headers:
+                  - name: Strict-Transport-Security
+                    value: '"max-age=31536000; includeSubdomains;"'
+                    always: true
+                  - name: X-Frame-Options
+                    value: SAMEORIGIN
+                    always: true
+                  - name: X-Content-Type-Options
+                    value: nosniff
+                    always: true
+                  - name: X-XSS-Protection
+                    value: '"1; mode=block"'
+                    always: true
+                  - name: Referrer-Policy
+                    value: strict-origin-when-cross-origin
+                    always: true
