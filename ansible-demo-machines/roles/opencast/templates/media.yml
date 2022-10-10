@@ -241,3 +241,13 @@ media:
     - isPartOf: ID-wiki-commons
     - source: https://commons.wikimedia.org/wiki/File:Espresso_video.ogv
     - created: '2013-09-22T00:00Z'
+
+  - - flavor: presentation/source
+    - mediaUri: https://data.lkiesow.io/opencast/test-media/olaf-schulte-opencast.mp4
+    - flavor: captions/source
+    - mediaUri: https://data.lkiesow.io/opencast/test-media/olaf-schulte-opencast.vtt
+    - flavor: captions/preview
+    - mediaUri: https://data.lkiesow.io/opencast/test-media/olaf-schulte-opencast.vtt
+    - title: Subtitle Demo
+    - creator: Olaf Schulte
+    - identifier: ID-subtitle-demo
