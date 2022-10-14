@@ -58,7 +58,7 @@
 
 - name: Ensuring the database file exists
   uri:
-    url:  http://{{ inventory_hostname }}/admin
+    url:  https://{{ inventory_hostname }}/admin
     return_content: yes
   delegate_to: 127.0.0.1
   become: no
