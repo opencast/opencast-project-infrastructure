@@ -35,7 +35,7 @@ media:
 
   - - flavor: presenter/source
     - mediaUri: https://data.lkiesow.io/opencast/test-media/goat.mp4
-    - flavor: captions/vtt
+    - flavor: captions/source
     - mediaUri: https://data.lkiesow.io/opencast/test-media/goat.vtt
     - title: Bleating Goat
     - creator: Lars Kiesow
@@ -147,7 +147,7 @@ media:
     - mediaUri: https://data.lkiesow.io/opencast/test-media/dualstream-presenter.mp4
     - flavor: presentation/source
     - mediaUri: https://data.lkiesow.io/opencast/test-media/dualstream-presentation.mp4
-    - flavor: captions/vtt+en
+    - flavor: captions/source+en
     - mediaUri: https://data.lkiesow.io/opencast/test-media/dualstream.vtt
     - title: Dual-Stream Demo
     - creator: Lars Kiesow
@@ -156,7 +156,7 @@ media:
 
   - - flavor: presentation/source
     - mediaUri: https://data.lkiesow.io/opencast/test-media/olaf-schulte-opencast.mp4
-    - flavor: captions/vtt+en
+    - flavor: captions/source+en
     - mediaUri: https://data.lkiesow.io/opencast/test-media/olaf-schulte-opencast.vtt
     - title: About Opencast
     - creator: Olaf Schulte
@@ -180,7 +180,7 @@ media:
 
   - - flavor: presenter/source
     - mediaUri: https://tib.flowcenter.de/mfc/medialink/3/de2a46cbb86bc3b5933395197e8076295d8fa68480e56f05e3fb081eac51894832/WasistChaos_flash9.mp4
-    - flavor: captions/vtt+en
+    - flavor: captions/source+en
     - mediaUri: https://data.lkiesow.io/opencast/test-media/was-ist-chaos.vtt
     - title: Was ist Chaos?, Folge 16, Experiment der Woche.
     - creator: Skorupka, Sascha
@@ -241,7 +241,7 @@ media:
 
   - - flavor: presenter/source
     - mediaUri: https://upload.wikimedia.org/wikipedia/commons/4/43/Espresso_video.ogv
-    - flavor: captions/vtt+en
+    - flavor: captions/source+en
     - mediaUri: https://data.lkiesow.io/opencast/test-media/espresso.vtt
     - title: Espresso
     - creator: Rosatrieu
