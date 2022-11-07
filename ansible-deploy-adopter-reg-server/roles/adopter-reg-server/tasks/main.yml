@@ -2,10 +2,10 @@
 
 - name: Cloning adopter reg service
   git:
-    #repo: https://github.com/opencast/adopter-registration-server.git
+    # repo: https://github.com/opencast/adopter-registration-server.git
     repo: https://github.com/gregorydlogan/adopter-registration-server.git
     dest: "{{ adopter_reg_home}}"
-    force: yes
+    force: true
 
 - name: Creating python venv
   command:
@@ -33,14 +33,14 @@
     owner: root
     group: root
     mode: 0644
-  become: yes
+  become: true
 
 - name: Generating Flask key
   lineinfile:
     path: "{{ adopter_reg_home }}/app/__init__.py"
     search_string: "super secret key"
     line: "app.secret_key = '{{ lookup('community.general.random_string', length=32, special=false) }}'"
-  become: yes
+  become: true
 
 - name: Updating password salt
   lineinfile:
@@ -48,20 +48,20 @@
     search_string: "SECURITY_PASSWORD_SALT = 'CHANGE_ME'"
     line: "    SECURITY_PASSWORD_SALT = '{{ reg_server_salt }}'"
 
-- name: Enabling and starting systemd unit  
+- name: Enabling and starting systemd unit
   systemd:
     name: oc-reg-server
     state: restarted
-    enabled: yes
-    daemon_reload: yes
-  become: yes
+    enabled: true
+    daemon_reload: true
+  become: true
 
 - name: Ensuring the database file exists
   uri:
-    url:  https://{{ inventory_hostname }}/admin
-    return_content: yes
+    url: https://{{ inventory_hostname }}/admin
+    return_content: true
   delegate_to: 127.0.0.1
-  become: no
+  become: false
 
 - name: Removing hardcoded superuser
   command: sqlite3 {{ adopter_reg_home }}/instance/app.db 'DELETE FROM user WHERE email="admin"; DELETE FROM roles_users WHERE user_id=1'
@@ -69,6 +69,6 @@
 - name: Removing generated user to update its password
   command: sqlite3 {{ adopter_reg_home }}/instance/app.db 'DELETE FROM user WHERE email="{{ reg_server_user }}"; DELETE FROM roles_users WHERE user_id={{ opencast_user_db_id }};'
 
-  #Role ID 1 is superuser
+  # Role ID 1 is superuser
 - name: Adding user and role
   command: sqlite3 {{ adopter_reg_home }}/instance/app.db "INSERT INTO user VALUES({{ opencast_user_db_id }},'{{ reg_server_user }}','{{ reg_server_pass }}','1970-01-01 00:00:00.00000','1970-01-01 00:00:00.00000','','','',1); INSERT INTO roles_users VALUES({{ opencast_user_db_id }},1)"
