@@ -1,0 +1,6 @@
+---
+
+- src: nginxinc.nginx
+  version: 0.23.1
+- src: nginxinc.nginx_config
+  version: 0.5.1

@@ -4,6 +4,7 @@ harvard
 uos
 cologne
 ilmenau
+fau
 
 [qa]
 develop.opencast.org
@@ -11,7 +12,6 @@ stable.opencast.org
 legacy.openast.org
 
 [uos]
-pyca.opencast.org
 nexus.opencast.org
 develop.opencast.org
 pkg.opencast.org
@@ -21,6 +21,11 @@ test.annotate.opencast.org
 [eth]
 stable.opencast.org
 oc-demo.ethz.ch
+
+[fau]
+ubt00.opencast.rrze.net
+ubt01.opencast.rrze.net
+ubt02.opencast.rrze.net
 
 [harvard]
 mvncache.opencast.org

@@ -28,12 +28,6 @@ opencast:
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     cores: '1'
     server: 'legacy'
-  10.x:
-    branch: 'r/10.x'
-    pom: '10'
-    jdk: [ '11' ]
-    profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
-    cores: '1'
 
 
 #########################

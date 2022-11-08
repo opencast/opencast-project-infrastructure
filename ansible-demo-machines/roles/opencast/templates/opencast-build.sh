@@ -31,8 +31,11 @@ chcon -Rt httpd_sys_content_t /srv/opencast/opencast-dist-allinone/data/log || :
 chcon -R system_u:object_r:bin_t:s0 /srv/opencast/opencast-dist-allinone/bin/ || :
 
 # Update ActiveMQ
-sudo install -m 644 /srv/opencast/opencast-dist-allinone/docs/scripts/activemq/activemq.xml /etc/activemq/activemq.xml
-sudo systemctl restart activemq.service
+if [ -f /srv/opencast/opencast-dist-allinone/docs/scripts/activemq/activemq.xml ]
+then
+  sudo install -m 644 /srv/opencast/opencast-dist-allinone/docs/scripts/activemq/activemq.xml /etc/activemq/activemq.xml
+  sudo systemctl restart activemq.service
+fi
 
 # Clear Elasticsearch
 sudo systemctl stop elasticsearch.service
