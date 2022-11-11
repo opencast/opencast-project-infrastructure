@@ -163,11 +163,10 @@ def getBuildersForBranch(props):
     for distro in (7, 8):
         el_props = dict(props)
         el_props['el_version'] = distro
+        el_props['image'] = f"cent{distro}"
         if 7 == distro:
-          el_props['image'] = f"cent{distro}"
           lock = el7_lock
         elif 8 == distro:
-          el_props['image'] = f"rocky{distro}"
           lock = el8_lock
 
         if "Develop" == pretty_branch_name:

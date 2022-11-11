@@ -67,7 +67,7 @@ docker_worker_base_image: "worker-base"
 docker_debian_worker_images: [ "deb10", "deb11", "ubu18", "ubu20", "ubu22"]
 
 #The list of possible CentOS based distro images
-docker_centos_worker_images: ["cent7", "rocky8"]
+docker_centos_worker_images: ["cent7", "cent8"]
 
 #The docker images currently supported
 docker_worker_images: "{{ docker_debian_worker_images + docker_centos_worker_images }}"

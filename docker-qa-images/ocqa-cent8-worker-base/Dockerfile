@@ -1,4 +1,4 @@
-FROM rockylinux/rockylinux:8
+FROM centos:8
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 #Needed to work around pip bug: https://githubmemory.com/repo/pypa/pip/issues/10219
@@ -8,6 +8,7 @@ ENV LC_ALL en_US.UTF-8
 COPY opencast.repo /etc/yum.repos.d/
 COPY opencast-testing.repo /etc/yum.repos.d/
 COPY nodesource-el8.repo /etc/yum.repos.d/
+COPY crowdin.repo /etc/yum.repos.d/
 
 COPY keys/* /etc/pki/rpm-gpg/
 
@@ -66,16 +67,10 @@ RUN yum install -y \
         s3fs-fuse \
      # Bits for buildbot worker
          gcc \
-         openssl-devel && \
+         openssl-devel \
+     # Crowdin
+         crowdin && \
     yum clean all
-
-# Install crowdin
-RUN curl https://downloads.crowdin.com/cli/v2/crowdin-cli.zip -o /tmp/crowdin.zip && \
-    cd /tmp && \
-    unzip /tmp/crowdin.zip && \
-    mv 2.0.31/crowdin-cli.jar /usr/local/bin && \
-    rm -rf 2.0.31
-COPY crowdin /usr/local/bin/
 
 RUN alternatives --set java java-11-openjdk.x86_64
 RUN alternatives --set javac java-11-openjdk.x86_64

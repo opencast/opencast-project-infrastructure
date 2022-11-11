@@ -28,8 +28,6 @@ ls | grep cent | cut -f 2 -d "-" | cut -c 5- | while read major
 do
   docker pull centos:$major
 done
-
-docker pull rockylinux/rockylinux:8
 docker image prune -f
 
 ls | grep worker-base | cut -f 2 -d "-" | while read image
