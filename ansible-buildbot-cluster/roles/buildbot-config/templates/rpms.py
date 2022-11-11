@@ -38,16 +38,9 @@ def getRPMBuilds(props):
 
 def getBuildPipeline():
 
-    rpmsClone = steps.Git(
-        repourl="{{ source_rpm_repo_url }}",
-        branch=util.Interpolate("%(prop:rpmspec_override:-%(prop:branch)s)s"),
-        alwaysUseLatest=True,
-        shallow=True,
-        mode="full",
-        method="clobber",
-        flunkOnFailure=True,
-        haltOnFailure=True,
-        name="Cloning rpm packaging configs")
+    rpmsClone = common.getClone(
+        url="{{ source_rpm_repo_url }}",
+        branch=util.Interpolate("%(prop:rpmspec_override:-%(prop:branch)s)s"))
 
     rpmsVersion = steps.SetPropertyFromCommand(
         command="git rev-parse HEAD",

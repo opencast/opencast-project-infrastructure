@@ -54,14 +54,23 @@ def getPreflightChecks():
         name="Pre-flight checks")
 
 
-def getClone():
-    return steps.GitHub(
-        repourl="{{ source_repo_url }}",
-        mode='full',
-        method='fresh',
-        haltOnFailure=True,
-        flunkOnFailure=True,
-        name="Clone/Checkout")
+def getClone(name="Clone/Checkout", url="{{ source_repo_url }}", branch=None):
+    args = {
+        "repourl": url,
+        "mode": 'full',
+        "method": 'fresh',
+        "haltOnFailure": True,
+        "flunkOnFailure": True,
+        "name": name
+    }
+    if None != branch:
+        args["branch"] = branch
+    if "github" in url:
+        return steps.GitLab(**args)
+    elif "gitlab" in url:
+        return steps.GitLab(**args)
+    else:
+        return steps.Git(**args)
 
 
 def getWorkerPrep():

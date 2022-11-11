@@ -155,11 +155,8 @@ class GenerateIngestCommands(buildstep.ShellMixin, steps.BuildStep):
 
 def getBuildPipeline():
 
-    clone = steps.Git(repourl="{{ ansible_scripts_url }}",
-                      branch=util.Property('branch'),
-                      alwaysUseLatest=True,
-                      mode="full",
-                      method="fresh")
+    clone = common.getClone(url="{{ ansible_scripts_url }}",
+                      branch=util.Property('branch'))
 
     version = steps.SetPropertyFromCommand(
         command="git rev-parse HEAD",

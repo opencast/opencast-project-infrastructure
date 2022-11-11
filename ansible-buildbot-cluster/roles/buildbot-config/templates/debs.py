@@ -84,13 +84,8 @@ def getBuildPipeline():
         },
         name="Build debs")
 
-    debRepoClone = steps.Git(repourl="{{ source_deb_packaging_repo_url }}",
+    debRepoClone = common.getClone(url="{{ source_deb_packaging_repo_url }}",
                           branch="{{ deb_packaging_repo_branch }}",
-                          alwaysUseLatest=True,
-                          mode="full",
-                          method="fresh",
-                          flunkOnFailure=True,
-                          haltOnFailure=True,
                           name="Cloning deb repo configs")
 
     debRepoLoadKeys = common.shellCommand(
