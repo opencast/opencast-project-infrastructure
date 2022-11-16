@@ -9,21 +9,21 @@
 opencast:
   Develop:
     branch: 'develop'
-    pom: '13'
+    pom: '14'
     jdk: [ '11' ]
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     cores: '1'
     server: 'develop'
-  12.x:
-    branch: 'r/12.x'
-    pom: '12'
+  13.x:
+    branch: 'r/13.x'
+    pom: '13'
     jdk: [ '11' ]
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     cores: '1'
     server: 'stable'
-  11.x:
-    branch: 'r/11.x'
-    pom: '11'
+  12.x:
+    branch: 'r/12.x'
+    pom: '12'
     jdk: [ '11' ]
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     cores: '1'
