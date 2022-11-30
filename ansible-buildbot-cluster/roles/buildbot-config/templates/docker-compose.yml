@@ -25,6 +25,7 @@ services:
     volumes:
       - "{{ buildbot_home }}/nginx-config:/etc/nginx/conf.d"
       - "{{ disk_base }}:{{ disk_base }}"
+      - "{{ buildbot_home }}/keys:{{ buildbot_home }}/keys"
   db:
     env_file:
       - db.env

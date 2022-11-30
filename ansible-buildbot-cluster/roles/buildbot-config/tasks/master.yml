@@ -10,6 +10,7 @@
   become: yes
   with_items:
     - { path: "{{ buildbot_home }}", mode: "0755" }
+    - { path: "{{ buildbot_home }}/keys", mode: "0755" }
     - { path: "{{ buildbot_config_master }}", mode: "0755" }
     - { path: "{{ buildbot_secrets_master }}", mode: "0700" }
 
@@ -105,3 +106,12 @@
     path: "temp"
     state: absent
   connection: local
+
+- name: Distributing public signing key
+  copy:
+    src: public-signing-key.gpg
+    dest: "{{ buildbot_home }}/keys"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: 0644
+  become: yes
