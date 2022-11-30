@@ -198,7 +198,13 @@ def deployS3fsSecrets():
 
 def mountS3fs():
     return shellCommand(
-        command=util.Interpolate(" ".join(["mkdir", "-p", "/builder/s3", "&&", "s3fs", "-o", "use_path_request_style", "-o", "url={{ s3_host }}/", "-o", "uid=%(prop:builder_uid)s,gid=%(prop:builder_gid)s,umask=0000", "{{ s3_public_bucket }}", "/builder/s3"])),
+        command=util.Interpolate(" ".join(
+            ["mkdir", "-p", "/builder/s3", "&&",
+             "s3fs",
+             "-o", "use_path_request_style",
+             "-o", "url={{ s3_host }}/",
+             "-o", "uid=%(prop:builder_uid)s,gid=%(prop:builder_gid)s,umask=0000",
+             "{{ s3_public_bucket }}", "/builder/s3"])),
         name="Mounting S3")
 
 def unmountS3fs():
