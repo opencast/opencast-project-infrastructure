@@ -112,7 +112,7 @@ def getBuildPipeline():
         alwaysRun=True)
 
     debRepoPublish = common.shellCommand(
-        command=["./publish-branch", util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:signing_key)s")],
+        command=["./publish-branch", util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:signing_key)s"), "s3"],
         name=util.Interpolate("Publishing %(prop:pkg_major_version)s.x"),
         env={
             "AWS_ACCESS_KEY_ID": util.Secret("s3.public_access_key"),
