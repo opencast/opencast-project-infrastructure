@@ -95,7 +95,7 @@ def getBuildPipeline():
 
     debRepoLoadKeys = common.shellCommand(
         command=['./build-keys'],
-        name="Loading signing keys")
+        name="Loading repo sig verification keys")
 
     debRepoCreate = common.shellCommand(
         command=['./create-branch', util.Interpolate("%(prop:pkg_major_version)s.x")],
