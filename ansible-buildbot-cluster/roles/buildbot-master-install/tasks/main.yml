@@ -18,6 +18,24 @@
     state: unmounted
   become: yes
 
+- name: Templating S3 auth details
+  template:
+    src: s3_auth
+    dest: "{{ buildbot_home }}/s3_auth"
+    owner: "{{ buildbot_user }}"
+    groups: "{{ buidlbot_group }}"
+    mode: 600
+  become: yes
+
+- name: Setting fstab and mounting
+  mount:
+    src: "{{ s3_public_bucket }}"
+    path: "{{ disk_base }}"
+    fstype: "fuse.s3fs"
+    opts: "_netdev,allow_other,use_path_request_style,uid={{ hostvars[inventory_hostname]['uid'] }},gid={{ hostvars[inventory_hostname]['gid'] }},umask=0002,url={{ s3_host }}/,passwd_file={{ buildbot_home }}/s3_auth"
+    state: mounted
+  become: yes
+
 - name: Ensure required directories exist and have the right permissions
   file:
     state: directory
