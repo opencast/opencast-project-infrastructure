@@ -126,10 +126,9 @@ def getBuildPipeline():
         workdir="build/rpmbuild/SPECS",
         name="Build rpms")
 
-       # Note: We're using a string here because using the array disables shell globbing!
-    rpmsUpload = common.syncAWS(
-        pathFrom="rpmbuild/RPMS/noarch",
-        pathTo="s3://{{ s3_public_bucket }}/repo/rpms/unstable/el/%(prop:el_version)s/noarch/",
+    # Note: We're using a string here because using the array disables shell globbing!
+    rpmsUpload = common.shellCommand(
+        command=util.Interpolate("mkdir -p /builder/s3/repo/rpms/unstable/el/%(prop:el_version)s/oc-%(prop:pkg_major_version)s/noarch && mv -v rpmbuild/RPMS/noarch/* /builder/s3/repo/rpms/unstable/el/%(prop:el_version)s/oc-%(prop:pkg_major_version)s/noarch/"),
         name="Upload rpms to S3")
 
     rpmsPrune = common.shellCommand(
@@ -139,7 +138,7 @@ def getBuildPipeline():
 
     repoMetadata = common.shellCommand(
         command=['createrepo', '.'],
-        workdir=util.Interpolate("/builder/s3/repo/rpms/unstable/el/%(prop:el_version)s/noarch"),
+        workdir=util.Interpolate("/builder/s3/repo/rpms/unstable/el/%(prop:el_version)s/oc-%(prop:pkg_major_version)s/noarch"),
         name="Building repository")
 
     f_package_rpms = util.BuildFactory()
@@ -155,9 +154,9 @@ def getBuildPipeline():
     f_package_rpms.addStep(common.loadSigningKey())
     f_package_rpms.addStep(rpmsBuild)
     f_package_rpms.addStep(common.unloadSigningKey())
-    f_package_rpms.addStep(rpmsUpload)
     f_package_rpms.addStep(common.deployS3fsSecrets())
     f_package_rpms.addStep(common.mountS3fs())
+    f_package_rpms.addStep(rpmsUpload)
     f_package_rpms.addStep(rpmsPrune)
     f_package_rpms.addStep(repoMetadata)
     f_package_rpms.addStep(common.unmountS3fs())
