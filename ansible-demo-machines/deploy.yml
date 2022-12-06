@@ -3,8 +3,10 @@
 - hosts: all
   become: true
   roles:
-    - nginx
-    - opencast
+    - role: nginx
+    - role: elan.opencast_firewalld
+      when: ansible_os_family == 'RedHat'
+    - role: opencast
 
 #- hosts: all
 #  become: true

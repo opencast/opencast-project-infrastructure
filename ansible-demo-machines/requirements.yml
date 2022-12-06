@@ -3,8 +3,8 @@
 roles:
   - lkiesow.dnf_autoupdate
   - elan.opencast_firewalld
-  - elan.opencast_repository
-  - elan.opencast_user
+  - elan.opencast_repository,v0.1.0
+  - elan.opencast_user,v0.1.0
 
 collections:
   - community.crypto

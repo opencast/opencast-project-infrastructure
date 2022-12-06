@@ -11,9 +11,7 @@
       - curl
       - ffmpeg
       - tesseract
-      - hunspell
       - tesseract-langpack-deu
-      - activemq-dist
       - elasticsearch-oss
       # ingest script
       - python39

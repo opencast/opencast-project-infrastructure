@@ -1,4 +1,3 @@
 dependencies:
-  - elan.opencast_firewalld
   - elan.opencast_repository
   - elan.opencast_user
