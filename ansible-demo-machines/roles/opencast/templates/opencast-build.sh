@@ -3,6 +3,12 @@ set -uex
 
 cd /opt/opencast-build/
 
+# Clean up first of we are out of space (<300MB free)
+free_space="$(df --output=avail . | tail -n1)"
+if [ "${free_space}" -lt 300000 ]; then
+  rm -rf /srv/opencast/opencast-dist-allinone/data/opencast/
+fi
+
 # Get latest opencast
 curl -s -O https://radosgw.public.os.wwu.de/opencast-daily/opencast-dist-allinone-{{ version }}.tar.gz
 tar xf opencast-dist-allinone-*.tar.gz
@@ -29,13 +35,6 @@ mkdir -p /srv/opencast/opencast-dist-allinone/data/log
 restorecon -r /srv/opencast/ || :
 chcon -Rt httpd_sys_content_t /srv/opencast/opencast-dist-allinone/data/log || :
 chcon -R system_u:object_r:bin_t:s0 /srv/opencast/opencast-dist-allinone/bin/ || :
-
-# Update ActiveMQ
-if [ -f /srv/opencast/opencast-dist-allinone/docs/scripts/activemq/activemq.xml ]
-then
-  sudo install -m 644 /srv/opencast/opencast-dist-allinone/docs/scripts/activemq/activemq.xml /etc/activemq/activemq.xml
-  sudo systemctl restart activemq.service
-fi
 
 # Clear Elasticsearch
 sudo systemctl stop elasticsearch.service
