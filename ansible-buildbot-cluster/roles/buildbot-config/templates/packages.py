@@ -54,7 +54,7 @@ class Packages():
     def getBuilders(self):
 
         if not self.builders:
-            self.builders = self.debs.getBuilders() + self.rpms.getBuilders()
+            self.builders = self.debs.getBuilders()# + self.rpms.getBuilders()
 
         return self.builders
 
@@ -64,7 +64,7 @@ class Packages():
         builders = [ builder.name for builder in self.getBuilders() ]
         unstable_builders = [ builder for builder in builders if "Testing" not in builder and "Release" not in builder ]
 
-        scheds = self.debs.getSchedulers() | self.rpms.getSchedulers()
+        scheds = self.debs.getSchedulers()# | self.rpms.getSchedulers()
 
         if None == self.build_sched:
             scheds[f"{ self.pretty_branch_name }UnstablePackages"] = schedulers.Nightly(
