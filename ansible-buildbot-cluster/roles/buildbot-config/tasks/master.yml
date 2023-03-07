@@ -39,6 +39,7 @@
     - { src: "schedulers.py", dest: "{{ buildbot_config_master }}/schedulers.py" }
     - { src: "ansible.py", dest: "{{ buildbot_config_master }}/ansible.py" }
     - { src: "maintenance.py", dest: "{{ buildbot_config_master }}/maintenance.py" }
+    - { src: "docker_images.py", dest: "{{ buildbot_config_master }}/docker_images.py" }
     - { src: "release.py", dest: "{{ buildbot_config_master }}/release.py" }
     - { src: "buildbot.conf", dest: "{{ buildbot_home }}/nginx-config/buildbot.conf" }
   notify: ["Stop Buildbot", "Start Buildbot"]
@@ -66,6 +67,8 @@
     - { src: "secrets/s3.public_secret_key", dest: "{{ buildbot_secrets_master }}/s3.public_secret_key" }
     - { src: "secrets/s3.private_access_key", dest: "{{ buildbot_secrets_master }}/s3.private_access_key" }
     - { src: "secrets/s3.private_secret_key", dest: "{{ buildbot_secrets_master }}/s3.private_secret_key" }
+    #- { src: "secrets/greglogan-docker-user", dest: "{{ buildbot_secrets_master }}/greglogan-docker-user" }
+    #- { src: "secrets/greglogan-docker-pass", dest: "{{ buildbot_secrets_master }}/greglogan-docker-pass" }
 
 - name: Ensure local temp directory exists
   file:
