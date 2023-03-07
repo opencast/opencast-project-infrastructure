@@ -44,6 +44,13 @@
   notify: ["Stop Buildbot", "Start Buildbot"]
   tags: just-config
 
+- name: Sanity check the files we just templated
+  shell: docker-compose run buildbot /buildbot_venv/bin/buildbot checkconfig
+  args:
+    chdir: "{{ buildbot_home }}"
+  become: yes
+  tags: just-config
+
 - name: Template Buildbot private support files
   template:
     src: "{{ item.src }}"
