@@ -1,13 +1,13 @@
 [opencast]
-name = Opencast el 8 Repositorys
-baseurl  = https://pkg.opencast.org/rpms/release/el/8/x86_64
+name = Opencast FIXME el 8 Repository
+baseurl  = https://pkg.opencast.org/rpms/release/el/8/FIXME/x86_64
 enabled  = 1
 gpgcheck = 1
 gpgkey = https://pkg.opencast.org/gpgkeys/opencast-el7-rpm.opencast.org.key
 
 [opencast-noarch]
-name = Opencast el 8 Repository - noarch
-baseurl  = https://pkg.opencast.org/rpms/release/el/8/noarch
+name = Opencast FIXME el 8 Repository - noarch
+baseurl  = https://pkg.opencast.org/rpms/release/el/8/FIXME/noarch
 enabled  = 1
 gpgcheck = 1
 gpgkey = https://pkg.opencast.org/gpgkeys/opencast-el7-rpm.opencast.org.key

@@ -1,1 +1,1 @@
-deb https://pkg.opencast.org/debian stable/
+deb [signed-by=/etc/apt/keyrings/opencast-deb.gpg] https://pkg.opencast.org/debian FIXME stable testing
