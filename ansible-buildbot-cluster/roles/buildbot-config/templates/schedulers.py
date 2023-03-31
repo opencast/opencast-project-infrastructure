@@ -161,7 +161,7 @@ def getSchedulers(props):
     scheduler_list.append(tag_sched)
 {% endif %}
 
-    forceBuilders = [common.getBuildWithJDK(pretty_branch_name, "Reports", jdk) for jdk in common.getJDKBuilds(props, pretty_branch_name)]
+    forceBuilders = [common.getBuildWithJDK(pretty_branch_name, "Reports", jdk) for jdk in common.getJDKBuilds(props)]
 
     forceBuilders.extend([
         pretty_branch_name + " Markdown",
