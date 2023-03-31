@@ -38,7 +38,7 @@
   connection: local
 
 - name: Get Buildbot master sshd server key
-  shell: "ssh-keyscan {{ groups['master'][0] }} bitbucket.org github.com >> .ssh/{{ inventory_hostname }}/known_hosts"
+  shell: "ssh-keyscan {{ groups['master'][0] }} >> .ssh/{{ inventory_hostname }}/known_hosts"
   connection: local
 
 - name: Fetch Buildbot SSH keys
