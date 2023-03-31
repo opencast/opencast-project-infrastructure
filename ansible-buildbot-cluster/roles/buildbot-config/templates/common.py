@@ -65,6 +65,8 @@ def getClone(name="Clone/Checkout", url="{{ source_repo_url }}", branch=None):
     }
     if None != branch:
         args["branch"] = branch
+        args["alwaysUseLatest"] = True
+        return steps.Git(**args)
     if "github" in url:
         return steps.GitLab(**args)
     elif "gitlab" in url:
