@@ -34,6 +34,9 @@ COPY keys/* /etc/apt/keyrings/
 COPY repos/* /etc/apt/sources.list.d/
 
 COPY aws-config /builder/.aws/config
+COPY install-ffmpeg.sh /builder/install-ffmpeg.sh
+
+RUN chmod 755 /builder/install-ffmpeg.sh
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -42,7 +45,6 @@ RUN apt-get update && \
      # Run deps
         tesseract-ocr \
         netcat \
-        synfig \
         sox \
         hunspell \
         openjdk-11-jre \
@@ -57,6 +59,11 @@ RUN apt-get update && \
         openjdk-17-jdk \
         firefox && \
     apt-get clean
+
+RUN curl --silent "https://api.github.com/repos/synfig/synfig/releases/latest" | \
+    grep "browser_download_url.*linux64*" | \
+    cut -d : -f 2,3 | tr -d \" | wget -qi - -O /usr/bin/synfig && \
+    chmod 755 /usr/bin/synfig
 
 RUN apt-get install -y --no-install-recommends \
      # Doc deps
@@ -113,13 +120,8 @@ RUN curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases
      chmod +x /usr/local/bin/dumb-init
 
 COPY opencast.list /etc/apt/sources.list.d
-RUN echo "username buildbot = NOPASSWD : /usr/bin/apt-get, /usr/local/bin/dumb-init" > /etc/sudoers.d/buildbot
+RUN echo "buildbot ALL = (root) NOPASSWD : /usr/bin/apt-get, /usr/bin/yum, /usr/local/bin/dumb-init, /bin/sed" > /etc/sudoers.d/buildbot
 
 COPY buildbot.tac /builder/buildbot.tac
     # Install required python packages, and twisted
 RUN python3 -m pip --no-cache-dir install future buildbot-worker==${VERSION}
-
-COPY entrypoint.sh /docker-entrypoint.sh
-RUN chmod a+x /docker-entrypoint.sh
-
-ENTRYPOINT ["/docker-entrypoint.sh"]

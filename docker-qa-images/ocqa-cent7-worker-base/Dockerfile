@@ -21,6 +21,9 @@ COPY repos/* /etc/yum.repos.d/
 COPY keys/* /etc/pki/rpm-gpg/
 
 COPY aws-config /builder/.aws/config
+COPY install-ffmpeg.sh /builder/install-ffmpeg.sh
+
+RUN chmod 755 /builder/install-ffmpeg.sh
 
 RUN sed -i '/override_install_langs/d' /etc/yum.conf
 
@@ -39,7 +42,6 @@ RUN yum install -y \
      # Run deps
         tesseract \
         nmap-ncat \
-        synfig \
         sox \
         hunspell \
         java-11-openjdk \
@@ -54,6 +56,11 @@ RUN yum install -y \
         java-17-openjdk-devel \
         firefox && \
     yum clean all
+
+RUN curl --silent "https://api.github.com/repos/synfig/synfig/releases/latest" | \
+    grep "browser_download_url.*linux64*" | \
+    cut -d : -f 2,3 | tr -d \" | wget -qi - -O /usr/bin/synfig && \
+    chmod 755 /usr/bin/synfig
 
 RUN yum install -y \
      # Doc deps
@@ -96,7 +103,8 @@ RUN python3 -m pip --no-cache-dir install vosk webvtt-py
 
 #Install bits only needed for docker setup
 RUN yum install -y docker-ce-cli && \
-    yum clean all
+    yum clean all && \
+    groupdel docker
 
     # Test runs produce a great quantity of dead grandchild processes.  In a
     # non-docker environment, these are automatically reaped by init (process 1),
@@ -106,13 +114,8 @@ RUN curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases
 
 COPY opencast.repo /etc/yum.repos.d/opencast.repo
 #Allow buildbot to install packages (ffmpeg) later
-RUN echo "username buildbot = NOPASSWD : /usr/bin/yum, /usr/local/bin/dumb-init" > /etc/sudoers.d/buildbot
+RUN echo "buildbot ALL = (root) NOPASSWD : /usr/bin/apt-get, /usr/bin/yum, /usr/local/bin/dumb-init, /bin/sed" > /etc/sudoers.d/buildbot
 
 COPY buildbot.tac /builder/buildbot.tac
     # Install required python packages, and twisted
 RUN python3 -m pip --no-cache-dir install future buildbot-worker==${VERSION}
-
-COPY entrypoint.sh /docker-entrypoint.sh
-RUN chmod a+x /docker-entrypoint.sh
-
-ENTRYPOINT ["/docker-entrypoint.sh"]
