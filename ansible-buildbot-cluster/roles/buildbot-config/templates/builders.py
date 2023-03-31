@@ -10,7 +10,6 @@ import markdown
 import database
 import debs
 import rpms
-import rpm_repo
 import ansible
 import release
 
