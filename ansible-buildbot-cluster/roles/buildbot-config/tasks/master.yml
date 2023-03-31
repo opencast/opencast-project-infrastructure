@@ -14,6 +14,47 @@
     - { path: "{{ buildbot_config_master }}", mode: "0755" }
     - { path: "{{ buildbot_secrets_master }}", mode: "0700" }
 
+- name: Ensure local temp directory exists
+  file:
+    path: "{{ role_path }}/temp"
+    state: directory
+    mode: 0700
+  tags: just-config
+  connection: local
+
+- name: Templating embeds locally
+  template:
+    src: "embeds/{{ item }}"
+    dest: "{{ role_path }}/temp/{{ item }}"
+    mode: 0600
+  tags: just-config
+  connection: local
+  with_items:
+    - ssh_config
+    - known_hosts
+
+- name: Munging templated embeds
+  replace:
+    path: '{{ role_path }}/temp/{{ item }}'
+    regexp: '(\w+[^\\])\n(\w+)' #This adds the backslashes on empty lines
+    replace: '\1\\\\n\2'
+  tags: just-config
+  connection: local
+  with_items:
+    - ssh_config
+    - known_hosts
+
+- name: Munging templated embeds
+  replace:
+    path: '{{ role_path }}/temp/{{ item }}'
+    regexp: '([a-zA-Z0-9\/\-]+[^\\])\n' #This adds the backslash on everything else
+    replace: '\1\\\\n'
+  tags: just-config
+  connection: local
+  with_items:
+    - ssh_config
+    - known_hosts
+
 - name: Template Buildbot configuration files
   template:
     src: "{{ item.src }}"
@@ -70,18 +111,12 @@
     #- { src: "secrets/greglogan-docker-user", dest: "{{ buildbot_secrets_master }}/greglogan-docker-user" }
     #- { src: "secrets/greglogan-docker-pass", dest: "{{ buildbot_secrets_master }}/greglogan-docker-pass" }
 
-- name: Ensure local temp directory exists
-  file:
-    path: "temp"
-    state: directory
-    mode: 0700
-  connection: local
 
   #The following files then get uploaded to S3 next
 - name: Template Buildbot private support files
   template:
     src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+    dest: "{{role_path}}/{{ item.dest }}"
     mode: 0600
   connection: local
   with_items:
@@ -101,7 +136,7 @@
     overwrite: "always"
     permission: [] #prevents a warning about PutObjectAcl not being implemented by minio
     bucket: "{{ s3_private_bucket }}"
-    src: "{{ item.src }}"
+    src: "{{ role_path }}/{{ item.src }}"
     object: "{{ item.dest }}"
   connection: local
   with_items:
@@ -113,9 +148,10 @@
 
 - name: Removing private support files from local disk
   file:
-    path: "temp"
+    path: "{{ role_path }}/temp"
     state: absent
   connection: local
+  tags: just-config
 
 - name: Distributing public signing key
   copy:

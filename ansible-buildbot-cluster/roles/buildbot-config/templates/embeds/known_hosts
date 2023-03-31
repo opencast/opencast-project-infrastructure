@@ -1,0 +1,3 @@
+develop.opencast.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIcaBy4tYMDTmdHUgfcfAaL5xwSrwO5XEQQHQ49F9xDq
+stable.opencast.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINDBALZx3rOb6+xP/B5aKGDWCpBqqvpyEpNRQc1lrfnJ
+legacy.opencast.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAbuoKfS3KJylie34HZPkfgtZBvMUiUMu0w4ZmvvFPgf
