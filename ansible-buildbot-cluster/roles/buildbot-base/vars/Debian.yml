@@ -1,18 +1,12 @@
 ---
 
-"8":
-  - "autossh"
-  - "sudo"
-  - "python3"
-  - "docker-ce"
-
-"9":
-  - "autossh"
-  - "sudo"
-  - "python3"
-  - "docker-ce"
-
 "10":
+  - "autossh"
+  - "sudo"
+  - "python3"
+  - "docker-ce"
+
+"11":
   - "autossh"
   - "sudo"
   - "python3"
