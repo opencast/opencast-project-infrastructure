@@ -49,7 +49,6 @@
   when: '"localhost" != ansible_host and buildbot_user != ansible_user'
   become: yes
   with_items:
-    - id_rsa
     - id_rsa.pub
 
 - name: Populate Buildbot master authorized_keys
