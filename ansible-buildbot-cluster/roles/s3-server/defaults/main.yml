@@ -1,0 +1,8 @@
+---
+
+s3_user: "minio"
+
+s3_home: "/opt/minio"
+
+s3_public_bucket: "public"
+s3_private_bucket: "private"

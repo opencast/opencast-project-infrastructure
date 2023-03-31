@@ -1,3 +1,5 @@
+[s3]
+
 [buildbot:children]
 master
 workers
