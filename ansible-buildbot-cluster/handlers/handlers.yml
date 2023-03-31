@@ -8,7 +8,7 @@
   ignore_errors: yes
 
 - name: Start Buildbot
-  shell: docker-compose up -d buildbot db proxy
+  shell: docker-compose up --pull always -d buildbot db proxy
   args:
     chdir: "{{ buildbot_home }}"
   become: yes
