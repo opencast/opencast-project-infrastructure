@@ -134,6 +134,11 @@ def getBuild(override=None, name="Build", workdir="build", timeout=240):
 #                flunkOnFailure=False,
 #                warnOnFailure=False),
             shellArg(
+                #This needs to be pkg_major_version so that it's numeric
+                command=['/builder/install-ffmpeg.sh', util.Property('ffmpeg', default=util.Property('pkg_major_version'))],
+                logname='ffmpeg',
+                haltOnFailure=True),
+            shellArg(
                 command=['sed', '-i', 's/captureTimeout: [0-9]*/captureTimeout: 120000/',
                          'modules/admin-ui/src/test/resources/karma.conf.js'],
                 logname='old-timeout',

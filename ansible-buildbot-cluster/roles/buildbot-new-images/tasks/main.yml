@@ -1,6 +1,11 @@
 ---
 
+- name: Pruning Docker containers
+  shell: docker system prune -f
+  become: yes
+
 - include_tasks: update.yml
+  when: "'workers' in group_names"
   loop: "{{ docker_worker_images }}"
   loop_control:
     loop_var: distro
