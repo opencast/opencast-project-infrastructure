@@ -1,26 +1,31 @@
 ---
 
 
-- name: Building {{ distro }} worker image
-  shell: docker build --pull {{ distro }} -t ocqa-{{ distro }}-worker:{{ docker_worker_image_tag }}
-  args:
-    chdir: "{{ buildbot_config_worker }}/workers"
-  when: "'workers' in group_names"
+- name: Pulling {{ distro }} worker base image
+  shell: docker pull {{ docker_image_user }}/ocqa-{{ distro }}-worker-base:{{ docker_worker_image_tag }}
   become: yes
 
-- include_tasks: remove.yml
-  loop:
-    - "ocqa-{{ distro }}-worker"
-    - "{{ docker_image_user }}/ocqa-{{ distro }}-worker-base"
-  loop_control:
-    loop_var: image
-
-- name: Pruning Docker containers
-  shell: docker container prune -f
-  when: "'workers' in group_names"
+- name: Finding all built {{ distro }} worker images
+  shell: docker images -q ocqa-{{ distro }}-worker
   become: yes
+  register: worker_images
 
-- name: Pruning Docker images
-  shell: docker image prune -f
-  when: "'workers' in group_names"
+- name: Removing all built {{ distro }} worker image to force rebuild
+  shell: docker rmi -f {{ item }}
   become: yes
+  with_items:
+    - "{{ worker_images.stdout_lines }}"
+  when: worker_images.stdout_lines | length > 0
+
+- name: Finding other {{ distro }} worker base images
+  shell: docker images -q --filter "before={{ docker_image_user }}/ocqa-{{ distro }}-worker-base:{{ docker_worker_image_tag }}" {{ docker_image_user }}/ocqa-{{ distro }}-worker-base
+  become: yes
+  register: worker_base_images
+
+- name: Removing other {{ distro }} worker base images
+  shell: docker rmi -f {{ item }}
+  become: yes
+  with_items:
+    - "{{ worker_base_images.stdout_lines }}"
+  when: worker_base_images.stdout_lines | length > 0
+
