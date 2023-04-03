@@ -93,6 +93,8 @@ RUN apt-get install -y --no-install-recommends \
      # Crowdin
         crowdin && \
     apt-get install -y -t squeeze aptly && \
+    #future is needed by buildbot, installing it with pip doesn't seem to work
+    apt-get install python3-future && \
     apt-get clean
 
 RUN apt-get install -y --no-install-recommends -t bullseye openjdk-17-jre openjdk-17-jdk && apt-get clean
@@ -129,4 +131,4 @@ RUN echo "buildbot ALL = (root) NOPASSWD : /usr/bin/apt-get, /usr/bin/yum, /usr/
 
 COPY buildbot.tac /builder/buildbot.tac
     # Install required python packages, and twisted
-RUN python3 -m pip --no-cache-dir install future buildbot-worker==${VERSION}
+RUN python3 -m pip --no-cache-dir install buildbot-worker==${VERSION}
