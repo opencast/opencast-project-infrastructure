@@ -1,0 +1,4 @@
+---
+
+#which machine is the buildbot master
+buildbot_master: "{{ groups['master'][0] }}"

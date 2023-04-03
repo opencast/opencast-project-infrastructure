@@ -1,7 +1,75 @@
 ---
 
-- import_tasks: master.yml
-  when: "'master' in group_names"
 
-- import_tasks: worker.yml
+#- import_tasks: generate-keys.yml
+#  when: "'workers' in group_names"
+
+- name: Clear any ssh key cache, if any
+  file:
+    name: "{{ role_path }}/.ssh/{{ buildbot_master }}/"
+    state: "{{ item }}"
+  when: "'master' in group_names"
+  connection: local
+  loop:
+    - absent
+    - directory
+
+- name: Get Buildbot master sshd server key
+  shell: "ssh-keyscan {{ buildbot_master }} >> {{ role_path }}/.ssh/{{ buildbot_master }}/known_hosts"
+  when: "'master' in group_names"
+  connection: local
+
+- name: Fetch Buildbot SSH keys
+  fetch:
+    src: "{{ buildbot_home }}/.ssh/id_rsa.pub"
+    dest: "{{ role_path }}/.ssh/{{ buildbot_master }}/{{ inventory_hostname }}.pub"
+    flat: yes
+  when: '"localhost" != ansible_host and buildbot_user != ansible_user'
+  become: yes
+
+- name: Populate Buildbot master authorized_keys
+  shell: cat {{ role_path }}/.ssh/{{ buildbot_master }}/*.pub > {{ role_path }}/.ssh/{{ buildbot_master }}/authorized_keys
+  when: "'master' in group_names"
+  connection: local
+
+- name: Ensure ssh key directory exists
+  file:
+    path: "{{ buildbot_home }}/.ssh"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: 0750
+    state: directory
+  become: yes
+
+- name: Deploying master SSH configuration
+  copy:
+    src: "{{ role_path }}/.ssh/{{ buildbot_master }}/{{ item }}"
+    dest: "{{ buildbot_home }}/.ssh/"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: 0600
+  become: yes
+  when: "'master' in group_names"
+  loop:
+    - authorized_keys
+  notify: "Start Autossh"
+
+- name: Deploying worker SSH configuration
+  copy:
+    src: "{{ role_path }}/.ssh/{{ buildbot_master }}/{{ item }}"
+    dest: "{{ buildbot_home }}/.ssh/"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: 0600
+  become: yes
   when: "'workers' in group_names"
+  loop:
+    - known_hosts
+  notify: "Start Autossh"
+
+- name: Clear any local copy of ssh key
+  file:
+    name: "{{ role_path }}/.ssh/{{ buildbot_master }}/"
+    state: absent
+  when: "'fail' in group_names"
+  connection: local

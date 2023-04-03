@@ -17,7 +17,7 @@
       - "{{ buildbot_user }}"
       - "docker"
   become: yes
-  when: create_buildbot_user and 'master' not in group_names
+  when: create_buildbot_user
 
 - name: Create Buildbot SSH key directory
   file:
@@ -28,16 +28,25 @@
     state: directory
   become: yes
 
-- name: Push Buildbot SSH keys
-  template:
-    src: "{{ item.src }}"
-    dest: "{{ buildbot_home }}/.ssh/"
-    owner: "{{ buildbot_user }}"
-    group: "{{ buildbot_user }}"
-    mode: 0600
-    force: yes
-  with_filetree:
-    - ".ssh/{{ groups['master'][0] }}/"
+- name: Clear current Buildbot user ssh key
+  file:
+    name: "{{ buildbot_home }}/{{ item }}"
+    state: absent
   become: yes
-  notify: "Start Autossh"
+  #Don't clear the key if we're not managing the user for... reasons
+  when: create_buildbot_user
+  with_items:
+    - .ssh/id_rsa
+    - .ssh/id_rsa.pub
+    - .ssh/authorized_keys
+    - .ssh/known_hosts
+
+- name: Generate new Buildbot SSH key
+  user:
+    name: "{{ buildbot_user }}"
+    home: "{{ buildbot_home }}"
+    generate_ssh_key: yes
+    ssh_key_bits: 4096
+  when: create_buildbot_user
+  become: yes
 
