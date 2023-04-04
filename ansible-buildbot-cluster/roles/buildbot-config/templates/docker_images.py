@@ -166,3 +166,10 @@ def getSpawnerPipeline():
     f_spawner.addStep(generateBuilds)
 
     return f_spawner
+
+def getCleanerPipeline():
+
+    f_cleaner = util.BuildFactory()
+    f_cleaner.addStep(pruneDockerImages)
+
+    return f_cleaner
