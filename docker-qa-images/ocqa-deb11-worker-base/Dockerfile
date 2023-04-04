@@ -60,10 +60,12 @@ RUN apt-get update && \
         firefox-esr && \
     apt-get clean
 
-RUN curl --silent "https://api.github.com/repos/synfig/synfig/releases/latest" | \
-    grep "browser_download_url.*linux64*" | \
-    cut -d : -f 2,3 | tr -d \" | wget -qi - -O /usr/bin/synfig && \
-    chmod 755 /usr/bin/synfig
+#Requires appimage, which doesn't work in Docker.
+#and appimagetool's extraction is not yet implemented, despite being documented as the 'solution' here
+#RUN curl --silent "https://api.github.com/repos/synfig/synfig/releases/latest" | \
+#    grep "browser_download_url.*linux64*" | \
+#    cut -d : -f 2,3 | tr -d \" | wget -qi - -O /usr/bin/synfig && \
+#    chmod 755 /usr/bin/synfig
 
 RUN apt-get install -y --no-install-recommends \
      # Doc deps
