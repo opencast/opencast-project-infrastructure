@@ -15,6 +15,6 @@
       - tesseract-ocr
       - tesseract-ocr-deu
       # for ingest script
-      - python3.9
+      - python3
       - python3-requests
       - python3-yaml
