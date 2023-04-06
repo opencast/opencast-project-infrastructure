@@ -96,7 +96,7 @@ RUN apt-get install -y --no-install-recommends \
         crowdin && \
     apt-get install -y -t squeeze aptly && \
     #future is needed by buildbot, installing it with pip doesn't seem to work
-    apt-get install python3-future && \
+    apt-get install -y -t bullseye python3-future python3-autobahn && \
     apt-get clean
 
 RUN apt-get install -y --no-install-recommends -t bullseye openjdk-17-jre openjdk-17-jdk && apt-get clean
