@@ -1,33 +1,5 @@
 ---
 
-- name: Create Buildbot group
-  group:
-    name: '{{ buildbot_user }}'
-    state: present
-  become: yes
-
-- name: Create Buildbot user
-  user:
-    name: '{{ buildbot_user }}'
-    password: "{{ lookup('password', '/dev/null encrypt=sha256_crypt length=32') }}"
-    update_password: always
-    home: "{{ buildbot_home }}"
-    shell: /sbin/nologin
-    groups:
-      - "{{ buildbot_user }}"
-      - "docker"
-  become: yes
-  when: create_buildbot_user
-
-- name: Create Buildbot SSH key directory
-  file:
-    path: "{{ buildbot_home }}/.ssh"
-    owner: "{{ buildbot_user }}"
-    group: "{{ buildbot_user }}"
-    mode: 0700
-    state: directory
-  become: yes
-
 - name: Clear current Buildbot user ssh key
   file:
     name: "{{ buildbot_home }}/{{ item }}"
