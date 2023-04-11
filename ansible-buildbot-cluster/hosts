@@ -5,10 +5,9 @@ master
 workers
 
 [master]
-ci.opencast.org
+ci
 
 [workers]
-ci.opencast.org
-oc-com-presentation.rrz.uni-koeln.de
-oc-com-worker1.rrz.uni-koeln.de
+cib1
+cib2
 pkg.opencast.org
