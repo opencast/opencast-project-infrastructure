@@ -6,7 +6,7 @@
   become: yes
 
 - name: Finding all built {{ distro }} worker images
-  shell: docker images -q ocqa-{{ distro }}-worker
+  shell: docker images -q {{ hostvars[inventory_hostname]['name'] }}_*
   become: yes
   register: worker_images
 
