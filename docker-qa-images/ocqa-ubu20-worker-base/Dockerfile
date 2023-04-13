@@ -34,9 +34,6 @@ COPY keys/* /etc/apt/keyrings/
 COPY repos/* /etc/apt/sources.list.d/
 
 COPY aws-config /builder/.aws/config
-COPY install-ffmpeg.sh /builder/install-ffmpeg.sh
-
-RUN chmod 755 /builder/install-ffmpeg.sh
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -127,3 +124,7 @@ RUN echo "buildbot ALL = (root) NOPASSWD : /usr/bin/apt-get, /usr/bin/yum, /usr/
 COPY buildbot.tac /builder/buildbot.tac
     # Install required python packages, and twisted
 RUN python3 -m pip --no-cache-dir install future buildbot-worker==${VERSION}
+
+COPY install-ffmpeg.sh /builder/install-ffmpeg.sh
+RUN chmod 755 /builder/install-ffmpeg.sh
+
