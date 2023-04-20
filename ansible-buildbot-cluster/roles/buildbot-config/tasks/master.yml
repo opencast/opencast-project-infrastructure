@@ -146,18 +146,24 @@
     - { src: "temp/develop", dest: "{{ groups['master'][0] }}/env/develop" }
     - { src: "temp/settings.xml", dest: "{{ groups['master'][0] }}/mvn/settings.xml" }
 
+- name: Extracting public signing key from private key
+  shell: gpg --no-default-keyring --keyring=./temp/keyring.gpg --import ./temp/signing.key && gpg --no-default-keyring --keyring=./temp/keyring.gpg -a --export {{ signing_key_id }} >> ./temp/{{ signing_key_id }}.asc
+  args:
+    chdir: "{{ role_path }}"
+  connection: local
+
+- name: Distributing public signing key
+  copy:
+    src: temp/{{ signing_key_id }}.asc
+    dest: "{{ buildbot_home }}/keys/public-signing-key.gpg"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: 0644
+  become: yes
+
 - name: Removing private support files from local disk
   file:
     path: "{{ role_path }}/temp"
     state: absent
   connection: local
   tags: just-config
-
-- name: Distributing public signing key
-  copy:
-    src: public-signing-key.gpg
-    dest: "{{ buildbot_home }}/keys"
-    owner: "{{ buildbot_user }}"
-    group: "{{ buildbot_user }}"
-    mode: 0644
-  become: yes
