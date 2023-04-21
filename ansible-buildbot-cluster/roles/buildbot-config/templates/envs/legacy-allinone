@@ -3,7 +3,7 @@
 [database]
 legacy.{{ infra_domain }}
 
-[activemq]
+[elasticsearch]
 legacy.{{ infra_domain }}
 
 [admin]
@@ -39,3 +39,11 @@ adminpresentation
 allinone
 presentation
 adminpresentation
+
+[nginx:children]
+admin
+adminpresentation
+allinone
+worker
+presentation
+ingest
