@@ -41,17 +41,13 @@ def getBuildPipeline():
         commands=[
             common.shellArg(
                 command=[
-                    'dch',
-                    '--changelog', 'opencast/debian/changelog',
-                    '--newversion',
-                    util.Interpolate(
-                        '%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s-%(prop:buildnumber)s-%(prop:short_revision)s'),
-                    '-b', '-D', 'unstable', '-u', 'low', '--empty',
-                    util.Interpolate(
-                        'Opencast revision %(prop:got_revision)s, packaged with Debian scripts version %(prop:deb_script_rev)s'
-                    )
+                    './changelog',
+                    util.Property("pkg_major_version"),
+                    util.Property("pkg_minor_version"),
+                    util.Interpolate("%(prop:buildnumber)s-%(prop:short_revision)s"),
+                    "unstable"
                 ],
-                logname='dch'),
+                logname='changelog'),
             common.shellArg(
                 command=[
                     'rm', '-f',
