@@ -104,8 +104,15 @@ RUN python3 -m pip --no-cache-dir install ansible paramiko
     # Buildbot s3 deploy bits
 RUN python3 -m pip --no-cache-dir install --upgrade requests urllib3
 RUN python3 -m pip --no-cache-dir install awscli
-    # Vosk, notably without any language models
-RUN python3 -m pip --no-cache-dir install vosk webvtt-py
+    # Vosk and vosk-cli
+RUN python3 -m pip --no-cache-dir install vosk vosk-cli webvtt-py && \
+    mkdir -p /usr/share/vosk/models && \
+    wget https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip -O /usr/share/vosk/models/vosk-model-small-en-us-0.15.zip && \
+    unzip /usr/share/vosk/models/vosk-model-small-en-us-0.15.zip -d /usr/share/vosk/models/ && \
+    rm -f /usr/share/vosk/models/vosk-model-small-en-us-0.15.zip
+#NB: This adds about 3GB to the image, even without a model
+#    #Whisper, except without models
+##RUN python3 -m pip --no-cache-dir install openai-whisper
 
 #Install bits only needed for docker setup
 RUN yum install -y docker-ce-cli && \
