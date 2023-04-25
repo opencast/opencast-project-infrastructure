@@ -88,16 +88,35 @@ tagImage = common.shellCommand(
         command=["docker", "tag",
             util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:latest"),
             util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:%(prop:docker_tag:-buildbot_version)s")],
-        workdir=util.Interpolate("build/docker-qa-images/%(prop:fdn)s"),
         name=util.Interpolate("Tagging %(prop:fdn)s:latest as %(prop:docker_tag:-buildbot_version)s"))
+
+tagUpstreamImage = common.shellCommand(
+        command=["docker", "tag",
+            util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:latest"),
+            util.Interpolate("greglogan/%(prop:fdn)s:latest")],
+        doStepIf="greglogan" != util.Property("docker_host"),
+        hideStepIf="greglogan" == util.Property("docker_host"),
+        name=util.Interpolate("Tagging for latest for upstream as well"))
 
 dockerLogin = common.shellCommand(
         command=["docker", "login", "-u", selectDockerHostUserSecret, "-p", selectDockerHostPassSecret, util.Interpolate("%(prop:docker_host)s")],
         name=util.Interpolate("Logging into %(prop:docker_host)s"))
 
+dockerLoginUpstream = common.shellCommand(
+        command=["docker", "login", "-u", util.Secret("greglogan-docker-user"), "-p", util.Secret("greglogan-docker-pass")],
+        doStepIf="greglogan" != util.Property("docker_host"),
+        hideStepIf="greglogan" == util.Property("docker_host"),
+        name="Logging into Dockerhub")
+
 pushlatestDockerImage = common.shellCommand(
         command=["docker", "push", util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:latest")],
         name=util.Interpolate("Pushing %(prop:fdn)s:latest"))
+
+pushUpstreamLatestDockerImage = common.shellCommand(
+        command=["docker", "push", util.Interpolate("greglogan/%(prop:fdn)s:latest")],
+        doStepIf="greglogan" != util.Property("docker_host"),
+        hideStepIf="greglogan" == util.Property("docker_host"),
+        name=util.Interpolate("Pushing greglogan/%(prop:fdn)s:latest"))
 
 pushDockerImage = common.shellCommand(
         command=["docker", "push", util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:%(prop:docker_tag)s")],
@@ -126,8 +145,11 @@ def getPushPipeline():
     f_build.addStep(setFullDockerImageName)
     f_build.addStep(buildDockerImage)
     f_build.addStep(tagImage)
+    f_build.addStep(tagUpstreamImage)
     f_build.addStep(dockerLogin)
+    f_build.addStep(dockerLoginUpstream)
     f_build.addStep(pushlatestDockerImage)
+    f_build.addStep(pushUpstreamLatestDockerImage)
     f_build.addStep(pushDockerImage)
     f_build.addStep(steps.Trigger(
         name=util.Interpolate("Triggering pull of %(prop:docker_image)s"),
