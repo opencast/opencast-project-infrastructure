@@ -30,7 +30,6 @@
     force: yes
   become: yes
   with_items:
-    - { src: "opencast-ingest.sh", dest: "{{ buildbot_config_worker }}/opencast-ingest.sh", mode: "644" }
     - { src: "envs/stable-allinone", dest: "{{ buildbot_config_worker }}/envs/stable-allinone", mode: "0644" }
     - { src: "envs/develop-allinone", dest: "{{ buildbot_config_worker }}/envs/develop-allinone", mode: "0644" }
     - { src: "envs/legacy-allinone", dest: "{{ buildbot_config_worker }}/envs/legacy-allinone", mode: "0644" }

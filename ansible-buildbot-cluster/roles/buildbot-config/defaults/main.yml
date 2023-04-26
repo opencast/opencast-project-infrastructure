@@ -247,13 +247,3 @@ deployed_javadocs_symlink_base: "{{ disk_base }}/javadocs"
 #The interpolatable location for each symlink
 deployed_javadocs_symlink: "{{ deployed_javadocs_symlink_base }}/%(prop:branch_pretty)s"
 
-
-#####################
-# Buildbot Commands #
-#####################
-
-#Don't change these, change the paths and whatnot above
-
-#Where to scp the demo media deployment script to
-buildbot_scp_deploy_script: "{{ buildbot_user }}@%(prop:deploy_env)s.{{ infra_domain }}:opencast-ingest.sh"
-
