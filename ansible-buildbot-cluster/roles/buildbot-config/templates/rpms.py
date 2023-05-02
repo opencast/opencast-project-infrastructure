@@ -125,7 +125,7 @@ def getBuildPipeline():
         name="Upload rpms to S3")
 
     rpmsPrune = common.shellCommand(
-        command=util.Interpolate("ls -t /builder/s3/repo/rpms/unstable/el/%(prop:el_version)s/noarch | grep allinone | tail -n +6 | cut -f 4 -d '-' | while read version; do rm -f /builder/s3/repo/rpms/unstable/el/%(prop:el_version)s/noarch/*$version; done"),
+        command=util.Interpolate("ls -t /builder/s3/repo/rpms/unstable/el/%(prop:el_version)s/oc-%(prop:pkg_major_version)s/noarch | grep allinone | tail -n +6 | cut -f 4 -d '-' | while read version; do rm -f /builder/s3/repo/rpms/unstable/el/%(prop:el_version)s/oc-%(prop:pkg_major_version)s/noarch/*$version; done"),
         name=util.Interpolate("Pruning %(prop:pkg_major_version)s unstable repository"),
         alwaysRun=True)
 

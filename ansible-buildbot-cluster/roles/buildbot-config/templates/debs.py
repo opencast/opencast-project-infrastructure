@@ -98,7 +98,7 @@ def getBuildPipeline():
         name=util.Interpolate(f"Adding build to %(prop:pkg_major_version)s.x-%(prop:repo_component)s"))
 
     debRepoPrune = common.shellCommand(
-        command=['./clean-unstable-repo', util.Interpolate("%(prop:pkg_major_version)s.x")],
+        command=util.Interpolate("./snapshot-cleanup %(prop:pkg_major_version)s.x oc && ./clean-unstable-repo %(prop:pkg_major_version)s.x"),
         name=util.Interpolate(f"Pruning %(prop:pkg_major_version)s.x unstable repository"),
         alwaysRun=True)
 
