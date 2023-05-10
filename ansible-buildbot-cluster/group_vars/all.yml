@@ -9,25 +9,31 @@
 opencast:
   Develop:
     branch: 'develop'
-    pom: '14'
+    pom: '15'
     jdk: [ '11' ]
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     cores: '1'
     server: 'develop'
+  14.x:
+    branch: 'r/14.x'
+    pom: '14'
+    jdk: [ '11' ]
+    profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
+    cores: '1'
+    server: 'stable'
   13.x:
     branch: 'r/13.x'
     pom: '13'
     jdk: [ '11' ]
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     cores: '1'
-    server: 'stable'
+    server: 'legacy'
   12.x:
     branch: 'r/12.x'
     pom: '12'
     jdk: [ '11' ]
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     cores: '1'
-    server: 'legacy'
 
 
 #########################
