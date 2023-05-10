@@ -3,6 +3,10 @@
 #Master settings
 mail_to: "gregorydlogan@gmail.com"
 docker_image_user: "greglogan"
+uid: 1004
+gid: 1004
+docker_gid: 997
+
 
 source_rpm_repo_url: "https://github.com/gregorydlogan/opencast-rpmbuild.git"
 
