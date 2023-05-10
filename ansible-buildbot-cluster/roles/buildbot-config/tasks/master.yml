@@ -167,4 +167,4 @@
     path: "{{ role_path }}/temp"
     state: absent
   connection: local
-  tags: just-config
+  tags: always
