@@ -87,12 +87,29 @@
   notify: ["Stop Buildbot", "Start Buildbot"]
   tags: just-config
 
+- name: Checking if Buildbot is already running
+  shell: docker-compose ps -q buildbot
+  args:
+    chdir: "{{ buildbot_home }}"
+  become: yes
+  tags: just-config
+  register: docker_ps
+
 - name: Sanity check the files we just templated
   shell: docker-compose run buildbot /buildbot_venv/bin/buildbot checkconfig
   args:
     chdir: "{{ buildbot_home }}"
   become: yes
   tags: just-config
+  when: docker_ps.stdout_lines == 0
+
+- name: Sanity check the files we just templated
+  shell: docker-compose exec -T buildbot /buildbot_venv/bin/buildbot checkconfig
+  args:
+    chdir: "{{ buildbot_home }}"
+  become: yes
+  tags: just-config
+  when: docker_ps.stdout_lines != 0
 
 - name: Template Buildbot private support files
   template:
