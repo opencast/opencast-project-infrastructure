@@ -39,6 +39,13 @@
   handlers:
     - import_tasks: handlers/handlers.yml
 
+- hosts: master
+  user: "{{ login_user }}"
+  roles:
+    - { role: geerlingguy.certbot, become: yes }
+  handlers:
+    - import_tasks: handlers/handlers.yml
+
 - hosts: workers
   user: "{{ login_user }}"
   roles:
