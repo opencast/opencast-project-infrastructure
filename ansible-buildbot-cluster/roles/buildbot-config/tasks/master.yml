@@ -98,12 +98,12 @@
   register: docker_ps
 
 - name: Sanity check the files we just templated
-  shell: docker-compose run buildbot /buildbot_venv/bin/buildbot checkconfig
+  shell: docker-compose run --rm buildbot /buildbot_venv/bin/buildbot checkconfig
   args:
     chdir: "{{ buildbot_home }}"
   become: yes
   tags: just-config
-  when: docker_ps.stdout_lines == 0
+  when: docker_ps.stdout_lines | length == 0
 
 - name: Sanity check the files we just templated
   shell: docker-compose exec -T buildbot /buildbot_venv/bin/buildbot checkconfig
@@ -111,7 +111,7 @@
     chdir: "{{ buildbot_home }}"
   become: yes
   tags: just-config
-  when: docker_ps.stdout_lines != 0
+  when: docker_ps.stdout_lines | length != 0
 
 - name: Template Buildbot private support files
   template:
