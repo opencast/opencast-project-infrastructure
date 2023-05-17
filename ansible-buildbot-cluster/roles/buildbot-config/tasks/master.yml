@@ -66,6 +66,8 @@
   become: yes
   with_items:
     - { src: "docker-compose.yml", dest: "{{ buildbot_home }}/docker-compose.yml" }
+    - { src: "buildbot.service", dest: "/etc/systemd/system/buildbot.service" }
+    - { src: "nginx.service", dest: "/etc/systemd/system/nginx.service" }
     - { src: "db.env", dest: "{{ buildbot_home }}/db.env" }
     - { src: "backup_database.sh", dest: "{{ buildbot_home }}/backup_database.sh", mode: "0700" }
     - { src: "restore_database.sh", dest: "{{ buildbot_home }}/backup_database.sh", mode: "0700" }

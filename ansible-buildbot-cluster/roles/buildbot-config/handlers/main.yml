@@ -1,0 +1,9 @@
+---
+
+- name: Stop Buildbot
+  systemd:
+    name: buildbot
+    state: stopped
+    enabled: yes
+    daemon_reload: yes
+  become: yes

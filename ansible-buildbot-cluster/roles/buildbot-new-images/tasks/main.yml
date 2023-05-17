@@ -21,8 +21,6 @@
     chdir: "{{ buildbot_home }}"
   become: yes
   when: "'master' in group_names"
-  #Database tests are turned off since we don't have any ddls to test with
-  #notify: ["Stop Databases", "Start Databases"]
 
 - name: Pruning Docker containers
   shell: docker container prune -f

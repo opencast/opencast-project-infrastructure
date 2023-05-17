@@ -1,0 +1,14 @@
+[Unit]
+Description=Buildbot service with docker compose
+PartOf=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+WorkingDirectory={{ buildbot_home }}
+ExecStart=/usr/bin/docker-compose up -d --remove-orphans buildbot
+ExecStop=/usr/bin/docker-compose rm -sfv buildbot
+
+[Install]
+WantedBy=multi-user.target
