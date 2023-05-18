@@ -5,7 +5,7 @@ master
 workers
 
 [master]
-ci
+ci.opencast.org
 
 [workers]
 cib1

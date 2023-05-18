@@ -1,10 +1,6 @@
 ---
 
-#Worker settings
-name: ci-opencast-org
-
 #Master settings
-login_user: greglogan
 mail_to: "gregorydlogan@gmail.com"
 docker_image_user: "greglogan"
 
