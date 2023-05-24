@@ -85,9 +85,9 @@
     - known_hosts
   notify: "Start Autossh"
 
-- name: Clear any local copy of ssh key
+- name: Clear any ssh key cache
   file:
-    name: "{{ role_path }}/.ssh/{{ buildbot_master }}/"
+    name: "{{ role_path }}/.ssh"
     state: absent
-  when: "'fail' in group_names"
+  when: "'master' in group_names"
   connection: local
