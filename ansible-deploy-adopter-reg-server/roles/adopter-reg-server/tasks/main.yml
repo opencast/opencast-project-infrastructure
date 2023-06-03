@@ -9,7 +9,7 @@
 
 - name: Creating python venv
   command:
-    cmd: python3.8 -m venv {{ adopter_reg_venv }}
+    cmd: python3.9 -m venv {{ adopter_reg_venv }}
     creates: "{{ adopter_reg_venv }}"
 
 - name: Updating python venv
