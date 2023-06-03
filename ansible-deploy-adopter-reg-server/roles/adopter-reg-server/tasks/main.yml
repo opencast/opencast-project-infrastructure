@@ -48,6 +48,13 @@
     search_string: "SECURITY_PASSWORD_SALT = 'CHANGE_ME'"
     line: "    SECURITY_PASSWORD_SALT = '{{ reg_server_salt }}'"
 
+- name: Stopping the server
+  systemd:
+    name: oc-reg-server
+    state: stopped
+    daemon_reload: true
+  become: yes
+
 - name: Enabling and starting systemd unit
   systemd:
     name: oc-reg-server
