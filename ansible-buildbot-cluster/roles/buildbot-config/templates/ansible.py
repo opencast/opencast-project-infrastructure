@@ -89,22 +89,56 @@ class GenerateDeployCommands(buildstep.ShellMixin, steps.BuildStep):
         result = cmd.results()
         if result == util.SUCCESS:
             # create a ShellCommand for each stage and add them to the build
-            self.build.addStepsAfterCurrentStep([
-                common.shellCommand(
-                    command=['ansible',
-                             '-e', 'ansible_user={{ buildbot_user }}',
-                             util.Interpolate(
-                                 '--private-key=%(prop:builddir)s/%(prop:deploy_env)s'),
-                             '-i', util.Interpolate(
-                                 "{{ buildbot_config }}/envs/" + target),
-                             'admin_node',
-                             '-m', 'copy',
-                             '-a', util.Interpolate(
-                                 'src={{ buildbot_config }}/opencast-ingest.sh dest=opencast-ingest.sh')],
-                    name="Copy ingest script to " + target + " env",
-                    haltOnFailure=False,
-                    flunkOnFailure=True)
-                for target in self.extract_targets(self.observer.getStdout())
+            self.build.addStepsAfterCurrentStep([ ansible(target) for target in self.extract_targets(self.observer.getStdout())
+                for ansible in (
+                    lambda target: 
+                        common.shellCommand(
+                            command=['ansible',
+                                     '-e', 'ansible_user={{ buildbot_user }}',
+                                     util.Interpolate(
+                                         '--private-key=%(prop:builddir)s/%(prop:deploy_env)s'),
+                                     '-i', util.Interpolate(
+                                         "{{ buildbot_config }}/envs/" + target),
+                                     '-b',
+                                     'admin_node',
+                                     '-m', 'package',
+                                     '-a', 'name=python3-pip state=present',
+                                     '--extra-vars', util.Interpolate(" ".join(params))],
+                            name=f"Ensure pip is installed in { target }",
+                            haltOnFailure=False,
+                            flunkOnFailure=True),
+                    lambda target:
+                        common.shellCommand(
+                            command=['ansible',
+                                     '-e', 'ansible_user={{ buildbot_user }}',
+                                     util.Interpolate(
+                                         '--private-key=%(prop:builddir)s/%(prop:deploy_env)s'),
+                                     '-i', util.Interpolate(
+                                         "{{ buildbot_config }}/envs/" + target),
+                                     '-b',
+                                     'admin_node',
+                                     '-m', 'shell',
+                                     '-a', 'pip3 install pyyaml pyjson requests',
+                                     '--extra-vars', util.Interpolate(" ".join(params))],
+                            name=f"Ensure ingest script requirements present in env",
+                            haltOnFailure=False,
+                            flunkOnFailure=True),
+                    lambda target:
+                        common.shellCommand(
+                            command=['ansible',
+                                     '-e', 'ansible_user={{ buildbot_user }}',
+                                     util.Interpolate(
+                                         '--private-key=%(prop:builddir)s/%(prop:deploy_env)s'),
+                                     '-i', util.Interpolate(
+                                         "{{ buildbot_config }}/envs/" + target),
+                                     'admin_node',
+                                     '-m', 'shell',
+                                     '-a', 'wget https://raw.githubusercontent.com/lkiesow/opencast-ingest/main/ingest.py -O ingest.py;  wget https://raw.githubusercontent.com/lkiesow/opencast-ingest/main/media.yml -O media.yml',
+                                     '--extra-vars', util.Interpolate(" ".join(params))],
+                            name=f"Copy ingest script to { target } env",
+                            haltOnFailure=False,
+                            flunkOnFailure=True)
+                        )
             ])
         return result
 
@@ -143,8 +177,8 @@ class GenerateIngestCommands(buildstep.ShellMixin, steps.BuildStep):
                              "-i", util.Interpolate(
                                  "{{ buildbot_config }}/envs/" + target),
                              "admin_node",
-                             "-m", "shell", "-a", "bash opencast-ingest.sh",
-                             "--extra-vars", util.Interpolate(" ".join(params))],
+                             "-m", "shell", "-a", "python3 ingest.py",
+                             '--extra-vars', util.Interpolate(" ".join(params))],
                     name="Ingest media to " + target + " env",
                     haltOnFailure=False,
                     flunkOnFailure=True)
@@ -155,11 +189,8 @@ class GenerateIngestCommands(buildstep.ShellMixin, steps.BuildStep):
 
 def getBuildPipeline():
 
-    clone = steps.Git(repourl="{{ ansible_scripts_url }}",
-                      branch=util.Property('branch'),
-                      alwaysUseLatest=True,
-                      mode="full",
-                      method="fresh")
+    clone = common.getClone(url="{{ ansible_scripts_url }}",
+                      branch=util.Property('branch'))
 
     version = steps.SetPropertyFromCommand(
         command="git rev-parse HEAD",

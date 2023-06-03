@@ -1,7 +1,7 @@
 # -*- python -*-
 # ex: set filetype=python:
 
-from buildbot.plugins import util
+from buildbot.plugins import steps, util
 import common
 
 getBuildSize = common.shellCommand(
@@ -13,6 +13,10 @@ uploadTarballs = common.syncAWS(
     pathTo="s3://{{ s3_public_bucket }}/builds/{{ builds_fragment }}",
     name="Upload build to S3")
 
+buildFoundAt = steps.SetProperty(
+    property="build_found_at",
+    value=util.Interpolate("s3://{{ s3_public_bucket }}/builds/{{ builds_fragment }}/"),
+    name="Set S3 location for binary fetch")
 
 def __getBasePipeline():
 
@@ -45,7 +49,6 @@ def getBuildPipeline():
         command=util.Interpolate("echo '%(prop:got_revision)s' | tee revision.txt"),
         name="Stamping the build")
 
-
     updateBuild = common.copyAWS(
         pathFrom="revision.txt",
         pathTo="s3://{{ s3_public_bucket }}/builds/%(prop:branch_pretty)s/latest.txt",
@@ -71,6 +74,7 @@ def getBuildPipeline():
     f_build.addStep(getBuildSize)
     f_build.addStep(stampVersion)
     f_build.addStep(uploadTarballs)
+    f_build.addStep(buildFoundAt)
     f_build.addStep(updateBuild)
     f_build.addStep(updateCrowdin)
     f_build.addStep(common.getClean())

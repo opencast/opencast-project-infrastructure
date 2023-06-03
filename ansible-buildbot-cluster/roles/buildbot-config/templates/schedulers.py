@@ -5,14 +5,15 @@ from buildbot.plugins import schedulers, util
 import common
 
 
-def _getAnyBranchScheduler(name, builderNames, change_filter=None, properties=dict()):
+def _getAnyBranchScheduler(name, builderNames, fileIsImportant=lambda fn: True, change_filter=None, properties=dict()):
     return schedulers.AnyBranchScheduler(
         name=name,
         # NB: Do not make this a string, a horribly unclear error occurs and nothing works for this scheduler...
         treeStableTimer={{ stability_limit }},
         builderNames=builderNames,
         properties=properties,
-        change_filter=change_filter)
+        change_filter=change_filter,
+        fileIsImportant=fileIsImportant)
 
 
 def _getForceScheduler(props, prefix, builderNames):
@@ -86,6 +87,7 @@ def _getBasicSchedulers(props):
             sched = _getAnyBranchScheduler(
                 name=common.getBuildWithJDK(pretty_branch_name, build_type, jdk),
                 change_filter=branch_cf,
+                fileIsImportant=lambda change: any(map(lambda filename: "modules" in filename, change.files)) or any(map(lambda filename: "assemblies" in filename, change.files)),
                 properties=props,
                 builderNames=[
                     common.getBuildWithJDK(pretty_branch_name, build_type, jdk),
@@ -95,6 +97,7 @@ def _getBasicSchedulers(props):
     sched = _getAnyBranchScheduler(
         name=pretty_branch_name + " Quick Build",
         change_filter=branch_cf,
+        fileIsImportant=lambda change: any(map(lambda filename: "docs/guides" in filename, change.files)),
         properties=props,
         builderNames=[
             pretty_branch_name + " Markdown",
@@ -154,9 +157,11 @@ def getSchedulers(props):
         change_filter=util.ChangeFilter(category='tag', branch_re=props['pkg_major_version'] + ".*"),
         properties=props,
         builderNames=[pretty_branch_name + " Release"])
+{% if deploy_tags | default(false) %}
     scheduler_list.append(tag_sched)
+{% endif %}
 
-    forceBuilders = [common.getBuildWithJDK(pretty_branch_name, "Reports", jdk) for jdk in common.getJDKBuilds(props, pretty_branch_name)]
+    forceBuilders = [common.getBuildWithJDK(pretty_branch_name, "Reports", jdk) for jdk in common.getJDKBuilds(props)]
 
     forceBuilders.extend([
         pretty_branch_name + " Markdown",

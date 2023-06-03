@@ -3,7 +3,7 @@
 # version is more recent
 
 Package: *
-Pin: release a=stable
+Pin: release a=buster
 Pin-Priority: 900
 
 # 100 <= P < 500: causes a version to be installed unless there is a
@@ -11,12 +11,12 @@ Pin-Priority: 900
 # version is more recent
 
 Package: *
-Pin: release a=testing
+Pin: release a=bookworm
 Pin-Priority: 400
 
 # 0 < P < 100: causes a version to be installed only if there is no
 # installed version of the package
 
 Package: *
-Pin: release a=oldstable
+Pin: release a=testing
 Pin-Priority: 50

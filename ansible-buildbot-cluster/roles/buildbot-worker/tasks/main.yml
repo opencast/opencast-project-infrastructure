@@ -1,19 +1,5 @@
 ---
 
-#Database tests are disabled right now, so no need to template this
-#- name: Template docker-compose configuration file
-#  template:
-#    src: "{{ item.src }}"
-#    dest: "{{ item.dest }}"
-#    owner: "{{ buildbot_user }}"
-#    mode: 0600
-#    force: yes
-#  become: yes
-#  when: "'master' not in group_names and hostvars[inventory_hostname]['docker_worker_base_image'] | default('worker-base') == 'worker-base'"
-#  with_items:
-#    - { src: "docker-compose.yml", dest: "{{ buildbot_home }}/docker-compose.yml" }
-#  notify: "Start Databases"
-
 - name: Ensure Buildbot directories exists and has the right permissions
   file:
     state: directory

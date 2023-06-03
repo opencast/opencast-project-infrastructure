@@ -54,14 +54,25 @@ def getPreflightChecks():
         name="Pre-flight checks")
 
 
-def getClone():
-    return steps.GitHub(
-        repourl="{{ source_repo_url }}",
-        mode='full',
-        method='fresh',
-        haltOnFailure=True,
-        flunkOnFailure=True,
-        name="Clone/Checkout")
+def getClone(name="Clone/Checkout", url="{{ source_repo_url }}", branch=None):
+    args = {
+        "repourl": url,
+        "mode": 'full',
+        "method": 'fresh',
+        "haltOnFailure": True,
+        "flunkOnFailure": True,
+        "name": name
+    }
+    if None != branch:
+        args["branch"] = branch
+        args["alwaysUseLatest"] = True
+        return steps.Git(**args)
+    if "github" in url:
+        return steps.GitLab(**args)
+    elif "gitlab" in url:
+        return steps.GitLab(**args)
+    else:
+        return steps.Git(**args)
 
 
 def getWorkerPrep():
@@ -89,7 +100,7 @@ def getMavenEnv(props):
     image = props.getProperty("image")
     if "deb" in image or "ubu" in image:
         java_home = "/usr/lib/jvm/java-" + str(jdk) + "-openjdk-amd64"
-    elif "cent" in image or "rocky" in image:
+    elif "cent" in image:
         if int(jdk) > 8:
             java_home = "/usr/lib/jvm/java-" + str(jdk) + "-openjdk"
         else:
@@ -100,13 +111,14 @@ def getMavenEnv(props):
         "LANGUAGE": util.Interpolate("%(prop:LANG)s"),
         "TZ": util.Interpolate("%(prop:TZ)s"),
         "JAVA_HOME": java_home,
-        "PATH": [ java_home + "/bin", "${PATH}" ]
+        "PATH": [ java_home + "/bin", "${PATH}" ],
+        "CI": "true"
     }
     return env
 
 
 def getBuild(override=None, name="Build", workdir="build", timeout=240):
-    command = ['mvn', '-B', '-V', '-Dmaven.repo.local=/builder/m2']
+    command = ['mvn', '-B', '-V', '-Dmaven.repo.local=/builder/m2', '-Dsurefire.rerunFailingTestsCount=2']
 {% if skip_tests %}
     command.append('-DskipTests')
 {% endif %}
@@ -123,6 +135,11 @@ def getBuild(override=None, name="Build", workdir="build", timeout=240):
 #                haltOnFailure=False,
 #                flunkOnFailure=False,
 #                warnOnFailure=False),
+            shellArg(
+                #This needs to be pkg_major_version so that it's numeric
+                command=['/builder/install-ffmpeg.sh', util.Property('ffmpeg', default=util.Property('pkg_major_version'))],
+                logname='ffmpeg',
+                haltOnFailure=True),
             shellArg(
                 command=['sed', '-i', 's/captureTimeout: [0-9]*/captureTimeout: 120000/',
                          'modules/admin-ui/src/test/resources/karma.conf.js'],
@@ -197,7 +214,13 @@ def deployS3fsSecrets():
 
 def mountS3fs():
     return shellCommand(
-        command=util.Interpolate(" ".join(["mkdir", "-p", "/builder/s3", "&&", "s3fs", "-o", "use_path_request_style", "-o", "url={{ s3_host }}/", "-o", "uid=%(prop:builder_uid)s,gid=%(prop:builder_gid)s,umask=0000", "{{ s3_public_bucket }}", "/builder/s3"])),
+        command=util.Interpolate(" ".join(
+            ["mkdir", "-p", "/builder/s3", "&&",
+             "s3fs",
+             "-o", "use_path_request_style",
+             "-o", "url={{ s3_host }}/",
+             "-o", "uid=%(prop:builder_uid)s,gid=%(prop:builder_gid)s,umask=0000",
+             "{{ s3_public_bucket }}", "/builder/s3"])),
         name="Mounting S3")
 
 def unmountS3fs():
@@ -277,8 +300,8 @@ def unloadMavenSettings():
 
 
 def setTimezone():
-    offsetHour = random.randint(-12, 14)
-    offsetMin = random.choice(["00", "15", "30", "45"]).zfill(2)
+    offsetHour = random.randint(-6, 2) #random.randint(-12, 14)
+    offsetMin = "00" #random.choice(["00", "15", "30", "45"]).zfill(2)
     if offsetHour >= 0:
         tz = "UTC+" + str(offsetHour).zfill(2) + ":" + offsetMin
     else:

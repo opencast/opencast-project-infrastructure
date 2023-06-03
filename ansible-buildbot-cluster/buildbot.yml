@@ -2,7 +2,12 @@
 # vim: et:ts=2:sw=2:sts=2
 # This playbook deploys a Buildbot master and worker(s) configured for Opencast
 
-- hosts: all
+- hosts: s3
+  user: "{{ login_user }}"
+  roles:
+    - { role: s3-server, when: "hostvars[inventory_hostname]['deploy_s3_server'] | bool" }
+
+- hosts: buildbot
   user: "{{ login_user }}"
   roles:
     - { role: buildbot-base }
@@ -31,6 +36,13 @@
   user: "{{ login_user }}"
   roles:
     - { role: buildbot-config, tags: [ buildbot, reconfig ] }
+  handlers:
+    - import_tasks: handlers/handlers.yml
+
+- hosts: master
+  user: "{{ login_user }}"
+  roles:
+    - { role: geerlingguy.certbot, become: yes }
   handlers:
     - import_tasks: handlers/handlers.yml
 

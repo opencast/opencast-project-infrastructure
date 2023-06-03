@@ -34,6 +34,9 @@ source_rpm_repo_url: "https://github.com/opencast/opencast-rpmbuild.git"
 #Where to fetch the ansible configuration management scripts from
 ansible_scripts_url: "https://github.com/opencast/oc-config-management.git"
 
+#Where to get the infrastructure docker files from
+infra_repo_url: "https://github.com/opencast/opencast/opencast-project-infrastructure.git"
+
 #Where to fetch the signing key for the generated packages.  Must match the signing key id below!
 key_url: "https://pkg.opencast.org/gpgkeys/automated.key"
 
@@ -110,6 +113,9 @@ debug_enabled: False
 
 #Whether to enable auth, or leave things wide open
 enable_auth: True
+
+#Set this to true to deploy tags, otherwise they are ignored
+deploy_tags: False
 
 #######################
 # Networking Settings #
@@ -240,14 +246,4 @@ deployed_javadocs_symlink_base: "{{ disk_base }}/javadocs"
 
 #The interpolatable location for each symlink
 deployed_javadocs_symlink: "{{ deployed_javadocs_symlink_base }}/%(prop:branch_pretty)s"
-
-
-#####################
-# Buildbot Commands #
-#####################
-
-#Don't change these, change the paths and whatnot above
-
-#Where to scp the demo media deployment script to
-buildbot_scp_deploy_script: "{{ buildbot_user }}@%(prop:deploy_env)s.{{ infra_domain }}:opencast-ingest.sh"
 

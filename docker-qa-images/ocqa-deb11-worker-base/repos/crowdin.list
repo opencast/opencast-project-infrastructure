@@ -1,0 +1,1 @@
+deb [signed-by=/etc/apt/keyrings/crowdin.gpg] https://artifacts.crowdin.com/repo/deb/ /

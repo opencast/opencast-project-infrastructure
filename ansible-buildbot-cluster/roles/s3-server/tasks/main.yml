@@ -1,0 +1,37 @@
+---
+
+- name: Create S3 user
+  user:
+    name: '{{ s3_user }}'
+    password: "{{ lookup('password', '/dev/null encrypt=sha256_crypt length=32') }}"
+    update_password: always
+    home: "{{ s3_home }}"
+    groups: docker
+    shell: /sbin/nologin
+  become: yes
+
+- name: Ensure required directories exist and have the right permissions
+  file:
+    state: directory
+    path: "{{ item.path }}"
+    owner: "{{ s3_user }}"
+    group: "{{ s3_user }}"
+    mode: "{{ item.mode }}"
+  become: yes
+  with_items:
+    - { path: "{{ s3_home }}/minio/{{ s3_public_bucket }}", mode: "0755" }
+    - { path: "{{ s3_home }}/minio/{{ s3_private_bucket }}", mode: "0755" }
+    - { path: "{{ s3_home }}/minio/opencast-packages", mode: "0755" }
+
+- name: Template Buildbot configuration files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ s3_user }}"
+    group: "{{ s3_user }}"
+    mode: "{{ item.mode | default('0600') }}"
+    force: yes
+  become: yes
+  with_items:
+    - { src: "docker-compose.yml", dest: "{{ s3_home }}/docker-compose.yml" }
+  notify: ["Start S3"]

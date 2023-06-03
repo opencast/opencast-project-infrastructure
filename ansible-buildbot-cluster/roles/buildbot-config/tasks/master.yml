@@ -10,8 +10,50 @@
   become: yes
   with_items:
     - { path: "{{ buildbot_home }}", mode: "0755" }
+    - { path: "{{ buildbot_home }}/keys", mode: "0755" }
     - { path: "{{ buildbot_config_master }}", mode: "0755" }
     - { path: "{{ buildbot_secrets_master }}", mode: "0700" }
+
+- name: Ensure local temp directory exists
+  file:
+    path: "{{ role_path }}/temp"
+    state: directory
+    mode: 0700
+  tags: just-config
+  connection: local
+
+- name: Templating embeds locally
+  template:
+    src: "embeds/{{ item }}"
+    dest: "{{ role_path }}/temp/{{ item }}"
+    mode: 0600
+  tags: just-config
+  connection: local
+  with_items:
+    - ssh_config
+    - known_hosts
+
+- name: Munging templated embeds
+  replace:
+    path: '{{ role_path }}/temp/{{ item }}'
+    regexp: '(\w+[^\\])\n(\w+)' #This adds the backslashes on empty lines
+    replace: '\1\\\\n\2'
+  tags: just-config
+  connection: local
+  with_items:
+    - ssh_config
+    - known_hosts
+
+- name: Munging templated embeds
+  replace:
+    path: '{{ role_path }}/temp/{{ item }}'
+    regexp: '([a-zA-Z0-9\/\-]+[^\\])\n' #This adds the backslash on everything else
+    replace: '\1\\\\n'
+  tags: just-config
+  connection: local
+  with_items:
+    - ssh_config
+    - known_hosts
 
 - name: Template Buildbot configuration files
   template:
@@ -19,12 +61,16 @@
     dest: "{{ item.dest }}"
     owner: "{{ buildbot_user }}"
     group: "{{ buildbot_user }}"
-    mode: "{{ item.mode | default(0600) }}"
+    mode: "{{ item.mode | default('0600') }}"
     force: yes
   become: yes
   with_items:
     - { src: "docker-compose.yml", dest: "{{ buildbot_home }}/docker-compose.yml" }
+    - { src: "buildbot.service", dest: "/etc/systemd/system/buildbot.service" }
+    - { src: "nginx.service", dest: "/etc/systemd/system/nginx.service" }
     - { src: "db.env", dest: "{{ buildbot_home }}/db.env" }
+    - { src: "backup_database.sh", dest: "{{ buildbot_home }}/backup_database.sh", mode: "0700" }
+    - { src: "restore_database.sh", dest: "{{ buildbot_home }}/backup_database.sh", mode: "0700" }
     - { src: "master.cfg", dest: "{{ buildbot_config_master }}/master.cfg" }
     - { src: "builders.py", dest: "{{ buildbot_config_master }}/builders.py" }
     - { src: "build.py", dest: "{{ buildbot_config_master }}/build.py" }
@@ -37,10 +83,35 @@
     - { src: "schedulers.py", dest: "{{ buildbot_config_master }}/schedulers.py" }
     - { src: "ansible.py", dest: "{{ buildbot_config_master }}/ansible.py" }
     - { src: "maintenance.py", dest: "{{ buildbot_config_master }}/maintenance.py" }
+    - { src: "docker_images.py", dest: "{{ buildbot_config_master }}/docker_images.py" }
     - { src: "release.py", dest: "{{ buildbot_config_master }}/release.py" }
     - { src: "buildbot.conf", dest: "{{ buildbot_home }}/nginx-config/buildbot.conf" }
   notify: ["Stop Buildbot", "Start Buildbot"]
   tags: just-config
+
+- name: Checking if Buildbot is already running
+  shell: docker-compose ps -q buildbot
+  args:
+    chdir: "{{ buildbot_home }}"
+  become: yes
+  tags: just-config
+  register: docker_ps
+
+- name: Sanity check the files we just templated
+  shell: docker-compose run --rm buildbot /buildbot_venv/bin/buildbot checkconfig
+  args:
+    chdir: "{{ buildbot_home }}"
+  become: yes
+  tags: just-config
+  when: docker_ps.stdout_lines | length == 0
+
+- name: Sanity check the files we just templated
+  shell: docker-compose exec -T buildbot /buildbot_venv/bin/buildbot checkconfig
+  args:
+    chdir: "{{ buildbot_home }}"
+  become: yes
+  tags: just-config
+  when: docker_ps.stdout_lines | length != 0
 
 - name: Template Buildbot private support files
   template:
@@ -49,7 +120,6 @@
     owner: "{{ buildbot_user }}"
     group: "{{ buildbot_user }}"
     mode: 0600
-    force: yes
   become: yes
   with_items:
     - { src: "secrets/changehook.passwd", dest: "{{ buildbot_config_master }}/changehook.passwd" }
@@ -58,19 +128,15 @@
     - { src: "secrets/s3.public_secret_key", dest: "{{ buildbot_secrets_master }}/s3.public_secret_key" }
     - { src: "secrets/s3.private_access_key", dest: "{{ buildbot_secrets_master }}/s3.private_access_key" }
     - { src: "secrets/s3.private_secret_key", dest: "{{ buildbot_secrets_master }}/s3.private_secret_key" }
+    #- { src: "secrets/greglogan-docker-user", dest: "{{ buildbot_secrets_master }}/greglogan-docker-user" }
+    #- { src: "secrets/greglogan-docker-pass", dest: "{{ buildbot_secrets_master }}/greglogan-docker-pass" }
 
-- name: Ensure local temp directory exists
-  file:
-    path: "temp"
-    state: directory
-    mode: 0700
-  connection: local
 
   #The following files then get uploaded to S3 next
 - name: Template Buildbot private support files
   template:
     src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+    dest: "{{role_path}}/{{ item.dest }}"
     mode: 0600
   connection: local
   with_items:
@@ -90,7 +156,7 @@
     overwrite: "always"
     permission: [] #prevents a warning about PutObjectAcl not being implemented by minio
     bucket: "{{ s3_private_bucket }}"
-    src: "{{ item.src }}"
+    src: "{{ role_path }}/{{ item.src }}"
     object: "{{ item.dest }}"
   connection: local
   with_items:
@@ -100,8 +166,24 @@
     - { src: "temp/develop", dest: "{{ groups['master'][0] }}/env/develop" }
     - { src: "temp/settings.xml", dest: "{{ groups['master'][0] }}/mvn/settings.xml" }
 
+- name: Extracting public signing key from private key
+  shell: gpg --no-default-keyring --keyring=./temp/keyring.gpg --import ./temp/signing.key && gpg --no-default-keyring --keyring=./temp/keyring.gpg -a --export {{ signing_key_id }} >> ./temp/{{ signing_key_id }}.asc
+  args:
+    chdir: "{{ role_path }}"
+  connection: local
+
+- name: Distributing public signing key
+  copy:
+    src: temp/{{ signing_key_id }}.asc
+    dest: "{{ buildbot_home }}/keys/public-signing-key.gpg"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: 0644
+  become: yes
+
 - name: Removing private support files from local disk
   file:
-    path: "temp"
+    path: "{{ role_path }}/temp"
     state: absent
   connection: local
+  tags: always

@@ -14,7 +14,15 @@
     split: ':'
   register: 'gid'
 
+- name: Determine Docker GID
+  getent:
+    database: 'group'
+    key: 'docker'
+    split: ':'
+  register: 'docker'
+
 - name: Storing data
   set_fact:
-   uid: "{{ uid['ansible_facts']['getent_passwd'][buildbot_user][1] }}"
-   gid: "{{ gid['ansible_facts']['getent_group'][buildbot_user][1] }}"
+    uid: "{{ uid['ansible_facts']['getent_passwd'][buildbot_user][1] }}"
+    gid: "{{ gid['ansible_facts']['getent_group'][buildbot_user][1] }}"
+    docker_gid: "{{ docker['ansible_facts']['getent_group']['docker'][1] }}"

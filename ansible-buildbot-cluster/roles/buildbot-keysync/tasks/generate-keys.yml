@@ -1,0 +1,24 @@
+---
+
+- name: Clear current Buildbot user ssh key
+  file:
+    name: "{{ buildbot_home }}/{{ item }}"
+    state: absent
+  become: yes
+  #Don't clear the key if we're not managing the user for... reasons
+  when: create_buildbot_user
+  with_items:
+    - .ssh/id_rsa
+    - .ssh/id_rsa.pub
+    - .ssh/authorized_keys
+    - .ssh/known_hosts
+
+- name: Generate new Buildbot SSH key
+  user:
+    name: "{{ buildbot_user }}"
+    home: "{{ buildbot_home }}"
+    generate_ssh_key: yes
+    ssh_key_bits: 4096
+  when: create_buildbot_user
+  become: yes
+

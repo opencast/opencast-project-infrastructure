@@ -1,3 +1,5 @@
+[s3]
+
 [buildbot:children]
 master
 workers
@@ -6,7 +8,5 @@ workers
 ci.opencast.org
 
 [workers]
-ci.opencast.org
-oc-com-presentation.rrz.uni-koeln.de
-oc-com-worker1.rrz.uni-koeln.de
-pkg.opencast.org
+cib1
+cib2

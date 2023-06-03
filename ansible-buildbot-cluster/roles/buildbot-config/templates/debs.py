@@ -41,17 +41,13 @@ def getBuildPipeline():
         commands=[
             common.shellArg(
                 command=[
-                    'dch',
-                    '--changelog', 'opencast/debian/changelog',
-                    '--newversion',
-                    util.Interpolate(
-                        '%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s-%(prop:buildnumber)s-%(prop:short_revision)s'),
-                    '-b', '-D', 'unstable', '-u', 'low', '--empty',
-                    util.Interpolate(
-                        'Opencast revision %(prop:got_revision)s, packaged with Debian scripts version %(prop:deb_script_rev)s'
-                    )
+                    './changelog',
+                    util.Property("pkg_major_version"),
+                    util.Property("pkg_minor_version"),
+                    util.Interpolate("%(prop:buildnumber)s-%(prop:short_revision)s"),
+                    "unstable"
                 ],
-                logname='dch'),
+                logname='changelog'),
             common.shellArg(
                 command=[
                     'rm', '-f',
@@ -73,7 +69,7 @@ def getBuildPipeline():
                 logname='build'),
             common.shellArg(
                 command=util.Interpolate(
-                    'echo "Opencast version %(prop:got_revision)s packaged with version %(prop:deb_script_rev)s" | tee outputs/%(prop:oc_commit)s/revision.txt'
+                    'echo "Opencast version %(prop:got_revision)s packaged with version %(prop:deb_script_rev)s" | tee outputs/%(prop:deb_script_rev)s/revision.txt'
                 ),
                 logname='revision')
         ],
@@ -84,18 +80,13 @@ def getBuildPipeline():
         },
         name="Build debs")
 
-    debRepoClone = steps.Git(repourl="{{ source_deb_packaging_repo_url }}",
+    debRepoClone = common.getClone(url="{{ source_deb_packaging_repo_url }}",
                           branch="{{ deb_packaging_repo_branch }}",
-                          alwaysUseLatest=True,
-                          mode="full",
-                          method="fresh",
-                          flunkOnFailure=True,
-                          haltOnFailure=True,
                           name="Cloning deb repo configs")
 
     debRepoLoadKeys = common.shellCommand(
         command=['./build-keys'],
-        name="Loading signing keys")
+        name="Loading repo sig verification keys")
 
     debRepoCreate = common.shellCommand(
         command=['./create-branch', util.Interpolate("%(prop:pkg_major_version)s.x")],
@@ -103,15 +94,16 @@ def getBuildPipeline():
 
 
     debRepoIngest = common.shellCommand(
-        command=['./include-binaries', util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:repo_component)s"), util.Interpolate("outputs/%(prop:revision)s/opencast-%(prop:pkg_major_version)s_%(prop:pkg_major_version)s.x-%(prop:buildnumber)s-%(prop:short_revision)s_amd64.changes")],
+        command=['./include-binaries', util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:repo_component)s"), util.Interpolate("outputs/%(prop:deb_script_rev)s/opencast-%(prop:pkg_major_version)s_%(prop:pkg_major_version)s.x-%(prop:buildnumber)s-%(prop:short_revision)s_amd64.changes")],
         name=util.Interpolate(f"Adding build to %(prop:pkg_major_version)s.x-%(prop:repo_component)s"))
 
     debRepoPrune = common.shellCommand(
-        command=['./clean-unstable-repo', util.Interpolate("%(prop:pkg_major_version)s.x")],
-        name=util.Interpolate(f"Pruning %(prop:pkg_major_version)s.x unstable repository"))
+        command=util.Interpolate("./snapshot-cleanup %(prop:pkg_major_version)s.x oc && ./clean-unstable-repo %(prop:pkg_major_version)s.x"),
+        name=util.Interpolate(f"Pruning %(prop:pkg_major_version)s.x unstable repository"),
+        alwaysRun=True)
 
     debRepoPublish = common.shellCommand(
-        command=["./publish-branch", util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:signing_key)s")],
+        command=["./publish-branch", util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:signing_key)s"), "s3"],
         name=util.Interpolate("Publishing %(prop:pkg_major_version)s.x"),
         env={
             "AWS_ACCESS_KEY_ID": util.Secret("s3.public_access_key"),

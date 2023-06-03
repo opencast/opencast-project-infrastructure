@@ -38,16 +38,9 @@ def getRPMBuilds(props):
 
 def getBuildPipeline():
 
-    rpmsClone = steps.Git(
-        repourl="{{ source_rpm_repo_url }}",
-        branch=util.Interpolate("%(prop:rpmspec_override:-%(prop:branch)s)s"),
-        alwaysUseLatest=True,
-        shallow=True,
-        mode="full",
-        method="clobber",
-        flunkOnFailure=True,
-        haltOnFailure=True,
-        name="Cloning rpm packaging configs")
+    rpmsClone = common.getClone(
+        url="{{ source_rpm_repo_url }}",
+        branch=util.Interpolate("%(prop:rpmspec_override:-%(prop:branch)s)s"))
 
     rpmsVersion = steps.SetPropertyFromCommand(
         command="git rev-parse HEAD",
@@ -126,19 +119,19 @@ def getBuildPipeline():
         workdir="build/rpmbuild/SPECS",
         name="Build rpms")
 
-       # Note: We're using a string here because using the array disables shell globbing!
-    rpmsUpload = common.syncAWS(
-        pathFrom="rpmbuild/RPMS/noarch",
-        pathTo="s3://{{ s3_public_bucket }}/repo/rpms/unstable/el/%(prop:el_version)s/noarch/",
+    # Note: We're using a string here because using the array disables shell globbing!
+    rpmsUpload = common.shellCommand(
+        command=util.Interpolate("mkdir -p /builder/s3/repo/rpms/unstable/el/%(prop:el_version)s/oc-%(prop:pkg_major_version)s/noarch && mv -v rpmbuild/RPMS/noarch/* /builder/s3/repo/rpms/unstable/el/%(prop:el_version)s/oc-%(prop:pkg_major_version)s/noarch/"),
         name="Upload rpms to S3")
 
     rpmsPrune = common.shellCommand(
-        command=util.Interpolate("ls -t /builder/s3/repo/rpms/unstable/el/%(prop:el_version)s/noarch | grep allinone | tail -n +6 | cut -f 4 -d '-' | while read version; do rm -f /builder/s3/repo/rpms/unstable/el/%(prop:el_version)s/noarch/*$version; done"),
-        name=util.Interpolate("Pruning %(prop:pkg_major_version)s unstable repository"))
+        command=util.Interpolate("ls -t /builder/s3/repo/rpms/unstable/el/%(prop:el_version)s/oc-%(prop:pkg_major_version)s/noarch | grep allinone | tail -n +6 | cut -f 4 -d '-' | while read version; do rm -f /builder/s3/repo/rpms/unstable/el/%(prop:el_version)s/oc-%(prop:pkg_major_version)s/noarch/*$version; done"),
+        name=util.Interpolate("Pruning %(prop:pkg_major_version)s unstable repository"),
+        alwaysRun=True)
 
     repoMetadata = common.shellCommand(
         command=['createrepo', '.'],
-        workdir=util.Interpolate("/builder/s3/repo/rpms/unstable/el/%(prop:el_version)s/noarch"),
+        workdir=util.Interpolate("/builder/s3/repo/rpms/unstable/el/%(prop:el_version)s/oc-%(prop:pkg_major_version)s/noarch"),
         name="Building repository")
 
     f_package_rpms = util.BuildFactory()
@@ -154,9 +147,9 @@ def getBuildPipeline():
     f_package_rpms.addStep(common.loadSigningKey())
     f_package_rpms.addStep(rpmsBuild)
     f_package_rpms.addStep(common.unloadSigningKey())
-    f_package_rpms.addStep(rpmsUpload)
     f_package_rpms.addStep(common.deployS3fsSecrets())
     f_package_rpms.addStep(common.mountS3fs())
+    f_package_rpms.addStep(rpmsUpload)
     f_package_rpms.addStep(rpmsPrune)
     f_package_rpms.addStep(repoMetadata)
     f_package_rpms.addStep(common.unmountS3fs())

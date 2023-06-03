@@ -9,25 +9,33 @@
 opencast:
   Develop:
     branch: 'develop'
+    pom: '15'
+    jdk: [ '11' ]
+    ffmpeg: 13
+    profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
+    cores: '1'
+    server: 'develop'
+  14.x:
+    branch: 'r/14.x'
+    pom: '14'
+    jdk: [ '11' ]
+    ffmpeg: 13
+    profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
+    cores: '1'
+    server: 'stable'
+  13.x:
+    branch: 'r/13.x'
     pom: '13'
     jdk: [ '11' ]
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     cores: '1'
-    server: 'develop'
+    server: 'legacy'
   12.x:
     branch: 'r/12.x'
     pom: '12'
     jdk: [ '11' ]
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     cores: '1'
-    server: 'stable'
-  11.x:
-    branch: 'r/11.x'
-    pom: '11'
-    jdk: [ '11' ]
-    profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
-    cores: '1'
-    server: 'legacy'
 
 
 #########################
@@ -54,8 +62,11 @@ buildbot_home: /opt/buildbot
 #The owner of the docker images (the opencast in opencast/ocqa-*)
 docker_image_user: "opencast"
 
+#The version of Buildbot which should be inside the various images
+docker_image_buildbot_version: "v3.8.0"
+
 #The version tag to use for all of the images
-docker_image_tag: "v3.5.0"
+docker_image_tag: "{{ docker_image_buildbot_version }}"
 
 #The version to use for the workers
 docker_worker_image_tag: "{{ docker_image_tag }}"
@@ -64,10 +75,10 @@ docker_worker_image_tag: "{{ docker_image_tag }}"
 docker_worker_base_image: "worker-base"
 
 #The list of possible Debian based distro images
-docker_debian_worker_images: ["deb9", "deb10", "deb11", "ubu18", "ubu20"]
+docker_debian_worker_images: [ "deb10", "deb11", "ubu18", "ubu20", "ubu22"]
 
 #The list of possible CentOS based distro images
-docker_centos_worker_images: ["cent7", "rocky8"]
+docker_centos_worker_images: ["cent8"]
 
 #The docker images currently supported
 docker_worker_images: "{{ docker_debian_worker_images + docker_centos_worker_images }}"
@@ -131,4 +142,19 @@ buildbot_secrets_master: "{{ buildbot_config_master }}/secrets"
 
 #Where built artifacts of all types live
 disk_base: "{{ buildbot_home }}/s3"
+
+#################################
+# ACME settings for HTTPS certs #
+#################################
+
+certbot_auto_renew_user: "{{ buildbot_user }}"
+certbot_create_if_missing: true
+certbot_create_method: standalone
+certbot_hsts: true
+certbot_admin_email: cloud@opencast.org
+certbot_certs:
+  - domains:
+    - "{{ inventory_hostname }}"
+certbot_create_standalone_stop_services:
+  - nginx
 
