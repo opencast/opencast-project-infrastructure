@@ -1,6 +1,12 @@
 ---
 
-- src: nginxinc.nginx
-  version: 0.23.1
-- src: nginxinc.nginx_config
-  version: 0.5.1
+roles:
+  - name: nginxinc.nginx
+    version: 0.23.1
+  - name: nginxinc.nginx_config
+    version: 0.5.1
+  - name: lkiesow.dnf_autoupdate
+    version: 2.0.1
+
+collections:
+  - community.crypto

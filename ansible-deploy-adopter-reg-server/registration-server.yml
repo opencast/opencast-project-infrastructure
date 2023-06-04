@@ -43,6 +43,7 @@
     - nginxinc.nginx
     - nginxinc.nginx_config
     - adopter-reg-server
+    - lkiesow.dnf_autoupdate
   vars:
     - reg_server_user: "opencast"
     - reg_server_pass: "{{ lookup('passwordstore', 'register.opencast.org/opencast') }}"
