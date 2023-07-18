@@ -78,4 +78,4 @@
 
   # Role ID 1 is superuser
 - name: Adding user and role
-  command: sqlite3 {{ adopter_reg_home }}/instance/app.db "INSERT INTO user VALUES('oc_ansible_generated', {{ opencast_user_db_id }},'{{ reg_server_user }}@opencast.org','{{ reg_server_pass }}','1970-01-01 00:00:00','1970-01-01 00:00:00','','','',1); INSERT INTO roles_users VALUES({{ opencast_user_db_id }},1)"
+  command: sqlite3 {{ adopter_reg_home }}/instance/app.db "INSERT INTO user VALUES('oc_ansible_generated', {{ opencast_user_db_id }},'{{ reg_server_user }}','{{ reg_server_pass }}','1970-01-01 00:00:00','1970-01-01 00:00:00','','','',1); INSERT INTO roles_users VALUES({{ opencast_user_db_id }},1)"

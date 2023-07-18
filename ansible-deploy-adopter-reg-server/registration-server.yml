@@ -45,8 +45,8 @@
     - adopter-reg-server
     - lkiesow.dnf_autoupdate
   vars:
-    - reg_server_user: "opencast"
-    - reg_server_pass: "{{ lookup('passwordstore', 'register.opencast.org/opencast') }}"
+    - reg_server_user: "opencast@opencast.org"
+    - reg_server_pass: "{{ lookup('passwordstore', 'register.opencast.org/opencast@opencast.org') }}"
     - reg_server_salt: "{{ lookup('passwordstore', 'register.opencast.org/salt') }}"
     - nginx_manage_repo: false
     - nginx_install_from: os_repository
