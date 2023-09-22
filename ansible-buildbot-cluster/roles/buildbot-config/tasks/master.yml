@@ -70,7 +70,7 @@
     - { src: "nginx.service", dest: "/etc/systemd/system/nginx.service" }
     - { src: "db.env", dest: "{{ buildbot_home }}/db.env" }
     - { src: "backup_database.sh", dest: "{{ buildbot_home }}/backup_database.sh", mode: "0700" }
-    - { src: "restore_database.sh", dest: "{{ buildbot_home }}/backup_database.sh", mode: "0700" }
+    - { src: "restore_database.sh", dest: "{{ buildbot_home }}/restore_database.sh", mode: "0700" }
     - { src: "master.cfg", dest: "{{ buildbot_config_master }}/master.cfg" }
     - { src: "builders.py", dest: "{{ buildbot_config_master }}/builders.py" }
     - { src: "build.py", dest: "{{ buildbot_config_master }}/build.py" }
