@@ -27,14 +27,16 @@ def load_config():
         config = yaml.safe_load(f)
 
 
-def acl():
-    return json.dumps({'acl': {'ace': config['acl']}})
+def acl(name="public"):
+    return json.dumps({'acl': {'ace': config['acl'][name]}})
 
 
 def create_series():
     print('Creating series…')
     for series in config.get('series', []):
-        series['acl'] = acl()
+        if not acl in series:
+            series['acl']="public"
+        series['acl'] = acl(series['acl'])
         r = post('/series/', data=series)
         print_status(r.ok, series["title"])
 
@@ -42,14 +44,20 @@ def create_series():
 def create_episodes():
     print('Ingesting episodes…')
     for media in config.get('media', []):
-        fields = [('acl', (None, acl()))]
+        fields = []
         for field in media:
             for key, value in field.items():
-                fields.append((key, (None, value)))
+                if "acl" == key:
+                    fields.append((key, (None, acl(value))))
+                else:
+                    fields.append((key, (None, value)))
         endpoint = '/ingest/addMediaPackage/' + config['server']['workflow']
         r = post(endpoint, files=fields)
         title = [x[1][1] for x in fields if x[0] == "title"][0]
         print_status(r.ok, title)
+        if not r.ok:
+            print(r)
+            print(r.text)
 
 
 if __name__ == '__main__':
