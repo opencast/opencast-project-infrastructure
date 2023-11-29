@@ -35,7 +35,7 @@ class Reports():
             if key in props:
                 self.props[key]
 
-        self.props['cores'] = 1 #cores # Fixed at 1 since the reports aren't multithreaded
+        self.props['cores'] = "1" #cores # Fixed at 1 since the reports aren't multithreaded
         self.pretty_branch_name = self.props["branch_pretty"]
         self.jdks = self.props["jdk"]
         self.buildFilter = lambda change: any(map(lambda filename: "modules" in filename, change.files)) or any(map(lambda filename: "assemblies" in filename, change.files))
