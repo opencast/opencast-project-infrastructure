@@ -13,6 +13,7 @@ opencast:
     jdk: [ '11', '17' ]
     ffmpeg: 13
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
+    el: [ 7, 8, 9 ]
     cores: '1'
     server: 'develop'
   14.x:
@@ -21,6 +22,7 @@ opencast:
     jdk: [ '11' ]
     ffmpeg: 13
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
+    el: [ 7, 8, 9 ]
     cores: '1'
     server: 'stable'
   13.x:

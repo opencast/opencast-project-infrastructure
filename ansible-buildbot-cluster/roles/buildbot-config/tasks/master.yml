@@ -72,21 +72,19 @@
     - { src: "backup_database.sh", dest: "{{ buildbot_home }}/backup_database.sh", mode: "0700" }
     - { src: "restore_database.sh", dest: "{{ buildbot_home }}/restore_database.sh", mode: "0700" }
     - { src: "master.cfg", dest: "{{ buildbot_config_master }}/master.cfg" }
-    - { src: "builders.py", dest: "{{ buildbot_config_master }}/builders.py" }
     - { src: "build.py", dest: "{{ buildbot_config_master }}/build.py" }
     - { src: "common.py", dest: "{{ buildbot_config_master }}/common.py" }
+    - { src: "packages.py", dest: "{{ buildbot_config_master }}/packages.py" }
     - { src: "debs.py", dest: "{{ buildbot_config_master }}/debs.py" }
     - { src: "markdown.py", dest: "{{ buildbot_config_master }}/markdown.py" }
     - { src: "database.py", dest: "{{ buildbot_config_master }}/database.py" }
     - { src: "reports.py", dest: "{{ buildbot_config_master }}/reports.py" }
     - { src: "rpms.py", dest: "{{ buildbot_config_master }}/rpms.py" }
-    - { src: "schedulers.py", dest: "{{ buildbot_config_master }}/schedulers.py" }
     - { src: "ansible.py", dest: "{{ buildbot_config_master }}/ansible.py" }
     - { src: "maintenance.py", dest: "{{ buildbot_config_master }}/maintenance.py" }
     - { src: "docker_images.py", dest: "{{ buildbot_config_master }}/docker_images.py" }
     - { src: "release.py", dest: "{{ buildbot_config_master }}/release.py" }
     - { src: "buildbot.conf", dest: "{{ buildbot_home }}/nginx-config/buildbot.conf" }
-  notify: ["Stop Buildbot", "Start Buildbot"]
   tags: just-config
 
 - name: Checking if Buildbot is already running

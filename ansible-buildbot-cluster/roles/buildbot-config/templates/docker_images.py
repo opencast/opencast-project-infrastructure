@@ -1,7 +1,7 @@
 # -*- python -*-
 # ex: set filetype=python:
 
-from buildbot.plugins import steps, util
+from buildbot.plugins import steps, util, schedulers
 from buildbot.process import buildstep, logobserver
 from twisted.internet import defer
 from datetime import datetime
@@ -50,148 +50,270 @@ class GenerateDockerBuilds(buildstep.ShellMixin, steps.BuildStep):
         return result
 
 
-@util.renderer
-def selectDockerHostUserSecret(props):
-    secretId = str(props.getProperty("docker_host")) + "-docker-user"
-    return util.Secret(secretId)
+class Docker():
 
-@util.renderer
-def selectDockerHostPassSecret(props):
-    secretId = str(props.getProperty("docker_host")) + "-docker-pass"
-    return util.Secret(secretId)
+    REQUIRED_PARAMS = [
+        "workernames"
+        ]
 
-cloneDockerfiles = common.getClone(url="{{ infra_repo_url }}", branch=util.Property("docker_branch"))
+    OPTIONAL_PARAMS = [
+        ]
 
-generateBuilds = GenerateDockerBuilds(
-        command="ls docker-qa-images | grep worker-base | cut -f 2 -d '-'",
-        name="Determining target images",
-        haltOnFailure=True,
-        flunkOnFailure=True)
+    props = {}
 
-setFullDockerImageName = steps.SetProperty(
-        property="fdn",
-        value=util.Interpolate("ocqa-%(prop:docker_image)s-worker-base"))
+    def __init__(self, props):
+        for key in Docker.REQUIRED_PARAMS:
+            if not key in props:
+                pass
+                #fail
+            if type(props[key]) in [str, list]:
+                self.props[key] = props[key]
 
-@util.renderer
-def getDatetime():
-    return datetime.utcnow().strftime('%Y-%m-%d:T%H:%M:%SZ')
-
-buildDockerImage = common.shellCommand(
-        command=["docker", "build", ".",
-            "--build-arg", util.Interpolate("VERSION=%(prop:buildbot_version)s"),
-            "--build-arg", f"BUILD_DATE={ str(getDatetime) }",
-            "-t", util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:latest")],
-        workdir=util.Interpolate("build/docker-qa-images/%(prop:fdn)s"),
-        name=util.Interpolate("Building %(prop:fdn)s:%(prop:docker_tag:-buildbot_version)s"))
-
-tagImage = common.shellCommand(
-        command=["docker", "tag",
-            util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:latest"),
-            util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:%(prop:docker_tag:-buildbot_version)s")],
-        name=util.Interpolate("Tagging %(prop:fdn)s:latest as %(prop:docker_tag:-buildbot_version)s"))
-
-tagUpstreamImage = common.shellCommand(
-        command=["docker", "tag",
-            util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:latest"),
-            util.Interpolate("greglogan/%(prop:fdn)s:latest")],
-        doStepIf="greglogan" != util.Property("docker_host"),
-        hideStepIf="greglogan" == util.Property("docker_host"),
-        name=util.Interpolate("Tagging for latest for upstream as well"))
-
-dockerLogin = common.shellCommand(
-        command=["docker", "login", "-u", selectDockerHostUserSecret, "-p", selectDockerHostPassSecret, util.Interpolate("%(prop:docker_host)s")],
-        name=util.Interpolate("Logging into %(prop:docker_host)s"))
-
-dockerLoginUpstream = common.shellCommand(
-        command=["docker", "login", "-u", util.Secret("greglogan-docker-user"), "-p", util.Secret("greglogan-docker-pass")],
-        doStepIf="greglogan" != util.Property("docker_host"),
-        hideStepIf="greglogan" == util.Property("docker_host"),
-        name="Logging into Dockerhub")
-
-pushlatestDockerImage = common.shellCommand(
-        command=["docker", "push", util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:latest")],
-        name=util.Interpolate("Pushing %(prop:fdn)s:latest"))
-
-pushUpstreamLatestDockerImage = common.shellCommand(
-        command=["docker", "push", util.Interpolate("greglogan/%(prop:fdn)s:latest")],
-        doStepIf="greglogan" != util.Property("docker_host"),
-        hideStepIf="greglogan" == util.Property("docker_host"),
-        name=util.Interpolate("Pushing greglogan/%(prop:fdn)s:latest"))
-
-pushDockerImage = common.shellCommand(
-        command=["docker", "push", util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:%(prop:docker_tag)s")],
-        name=util.Interpolate("Pushing %(prop:fdn)s:%(prop:docker_tag)s"),
-        doStepIf=lambda step: "latest" != util.Property("docker_tag"),
-        hideStepIf=lambda results, step: "latest" != util.Property("docker_tag"))
-
-pullDockerImage = common.shellCommand(
-        command=['docker', 'pull', util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:%(prop:docker_tag)s")],
-        name=util.Interpolate("Fetching %(prop:fdn)s:%(prop:docker_tag)s image"))
-
-removeDockerTag = common.shellCommand(
-        command=["docker", "rmi", "-f", util.Interpolate("ocqa-%(prop:docker_image)s-worker:%(prop:docker_tag)s")],
-        name=util.Interpolate("Untagging ocqa-%(prop:docker_image)s-worker:%(prop:docker_tag)s"))
-
-pruneDockerImages = common.shellCommand(
-        command=["docker", "system", "prune", "-f"],
-        name="Pruning Docker")
+        for key in Docker.OPTIONAL_PARAMS:
+            if key in props:
+                self.props[key] = props[key]
 
 
-def getPushPipeline():
+    @util.renderer
+    def selectDockerHostUserSecret(props):
+        secretId = str(props.getProperty("docker_host")) + "-docker-user"
+        return util.Secret(secretId)
 
-    # This pipeline runs once per image type
-    f_build = util.BuildFactory()
-    f_build.addStep(cloneDockerfiles)
-    f_build.addStep(setFullDockerImageName)
-    f_build.addStep(buildDockerImage)
-    f_build.addStep(tagImage)
-    f_build.addStep(tagUpstreamImage)
-    f_build.addStep(dockerLogin)
-    f_build.addStep(dockerLoginUpstream)
-    f_build.addStep(pushlatestDockerImage)
-    f_build.addStep(pushUpstreamLatestDockerImage)
-    f_build.addStep(pushDockerImage)
-    f_build.addStep(steps.Trigger(
-        name=util.Interpolate("Triggering pull of %(prop:docker_image)s"),
-            schedulerNames=["ocqa finalizer triggerable"],
-            #We need to check for tags like 'v3.7.0', where we remove the v, and 'latest', where we don't.
-            doStepIf=util.Property("docker_tag", default="latest") in ("{{ docker_image_tag[1:] }}", "{{ docker_image_tag }}"),
-            waitForFinish=False,
-            alwaysUseLatest=True,
-            set_properties={
-                'docker_image': util.Property("docker_image"), 
-                'docker_tag': util.Property("docker_tag"),
-                'docker_host': util.Property("docker_host"),
-                'docker_branch': util.Property('docker_branch')
-            }))
-    f_build.addStep(common.getClean())
 
-    return f_build
+    @util.renderer
+    def selectDockerHostPassSecret(props):
+        secretId = str(props.getProperty("docker_host")) + "-docker-pass"
+        return util.Secret(secretId)
 
-def getPullPipeline():
 
-    # This pipline runs once per *worker* and handles all of the images
-    f_get = util.BuildFactory()
-    f_get.addStep(cloneDockerfiles)
-    f_get.addStep(dockerLogin)
-    f_get.addStep(setFullDockerImageName)
-    f_get.addStep(pullDockerImage)
-    f_get.addStep(pruneDockerImages)
-    f_get.addStep(common.getClean())
-    
-    return f_get
+    @util.renderer
+    def getDatetime(self):
+        return datetime.utcnow().strftime('%Y-%m-%d:T%H:%M:%SZ')
 
-def getSpawnerPipeline():
 
-    f_spawner = util.BuildFactory()
-    f_spawner.addStep(cloneDockerfiles)
-    f_spawner.addStep(generateBuilds)
+    cloneDockerfiles = common.getClone(url="{{ infra_repo_url }}", branch=util.Property("docker_branch"))
 
-    return f_spawner
+    setFullDockerImageName = steps.SetProperty(
+            property="fdn",
+            value=util.Interpolate("ocqa-%(prop:docker_image)s-worker-base"))
 
-def getCleanerPipeline():
 
-    f_cleaner = util.BuildFactory()
-    f_cleaner.addStep(pruneDockerImages)
+    dockerLogin = common.shellCommand(
+            command=["docker", "login", "-u", selectDockerHostUserSecret, "-p", selectDockerHostPassSecret, util.Interpolate("%(prop:docker_host)s")],
+            name=util.Interpolate("Logging into %(prop:docker_host)s"))
 
-    return f_cleaner
+    dockerLoginUpstream = common.shellCommand(
+            command=["docker", "login", "-u", util.Secret("greglogan-docker-user"), "-p", util.Secret("greglogan-docker-pass")],
+            doStepIf="greglogan" != util.Property("docker_host"),
+            hideStepIf="greglogan" == util.Property("docker_host"),
+            name="Logging into Dockerhub")
+
+    #FIXME: Unused?
+    removeDockerTag = common.shellCommand(
+            command=["docker", "rmi", "-f", util.Interpolate("ocqa-%(prop:docker_image)s-worker:%(prop:docker_tag)s")],
+            name=util.Interpolate("Untagging ocqa-%(prop:docker_image)s-worker:%(prop:docker_tag)s"))
+
+    pruneDockerImages = common.shellCommand(
+            command=["docker", "system", "prune", "-f"],
+            name="Pruning Docker")
+
+
+    def getPushPipeline(self):
+
+        buildDockerImage = common.shellCommand(
+            command=["docker", "build", ".",
+                "--build-arg", util.Interpolate("VERSION=%(prop:buildbot_version)s"),
+                "--build-arg", f"BUILD_DATE={ str(self.getDatetime) }",
+                "-t", util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:latest")],
+            workdir=util.Interpolate("build/docker-qa-images/%(prop:fdn)s"),
+            name=util.Interpolate("Building %(prop:fdn)s:%(prop:docker_tag:-buildbot_version)s"))
+
+        tagImage = common.shellCommand(
+            command=["docker", "tag",
+                util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:latest"),
+                util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:%(prop:docker_tag:-buildbot_version)s")],
+            name=util.Interpolate("Tagging %(prop:fdn)s:latest as %(prop:docker_tag:-buildbot_version)s"))
+
+        tagUpstreamImage = common.shellCommand(
+            command=["docker", "tag",
+                util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:latest"),
+                util.Interpolate("greglogan/%(prop:fdn)s:latest")],
+            doStepIf="greglogan" != util.Property("docker_host"),
+            hideStepIf="greglogan" == util.Property("docker_host"),
+            name=util.Interpolate("Tagging for latest for upstream as well"))
+
+
+        pushlatestDockerImage = common.shellCommand(
+            command=["docker", "push", util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:latest")],
+            name=util.Interpolate("Pushing %(prop:fdn)s:latest"))
+
+        pushUpstreamLatestDockerImage = common.shellCommand(
+            command=["docker", "push", util.Interpolate("greglogan/%(prop:fdn)s:latest")],
+            doStepIf="greglogan" != util.Property("docker_host"),
+            hideStepIf="greglogan" == util.Property("docker_host"),
+            name=util.Interpolate("Pushing greglogan/%(prop:fdn)s:latest"))
+
+        pushDockerImage = common.shellCommand(
+            command=["docker", "push", util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:%(prop:docker_tag)s")],
+            name=util.Interpolate("Pushing %(prop:fdn)s:%(prop:docker_tag)s"),
+            doStepIf=lambda step: "latest" != util.Property("docker_tag"),
+            hideStepIf=lambda results, step: "latest" != util.Property("docker_tag"))
+
+
+        # This pipeline runs once per image type
+        f_build = util.BuildFactory()
+        f_build.addStep(self.cloneDockerfiles)
+        f_build.addStep(self.setFullDockerImageName)
+        f_build.addStep(buildDockerImage)
+        f_build.addStep(tagImage)
+        f_build.addStep(tagUpstreamImage)
+        f_build.addStep(self.dockerLogin)
+        f_build.addStep(self.dockerLoginUpstream)
+        f_build.addStep(pushlatestDockerImage)
+        f_build.addStep(pushUpstreamLatestDockerImage)
+        f_build.addStep(pushDockerImage)
+        f_build.addStep(steps.Trigger(
+            name=util.Interpolate("Triggering pull of %(prop:docker_image)s"),
+                schedulerNames=["ocqa finalizer triggerable"],
+                #We need to check for tags like 'v3.7.0', where we remove the v, and 'latest', where we don't.
+                doStepIf=util.Property("docker_tag", default="latest") in ("{{ docker_image_tag[1:] }}", "{{ docker_image_tag }}"),
+                waitForFinish=False,
+                alwaysUseLatest=True,
+                set_properties={
+                    'docker_image': util.Property("docker_image"),
+                    'docker_tag': util.Property("docker_tag"),
+                    'docker_host': util.Property("docker_host"),
+                    'docker_branch': util.Property('docker_branch')
+                }))
+        f_build.addStep(common.getClean())
+
+        return f_build
+
+
+    def getPullPipeline(self):
+
+        pullDockerImage = common.shellCommand(
+            command=['docker', 'pull', util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:%(prop:docker_tag)s")],
+            name=util.Interpolate("Fetching %(prop:fdn)s:%(prop:docker_tag)s image"))
+
+        # This pipline runs once per *worker* and handles all of the images
+        f_get = util.BuildFactory()
+        f_get.addStep(self.cloneDockerfiles)
+        f_get.addStep(self.dockerLogin)
+        f_get.addStep(self.setFullDockerImageName)
+        f_get.addStep(pullDockerImage)
+        f_get.addStep(self.pruneDockerImages)
+        f_get.addStep(common.getClean())
+
+        return f_get
+
+
+    def getSpawnerPipeline(self):
+
+        generateBuilds = GenerateDockerBuilds(
+            command="ls docker-qa-images | grep worker-base | cut -f 2 -d '-'",
+            name="Determining target images",
+            haltOnFailure=True,
+            flunkOnFailure=True)
+
+
+        f_spawner = util.BuildFactory()
+        f_spawner.addStep(self.cloneDockerfiles)
+        f_spawner.addStep(generateBuilds)
+
+        return f_spawner
+
+
+    def getCleanerPipeline(self):
+
+        f_cleaner = util.BuildFactory()
+        f_cleaner.addStep(self.pruneDockerImages)
+
+        return f_cleaner
+
+
+    def getBuilders(self):
+
+        builders = []
+
+        #Spawn all of the individual container builds
+        builders.append(util.BuilderConfig(
+            name="ocqa worker build spawner",
+            workernames=self.props['workernames'],
+            factory=self.getSpawnerPipeline()))
+
+        #Triggerable scheduler to catch the above trigger steps
+        builders.append(util.BuilderConfig(
+            name="ocqa worker build",
+            collapseRequests=False,
+            workernames=self.props['workernames'],
+            factory=self.getPushPipeline()))
+
+        #Each worker has its own builder since this has to execute on every single worker
+        for worker in self.props["workernames"]:
+            builders.append(util.BuilderConfig(
+                name="ocqa worker " + worker + " finalizer",
+                collapseRequests=False,
+                workernames=self.props['workernames'],
+                factory=self.getPullPipeline()))
+            #NB: This gets fired by the maintenance scheduler!
+            builders.append(util.BuilderConfig(
+                name=f"ocqa { worker } docker cleanup",
+                workernames=self.props['workernames'],
+                factory=self.getCleanerPipeline()))
+
+        return builders
+
+
+    def getSchedulers(self):
+
+        scheds = {}
+
+        scheds['docker_spawner'] = schedulers.SingleBranchScheduler(
+            name="ocqa spawner scheduler",
+            builderNames=["ocqa worker build spawner"],
+            fileIsImportant=lambda change: any(map(lambda filename: "docker-qa-images" in filename, change.files)),
+            onlyImportant=True,
+            change_filter=util.ChangeFilter(category="push", branch_re='f/buildbot'))
+
+        scheds['docker_image'] = schedulers.Triggerable(
+            name="ocqa image triggerable",
+            builderNames=["ocqa worker build"])
+
+        scheds['docker_finalizer'] = schedulers.Triggerable(
+            name="ocqa finalizer triggerable",
+            builderNames=["ocqa worker " + worker + " finalizer" for worker in self.props["workernames"]])
+
+        scheds["docker_force"] = schedulers.ForceScheduler(
+            name="ocqaforce",
+            buttonName="Force Build",
+            label="Force Build Settings",
+            builderNames=["ocqa worker build spawner"],
+            codebases=[
+                  util.CodebaseParameter(
+                      "",
+                      label="Dockerfile source branch",
+                      # will generate a combo box
+                      branch=util.StringParameter(
+                          name="branch",
+                          default="f/buildbot"
+                      ),
+                      # will generate nothing in the form, but revision, repository,
+                      # and project are needed by buildbot scheduling system so we
+                      # need to pass a value ("")
+                      revision=util.FixedParameter(name="revision", default="HEAD"),
+                      repository=util.FixedParameter(
+                          name="repository", default="{{ infra_repo_url }}"),
+                      project=util.FixedParameter(name="project", default=""),
+                  )],
+
+            # in case you don't require authentication this will display
+            # input for user to type his name
+            username=util.UserNameParameter(label="your name:", size=80),
+
+            properties=[
+              util.StringParameter(name="buildbot_version", label="Buildbot Version", default="{{ docker_image_tag }}"),
+              util.StringParameter(name="docker_tag", label="Docker Tag", default="latest")
+            ])
+
+        return scheds

@@ -1,11 +1,65 @@
 # -*- python -*-
 # ex: set filetype=python:
 
-from buildbot.plugins import steps, util
+from buildbot.plugins import steps, util, schedulers
 import random
 
 
-def shellCommand(command, name, workdir="build", env={}, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, alwaysRun=False, doStepIf=True, hideStepIf=False):
+def getAnyBranchScheduler(name, builderNames, fileIsImportant=lambda fn: True, change_filter=None, properties=dict()):
+    return schedulers.AnyBranchScheduler(
+        name=name,
+        # NB: Do not make this a string, a horribly unclear error occurs and nothing works for this scheduler...
+        treeStableTimer={{ stability_limit }},
+        builderNames=builderNames,
+        properties=properties,
+        change_filter=change_filter,
+        fileIsImportant=fileIsImportant)
+
+
+def getForceScheduler(props, build_type, builderNames):
+    pretty_branch_name = props['branch_pretty']
+
+    forceParams = [
+        util.CodebaseParameter(
+            "",
+            label="Main repository",
+            # will generate a combo box
+            branch=util.FixedParameter(
+                name="branch",
+                default=props['git_branch_name'],
+            ),
+            # will generate nothing in the form, but revision, repository,
+            # and project are needed by buildbot scheduling system so we
+            # need to pass a value ("")
+            revision=util.FixedParameter(name="revision", default="HEAD"),
+            repository=util.FixedParameter(
+                name="repository", default="{{ source_repo_url }}"),
+            project=util.FixedParameter(name="project", default=""),
+        ),
+    ]
+
+# Note: This is a hack, but we need a unique name for the force schedulers, and it can't have special characters in it, and it can't be longer than a certain length
+    return schedulers.ForceScheduler(
+        name=f"F{ pretty_branch_name[0:2] }{ build_type }".replace(".", "x").replace(" ", ""),
+        buttonName="Force Build",
+        label="Force Build Settings",
+        builderNames=builderNames,
+        codebases=forceParams,
+
+        # will generate a text input
+        reason=util.StringParameter(
+            name="reason",
+            label="Reason:",
+            required=False,
+            size=80,
+            default=""),
+
+        # in case you don't require authentication this will display
+        # input for user to type his name
+        username=util.UserNameParameter(label="your name:", size=80))
+
+
+def shellCommand(command, name, workdir="build", env={}, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, alwaysRun=False, doStepIf=True, hideStepIf=False, locks=[]):
     return steps.ShellCommand(
         command=command,
         name=name,
@@ -16,7 +70,8 @@ def shellCommand(command, name, workdir="build", env={}, haltOnFailure=True, flu
         warnOnFailure=warnOnFailure,
         alwaysRun=alwaysRun,
         doStepIf=doStepIf,
-        hideStepIf=hideStepIf)
+        hideStepIf=hideStepIf,
+        locks=locks)
 
 
 def shellArg(command, logname, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True):
@@ -28,7 +83,7 @@ def shellArg(command, logname, haltOnFailure=True, flunkOnFailure=True, warnOnFa
         warnOnFailure=warnOnFailure)
 
 
-def shellSequence(commands, name, workdir="build", env={}, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, alwaysRun=False, doStepIf=True, hideStepIf=False, timeout=240):
+def shellSequence(commands, name, workdir="build", env={}, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, alwaysRun=False, doStepIf=True, hideStepIf=False, timeout=240, locks=[]):
     return steps.ShellSequence(
         commands=commands,
         name=name,
@@ -40,7 +95,8 @@ def shellSequence(commands, name, workdir="build", env={}, haltOnFailure=True, f
         warnOnFailure=warnOnFailure,
         alwaysRun=alwaysRun,
         doStepIf=doStepIf,
-        hideStepIf=hideStepIf)
+        hideStepIf=hideStepIf,
+        locks=locks)
 
 
 
@@ -84,14 +140,6 @@ def getWorkerPrep():
     return shellSequence(
         commands=commandsAry,
         name="Build Prep")
-
-
-def getJDKBuilds(props):
-    return props['jdk']
-
-
-def getBuildWithJDK(prefix, build_type, jdk):
-    return prefix + " " + build_type + " JDK " + str(jdk)
 
 
 @util.renderer
@@ -207,20 +255,20 @@ def AWSStep(command, name, doStepIf=True, hideStepIf=False, access=util.Secret("
         hideStepIf=hideStepIf)
 
 
-def deployS3fsSecrets():
+def deployS3fsSecrets(access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
     return shellCommand(
-        command=util.Interpolate("echo '%(secret:s3.public_access_key)s:%(secret:s3.public_secret_key)s' > /builder/.passwd-s3fs && chmod 600 /builder/.passwd-s3fs"),
+        command=util.Interpolate(f"echo '%(secret:{ access_key_secret_id })s:%(secret:{ secret_key_secret_id })s' > /builder/.passwd-s3fs && chmod 600 /builder/.passwd-s3fs"),
         name="Deploying S3 auth details")
 
-def mountS3fs():
+def mountS3fs(host="{{ s3_host }}", bucket="{{ s3_public_bucket }}", args=[]):
     return shellCommand(
         command=util.Interpolate(" ".join(
             ["mkdir", "-p", "/builder/s3", "&&",
              "s3fs",
              "-o", "use_path_request_style",
-             "-o", "url={{ s3_host }}/",
+             "-o", f"url={ host }/",
              "-o", "uid=%(prop:builder_uid)s,gid=%(prop:builder_gid)s,umask=0000",
-             "{{ s3_public_bucket }}", "/builder/s3"])),
+             f"{ bucket }", "/builder/s3"] + args)),
         name="Mounting S3")
 
 def unmountS3fs():
