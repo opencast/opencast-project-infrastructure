@@ -255,20 +255,20 @@ def AWSStep(command, name, doStepIf=True, hideStepIf=False, access=util.Secret("
         hideStepIf=hideStepIf)
 
 
-def deployS3fsSecrets():
+def deployS3fsSecrets(access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
     return shellCommand(
-        command=util.Interpolate("echo '%(secret:s3.public_access_key)s:%(secret:s3.public_secret_key)s' > /builder/.passwd-s3fs && chmod 600 /builder/.passwd-s3fs"),
+        command=util.Interpolate(f"echo '%(secret:{ access_key_secret_id })s:%(secret:{ secret_key_secret_id })s' > /builder/.passwd-s3fs && chmod 600 /builder/.passwd-s3fs"),
         name="Deploying S3 auth details")
 
-def mountS3fs():
+def mountS3fs(host="{{ s3_host }}", bucket="{{ s3_public_bucket }}", args=[]):
     return shellCommand(
         command=util.Interpolate(" ".join(
             ["mkdir", "-p", "/builder/s3", "&&",
              "s3fs",
              "-o", "use_path_request_style",
-             "-o", "url={{ s3_host }}/",
+             "-o", f"url={ host }/",
              "-o", "uid=%(prop:builder_uid)s,gid=%(prop:builder_gid)s,umask=0000",
-             "{{ s3_public_bucket }}", "/builder/s3"])),
+             f"{ bucket }", "/builder/s3"] + args)),
         name="Mounting S3")
 
 def unmountS3fs():
