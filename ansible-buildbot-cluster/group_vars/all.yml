@@ -9,13 +9,22 @@
 opencast:
   Develop:
     branch: 'develop'
-    pom: '15'
+    pom: '16'
     jdk: [ '11', '17' ]
     ffmpeg: 13
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     el: [ 7, 8, 9 ]
     cores: '1'
     server: 'develop'
+  15.x:
+    branch: 'r/15.x'
+    pom: '15'
+    jdk: [ '11' ]
+    ffmpeg: 13
+    profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
+    el: [ 7, 8, 9 ]
+    cores: '1'
+    server: 'stable'
   14.x:
     branch: 'r/14.x'
     pom: '14'
@@ -24,20 +33,7 @@ opencast:
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     el: [ 7, 8, 9 ]
     cores: '1'
-    server: 'stable'
-  13.x:
-    branch: 'r/13.x'
-    pom: '13'
-    jdk: [ '11' ]
-    profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
-    cores: '1'
     server: 'legacy'
-  12.x:
-    branch: 'r/12.x'
-    pom: '12'
-    jdk: [ '11' ]
-    profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
-    cores: '1'
 
 
 #########################
