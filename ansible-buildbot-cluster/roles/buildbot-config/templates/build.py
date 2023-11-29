@@ -17,7 +17,6 @@ class Build():
         ]
 
     OPTIONAL_PARAMS = [
-        "deploy_env"
         ]
 
     props = {}
@@ -39,7 +38,6 @@ class Build():
 
         self.pretty_branch_name = self.props["branch_pretty"]
         self.jdks = self.props["jdk"]
-        self.deploy_env = self.props["deploy_env"] if "deploy_env" in self.props else None
         self.buildFilter = lambda change: any(map(lambda filename: "modules" in filename, change.files)) or any(map(lambda filename: "assemblies" in filename, change.files))
 
     getBuildSize = common.shellCommand(
