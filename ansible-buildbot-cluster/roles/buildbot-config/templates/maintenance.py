@@ -2,7 +2,7 @@
 # ex: set filetype=python:
 
 import os.path
-from buildbot.plugins import steps, util
+from buildbot.plugins import steps, util, schedulers
 from buildbot.process import buildstep, logobserver
 from twisted.internet import defer
 from buildbot.process.results import SUCCESS
@@ -134,7 +134,7 @@ class GenerateDeleteCommands(steps.BuildStep):
         delete_before = datetime.utcnow() - timedelta(days={{ keep_artifacts }})
 
         remaining_prefixes = {}
-        for vers in SUPPORTED_BRANCHES: 
+        for vers in SUPPORTED_BRANCHES:
             remaining_prefixes.update(self.clean_prefix(s3, vers, process_whitelist=True, before_date=delete_before))
         total_size = sum([ int(remaining_prefixes[prefix]['size']) for prefix in remaining_prefixes] )
         print(f"Calculated artifacts storage size is { total_size } bytes for { len(remaining_prefixes) } prefixes")
@@ -164,25 +164,94 @@ class GenerateDeleteCommands(steps.BuildStep):
                })
 
 
+class Maintenance():
 
-def __getBasePipeline():
+    REQUIRED_PARAMS = [
+        "git_branch_name",
+        "workernames"
+        ]
 
-    f_build = util.BuildFactory()
+    OPTIONAL_PARAMS = [
+        ]
 
-    return f_build
+    props = {}
+
+    def __init__(self, props):
+        for key in Maintenance.REQUIRED_PARAMS:
+            if not key in props:
+                pass
+                #fail
+            if type(props[key]) in [str, list]:
+                self.props[key] = props[key]
+
+        for key in Maintenance.OPTIONAL_PARAMS:
+            if key in props:
+                self.props[key] = props[key]
 
 
-def getPullRequestPipeline():
 
-    f_build = __getBasePipeline()
+    def getBuildPipeline(self):
+        f_build = util.BuildFactory()
+        f_build.addStep(GenerateDeleteCommands(name="Clean S3 host"))
 
-    return f_build
-
-
-def getBuildPipeline():
+        return f_build
 
 
-    f_build = __getBasePipeline()
-    f_build.addStep(GenerateDeleteCommands(name="Clean S3 host"))
+    def getBuilders(self):
 
-    return f_build
+        builders = []
+
+        builders.append(util.BuilderConfig(
+            name="Opencast Maintenance",
+            factory=self.getBuildPipeline(),
+            workernames=self.props['workernames']))
+
+        return builders
+
+
+    def getSchedulers(self):
+
+        scheds = {}
+        scheds['maintenance'] = schedulers.Nightly(
+            name="Opencast Maintenance",
+            hour={{ nightly_build_hour }},
+            builderNames=['Opencast Maintenance'] + [ f"ocqa { w } docker cleanup" for w in self.props['workernames'] ])
+
+
+        scheds['forceMaint'] = schedulers.ForceScheduler(
+            name="OpencastMaintenanceForceBuild",
+            buttonName="Force Build",
+            label="Force Build Settings",
+            builderNames=["Opencast Maintenance"],
+            codebases=[
+                util.CodebaseParameter(
+                    "",
+                    label="Main repository",
+                    # will generate a combo box
+                    branch=util.FixedParameter(
+                        name="branch",
+                        default=self.props['git_branch_name'],
+                    ),
+                    # will generate nothing in the form, but revision, repository,
+                    # and project are needed by buildbot scheduling system so we
+                    # need to pass a value ("")
+                    revision=util.FixedParameter(name="revision", default="HEAD"),
+                    repository=util.FixedParameter(
+                        name="repository", default="{{ source_repo_url }}"),
+                    project=util.FixedParameter(name="project", default=""),
+                ),
+            ],
+
+            # will generate a text input
+            reason=util.StringParameter(
+                name="reason",
+                label="Reason:",
+                required=False,
+                size=80,
+                default=""),
+
+            # in case you don't require authentication this will display
+            # input for user to type his name
+            username=util.UserNameParameter(label="your name:", size=80))
+
+        return scheds

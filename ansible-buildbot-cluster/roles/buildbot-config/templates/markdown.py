@@ -122,105 +122,181 @@ class GenerateS3Commands(buildstep.ShellMixin, steps.BuildStep):
         return result
 
 
-def __getBasePipeline():
+class Markdown():
 
-    npm_install = common.shellSequence(
-        commands=[
-            common.shellArg(
-                command=['npm', 'install'],
-                logname='npm_install'),
-        ],
-        workdir="build/docs/guides",
-        name="Running npm install",
-        haltOnFailure=True)
+    REQUIRED_PARAMS = [
+        "git_branch_name",
+        "pkg_major_version",
+        "branch_pretty",
+        "workernames"
+        ]
 
-    npmCheck = common.shellSequence(
-        commands=[
-            common.shellArg(
-                command=['npm', 'test'],
-                haltOnFailure=False,
-                logname='markdown-cli'),
-        ],
-        workdir="build/docs/guides",
-        name="Check Markdown doc formatting with markdown-cli",
-        haltOnFailure=False)
+    OPTIONAL_PARAMS = [
+        ]
 
-    pip_install = common.shellSequence(
-        commands=[
-            common.shellArg(
-                command=['python3', '-m', 'pip', 'install', '-r', 'requirements.txt'],
-                haltOnFailure=False,
-                logname='markdown-cli'),
-        ],
-        workdir="build/docs/guides",
-        name="Running pip install",
-        haltOnFailure=True)
+    props = {}
+    pretty_branch_name = None
 
-    build = common.shellCommand(
-        command=['./.style-and-markdown-build.sh'],
-        name="Running tests and building docs",
-        env={
-            "LC_ALL": "en_US.UTF-8",
-            "LANG": "en_US.UTF-8",
-            "OC_CTYPE": "en_US.UTF-8",
-            "PATH": "/builder/.local/bin:${PATH}"
-        },
-        haltOnFailure=False,
-        flunkOnFailure=True)
+    def __init__(self, props):
+        for key in Markdown.REQUIRED_PARAMS:
+            if not key in props:
+                pass
+                #fail
+            if type(props[key]) in [str, list]:
+                self.props[key] = props[key]
 
-    markdown = GenerateMarkdownCommands(
-        command='ls -d */',
-        name="Determining available docs",
-        workdir="build/docs/guides",
-        haltOnFailure=True,
-        flunkOnFailure=True)
+        for key in Markdown.OPTIONAL_PARAMS:
+            if key in props:
+                self.props[key]
 
-    f_build = util.BuildFactory()
-    f_build.addStep(common.getClone())
-    f_build.addStep(npm_install)
-    f_build.addStep(npmCheck)
-    f_build.addStep(pip_install)
-    f_build.addStep(build)
-    f_build.addStep(markdown)
+        self.pretty_branch_name = self.props["branch_pretty"]
+        self.buildFilter = lambda change: any(map(lambda filename: "docs/guids" in filename, change.files))
 
-    return f_build
+    def __getBasePipeline(self):
+
+        npm_install = common.shellSequence(
+            commands=[
+                common.shellArg(
+                    command=['npm', 'install'],
+                    logname='npm_install'),
+            ],
+            workdir="build/docs/guides",
+            name="Running npm install",
+            haltOnFailure=True)
+
+        npmCheck = common.shellSequence(
+            commands=[
+                common.shellArg(
+                    command=['npm', 'test'],
+                    haltOnFailure=False,
+                    logname='markdown-cli'),
+            ],
+            workdir="build/docs/guides",
+            name="Check Markdown doc formatting with markdown-cli",
+            haltOnFailure=False)
+
+        pip_install = common.shellSequence(
+            commands=[
+                common.shellArg(
+                    command=['python3', '-m', 'pip', 'install', '-r', 'requirements.txt'],
+                    haltOnFailure=False,
+                    logname='markdown-cli'),
+            ],
+            workdir="build/docs/guides",
+            name="Running pip install",
+            haltOnFailure=True)
+
+        build = common.shellCommand(
+            command=['./.style-and-markdown-build.sh'],
+            name="Running tests and building docs",
+            env={
+                "LC_ALL": "en_US.UTF-8",
+                "LANG": "en_US.UTF-8",
+                "OC_CTYPE": "en_US.UTF-8",
+                "PATH": "/builder/.local/bin:${PATH}"
+            },
+            haltOnFailure=False,
+            flunkOnFailure=True)
+
+        markdown = GenerateMarkdownCommands(
+            command='ls -d */',
+            name="Determining available docs",
+            workdir="build/docs/guides",
+            haltOnFailure=True,
+            flunkOnFailure=True)
+
+        f_build = util.BuildFactory()
+        f_build.addStep(common.getClone())
+        f_build.addStep(npm_install)
+        f_build.addStep(npmCheck)
+        f_build.addStep(pip_install)
+        f_build.addStep(build)
+        f_build.addStep(markdown)
+
+        return f_build
 
 
-def getPullRequestPipeline():
+    def getPullRequestPipeline(self):
 
-    f_build = __getBasePipeline()
-    f_build.addStep(common.getClean())
+        f_build = self.__getBasePipeline()
+        f_build.addStep(common.getClean())
 
-    return f_build
+        return f_build
 
 
-def getBuildPipeline():
+    def getBuildPipeline(self):
 
-    compress = GenerateCompressionCommands(
-        command='ls -d */site',
-        name="Determining available docs for compression",
-        workdir="build/docs/guides",
-        haltOnFailure=True,
-        flunkOnFailure=True)
+        compress = GenerateCompressionCommands(
+            command='ls -d */site',
+            name="Determining available docs for compression",
+            workdir="build/docs/guides",
+            haltOnFailure=True,
+            flunkOnFailure=True)
 
-    upload = GenerateS3Commands(
-        command='ls -d */site',
-        name="Determining available docs for upload",
-        workdir="build/docs/guides",
-        haltOnFailure=True,
-        flunkOnFailure=True)
+        upload = GenerateS3Commands(
+            command='ls -d */site',
+            name="Determining available docs for upload",
+            workdir="build/docs/guides",
+            haltOnFailure=True,
+            flunkOnFailure=True)
 
-    updateMarkdown = steps.MasterShellCommand(
-        command=util.Interpolate(
-            "rm -f {{ deployed_markdown_symlink }} && ln -s {{ deployed_markdown }} {{ deployed_markdown_symlink }}"
-        ),
-        flunkOnFailure=True,
-        name="Deploy Markdown")
+        updateMarkdown = steps.MasterShellCommand(
+            command=util.Interpolate(
+                "rm -f {{ deployed_markdown_symlink }} && ln -s {{ deployed_markdown }} {{ deployed_markdown_symlink }}"
+            ),
+            flunkOnFailure=True,
+            name="Deploy Markdown")
 
-    f_build = __getBasePipeline()
-    f_build.addStep(compress)
-    f_build.addStep(upload)
-    #f_build.addStep(updateMarkdown)
-    f_build.addStep(common.getClean())
+        f_build = self.__getBasePipeline()
+        f_build.addStep(compress)
+        f_build.addStep(upload)
+        #f_build.addStep(updateMarkdown)
+        f_build.addStep(common.getClean())
 
-    return f_build
+        return f_build
+
+
+    def getBuilders(self):
+
+        builders = []
+
+        builders.append(util.BuilderConfig(
+            name=self.pretty_branch_name + " Pull Request Markdown",
+            factory=self.getPullRequestPipeline(),
+            workernames=self.props['workernames'],
+            collapseRequests=True,
+            properties=self.props))
+
+        builders.append(util.BuilderConfig(
+            name=self.pretty_branch_name + " Markdown",
+            factory=self.getBuildPipeline(),
+            workernames=self.props['workernames'],
+            properties=self.props))
+
+        return builders
+
+
+    def getSchedulers(self):
+
+        scheds = {}
+
+        #Regular builds
+        scheds[f"{ self.pretty_branch_name }Markdown"] = common.getAnyBranchScheduler(
+            name=self.pretty_branch_name + " Markdown",
+            change_filter=util.ChangeFilter(category=None, branch_re=self.props['git_branch_name']),
+            fileIsImportant=self.buildFilter,
+            builderNames=[ self.pretty_branch_name + " Markdown" ])
+
+        #PR builds
+        scheds[f"{ self.pretty_branch_name }MarkdownPR"] = common.getAnyBranchScheduler(
+            name=self.pretty_branch_name + " Pull Request Markdown",
+            change_filter=util.ChangeFilter(category="pull", branch_re=self.props['git_branch_name']),
+            fileIsImportant=self.buildFilter,
+            builderNames=[ self.pretty_branch_name + " Pull Request Markdown" ])
+
+        scheds[f"{ self.pretty_branch_name}MarkdownForce"] = common.getForceScheduler(
+            props=self.props,
+            build_type="Markdown",
+            builderNames=[ self.pretty_branch_name + " Markdown" ])
+
+        return scheds
