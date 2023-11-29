@@ -83,3 +83,10 @@ Worker nodes
 
 Create a file for each worker node in `host_vars` named after the worker node, and set the worker's properties from there.
 The only requirement for the workers is that they have a unique numerical id.
+
+Troubleshooting
+---------------
+
+If you have installed ansible plus the dependencies via pipx, Ansible won't find the AWS related libraries (boto3, botocore)
+To fix this, we need to set the PYTHONPATH variable, which can be done via something like this
+`ansible-playbook -i hosts buildbot.yml --extra-vars "EXTRA_PYTHONPATH=/home/greg/.local/pipx/venvs/ansible-core/lib/python3.11/site-packages"`
