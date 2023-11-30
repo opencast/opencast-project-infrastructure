@@ -91,7 +91,7 @@ class Docker():
         return datetime.utcnow().strftime('%Y-%m-%d:T%H:%M:%SZ')
 
 
-    cloneDockerfiles = common.getClone(url="{{ infra_repo_url }}", branch=util.Property("docker_branch"))
+    cloneDockerfiles = common.getClone(url="{{ infra_repo_url }}", branch=util.Property("docker_branch", default=util.Property("branch")))
 
     setFullDockerImageName = steps.SetProperty(
             property="fdn",
