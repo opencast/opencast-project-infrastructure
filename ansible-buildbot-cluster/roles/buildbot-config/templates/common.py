@@ -60,6 +60,7 @@ def getForceScheduler(props, build_type, builderNames):
 
 
 def shellCommand(command, name, workdir="build", env={}, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, alwaysRun=False, doStepIf=True, hideStepIf=False, locks=[]):
+    lock_temp = [ locks ] if type(locks) != list else locks
     return steps.ShellCommand(
         command=command,
         name=name,
@@ -71,7 +72,7 @@ def shellCommand(command, name, workdir="build", env={}, haltOnFailure=True, flu
         alwaysRun=alwaysRun,
         doStepIf=doStepIf,
         hideStepIf=hideStepIf,
-        locks=locks)
+        locks=lock_temp)
 
 
 def shellArg(command, logname, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True):
@@ -84,6 +85,7 @@ def shellArg(command, logname, haltOnFailure=True, flunkOnFailure=True, warnOnFa
 
 
 def shellSequence(commands, name, workdir="build", env={}, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, alwaysRun=False, doStepIf=True, hideStepIf=False, timeout=240, locks=[]):
+    lock_temp = [ locks ] if type(locks) != list else locks
     return steps.ShellSequence(
         commands=commands,
         name=name,
@@ -96,7 +98,7 @@ def shellSequence(commands, name, workdir="build", env={}, haltOnFailure=True, f
         alwaysRun=alwaysRun,
         doStepIf=doStepIf,
         hideStepIf=hideStepIf,
-        locks=locks)
+        locks=lock_temp)
 
 
 
