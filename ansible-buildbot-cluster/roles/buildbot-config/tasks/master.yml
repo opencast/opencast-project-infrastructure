@@ -85,6 +85,7 @@
     - { src: "docker_images.py", dest: "{{ buildbot_config_master }}/docker_images.py" }
     - { src: "release.py", dest: "{{ buildbot_config_master }}/release.py" }
     - { src: "buildbot.conf", dest: "{{ buildbot_home }}/nginx-config/buildbot.conf" }
+  notify: ["Stop Buildbot", "Start Buildbot"]
   tags: just-config
 
 - name: Checking if Buildbot is already running
