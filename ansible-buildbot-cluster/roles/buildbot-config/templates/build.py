@@ -38,7 +38,8 @@ class Build():
 
         self.pretty_branch_name = self.props["branch_pretty"]
         self.jdks = self.props["jdk"]
-        self.buildFilter = lambda change: any(map(lambda filename: "modules" in filename, change.files)) or any(map(lambda filename: "assemblies" in filename, change.files))
+        build_triggers = [ "assemblies", "modules", "pom.xml" ]
+        self.buildFilter = lambda change: any(map(lambda filename: [ substr in filename for substr in build_triggers ], change.files))
 
     getBuildSize = common.shellCommand(
         command=['du', '-ch'],

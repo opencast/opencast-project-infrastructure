@@ -150,7 +150,7 @@ class Markdown():
                 self.props[key]
 
         self.pretty_branch_name = self.props["branch_pretty"]
-        self.buildFilter = lambda change: any(map(lambda filename: "docs/guids" in filename, change.files))
+        self.buildFilter = lambda change: any(map(lambda filename: "docs/guides" in filename, change.files))
 
     def __getBasePipeline(self):
 
