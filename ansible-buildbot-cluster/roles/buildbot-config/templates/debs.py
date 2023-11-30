@@ -32,12 +32,12 @@ class Debs():
             if not key in props:
                 pass
                 #fail
-            if "Build" == key:
-                self.build_sched = props[key]
             if type(props[key]) in [str, list]:
                 self.props[key] = props[key]
 
         for key in Debs.OPTIONAL_PARAMS:
+            if "Build" == key:
+                self.build_sched = props[key]
             if key in props:
                 self.props[key] = props[key]
 
