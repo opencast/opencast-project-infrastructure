@@ -69,8 +69,6 @@ RUN yum install -y \
         python3-pip && \
     yum clean all
 
-RUN dnf module install -y nodejs:16
-
 RUN yum install -y \
      # Package building deps
         createrepo \
@@ -88,6 +86,8 @@ RUN yum install -y \
 
 RUN alternatives --set java java-11-openjdk.x86_64
 RUN alternatives --set javac java-11-openjdk.x86_64
+
+RUN dnf module install -y nodejs:18/common
 
 # The base CentOS image strips the locales out, this reinstalls them
 RUN yum install -y \
