@@ -35,7 +35,6 @@ COPY repos/* /etc/apt/sources.list.d/
 
 #JDK17 is not present in buster, but lives in bullseye instead
 #This file prevents the whole system from upgrading due to the above configuration
-COPY 99defaultrelease /etc/apt/apt.conf.d/
 COPY releases.pref /etc/apt/preferences.d/
 
 COPY aws-config /builder/.aws/config

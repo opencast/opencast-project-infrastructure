@@ -6,17 +6,9 @@ Package: *
 Pin: release a=buster
 Pin-Priority: 900
 
-# 100 <= P < 500: causes a version to be installed unless there is a
-# version available belonging to some other distribution or the installed
-# version is more recent
+#Allow installation of packages from bullseye via
+# apt install $package/bullseye or apt install -T bullseye $package
 
 Package: *
-Pin: release a=bookworm
-Pin-Priority: 400
-
-# 0 < P < 100: causes a version to be installed only if there is no
-# installed version of the package
-
-Package: *
-Pin: release a=testing
-Pin-Priority: 50
+Pin: release a=bullseye
+Pin-Priority: -10
