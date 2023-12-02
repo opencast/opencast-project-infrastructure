@@ -104,14 +104,12 @@ RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
     sed -i -e 's/# fr_FR.UTF-8 UTF-8/fr_FR.UTF-8 UTF-8/' /etc/locale.gen && \
     locale-gen
 
-RUN python3 -m pip --no-cache-dir install --upgrade pip
-RUN python3 -m pip --no-cache-dir install --upgrade setuptools
     # Ansible deploy bits
-RUN python3 -m pip --no-cache-dir install ansible paramiko
+RUN python3 -m pip --no-cache-dir install ansible paramiko --break-system-packages
     # Buildbot s3 deploy bits
-RUN python3 -m pip --no-cache-dir install awscli
+RUN python3 -m pip --no-cache-dir install awscli --break-system-packages
     # Vosk and vosk-cli
-RUN python3 -m pip --no-cache-dir install vosk vosk-cli webvtt-py && \
+RUN python3 -m pip --no-cache-dir install vosk vosk-cli webvtt-py --break-system-packages && \
     mkdir -p /usr/share/vosk/models && \
     wget https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip -O /usr/share/vosk/models/vosk-model-small-en-us-0.15.zip && \
     unzip /usr/share/vosk/models/vosk-model-small-en-us-0.15.zip -d /usr/share/vosk/models/ && \
@@ -135,7 +133,7 @@ RUN echo "buildbot ALL = (root) NOPASSWD : /usr/bin/apt-get, /usr/bin/yum, /usr/
 
 COPY buildbot.tac /builder/buildbot.tac
     # Install required python packages, and twisted
-RUN python3 -m pip --no-cache-dir install future buildbot-worker==${VERSION}
+RUN python3 -m pip --no-cache-dir install future buildbot-worker==${VERSION} --break-system-packages
 
 COPY install-ffmpeg.sh /builder/install-ffmpeg.sh
 RUN chmod 755 /builder/install-ffmpeg.sh
