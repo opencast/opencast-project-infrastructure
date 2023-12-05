@@ -32,7 +32,7 @@ class Reports():
                 self.props[key] = props[key]
 
         for key in Reports.OPTIONAL_PARAMS:
-            if key in props:
+            if key in props and type(props[key]) in [str, list]:
                 self.props[key]
 
         self.props['cores'] = "1" #cores # Fixed at 1 since the reports aren't multithreaded

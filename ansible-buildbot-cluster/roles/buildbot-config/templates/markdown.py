@@ -146,7 +146,7 @@ class Markdown():
                 self.props[key] = props[key]
 
         for key in Markdown.OPTIONAL_PARAMS:
-            if key in props:
+            if key in props and type(props[key]) in [str, list]:
                 self.props[key]
 
         self.pretty_branch_name = self.props["branch_pretty"]

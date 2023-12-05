@@ -40,7 +40,7 @@ class Rpms():
         for key in Rpms.OPTIONAL_PARAMS:
             if "Build" == key:
                 self.build_sched = props[key]
-            if key in props:
+            if key in props and type(props[key]) in [str, list]:
                 self.props[key] = props[key]
 
         self.pretty_branch_name = self.props["branch_pretty"]
