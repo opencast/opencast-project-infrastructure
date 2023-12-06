@@ -19,7 +19,7 @@ opencast:
   15.x:
     branch: 'r/15.x'
     pom: '15'
-    jdk: [ '11' ]
+    jdk: [ '11', '17' ]
     ffmpeg: 13
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     el: [ 7, 8, 9 ]
