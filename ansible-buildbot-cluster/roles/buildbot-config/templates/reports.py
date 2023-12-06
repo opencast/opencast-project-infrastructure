@@ -2,6 +2,7 @@
 # ex: set filetype=python:
 
 from buildbot.plugins import steps, util
+from buildbot.process.results import SUCCESS
 import common
 
 class Reports():
@@ -66,7 +67,9 @@ class Reports():
             '-Dcheckstyle.skip=true',
             '-P', 'none,!frontend'
         ]
-        site = common.getBuild(override=reports, name="Build site report")
+        site = common.getBuild(override=reports, name="Build site report", haltOnFailure=False)
+        site2 = common.getBuild(override=reports, name="Build site report attempt 2", haltOnFailure=False, doStepIf=lambda build: build.build.results != SUCCESS)
+        site3 = common.getBuild(override=reports, name="Build site report attempt 3", doStepIf=lambda build: build.build.results != SUCCESS)
 
         f_build = util.BuildFactory()
         f_build.addStep(common.getPreflightChecks())
@@ -74,9 +77,14 @@ class Reports():
         f_build.addStep(common.getWorkerPrep())
         f_build.addStep(common.setTimezone())
         f_build.addStep(common.setLocale())
-        f_build.addStep(common.getBuild())
+        f_build.addStep(common.getBuildPrep())
+        f_build.addStep(common.getBuild(haltOnFailure=False))
+        f_build.addStep(common.getBuild(name="Build attempt 2", haltOnFailure=False, doStepIf=lambda build: build.build.results != SUCCESS))
+        f_build.addStep(common.getBuild(name="Build attempt 3", doStepIf=lambda build: build.build.results != SUCCESS))
         f_build.addStep(checkSpaces)
         f_build.addStep(site)
+        f_build.addStep(site2)
+        f_build.addStep(site3)
 
         return f_build
 

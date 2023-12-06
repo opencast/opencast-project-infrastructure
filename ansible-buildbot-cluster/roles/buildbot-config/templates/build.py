@@ -2,6 +2,7 @@
 # ex: set filetype=python:
 
 from buildbot.plugins import steps, util
+from buildbot.process.results import SUCCESS
 import common
 
 class Build():
@@ -66,7 +67,10 @@ class Build():
 
         f_build = self._getBasePipeline()
         f_build.addStep(common.getWorkerPrep())
-        f_build.addStep(common.getBuild())
+        f_build.addStep(common.getBuildPrep())
+        f_build.addStep(common.getBuild(haltOnFailure=False))
+        f_build.addStep(common.getBuild(name="Build attempt 2", haltOnFailure=False, doStepIf=lambda build: build.build.results != SUCCESS))
+        f_build.addStep(common.getBuild(name="Build attempt 3", doStepIf=lambda build: build.build.results != SUCCESS))
         f_build.addStep(self.getBuildSize)
 {% if push_prs | default(False) %}
         f_build.addStep(common.getTarballs())
@@ -102,12 +106,15 @@ class Build():
 
         f_build = self._getBasePipeline()
         f_build.addStep(common.getWorkerPrep())
+        override = None
 {% if deploy_snapshots %}
         f_build.addStep(common.loadMavenSettings())
-        f_build.addStep(common.getBuild(override=['deploy', '-T 1C', '-Pnone', '-s', 'settings.xml']))
-{% else %}
-        f_build.addStep(common.getBuild())
+        override=['deploy', '-T 1C', '-Pnone', '-s', 'settings.xml'],
 {% endif %}
+        f_build.addStep(common.getBuildPrep())
+        f_build.addStep(common.getBuild(override=override, haltOnFailure=False))
+        f_build.addStep(common.getBuild(override=override, name="Build attempt 2", haltOnFailure=False, doStepIf=lambda build: build.build.results != SUCCESS))
+        f_build.addStep(common.getBuild(override=override, name="Build attempt 3", doStepIf=lambda build: build.build.results != SUCCESS))
         f_build.addStep(self.getBuildSize)
         f_build.addStep(common.unloadMavenSettings())
         f_build.addStep(common.getTarballs())

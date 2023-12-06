@@ -59,7 +59,7 @@ def getForceScheduler(props, build_type, builderNames):
         username=util.UserNameParameter(label="your name:", size=80))
 
 
-def shellCommand(command, name, workdir="build", env={}, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, alwaysRun=False, doStepIf=True, hideStepIf=False, locks=[]):
+def shellCommand(command, name, workdir="build", env={}, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, alwaysRun=False, doStepIf=True, hideStepIf=False, locks=[], timeout=60):
     lock_temp = [ locks ] if type(locks) != list else locks
     return steps.ShellCommand(
         command=command,
@@ -72,7 +72,8 @@ def shellCommand(command, name, workdir="build", env={}, haltOnFailure=True, flu
         alwaysRun=alwaysRun,
         doStepIf=doStepIf,
         hideStepIf=hideStepIf,
-        locks=lock_temp)
+        locks=lock_temp,
+        timeout=timeout)
 
 
 def shellArg(command, logname, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True):
@@ -141,7 +142,7 @@ def getWorkerPrep():
     ]
     return shellSequence(
         commands=commandsAry,
-        name="Build Prep")
+        name="Build Worker Prep")
 
 
 @util.renderer
@@ -167,15 +168,7 @@ def getMavenEnv(props):
     return env
 
 
-def getBuild(override=None, name="Build", workdir="build", timeout=240):
-    command = ['mvn', '-B', '-V', '-Dmaven.repo.local=/builder/m2', '-Dsurefire.rerunFailingTestsCount=2']
-{% if skip_tests %}
-    command.append('-DskipTests')
-{% endif %}
-    if not override:
-        command.extend(['install', '-T', util.Property('cores', default='1'), '-Pnone'])
-    else:
-        command.extend(override)
+def getBuildPrep(name="Build Prep", workdir="build"):
     return shellSequence(
         commands=[
 #            shellArg(
@@ -203,15 +196,33 @@ def getBuild(override=None, name="Build", workdir="build", timeout=240):
                 logname='new-timeout',
                 haltOnFailure=False,
                 flunkOnFailure=False,
-                warnOnFailure=False),
-            shellArg(
-                command=command,
-                logname='build')
+                warnOnFailure=False)
         ],
-        env=getMavenEnv,
         workdir=workdir,
-        name=name,
-        timeout=timeout)
+        name=name)
+
+
+def getBuild(override=None, name="Build", workdir="build", timeout=240, haltOnFailure=True, doStepIf=True, locks=[]):
+    command = ['mvn', '-B', '-V', '-Dmaven.repo.local=/builder/m2', '-Dsurefire.rerunFailingTestsCount=2']
+{% if skip_tests %}
+    command.append('-DskipTests')
+{% endif %}
+    if not override:
+        command.extend(['install', '-T', util.Property('cores', default='1'), '-Pnone'])
+    else:
+        command.extend(override)
+    return shellCommand(
+                command=command,
+                name=name,
+                workdir=workdir,
+                env=getMavenEnv,
+                haltOnFailure=haltOnFailure,
+                flunkOnFailure=haltOnFailure,
+                warnOnFailure=True, #We always warn, even if we try again later
+                doStepIf=doStepIf,
+                hideStepIf=not doStepIf,
+                locks=locks,
+                timeout=timeout)
 
 def getTarballs():
     return getBuild(
