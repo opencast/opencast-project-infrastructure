@@ -250,9 +250,9 @@ def syncAWS(pathFrom, pathTo, name, doStepIf=True, hideStepIf=False):
         name, doStepIf, hideStepIf)
 
 
-def AWSStep(command, name, doStepIf=True, hideStepIf=False, access=util.Secret("s3.public_access_key"), secret=util.Secret("s3.public_secret_key")):
+def AWSStep(command, name, doStepIf=True, hideStepIf=False, host="{{ s3_host }}", access=util.Secret("s3.public_access_key"), secret=util.Secret("s3.public_secret_key")):
     commandAry = list()
-    commandAry.extend(['aws', '--endpoint-url', '{{ s3_host }}']),
+    commandAry.extend(['aws', '--endpoint-url', host]),
     if type(command) == list:
         commandAry.extend(command)
     else:
@@ -268,9 +268,9 @@ def AWSStep(command, name, doStepIf=True, hideStepIf=False, access=util.Secret("
         hideStepIf=hideStepIf)
 
 
-def deployS3fsSecrets(access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
+def deployS3fsSecrets(bucket='{{ s3_public_bucket }}', access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
     return shellCommand(
-        command=util.Interpolate(f"echo '%(secret:{ access_key_secret_id })s:%(secret:{ secret_key_secret_id })s' > /builder/.passwd-s3fs && chmod 600 /builder/.passwd-s3fs"),
+            command=util.Interpolate(f"echo '{ bucket }:%(secret:{ access_key_secret_id })s:%(secret:{ secret_key_secret_id })s' >> /builder/.passwd-s3fs && chmod 600 /builder/.passwd-s3fs"),
         name="Deploying S3 auth details")
 
 def mountS3fs(host="{{ s3_host }}", bucket="{{ s3_public_bucket }}", args=[]):
