@@ -42,6 +42,10 @@ class Debs():
                 self.props[key] = props[key]
 
         self.pretty_branch_name = self.props["branch_pretty"]
+        if 'pkg_minor_version' not in self.props:
+            self.props["pkg_minor_version"] = "x"
+        if 'signing_key' not in self.props:
+            self.props['signing_key'] = "{{ hostvars[inventory_hostname]['signing_key_id'] }}"
 
     def getBuildPipeline(self):
 
