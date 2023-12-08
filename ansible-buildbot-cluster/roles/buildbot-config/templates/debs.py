@@ -68,7 +68,6 @@ class Debs():
 
         removeSymlinks = common.shellCommand(
             command=['rm', '-rf', 'binaries', 'outputs'],
-            alwaysRun=True,
             name="Prep cloned repo for CI use")
 
         debsFetch = common.syncAWS(
@@ -117,7 +116,8 @@ class Debs():
                 "EMAIL": "buildbot@{{ groups['master'][0] }}",
                 "SIGNING_KEY": util.Interpolate("%(prop:signing_key)s")
             },
-            name="Build debs")
+            name="Build debs",
+            timeout=300)
 
         debRepoClone = common.getClone(url="{{ source_deb_packaging_repo_url }}",
                               branch="{{ deb_packaging_repo_branch }}",
@@ -130,29 +130,32 @@ class Debs():
         debRepoCreate = common.shellCommand(
             command=['./create-branch', util.Interpolate("%(prop:pkg_major_version)s.x")],
             name=util.Interpolate("Ensuring %(prop:pkg_major_version)s.x repos exist"),
-            locks=repo_lock)
+            locks=repo_lock.access('exclusive'),
+            timeout=300)
 
 
         debRepoIngest = common.shellCommand(
-            command=['./include-binaries', util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:repo_component)s"), util.Interpolate("outputs/%(prop:deb_script_rev)s/opencast-%(prop:pkg_major_version)s_%(prop:pkg_major_version)s.x-%(prop:buildnumber)s-%(prop:short_revision)s_amd64.changes")],
-            name=util.Interpolate(f"Adding build to %(prop:pkg_major_version)s.x-%(prop:repo_component)s"),
-            locks=repo_lock)
+                command=['./include-binaries', util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:repo_component:-unstable)s"), util.Interpolate("outputs/%(prop:deb_script_rev)s/opencast-%(prop:pkg_major_version)s_%(prop:pkg_major_version)s.x-%(prop:buildnumber)s-%(prop:short_revision)s_amd64.changes")],
+            name=util.Interpolate(f"Adding build to %(prop:pkg_major_version)s.x-%(prop:repo_component:-unstable)s"),
+            locks=repo_lock.access('exclusive'),
+            timeout=1800)
 
         debRepoPrune = common.shellCommand(
             command=util.Interpolate("./snapshot-cleanup %(prop:pkg_major_version)s.x oc && ./clean-unstable-repo %(prop:pkg_major_version)s.x"),
             name=util.Interpolate(f"Pruning %(prop:pkg_major_version)s.x unstable repository"),
-            alwaysRun=True,
-            locks=repo_lock)
+            locks=repo_lock.access('exclusive'),
+            timeout=300)
 
         debRepoPublish = common.shellCommand(
-            command=["./publish-branch", util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:signing_key)s"), "s3"],
+                command=["./publish-branch", util.Interpolate("%(prop:pkg_major_version)s.x"), "s3:s3:", util.Interpolate("%(prop:repo_signing_key)s")],
             name=util.Interpolate("Publishing %(prop:pkg_major_version)s.x"),
             env={
                 "AWS_ACCESS_KEY_ID": util.Secret("s3.public_access_key"),
                 #FIXME: This needs to be set on a per-publication-target (ie, loganite vs rados)
                 "AWS_SECRET_ACCESS_KEY": util.Secret("s3.public_secret_key")
             },
-            locks=repo_lock)
+            locks=repo_lock.access('exclusive'),
+            timeout=300)
 
         f_package_debs = util.BuildFactory()
         f_package_debs.addStep(common.getPreflightChecks())
