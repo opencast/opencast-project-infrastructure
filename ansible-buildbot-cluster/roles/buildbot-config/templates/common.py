@@ -238,19 +238,29 @@ def compressDir(dirToCompress, outputFile, workdir="build"):
          name=f"Compressing { dirToCompress }")
 
 
-def copyAWS(pathFrom, pathTo, name, doStepIf=True, hideStepIf=False):
+def copyAWS(pathFrom, pathTo, name, host="{{ s3_host }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key", doStepIf=True, hideStepIf=False):
     return AWSStep(
-        ['s3', 'cp', util.Interpolate(pathFrom), util.Interpolate(pathTo)],
-        name, doStepIf, hideStepIf)
+        command=['s3', 'cp', util.Interpolate(pathFrom), util.Interpolate(pathTo)],
+        name=name,
+        host=host,
+        access_key_secret_id=access_key_secret_id,
+        secret_key_secret_id=secret_key_secret_id,
+        doStepIf=doStepIf,
+        hideStepIf=hideStepIf)
 
 
-def syncAWS(pathFrom, pathTo, name, doStepIf=True, hideStepIf=False):
+def syncAWS(pathFrom, pathTo, name, host="{{ s3_host }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key", doStepIf=True, hideStepIf=False):
     return AWSStep(
-        ['s3', 'sync', util.Interpolate(pathFrom), util.Interpolate(pathTo)],
-        name, doStepIf, hideStepIf)
+        command=['s3', 'sync', util.Interpolate(pathFrom), util.Interpolate(pathTo)],
+        name=name,
+        host=host,
+        access_key_secret_id=access_key_secret_id,
+        secret_key_secret_id=secret_key_secret_id,
+        doStepIf=doStepIf,
+        hideStepIf=hideStepIf)
 
 
-def AWSStep(command, name, doStepIf=True, hideStepIf=False, host="{{ s3_host }}", access=util.Secret("s3.public_access_key"), secret=util.Secret("s3.public_secret_key")):
+def AWSStep(command, name, host="{{ s3_host }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key", doStepIf=True, hideStepIf=False):
     commandAry = list()
     commandAry.extend(['aws', '--endpoint-url', host]),
     if type(command) == list:
@@ -260,8 +270,8 @@ def AWSStep(command, name, doStepIf=True, hideStepIf=False, host="{{ s3_host }}"
     return shellCommand(
         command=commandAry,
         env={
-            "AWS_ACCESS_KEY_ID": access,
-            "AWS_SECRET_ACCESS_KEY": secret
+            "AWS_ACCESS_KEY_ID": util.Secret(access_key_secret_id),
+            "AWS_SECRET_ACCESS_KEY": util.Secret(secret_key_secret_id)
         },
         name=name,
         doStepIf=doStepIf,
@@ -295,15 +305,15 @@ def cleanupS3Secrets():
         name="Cleaning up S3 secrets")
 
 
-def getLatestBuildRevision():
-    pathFrom = "s3://{{ s3_public_bucket }}/builds/%(prop:branch_pretty)s/latest.txt"
+def getLatestBuildRevision(host="{{ s3_host }}", bucket="{{ s3_public_bucket }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
+    pathFrom = f"s3://{ bucket }/builds/%(prop:branch_pretty)s/latest.txt"
     pathTo = "-"
     command = 'cp'
     return steps.SetPropertyFromCommand(
-        command=['aws', '--endpoint-url', '{{ s3_host }}', 's3', command, util.Interpolate(pathFrom), util.Interpolate(pathTo)],
+        command=['aws', '--endpoint-url', host, 's3', command, util.Interpolate(pathFrom), util.Interpolate(pathTo)],
         env={
-            "AWS_ACCESS_KEY_ID": util.Secret("s3.public_access_key"),
-            "AWS_SECRET_ACCESS_KEY": util.Secret("s3.public_secret_key")
+            "AWS_ACCESS_KEY_ID": util.Secret(access_key_secret_id),
+            "AWS_SECRET_ACCESS_KEY": util.Secret(secret_key_secret_id)
         },
         # Note: We're overwriting this value to set it to the built revision rather than whatever it defaults to
         property="got_revision",
