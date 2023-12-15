@@ -14,7 +14,7 @@ opencast:
     ffmpeg: 13
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     el: [ 7, 8, 9 ]
-    cores: '1'
+    cores: '1C'
     server: 'develop'
   15.x:
     branch: 'r/15.x'
@@ -23,7 +23,7 @@ opencast:
     ffmpeg: 13
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     el: [ 7, 8, 9 ]
-    cores: '1'
+    cores: '1C'
     server: 'stable'
   14.x:
     branch: 'r/14.x'
@@ -32,7 +32,7 @@ opencast:
     ffmpeg: 13
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     el: [ 7, 8, 9 ]
-    cores: '1'
+    cores: '1C'
     server: 'legacy'
 
 
