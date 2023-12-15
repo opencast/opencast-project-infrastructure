@@ -96,11 +96,11 @@ class Debs():
                         "unstable"
                     ],
                     logname='changelog'),
-                #common.shellArg(
-                #    command=util.Interpolate(
-                #        'ln -s opencast-%(prop:pkg_major_version)s_%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s.orig.tar.xz opencast-%(prop:pkg_major_version)s_%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s-%(prop:buildnumber)s.orig.tar.xz'
-                #    ),
-                #    logname='link'),
+                common.shellArg(
+                    command=util.Interpolate(
+                        'ln -s opencast-%(prop:pkg_major_version)s_%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s.orig.tar.xz opencast-%(prop:pkg_major_version)s_%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s-%(prop:buildnumber)s.orig.tar.xz'
+                    ),
+                    logname='link'),
                 common.shellArg(
                     command=util.Interpolate(
                         'echo "source library.sh\ndoOpencast %(prop:pkg_major_version)s.%(prop:pkg_minor_version)s %(prop:branch)s %(prop:got_revision)s" | tee build.sh'
@@ -144,7 +144,7 @@ class Debs():
                 "EMAIL": "buildbot@{{ groups['master'][0] }}",
                 "SIGNING_KEY": util.Interpolate("%(prop:signing_key)s")
             },
-            name="Build debs for a")
+            name="Build debs")
 
         f_package_debs.addStep(common.getPreflightChecks())
         f_package_debs.addStep(debsClone)
