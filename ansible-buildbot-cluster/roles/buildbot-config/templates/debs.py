@@ -316,28 +316,20 @@ class Debs():
 
     def getSchedulers(self):
 
-        raise RuntimeError("Check packages.py for the deb schedulers")
-
         scheds = {}
 
-        if None == self.build_sched:
-            sched = schedulers.Nightly(
-                name=self.pretty_branch_name + ' Debian Package Generation',
-                change_filter=util.ChangeFilter(category=None, branch_re=self.props['git_branch_name']),
-                hour={{ nightly_build_hour }},
-                onlyIfChanged=True,
-                properties=self.props,
-                builderNames=[
-                    self.pretty_branch_name + " Debian Packaging"
-                ])
-        else:
-            sched = schedulers.Dependent(
-                name=self.pretty_branch_name + " Debian Packaging Generation",
-                upstream=self.build_sched,
-                properties=self.props,
-                builderNames=[
-                    self.pretty_branch_name + " Debian Packaging"
-                ])
-        scheds[f"{ self.pretty_branch_name }Debs"] = sched
+        #Regular builds
+        scheds[f"{ self.pretty_branch_name }DebsTesting"] = common.getAnyBranchScheduler(
+            name=self.pretty_branch_name + " Debian Testing Packaging Generation",
+            #FIXME: Set appropriate props (specifically pkg_release_version)
+            change_filter=util.ChangeFilter(category=None, branch_re=f'{ self.props["pkg_major_version"] }\.\d*-\d*'),
+            builderNames=[ self.pretty_branch_name + " Testing Debian Packaging" ])
+
+        scheds[f"{ self.pretty_branch_name}BuildForce"] = common.getForceScheduler(
+            #FIXME: Set appropriate props (specifically pkg_release_version)
+            props=self.props,
+            #The hell is this?
+            build_type="Build",
+            builderNames=[ self.pretty_branch_name + " Release Debian Packaging"])
 
         return scheds
