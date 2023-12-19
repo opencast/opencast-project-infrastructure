@@ -198,7 +198,7 @@ class Ansible():
         "jdk",
         "workernames",
         "deploy_env",
-        "Packages"
+        "UnstablePackages"
         ]
 
     OPTIONAL_PARAMS = [
@@ -214,7 +214,7 @@ class Ansible():
             if not key in props:
                 pass
                 #fail
-            if "Packages" == key:
+            if "UnstablePackages" == key:
                 self.package_sched = props[key]
             if type(props[key]) in [str, list]:
                 self.props[key] = props[key]

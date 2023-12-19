@@ -50,6 +50,7 @@ class Packages():
         self.debs = Debs(props)
         self.rpms = Rpms(props)
 
+
     def getBuilders(self):
 
         if not self.builders:
@@ -57,30 +58,32 @@ class Packages():
 
         return self.builders
 
+
     def getSchedulers(self):
 
         builders = [ builder.name for builder in self.getBuilders() ]
+        unstable_builders = [ builder for builder in builders if "Testing" not in builder and "Release" not in builder ]
 
-        scheds = {}
+        scheds = self.debs.getSchedulers() | self.rpms.getSchedulers()
 
         if None == self.build_sched:
-            scheds[f"{ self.pretty_branch_name }Packages"] = schedulers.Nightly(
-                name=self.pretty_branch_name + ' Package Generation',
+            scheds[f"{ self.pretty_branch_name }UnstablePackages"] = schedulers.Nightly(
+                name=self.pretty_branch_name + ' Unstable Package Generation',
                 change_filter=util.ChangeFilter(category=None, branch_re=self.props['git_branch_name']),
                 hour={{ nightly_build_hour }},
                 onlyIfChanged=True,
                 properties=self.props,
-                builderNames=builders)
+                builderNames=unstable_builders)
         else:
-            scheds[f"{ self.pretty_branch_name }Packages"] = schedulers.Dependent(
-                name=self.pretty_branch_name + " Packaging Generation",
+            scheds[f"{ self.pretty_branch_name }UnstablePackages"] = schedulers.Dependent(
+                name=self.pretty_branch_name + " Unstable Packaging Generation",
                 upstream=self.build_sched,
                 properties=self.props,
-                builderNames=builders)
+                builderNames=unstable_builders)
 
-        scheds[f"{ self.pretty_branch_name }PackagesForce"] = common.getForceScheduler(
+        scheds[f"{ self.pretty_branch_name }UnstableForce"] = common.getForceScheduler(
             props=self.props,
             build_type="Packages",
-            builderNames=builders)
+            builderNames=unstable_builders)
 
         return scheds
