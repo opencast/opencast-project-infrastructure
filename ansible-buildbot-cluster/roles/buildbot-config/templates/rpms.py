@@ -44,37 +44,46 @@ class Rpms():
                 self.props[key] = props[key]
 
         self.pretty_branch_name = self.props["branch_pretty"]
+        self.profiles = self.props['profiles']
+        if 'pkg_minor_version' not in self.props:
+            self.props["pkg_minor_version"] = "x"
+        if 'signing_key' not in self.props:
+            self.props['signing_key'] = "{{ hostvars[inventory_hostname]['signing_key_id'] }}"
 
-    @util.renderer
-    def getRPMBuilds(props):
-        builds = []
-        for profile in self.profiles[props.getProperty('branch_pretty')]:
-            builds.append(common.shellArg(
-                command=[
-                    'rpmbuild',
-                    '--define', 'ocdist ' + profile,
-                    '--define', util.Interpolate('tarversion %(prop:pkg_major_version)s-SNAPSHOT'),
-                    '-bb', '--noclean',
-                    'opencast.spec'
-                ],
-                logname=profile))
-            builds.append(common.shellArg(
-                command=[
-                    'rpmsign',
-                    '--addsign',
-                    '--key-id', util.Interpolate("%(prop:signing_key)s"),
-                    util.Interpolate(
-                        "../RPMS/noarch/opencast-" + profile + "-%(prop:rpm_version)s.el%(prop:el_version)s.noarch.rpm")
-                ],
-                logname=profile + " signing"))
-        return builds
-
+    def getRPMBuild(self, profile):
+        return common.shellSequence(
+            commands=[
+                common.shellArg(
+                    command=[
+                        'mv',
+                        util.Interpolate(f"SOURCES/opencast-dist-{ profile }-%(prop:pkg_major_version)s-SNAPSHOT.tar.gz"),
+                        util.Interpolate(f"SOURCES/opencast-dist-{ profile }-%(prop:pkg_major_version)s.tar.gz")],
+                    logname=profile + " rename tarball"),
+                common.shellArg(
+                    command=[
+                        'rpmbuild',
+                        '--define', 'ocdist ' + profile,
+                        '-ba',
+                        'SPECS/opencast.spec'],
+                    logname=profile),
+                common.shellArg(
+                    command=[
+                        'rpmsign',
+                        '--addsign',
+                        '--key-id', util.Interpolate("%(prop:signing_key)s"),
+                        util.Interpolate(
+                            "RPMS/noarch/opencast-" + profile + "-%(prop:pkg_major_version)s-%(prop:rpm_version)s.el%(prop:el_version)s.noarch.rpm")
+                    ],
+                    logname=profile + " signing")
+            ],
+            workdir="build/rpmbuild",
+            name=f"Building { profile } RPM")
 
     def getBuildPipeline(self):
 
         rpmsClone = common.getClone(
             url="{{ source_rpm_repo_url }}",
-            branch=util.Interpolate("%(prop:rpmspec_override:-%(prop:branch)s)s"))
+            branch=util.Interpolate("%(prop:branch)s"))
 
         rpmsVersion = steps.SetPropertyFromCommand(
             command="git rev-parse HEAD",
@@ -87,71 +96,32 @@ class Rpms():
 
         rpmsFullVersion = steps.SetProperty(
             property="rpm_version",
-            value=util.Interpolate("%(prop:pkg_major_version)s.git%(prop:short_revision)s-%(prop:buildnumber)s"))
+            value=util.Interpolate("git%(prop:short_revision)s.%(prop:buildnumber)s"),
+            name="Calculate desired RPM version")
 
         rpmsSetup = common.shellSequence(
             commands=[
                 common.shellArg(
                     # We're using a string here rather than an arg array since we need the shell functions
                     command='echo -e "%_topdir `pwd`" > ~/.rpmmacros',
-                    logname="rpmdev-setup"),
+                    logname="rpmdev-setup-topdir"),
+                common.shellArg(
+                    command=util.Interpolate('echo "%%octarversion %(prop:pkg_major_version)s" >> ~/.rpmmacros'),
+                    logname="rpmdev-setup-tarversion"),
+                common.shellArg(
+                    command=util.Interpolate('echo "%%ocversion %(prop:pkg_major_version)s" >> ~/.rpmmacros'),
+                    logname="rpmdev-setup-tarversion"),
+                common.shellArg(
+                    command=util.Interpolate('echo "%%ocrelease %(prop:rpm_version)s" >> ~/.rpmmacros'),
+                    logname="rpmdev-setup-tarversion"),
             ],
             workdir="build/rpmbuild",
-            name="Fetch built artifacts and build prep")
+            name="Prep rpm environment")
 
         rpmsFetch = common.syncAWS(
             pathFrom="s3://{{ s3_public_bucket }}/builds/{{ builds_fragment }}",
             pathTo="rpmbuild/SOURCES",
             name="Fetch build from S3")
-
-        rpmsPrep = common.shellSequence(
-            commands=[
-                common.shellArg(
-                    command=[
-                        'sed',
-                        '-i',
-                        util.Interpolate('s/define srcversion .*$/define srcversion %(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/g'),
-                        util.Interpolate('opencast.spec')
-                    ],
-                    logname='version'),
-                common.shellArg(
-                    command=[
-                        'rpmdev-bumpspec',
-                        '-u', '"Buildbot <buildbot@opencast.org>"',
-                        '-c',
-                        util.Interpolate(
-                            'Opencast revision %(prop:got_revision)s, packaged with RPM scripts version %(prop:rpm_script_rev)s'
-                        ),
-                        util.Interpolate('opencast.spec')
-                    ],
-                    logname='rpmdev-bumpspec'),
-                common.shellArg(
-                    command=[
-                        'sed',
-                        '-i',
-                        util.Interpolate("s/\(Version: *\) .*/\\1 %(prop:pkg_major_version)s.git%(prop:short_revision)s/"),
-                        util.Interpolate('opencast.spec')
-                    ],
-                    logname='version'),
-                common.shellArg(
-                    command=[
-                        'sed',
-                        '-i',
-                        util.Interpolate('s/2%%{?dist}/%(prop:buildnumber)s%%{?dist}/g'),
-                        util.Interpolate('opencast.spec')
-                    ],
-                    logname='buildnumber'),
-                common.shellArg(
-                    command=['rm', '-f', 'BUILD/opencast/build/revision.txt'],
-                    logname="cleanup")
-            ],
-            workdir="build/rpmbuild/SPECS",
-            name="Prepping rpms")
-
-        rpmsBuild = common.shellSequence(
-            commands=self.getRPMBuilds,
-            workdir="build/rpmbuild/SPECS",
-            name="Build rpms")
 
         # Note: We're using a string here because using the array disables shell globbing!
         rpmsUpload = common.shellCommand(
@@ -166,6 +136,7 @@ class Rpms():
         repoMetadata = common.shellCommand(
             command=['createrepo', '.'],
             workdir=util.Interpolate("/builder/s3/repo/rpms/unstable/el/%(prop:el_version)s/oc-%(prop:pkg_major_version)s/noarch"),
+            timeout=1800,
             name="Building repository")
 
         f_package_rpms = util.BuildFactory()
@@ -177,9 +148,9 @@ class Rpms():
         f_package_rpms.addStep(rpmsFullVersion)
         f_package_rpms.addStep(rpmsSetup)
         f_package_rpms.addStep(rpmsFetch)
-        f_package_rpms.addStep(rpmsPrep)
         f_package_rpms.addStep(common.loadSigningKey())
-        f_package_rpms.addStep(rpmsBuild)
+        for profile in self.profiles:
+            f_package_rpms.addStep(self.getRPMBuild(profile))
         f_package_rpms.addStep(common.unloadSigningKey())
         f_package_rpms.addStep(common.deployS3fsSecrets())
         f_package_rpms.addStep(common.mountS3fs())
@@ -206,10 +177,6 @@ class Rpms():
             el_props['image'] = f"cent{distro}"
             lock = util.MasterLock(f"{ self.props['git_branch_name'] }rpm_el{ distro }_lock", maxCount=1)
 
-            if "Develop" == self.pretty_branch_name:
-                #Set the RPM branch to master
-                el_props['rpmspec_override'] = "master"
-                #Override/set a bunch of the build props since the RPM's dont relaly have a develop...
 
             builders.append(util.BuilderConfig(
                 name=self.pretty_branch_name + f" el{distro} RPM Packaging",
@@ -224,28 +191,7 @@ class Rpms():
 
     def getSchedulers(self):
 
-        raise RuntimeError("Check packages.py for the RPM schedulers")
+        #NOTE: The RPMs do not currently define testing and release pipelines since Lars is doing them
+        # If we ever move that into buildbot, take a look at how the debs are doing it
+        return {}
 
-        scheds = {}
-
-        if None == self.build_sched:
-            sched = schedulers.Nightly(
-                name=self.pretty_branch_name + ' RPM Package Generation',
-                change_filter=util.ChangeFilter(category=None, branch_re=self.props['git_branch_name']),
-                hour={{ nightly_build_hour }},
-                onlyIfChanged=True,
-                properties=self.props,
-                builderNames=[ f"{ self.pretty_branch_name } el{ el_mapping[version] } RPM Packaging" for version in el_mapping ])
-        else:
-            sched = schedulers.Dependent(
-                name=self.pretty_branch_name + " RPM Packaging Generation",
-                upstream=self.build_sched,
-                properties=self.props,
-                builderNames=[
-                    self.pretty_branch_name + " el7 RPM Packaging",
-                    self.pretty_branch_name + " el8 RPM Packaging",
-                    self.pretty_branch_name + " el9 RPM Packaging"
-                ])
-        scheds[f"{ self.pretty_branch_name }Rpms"] = sched
-
-        return scheds
