@@ -295,8 +295,8 @@ class Markdown():
             builderNames=[ self.pretty_branch_name + " Pull Request Markdown" ])
 
         scheds[f"{ self.pretty_branch_name}MarkdownForce"] = common.getForceScheduler(
+            name=self.pretty_branch_name + "Markdown",
             props=self.props,
-            build_type="Markdown",
             builderNames=[ self.pretty_branch_name + " Markdown" ])
 
         return scheds

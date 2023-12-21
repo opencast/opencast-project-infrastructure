@@ -325,11 +325,9 @@ class Debs():
             change_filter=util.ChangeFilter(category=None, branch_re=f'{ self.props["pkg_major_version"] }\.\d*-\d*'),
             builderNames=[ self.pretty_branch_name + " Testing Debian Packaging" ])
 
-        scheds[f"{ self.pretty_branch_name}BuildForce"] = common.getForceScheduler(
-            #FIXME: Set appropriate props (specifically pkg_release_version)
+        scheds[f"{ self.pretty_branch_name}DebsRelease"] = common.getForceScheduler(
+            name=self.pretty_branch_name + "DebsRelease",
             props=self.props,
-            #The hell is this?
-            build_type="Build",
             builderNames=[ self.pretty_branch_name + " Release Debian Packaging"])
 
         return scheds

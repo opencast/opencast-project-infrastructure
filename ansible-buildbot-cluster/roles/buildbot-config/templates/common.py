@@ -16,8 +16,7 @@ def getAnyBranchScheduler(name, builderNames, fileIsImportant=lambda fn: True, c
         fileIsImportant=fileIsImportant)
 
 
-def getForceScheduler(props, build_type, builderNames):
-    pretty_branch_name = props['branch_pretty']
+def getForceScheduler(name, props, builderNames, params=None):
 
     forceParams = [
         util.CodebaseParameter(
@@ -38,9 +37,10 @@ def getForceScheduler(props, build_type, builderNames):
         ),
     ]
 
-# Note: This is a hack, but we need a unique name for the force schedulers, and it can't have special characters in it, and it can't be longer than a certain length
+    forceParams = params or forceParams
+
     return schedulers.ForceScheduler(
-        name=f"F{ pretty_branch_name[0:2] }{ build_type }".replace(".", "x").replace(" ", ""),
+        name=f"FORCE{ name }".replace(".", "c").replace(" ", "s"),
         buttonName="Force Build",
         label="Force Build Settings",
         builderNames=builderNames,

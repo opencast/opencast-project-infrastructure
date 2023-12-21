@@ -330,8 +330,8 @@ class Ansible():
             builderNames=[self.pretty_branch_name + " Ansible Deploy"])
 
         scheds[f"{ self.pretty_branch_name }AnsibleForce"] = common.getForceScheduler(
+            name=self.pretty_branch_name + "Ansible",
             props=self.props,
-            build_type="Ansible",
             builderNames=[self.pretty_branch_name + " Ansible Deploy"])
 
         return scheds

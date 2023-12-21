@@ -82,8 +82,8 @@ class Packages():
                 builderNames=unstable_builders)
 
         scheds[f"{ self.pretty_branch_name }UnstableForce"] = common.getForceScheduler(
+            name=self.pretty_branch_name + "Package",
             props=self.props,
-            build_type="Packages",
             builderNames=unstable_builders)
 
         return scheds

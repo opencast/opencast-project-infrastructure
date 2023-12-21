@@ -174,8 +174,8 @@ class Build():
             builderNames=[ self.pretty_branch_name + " Pull Request Build JDK " + str(jdk) for jdk in self.jdks ])
 
         scheds[f"{ self.pretty_branch_name}BuildForce"] = common.getForceScheduler(
+            name=self.pretty_branch_name + "Build",
             props=self.props,
-            build_type="Build",
             builderNames=[ self.pretty_branch_name + " Build JDK " + str(jdk) for jdk in self.jdks ])
 
         return scheds

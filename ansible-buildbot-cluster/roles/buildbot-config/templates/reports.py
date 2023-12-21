@@ -185,8 +185,8 @@ class Reports():
             builderNames=[ self.pretty_branch_name + " Pull Request Reports JDK " + str(jdk) for jdk in self.jdks ])
 
         scheds[f"{ self.pretty_branch_name}ReportsForce"] = common.getForceScheduler(
+            name=self.pretty_branch_name + "Reports",
             props=self.props,
-            build_type="Report",
             builderNames=[ self.pretty_branch_name + " Reports JDK " + str(jdk) for jdk in self.jdks ])
 
         return scheds
