@@ -114,7 +114,7 @@ class Debs():
             },
             name="Prep to build debs",
             doStepIf= "" == util.Property("pkg_release_version", default=""),
-            hideStepIf= "" == util.Property("pkg_release_version", default=""))
+            hideStepIf= "" != util.Property("pkg_release_version", default=""))
 
         debsPrepReleaseBuild = common.shellSequence(
             commands=[
@@ -126,7 +126,7 @@ class Debs():
             ],
             name="Prep to build release debs",
             doStepIf= "" != util.Property("pkg_release_version", default=""),
-            hideStepIf= "" != util.Property("pkg_release_version", default=""))
+            hideStepIf= "" == util.Property("pkg_release_version", default=""))
 
         debsBuild = common.shellSequence(
             commands=[
