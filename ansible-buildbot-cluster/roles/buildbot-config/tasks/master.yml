@@ -16,7 +16,7 @@
 
 - name: Ensure local temp directory exists
   file:
-    path: "{{ role_path }}/temp"
+    path: "{{ role_path }}/.temp"
     state: directory
     mode: 0700
   tags: just-config
@@ -25,7 +25,7 @@
 - name: Templating embeds locally
   template:
     src: "embeds/{{ item }}"
-    dest: "{{ role_path }}/temp/{{ item }}"
+    dest: "{{ role_path }}/.temp/{{ item }}"
     mode: 0600
   tags: just-config
   connection: local
@@ -35,7 +35,7 @@
 
 - name: Munging templated embeds
   replace:
-    path: '{{ role_path }}/temp/{{ item }}'
+    path: '{{ role_path }}/.temp/{{ item }}'
     regexp: '(\w+[^\\])\n(\w+)' #This adds the backslashes on empty lines
     replace: '\1\\\\n\2'
   tags: just-config
@@ -46,7 +46,7 @@
 
 - name: Munging templated embeds
   replace:
-    path: '{{ role_path }}/temp/{{ item }}'
+    path: '{{ role_path }}/.temp/{{ item }}'
     regexp: '([a-zA-Z0-9\/\-]+[^\\])\n' #This adds the backslash on everything else
     replace: '\1\\\\n'
   tags: just-config
@@ -139,11 +139,11 @@
     mode: 0600
   connection: local
   with_items:
-    - { src: "secrets/signing.key", dest: "temp/signing.key" }
-    - { src: "secrets/stable", dest: "temp/stable" }
-    - { src: "secrets/legacy", dest: "temp/legacy" }
-    - { src: "secrets/develop", dest: "temp/develop" }
-    - { src: "secrets/settings.xml", dest: "temp/settings.xml" }
+    - { src: "secrets/signing.key", dest: ".temp/signing.key" }
+    - { src: "secrets/stable", dest: ".temp/stable" }
+    - { src: "secrets/legacy", dest: ".temp/legacy" }
+    - { src: "secrets/develop", dest: ".temp/develop" }
+    - { src: "secrets/settings.xml", dest: ".temp/settings.xml" }
 
 - name: Distributing private support files into S3
   aws_s3:
@@ -159,23 +159,23 @@
     object: "{{ item.dest }}"
   connection: local
   with_items:
-    - { src: "temp/signing.key", dest: "{{ groups['master'][0] }}/key/signing.key" }
-    - { src: "temp/stable", dest: "{{ groups['master'][0] }}/env/stable" }
-    - { src: "temp/legacy", dest: "{{ groups['master'][0] }}/env/legacy" }
-    - { src: "temp/develop", dest: "{{ groups['master'][0] }}/env/develop" }
-    - { src: "temp/settings.xml", dest: "{{ groups['master'][0] }}/mvn/settings.xml" }
+    - { src: ".temp/signing.key", dest: "{{ groups['master'][0] }}/key/signing.key" }
+    - { src: ".temp/stable", dest: "{{ groups['master'][0] }}/env/stable" }
+    - { src: ".temp/legacy", dest: "{{ groups['master'][0] }}/env/legacy" }
+    - { src: ".temp/develop", dest: "{{ groups['master'][0] }}/env/develop" }
+    - { src: ".temp/settings.xml", dest: "{{ groups['master'][0] }}/mvn/settings.xml" }
   environment:
     PYTHONPATH: "{{ EXTRA_PYTHONPATH if EXTRA_PYTHONPATH is defined else '' }}"
 
 - name: Extracting public signing key from private key
-  shell: gpg --no-default-keyring --keyring=./temp/keyring.gpg --import ./temp/signing.key && gpg --no-default-keyring --keyring=./temp/keyring.gpg -a --export {{ signing_key_id }} >> ./temp/{{ signing_key_id }}.asc
+  shell: gpg --no-default-keyring --keyring=./.temp/keyring.gpg --import ./.temp/signing.key && gpg --no-default-keyring --keyring=./.temp/keyring.gpg -a --export {{ signing_key_id }} >> ./.temp/{{ signing_key_id }}.asc
   args:
     chdir: "{{ role_path }}"
   connection: local
 
 - name: Distributing public signing key
   copy:
-    src: temp/{{ signing_key_id }}.asc
+    src: .temp/{{ signing_key_id }}.asc
     dest: "{{ buildbot_home }}/keys/public-signing-key.gpg"
     owner: "{{ buildbot_user }}"
     group: "{{ buildbot_user }}"
@@ -184,7 +184,7 @@
 
 - name: Removing private support files from local disk
   file:
-    path: "{{ role_path }}/temp"
+    path: "{{ role_path }}/.temp"
     state: absent
   connection: local
   tags: always
