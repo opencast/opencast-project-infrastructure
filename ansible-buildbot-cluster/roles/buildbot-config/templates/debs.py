@@ -75,15 +75,15 @@ class Debs():
             pathFrom="s3://{{ s3_public_bucket }}/builds/{{ builds_fragment }}",
             pathTo="binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/",
             name="Fetch build from S3",
-            doStepIf= "" == util.Property("pkg_release_version", default=""),
-            hideStepIf= "" != util.Property("pkg_release_version", default=""))
+            doStepIf=not util.Property("release_build", default=False),
+            hideStepIf=util.Property("release_build", default=False))
 
         debsFetchFromGitHub = common.shellCommand(
-            command=["./fetch.sh", util.Property("pkg_release_version")],
+            command=["./fetch.sh", util.Property("branch")],
             workdir="build/binaries",
             name="Fetch release build from GitHub",
-            doStepIf= "" != util.Property("pkg_release_version", default=""),
-            hideStepIf= "" == util.Property("pkg_release_version", default=""))
+            doStepIf=util.Property("release_build", default=False),
+            hideStepIf=not util.Property("release_build", default=False))
 
         debsPrepBuild = common.shellSequence(
             commands=[
@@ -113,20 +113,20 @@ class Debs():
                 "SIGNING_KEY": util.Interpolate("%(prop:signing_key)s")
             },
             name="Prep to build debs",
-            doStepIf= "" == util.Property("pkg_release_version", default=""),
-            hideStepIf= "" != util.Property("pkg_release_version", default=""))
+            doStepIf=not util.Property("release_build", default=False),
+            hideStepIf=util.Property("release_build", default=False))
 
         debsPrepReleaseBuild = common.shellSequence(
             commands=[
                 common.shellArg(
                     command=util.Interpolate(
-                        'echo "source library.sh\ndoOpencast %(prop:pkg_release_version)s %(prop:pkg_release_version)s-1 %(prop:pkg_release_version)s-1" | tee build.sh'
+                        'echo "source library.sh\ndoOpencast %(prop:branch)s %(prop:branch)s %(prop:branch)s" | tee build.sh'
                     ),
                     logname='write'),
             ],
             name="Prep to build release debs",
-            doStepIf= "" != util.Property("pkg_release_version", default=""),
-            hideStepIf= "" == util.Property("pkg_release_version", default=""))
+            doStepIf=util.Property("release_build", default=False),
+            hideStepIf=not util.Property("release_build", default=False))
 
         debsBuild = common.shellSequence(
             commands=[
@@ -263,8 +263,8 @@ class Debs():
     def getReleasePipeline(self):
 
         debRepoPromote = common.shellCommand(
-                command=["./promote-package", "opencast", util.Property("pkg_release_version"), util.Interpolate("%(prop:pkg_major_version)s.x"), "testing", "stable"],
-                name=util.Interpolate("Promoting %(prop:pkg_release_version)s to stable"),
+                command=["./promote-package", "opencast", util.Property("branch"), util.Interpolate("%(prop:pkg_major_version)s.x"), "testing", "stable"],
+                name=util.Interpolate("Promoting %(prop:branch)s to stable"),
             locks=repo_lock.access('exclusive'),
             timeout=300)
 
@@ -299,7 +299,7 @@ class Debs():
             name=self.pretty_branch_name + " Testing Debian Packaging",
             factory=self.getTestPipeline(),
             workernames=self.props['workernames'],
-            properties=deb_props,
+            properties=dict(deb_props) | {"release_build": True},
             collapseRequests=True,
             locks=[lock.access('exclusive')]))
 
@@ -307,7 +307,7 @@ class Debs():
             name=self.pretty_branch_name + " Release Debian Packaging",
             factory=self.getReleasePipeline(),
             workernames=self.props['workernames'],
-            properties=deb_props,
+            properties=dict(deb_props) | {"release_build": True},
             collapseRequests=True,
             locks=[lock.access('exclusive')]))
 
