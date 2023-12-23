@@ -225,7 +225,7 @@ class Debs():
         f_package_debs.addStep(debRepoPrune)
 
 
-    def publishRepo(self, f_package_debs, s3_target="s3:s3:", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
+    def publishRepo(self, f_package_debs, roomId="{{ default_matrix_room }}", repo="Testing", s3_target="s3:s3:", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
 
         debRepoPublish = common.shellCommand(
                 command=["./publish-branch", util.Interpolate("%(prop:pkg_major_version)s.x"), s3_target, util.Interpolate("%(prop:repo_signing_key)s")],
@@ -237,7 +237,16 @@ class Debs():
             locks=repo_lock.access('exclusive'),
             timeout=300)
 
+        debsNotifyMatrix = common.notifyMatrix(
+            message="Opencast %(prop:branch)s is now available in Debian " + repo,
+            roomId=roomId,
+            warnOnFailure=True,
+            flunkOnFailure=False,
+            doStepIf=util.Property("release_build", default=False),
+            hideStepIf=not util.Property("release_build", default=False))
+
         f_package_debs.addStep(debRepoPublish)
+        f_package_debs.addStep(debsNotifyMatrix)
         f_package_debs.addStep(common.unmountS3fs())
 
 
