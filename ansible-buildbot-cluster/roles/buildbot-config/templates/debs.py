@@ -59,6 +59,15 @@ class Debs():
                               haltOnFailure=True,
                               name="Cloning deb packaging configs")
 
+        debsSetMinor = steps.SetPropertyFromCommand(
+            command=util.Interpolate("echo %(prop:branch)s | cut -f 2 -d '.' | cut -f 1 -d '-'"),
+            property="pkg_minor_version",
+            flunkOnFailure=True,
+            haltOnFailure=True,
+            doStepIf=True, #util.Property("release_build", default=False),
+            hideStepIf=False, #not util.Property("release_build", default=False))
+            name="Set minor version property")
+
         debsVersion = steps.SetPropertyFromCommand(
             command="git rev-parse HEAD",
             property="deb_script_rev",
@@ -120,6 +129,11 @@ class Debs():
             commands=[
                 common.shellArg(
                     command=util.Interpolate(
+                        'ln -s opencast-%(prop:pkg_major_version)s_%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s.orig.tar.xz opencast-%(prop:pkg_major_version)s_%(prop:branch)s.orig.tar.xz && ls'
+                    ),
+                    logname='link'),
+                common.shellArg(
+                    command=util.Interpolate(
                         'echo "source library.sh\ndoOpencast %(prop:branch)s %(prop:branch)s %(prop:branch)s" | tee build.sh'
                     ),
                     logname='write'),
@@ -148,6 +162,7 @@ class Debs():
 
         f_package_debs.addStep(common.getPreflightChecks())
         f_package_debs.addStep(debsClone)
+        f_package_debs.addStep(debsSetMinor)
         f_package_debs.addStep(debsVersion)
         f_package_debs.addStep(common.getLatestBuildRevision())
         f_package_debs.addStep(common.getShortBuildRevision())
