@@ -49,6 +49,9 @@ repo_host: "pkg.opencast.org"
 #The repo suite to deploy Opencast from
 repo_deploy_suite: "unstable"
 
+#The room to post in about debian (and rpm?) packages being published
+default_matrix_room: "!RACMQVfKRDQTWhdXLa:matrix.org"
+
 #Who to send status mails to
 mail_to: "dev@opencast.org"
 

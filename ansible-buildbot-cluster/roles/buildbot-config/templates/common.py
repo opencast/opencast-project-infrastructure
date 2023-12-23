@@ -3,7 +3,7 @@
 
 from buildbot.plugins import steps, util, schedulers
 import random
-
+from urllib.parse import quote
 
 def getAnyBranchScheduler(name, builderNames, fileIsImportant=lambda fn: True, change_filter=None, properties=dict()):
     return schedulers.AnyBranchScheduler(
@@ -392,6 +392,21 @@ def setLocale():
         flunkOnFailure=True,
         haltOnFailure=True,
         name="Generate locale for testing")
+
+def notifyMatrix(message, roomId="{{ default_matrix_room }}", warnOnFailure=True, flunkOnFailure=False, doStepIf=True, hideStepIf=False):
+    return shellCommand(
+        #I have tried so many combinations of f strings, interpolate, jinja, and various escape styles  This appears to be the least worst way of doing this...
+        # - f strings don't like the {} from the post data
+        # - jinja doesn't like the method of escaping {} in the f string
+        # - and just for fun, interpolate doesn't like the escaping that jinja uses
+        # Note: the quote()ed room gets replaced since Interpolate doesn't like things liks %21 (which is !), but handles %%21 correctly.
+        command=util.Interpolate('curl -s -XPOST -d \'{"msgtype":"m.text", "body":"' + message +'"}\' ' + \
+                                 'https://matrix.org/_matrix/client/r0/rooms/' + quote(roomId).replace("%", "%%") + '/send/m.room.message?access_token=%(secret:matrix_announce_secret)s'), # E: line too long (295 > 79 characters)
+        name=util.Interpolate(message),
+        warnOnFailure=warnOnFailure,
+        flunkOnFailure=flunkOnFailure,
+        doStepIf=doStepIf,
+        hideStepIf=hideStepIf)
 
 
 def getClean():

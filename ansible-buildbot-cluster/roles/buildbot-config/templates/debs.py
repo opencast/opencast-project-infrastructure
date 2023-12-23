@@ -225,19 +225,28 @@ class Debs():
         f_package_debs.addStep(debRepoPrune)
 
 
-    def publishRepo(self, f_package_debs, s3_target="s3:s3:", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
+    def publishRepo(self, f_package_debs, repo="Testing", s3_target="s3:s3:", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
 
         debRepoPublish = common.shellCommand(
                 command=["./publish-branch", util.Interpolate("%(prop:pkg_major_version)s.x"), s3_target, util.Interpolate("%(prop:repo_signing_key)s")],
-            name=util.Interpolate("Publishing %(prop:pkg_major_version)s.x"),
+            name=util.Interpolate("Publishing %(prop:pkg_major_version)s.x on " + s3_target),
             env={
                 "AWS_ACCESS_KEY_ID": util.Secret(access_key_secret_id),
                 "AWS_SECRET_ACCESS_KEY": util.Secret(secret_key_secret_id)
             },
             locks=repo_lock.access('exclusive'),
-            timeout=300)
+            timeout=4 * 60 * 60) #Yes, 4 hours.  Publishing from LITE to RADOS can take a *long* time.
+
+        debsNotifyMatrix = common.notifyMatrix(
+            message="Opencast %(prop:branch)s is now in the Deb " + repo + " repo",
+            roomId="{{ default_matrix_room }}",
+            warnOnFailure=True,
+            flunkOnFailure=False,
+            doStepIf=util.Property("release_build", default=False),
+            hideStepIf=not util.Property("release_build", default=False))
 
         f_package_debs.addStep(debRepoPublish)
+        f_package_debs.addStep(debsNotifyMatrix)
         f_package_debs.addStep(common.unmountS3fs())
 
 
