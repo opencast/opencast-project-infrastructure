@@ -261,9 +261,9 @@ class Debs():
 
 
         f_package_debs = util.BuildFactory()
-        self.mountS3(f_package_debs)
         self.addDebBuild(f_package_debs)
         self.setupRepo(f_package_debs)
+        self.mountS3(f_package_debs)
         self.includeRepo(f_package_debs)
         self.publishRepo(f_package_debs)
         self.cleanup(f_package_debs)
@@ -274,9 +274,9 @@ class Debs():
     def getTestPipeline(self):
 
         f_package_debs = util.BuildFactory()
+        self.addDebBuild(f_package_debs)
         self.setupRepo(f_package_debs)
         self.mountS3(f_package_debs)
-        self.addDebBuild(f_package_debs)
         self.includeRepo(f_package_debs)
         self.publishRepo(f_package_debs)
         self.cleanup(f_package_debs)
