@@ -192,12 +192,10 @@ class Debs():
     def mountS3(self, f_package_debs, host="{{ s3_host }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
 
         f_package_debs.addStep(
-            common.deployS3fsSecrets(
+            common.mountS3fs(
+                host=host,
                 access_key_secret_id=access_key_secret_id,
                 secret_key_secret_id=secret_key_secret_id))
-        f_package_debs.addStep(
-            common.mountS3fs(
-                host=host))
 
 
     def includeRepo(self, f_package_debs):

@@ -152,7 +152,6 @@ class Rpms():
         for profile in self.profiles:
             f_package_rpms.addStep(self.getRPMBuild(profile))
         f_package_rpms.addStep(common.unloadSigningKey())
-        f_package_rpms.addStep(common.deployS3fsSecrets())
         f_package_rpms.addStep(common.mountS3fs())
         f_package_rpms.addStep(rpmsUpload)
         f_package_rpms.addStep(rpmsPrune)

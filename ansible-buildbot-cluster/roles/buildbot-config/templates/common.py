@@ -127,7 +127,7 @@ def getClone(name="Clone/Checkout", url="{{ source_repo_url }}", branch=None):
         args["alwaysUseLatest"] = True
         return steps.Git(**args)
     if "github" in url:
-        return steps.GitLab(**args)
+        return steps.GitHub(**args)
     elif "gitlab" in url:
         return steps.GitLab(**args)
     else:
@@ -278,21 +278,26 @@ def AWSStep(command, name, host="{{ s3_host }}", access_key_secret_id="s3.public
         hideStepIf=hideStepIf)
 
 
-def deployS3fsSecrets(bucket='{{ s3_public_bucket }}', access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
-    return shellCommand(
-            command=util.Interpolate(f"echo '{ bucket }:%(secret:{ access_key_secret_id })s:%(secret:{ secret_key_secret_id })s' >> /builder/.passwd-s3fs && chmod 600 /builder/.passwd-s3fs"),
-        name="Deploying S3 auth details")
-
-def mountS3fs(host="{{ s3_host }}", bucket="{{ s3_public_bucket }}", args=[]):
-    return shellCommand(
-        command=util.Interpolate(" ".join(
-            ["mkdir", "-p", "/builder/s3", "&&",
-             "s3fs",
-             "-o", "use_path_request_style",
-             "-o", f"url={ host }/",
-             "-o", "uid=%(prop:builder_uid)s,gid=%(prop:builder_gid)s,umask=0000",
-             f"{ bucket }", "/builder/s3"] + args)),
-        name="Mounting S3")
+def mountS3fs(host="{{ s3_host }}", bucket="{{ s3_public_bucket }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
+    return shellSequence(
+        commands=[
+            shellArg(
+                command=['mkdir', '-p', '/builder/s3'],
+                logname='mkdir'),
+            shellArg(
+                command=["s3fs",
+                    "-o", "use_path_request_style",
+                    "-o", f"url={ host }/",
+                    "-o", util.Interpolate("uid=%(prop:builder_uid)s,gid=%(prop:builder_gid)s,umask=0000"),
+                    f"{ bucket }", "/builder/s3"],
+                logname="mount")
+        ],
+        env={
+            #NB the weird format here.  Thanks S3fs for being weird.
+            "AWSACCESSKEYID": util.Secret(access_key_secret_id),
+            "AWSSECRETACCESSKEY": util.Secret(secret_key_secret_id)
+        },
+        name=f"Mounting S3 on { host }")
 
 def unmountS3fs():
     return shellCommand(
