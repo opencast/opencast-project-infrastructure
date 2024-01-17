@@ -88,7 +88,7 @@ class Debs():
             hideStepIf=util.Property("release_build", default=False))
 
         debsFetchFromGitHub = common.shellCommand(
-            command=["./fetch.sh", util.Property("branch")],
+            command=["./fetch.sh", util.Interpolate("%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s")],
             workdir="build/binaries",
             name="Fetch release build from GitHub",
             doStepIf=util.Property("release_build", default=False),
@@ -134,7 +134,7 @@ class Debs():
                     logname='link'),
                 common.shellArg(
                     command=util.Interpolate(
-                        'echo "source library.sh\ndoOpencast %(prop:branch)s %(prop:branch)s %(prop:branch)s" | tee build.sh'
+                        'echo "source library.sh\ndoOpencast %(prop:pkg_major_version)s.%(prop:pkg_minor_version)s %(prop:branch)s %(prop:branch)s" | tee build.sh'
                     ),
                     logname='write'),
             ],
