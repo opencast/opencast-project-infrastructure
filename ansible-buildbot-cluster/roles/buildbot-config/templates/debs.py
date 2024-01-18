@@ -77,7 +77,7 @@ class Debs():
             name="Get Debian script revision")
 
         removeSymlinks = common.shellCommand(
-            command=['rm', '-rf', 'binaries', 'outputs'],
+            command=['rm', '-rf', 'outputs'],
             name="Prep cloned repo for CI use")
 
         debsFetchFromS3 = common.syncAWS(
