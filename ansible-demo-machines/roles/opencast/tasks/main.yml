@@ -32,7 +32,7 @@
 
 - name: Fetch ingest helper scripts from helper repo
   get_url:
-    src: 'https://github.com/opencast/helper-scripts/raw/master/ingest/ingest-addtrack.sh'
+    src: 'https://github.com/opencast/helper-scripts/raw/master/ingest/{{ item }}'
     dest: '/opt/opencast-build/{{ item }}'
     mode: '0750'
     owner: opencast
