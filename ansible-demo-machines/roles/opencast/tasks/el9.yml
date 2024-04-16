@@ -1,0 +1,20 @@
+---
+
+- name: Fail early if os is not supported
+  assert:
+    that: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '9'
+
+- name: install dependencies
+  package:
+    name:
+      - nmap-ncat
+      - curl
+      - ffmpeg
+      - tar
+      - java-17-openjdk
+      - gzip
+      - tesseract
+      - elasticsearch-oss
+      # ingest script
+      - python3-pyyaml
+      - python3-requests
