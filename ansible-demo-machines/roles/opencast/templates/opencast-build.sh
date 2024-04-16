@@ -51,6 +51,6 @@ sleep 120
 ./ingest.py
 
 # Avoid registration form
-curl -i -u admin:opencast \
+curl -i -s -u admin:opencast \
 	'http://127.0.0.1:8080/admin-ng/adopter/registration' \
 	--data-raw 'contactMe=false&allowsStatistics=false&allowsErrorReports=false&agreedToPolicy=false&organisationName=&departmentName=&country=&postalCode=&city=&firstName=&lastName=&street=&streetNo=&email=&registered='
