@@ -5,17 +5,8 @@ server:
   password: opencast
 
 acl:
-  public:
-    - role: ROLE_ANONYMOUS
-      action: read
-  authenticated:
-    - role: ROLE_USER
-      action: read
-    - role: ROLE_ADMIN
-      action: write
-  private:
-    - role: ROLE_ADMIN
-      action: write
+  - role: ROLE_ANONYMOUS
+    action: read
 
 series:
   - identifier: ID-blender-foundation
