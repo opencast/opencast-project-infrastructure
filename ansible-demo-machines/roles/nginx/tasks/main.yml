@@ -1,26 +1,26 @@
 ---
 
-- name: install nginx
-  package:
+- name: Install Nginx
+  ansible.builtin.package:
     name: nginx
     state: present
 
-- name: create ssl directory
-  file:
+- name: Create ssl directory
+  ansible.builtin.file:
     path: /etc/nginx/ssl
     state: directory
     mode: '0755'
 
-- name: configure nginx mime types
-  copy:
+- name: Configure Nginx mime types
+  ansible.builtin.copy:
     src: mime.types
     dest: /etc/nginx/mime.types
     owner: root
     group: root
     mode: '0644'
 
-- name: initial configuration for certificates
-  copy:
+- name: Initial configuration for certificates
+  ansible.builtin.copy:
     src: '{{ item }}.pem'
     dest: /etc/nginx/ssl/{{ inventory_hostname }}.{{ item }}
     owner: root
@@ -31,7 +31,7 @@
     - crt
     - key
 
-- name: create diffie hellman ephemeral parameters for nginx
+- name: Create diffie hellman ephemeral parameters for nginx
   community.crypto.openssl_dhparam:
     path: /etc/nginx/ssl/dhparam.pem
     size: 2048
@@ -39,25 +39,24 @@
     group: root
     mode: '0640'
 
-- name: configure nginx
-  template:
+- name: Configure Nginx
+  ansible.builtin.template:
     src: nginx.conf
     dest: /etc/nginx/nginx.conf
     owner: root
     group: root
-    mode: 0640
-  notify: reload nginx
+    mode: '0640'
+  notify: Reload Nginx
 
-- name: install selinux config libs
-  package:
+- name: Install SElinux config libs
+  ansible.builtin.package:
     name: python3-libsemanage
   when: >
     ansible_os_family == 'RedHat'
     and ansible_distribution_major_version >= '8'
 
-- name: allow httpd to act as reverse proxy
-  become: true
-  seboolean:
+- name: Allow httpd to act as reverse proxy
+  ansible.posix.seboolean:
     name: httpd_can_network_relay
     state: true
     persistent: true
@@ -66,8 +65,8 @@
     or ansible_distribution == 'RedHat'
     or ansible_distribution == 'Scientific'
 
-- name: start and enable nginx
-  service:
+- name: Start and enable nginx
+  ansible.builtin.service:
     name: nginx
     enabled: true
     state: started

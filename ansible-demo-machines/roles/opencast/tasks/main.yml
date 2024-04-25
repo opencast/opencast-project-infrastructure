@@ -3,18 +3,20 @@
 ###
 # Install Opencast RPM repositories
 
-- include_tasks: debian.yml
+- name: Install Opencast dependencies
+  ansible.builtin.include_tasks: debian.yml
   when: ansible_os_family == 'Debian'
 
-- include_tasks: el9.yml
+- name: Install Opencast dependencies
+  ansible.builtin.include_tasks: el9.yml
   when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '9'
 
 
 ###
 # Create opencast directories
 
-- name: create opencast directories
-  file:
+- name: Create Opencast directories
+  ansible.builtin.file:
     path: '{{ item }}'
     state: directory
     mode: '0775'
@@ -27,8 +29,8 @@
 ###
 # Install build and ingest scripts, install systemd service files
 
-- name: install opencast build and ingest scripts
-  template:
+- name: Install Opencast build and ingest scripts
+  ansible.builtin.template:
     src: '{{ item }}'
     dest: /opt/opencast-build/
     mode: '0750'
@@ -39,8 +41,8 @@
     - media.yml
     - ingest.py
 
-- name: install systemd service files
-  copy:
+- name: Install Systemd service files
+  ansible.builtin.copy:
     src: '{{ item }}'
     dest: /etc/systemd/system/
     mode: '0644'
@@ -52,11 +54,11 @@
     - opencast-build.service
     - opencast-build.timer
 
-- name: give opencast user rights to run build commands with higher privileges
-  copy:
+- name: Give Opencast user rights to run build commands with higher privileges
+  ansible.builtin.copy:
     src: opencast-build-sudoers
     dest: /etc/sudoers.d/
-    mode: 0440
+    mode: '0440'
     owner: root
     group: root
     force: true
@@ -64,19 +66,19 @@
 ###
 # Enable and run opencast buid service
 
-- name: enable opencast build service
-  systemd:
+- name: Enable Opencast build service
+  ansible.builtin.systemd:
     daemon_reload: true
     name: opencast-build.timer
     enabled: true
     state: started
 
-- name: enable opencast service
-  service:
+- name: Enable opencast service
+  ansible.builtin.service:
     name: opencast
     enabled: true
 
-- name: run opencast build service
-  service:
+- name: Run Opencast build service
+  ansible.builtin.service:
     name: opencast-build.service
     state: started

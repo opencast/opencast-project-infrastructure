@@ -1,11 +1,11 @@
 ---
 
 - name: Fail early if os is not supported
-  assert:
+  ansible.builtin.assert:
     that: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '9'
 
-- name: install dependencies
-  package:
+- name: Install dependencies
+  ansible.builtin.package:
     name:
       - nmap-ncat
       - curl

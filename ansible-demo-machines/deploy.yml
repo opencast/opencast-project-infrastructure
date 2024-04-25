@@ -1,15 +1,12 @@
 ---
 
-- hosts: all
+- name: Deploy Opencast test server
+  hosts: all
   become: true
   roles:
     - role: nginx
     - role: elan.opencast_firewalld
       when: ansible_os_family == 'RedHat'
     - role: opencast
-
-#- hosts: all
-#  become: true
-#  roles:
-#    - lkiesow.dnf_autoupdate
-#  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '8'
+    - role: lkiesow.dnf_autoupdate
+      when: ansible_os_family == 'RedHat'

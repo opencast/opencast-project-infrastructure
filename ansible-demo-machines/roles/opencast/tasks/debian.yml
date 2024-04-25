@@ -1,11 +1,11 @@
 ---
 
-- name: fail early if OS is not supported
-  assert:
+- name: Fail early if OS is not supported
+  ansible.builtin.assert:
     that: ansible_os_family == 'Debian'
 
-- name: install opencast dependencies
-  package:
+- name: Install opencast dependencies
+  ansible.builtin.package:
     name:
       - openjdk-11-jre
       - curl
