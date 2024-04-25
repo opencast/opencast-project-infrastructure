@@ -27,17 +27,6 @@
 ###
 # Install build and ingest scripts, install systemd service files
 
-- name: Fetch ingest helper scripts from helper repo
-  ansible.builtin.get_url:
-    url: 'https://github.com/opencast/helper-scripts/raw/master/ingest/{{ item }}'
-    dest: '/opt/opencast-build/{{ item }}'
-    mode: '0750'
-    owner: opencast
-    group: opencast
-  loop:
-    - ingest.py
-    - media.yml
-
 - name: install opencast build and ingest scripts
   template:
     src: '{{ item }}'
@@ -47,6 +36,8 @@
     group: opencast
   loop:
     - opencast-build.sh
+    - media.yml
+    - ingest.py
 
 - name: install systemd service files
   copy:
