@@ -274,7 +274,7 @@ def syncAWS(pathFrom, pathTo, name, host="{{ s3_host }}", access_key_secret_id="
         hideStepIf=hideStepIf)
 
 
-def mountS3fs(host="{{ s3_host }}", bucket="{{ s3_public_bucket }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
+def mountS3fs(host="{{ s3_host }}", bucket="{{ s3_public_bucket }}", target="/builder/s3", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
     return shellSequence(
         commands=[
             shellArg(
@@ -285,7 +285,7 @@ def mountS3fs(host="{{ s3_host }}", bucket="{{ s3_public_bucket }}", access_key_
                     "-o", "use_path_request_style",
                     "-o", f"url={ host }/",
                     "-o", util.Interpolate("uid=%(prop:builder_uid)s,gid=%(prop:builder_gid)s,umask=0000"),
-                    f"{ bucket }", "/builder/s3"],
+                    f"{ bucket }", target],
                 logname="mount")
         ],
         env={
@@ -295,9 +295,9 @@ def mountS3fs(host="{{ s3_host }}", bucket="{{ s3_public_bucket }}", access_key_
         },
         name=f"Mounting S3 on { host }")
 
-def unmountS3fs():
+def unmountS3fs(target="/builder/s3"):
     return shellCommand(
-        command=["fusermount", "-u", "/builder/s3"],
+        command=["fusermount", "-u", target],
         name="Unmounting S3")
 
 def cleanupS3Secrets():
