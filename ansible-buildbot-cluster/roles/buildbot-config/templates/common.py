@@ -306,7 +306,7 @@ def cleanupS3Secrets():
         name="Cleaning up S3 secrets")
 
 
-def getLatestBuildRevision(host="{{ s3_host }}", bucket="{{ s3_public_bucket }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
+def getLatestBuildRevision(host="{{ s3_host }}", bucket="{{ s3_public_bucket }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key", doStepIf=True, hideStepIf=False):
     pathFrom = f"s3://{ bucket }/builds/%(prop:branch_pretty)s/latest.txt"
     pathTo = "-"
     command = 'cp'
@@ -320,6 +320,8 @@ def getLatestBuildRevision(host="{{ s3_host }}", bucket="{{ s3_public_bucket }}"
         property="got_revision",
         flunkOnFailure=True,
         haltOnFailure=True,
+        doStepIf=doStepIf,
+        hideStepIf=hideStepIf,
         name="Get latest build version")
 
 
