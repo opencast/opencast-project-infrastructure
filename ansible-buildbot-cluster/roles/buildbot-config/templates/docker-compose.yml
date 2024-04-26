@@ -26,6 +26,7 @@ services:
       - "{{ buildbot_home }}/nginx-config/dhparam.pem:/etc/nginx/ssl/dhparam.pem"
       - "{{ disk_base }}:{{ disk_base }}"
       - "{{ buildbot_home }}/keys:{{ buildbot_home }}/keys"
+      - "{{ buildbot_home }}/nginx_root:/var/www"
   db:
     env_file:
       - db.env

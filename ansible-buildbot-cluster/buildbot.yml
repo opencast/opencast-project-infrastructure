@@ -3,11 +3,13 @@
 # This playbook deploys a Buildbot master and worker(s) configured for Opencast
 
 - hosts: s3
+  gather_facts: false
   user: "{{ login_user }}"
   roles:
     - { role: s3-server, when: "hostvars[inventory_hostname]['deploy_s3_server'] | bool" }
 
 - hosts: buildbot
+  gather_facts: false
   user: "{{ login_user }}"
   roles:
     - { role: buildbot-base }
@@ -18,7 +20,29 @@
   handlers:
     - import_tasks: handlers/handlers.yml
 
+  # Special handling for installing on a virgin system
 - hosts: master
+  gather_facts: false
+  user: "{{ login_user }}"
+  tasks:
+    - name: Check if certs already exists
+      stat:
+        path: /etc/letsencrypt/live/{{ inventory_hostname }}
+      register: certs
+      become: yes
+
+- hosts: master
+  gather_facts: false
+  user: "{{ login_user }}"
+  roles:
+    - { role: geerlingguy.certbot, when: "not certs.stat.exists", become: yes }
+  vars:
+    - certbot_create_method: standalone
+  handlers:
+    - import_tasks: handlers/handlers.yml
+
+- hosts: master
+  gather_facts: false
   user: "{{ login_user }}"
   roles:
     - { role: buildbot-master-install, tags: [ buildbot ] }
@@ -26,6 +50,7 @@
     - import_tasks: handlers/handlers.yml
 
 - hosts: workers
+  gather_facts: false
   user: "{{ login_user }}"
   roles:
     - { role: buildbot-worker, tags: [ buildbot ] }
@@ -33,6 +58,7 @@
     - import_tasks: handlers/handlers.yml
 
 - hosts: all
+  gather_facts: false
   user: "{{ login_user }}"
   roles:
     - { role: buildbot-config, tags: [ buildbot, reconfig ] }
@@ -40,6 +66,7 @@
     - import_tasks: handlers/handlers.yml
 
 - hosts: master
+  gather_facts: false
   user: "{{ login_user }}"
   roles:
     - { role: geerlingguy.certbot, become: yes }
@@ -47,6 +74,7 @@
     - import_tasks: handlers/handlers.yml
 
 - hosts: workers
+  gather_facts: false
   user: "{{ login_user }}"
   roles:
     - { role: buildbot-new-images, tags: [ buildbot, reconfig ] }

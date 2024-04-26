@@ -11,6 +11,7 @@
   with_items:
     - { path: "{{ buildbot_home }}", mode: "0755" }
     - { path: "{{ buildbot_home }}/keys", mode: "0755" }
+    - { path: "{{ buildbot_home }}/nginx_root", mode: "0755" }
     - { path: "{{ buildbot_config_master }}", mode: "0755" }
     - { path: "{{ buildbot_secrets_master }}", mode: "0700" }
 

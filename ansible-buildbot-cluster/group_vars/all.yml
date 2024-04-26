@@ -149,12 +149,11 @@ disk_base: "{{ buildbot_home }}/s3"
 
 certbot_auto_renew_user: "{{ buildbot_user }}"
 certbot_create_if_missing: true
-certbot_create_method: standalone
+certbot_create_method: webroot
+certbot_webroot: "{{ buildbot_home }}/nginx_root"
 certbot_hsts: true
 certbot_admin_email: cloud@opencast.org
 certbot_certs:
   - domains:
     - "{{ inventory_hostname }}"
-certbot_create_standalone_stop_services:
-  - nginx
 
