@@ -118,6 +118,10 @@ class Rpms():
             workdir="build/rpmbuild",
             name="Prep rpm environment")
 
+        rpmsCheck = common.checkAWS(
+            path="s3://{{ s3_public_bucket }}/builds/{{ builds_fragment }}",
+            name="Checking that build exists in S3")
+
         rpmsFetch = common.syncAWS(
             pathFrom="s3://{{ s3_public_bucket }}/builds/{{ builds_fragment }}",
             pathTo="rpmbuild/SOURCES",
@@ -147,6 +151,7 @@ class Rpms():
         f_package_rpms.addStep(common.getShortBuildRevision())
         f_package_rpms.addStep(rpmsFullVersion)
         f_package_rpms.addStep(rpmsSetup)
+        f_package_rpms.addStep(rpmsCheck)
         f_package_rpms.addStep(rpmsFetch)
         f_package_rpms.addStep(common.loadSigningKey())
         for profile in self.profiles:

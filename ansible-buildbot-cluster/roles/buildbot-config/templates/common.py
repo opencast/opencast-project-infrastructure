@@ -86,7 +86,6 @@ def shellArg(command, logname, haltOnFailure=True, flunkOnFailure=True, warnOnFa
 
 
 def shellSequence(commands, name, workdir="build", env={}, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, alwaysRun=False, doStepIf=True, hideStepIf=False, timeout=240, locks=[]):
-    lock_temp = [ locks ] if type(locks) != list else locks
     return steps.ShellSequence(
         commands=commands,
         name=name,
@@ -99,7 +98,7 @@ def shellSequence(commands, name, workdir="build", env={}, haltOnFailure=True, f
         alwaysRun=alwaysRun,
         doStepIf=doStepIf,
         hideStepIf=hideStepIf,
-        locks=lock_temp)
+        locks=[ locks ] if type(locks) != list else locks)
 
 
 
@@ -238,42 +237,39 @@ def compressDir(dirToCompress, outputFile, workdir="build"):
          name=f"Compressing { dirToCompress }")
 
 
-def copyAWS(pathFrom, pathTo, name, host="{{ s3_host }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key", doStepIf=True, hideStepIf=False):
-    return AWSStep(
-        command=['s3', 'cp', util.Interpolate(pathFrom), util.Interpolate(pathTo)],
+def checkAWS(path, name, host="{{ s3_host }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key", doStepIf=True, hideStepIf=False):
+    return shellCommand(
+        command=['aws', '--endpoint-url', host, 's3', 'ls', '--recursive', util.Interpolate(path)],
         name=name,
-        host=host,
-        access_key_secret_id=access_key_secret_id,
-        secret_key_secret_id=secret_key_secret_id,
+        env={
+            "AWS_ACCESS_KEY_ID": util.Secret(access_key_secret_id),
+            "AWS_SECRET_ACCESS_KEY": util.Secret(secret_key_secret_id)
+        },
+        doStepIf=doStepIf,
+        hideStepIf=hideStepIf)
+
+
+def copyAWS(pathFrom, pathTo, name, host="{{ s3_host }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key", doStepIf=True, hideStepIf=False):
+    return shellCommand(
+        command=['aws', '--endpoint-url', host, 's3', 'cp', util.Interpolate(pathFrom), util.Interpolate(pathTo)],
+        name=name,
+        env={
+            "AWS_ACCESS_KEY_ID": util.Secret(access_key_secret_id),
+            "AWS_SECRET_ACCESS_KEY": util.Secret(secret_key_secret_id)
+        },
         doStepIf=doStepIf,
         hideStepIf=hideStepIf)
 
 
 def syncAWS(pathFrom, pathTo, name, host="{{ s3_host }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key", doStepIf=True, hideStepIf=False):
-    return AWSStep(
-        command=['s3', 'sync', util.Interpolate(pathFrom), util.Interpolate(pathTo)],
-        name=name,
-        host=host,
-        access_key_secret_id=access_key_secret_id,
-        secret_key_secret_id=secret_key_secret_id,
-        doStepIf=doStepIf,
-        hideStepIf=hideStepIf)
 
-
-def AWSStep(command, name, host="{{ s3_host }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key", doStepIf=True, hideStepIf=False):
-    commandAry = list()
-    commandAry.extend(['aws', '--endpoint-url', host]),
-    if type(command) == list:
-        commandAry.extend(command)
-    else:
-        commandAry.append(command)
     return shellCommand(
-        command=commandAry,
+        command=['aws', '--endpoint-url', host, 's3', 'sync', util.Interpolate(pathFrom), util.Interpolate(pathTo)],
+        name=name,
         env={
             "AWS_ACCESS_KEY_ID": util.Secret(access_key_secret_id),
             "AWS_SECRET_ACCESS_KEY": util.Secret(secret_key_secret_id)
         },
-        name=name,
         doStepIf=doStepIf,
         hideStepIf=hideStepIf)
 

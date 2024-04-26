@@ -80,6 +80,12 @@ class Debs():
             command=['rm', '-rf', 'outputs'],
             name="Prep cloned repo for CI use")
 
+        debsCheckS3 = common.checkAWS(
+            path="s3://{{ s3_public_bucket }}/builds/{{ builds_fragment }}",
+            name="Checking that build exists in S3",
+            doStepIf=util.Property("release_build", default="false") != "true",
+            hideStepIf=util.Property("release_build", default="false") == "true")
+
         debsFetchFromS3 = common.syncAWS(
             pathFrom="s3://{{ s3_public_bucket }}/builds/{{ builds_fragment }}",
             pathTo="binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/",
@@ -167,6 +173,7 @@ class Debs():
         f_package_debs.addStep(common.getLatestBuildRevision())
         f_package_debs.addStep(common.getShortBuildRevision())
         f_package_debs.addStep(removeSymlinks)
+        f_package_debs.addStep(debsCheckS3)
         f_package_debs.addStep(debsFetchFromS3)
         f_package_debs.addStep(debsFetchFromGitHub)
         f_package_debs.addStep(common.loadSigningKey())
