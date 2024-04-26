@@ -3,7 +3,38 @@
 
 from buildbot.plugins import steps, util
 from buildbot.process.results import SUCCESS
+#from github import Github
 import common
+
+class GenerateGithubRelease(steps.BuildStep):
+
+    def __init__(self, release_tag, release_name, release_message, **kwargs):
+        super().__init__(**kwargs)
+
+        self.tag = release_tag
+        self.name = release_name
+        self.message = release_message
+
+    def run(self):
+        g = Github("{{ github_token }}")
+
+        opencast = g.get_repo("{{ source_pr_owner }}/{{ source_pr_repo }}")
+
+        release = opencast.create_git_release(tag=f"{self.tag}", name=f"{self.name}", message=f"{self.message}", prerelease=True)
+        #release.upload_asset(path="./test.txt", content_type="application/txt")
+        return SUCCESS
+
+    def getCurrentSummary(self):
+        return dict({
+                 "step": f"Creating { self.tag } release named { self.name }"
+               })
+
+    def getResultSummary(self):
+        return dict({
+                 "step": f"Created { self.tag } release named { self.name }",
+                 "build": f"I dunno lol"
+               })
+
 
 class Build():
 
@@ -36,6 +67,8 @@ class Build():
         for key in Build.OPTIONAL_PARAMS:
             if key in props and type(props[key]) in [str, list]:
                 self.props[key] = props[key]
+
+        self.props['signing_key_filename'] = "{{ signing_key_filename }}"
 
         self.pretty_branch_name = self.props["branch_pretty"]
         self.jdks = self.props["jdk"]
@@ -103,12 +136,12 @@ class Build():
             value=util.Interpolate("s3://{{ s3_public_bucket }}/builds/{{ builds_fragment }}/"),
             name="Set S3 location for binary fetch")
 
-
         f_build = self._getBasePipeline()
         f_build.addStep(common.getWorkerPrep())
         override = None
 {% if deploy_snapshots %}
         f_build.addStep(common.loadMavenSettings())
+        f_build.addStep(common.loadSigningKey())
         override=['deploy', '-T 1C', '-Pnone', '-s', 'settings.xml'],
 {% endif %}
         f_build.addStep(common.getBuildPrep())
@@ -124,6 +157,30 @@ class Build():
         f_build.addStep(buildFoundAt)
         f_build.addStep(updateBuild)
         f_build.addStep(updateCrowdin)
+        f_build.addStep(common.getClean())
+
+        return f_build
+
+    def getReleasePipeline(self):
+
+        #github_release = GenerateGithubRelease(
+        #    release_tag=util.Interpolate("%(prop:branch)s"),
+        #    release_name=util.Interpolate("Opencast %(prop:branch)s"),
+        #    release_message=util.Interpolate("Changelog available at #TODO"),
+        #    haltOnFailure=True,
+        #    flunkOnFailure=True)
+
+        f_build = self._getBasePipeline()
+        f_build.addStep(common.getWorkerPrep())
+        f_build.addStep(common.loadMavenSettings())
+        f_build.addStep(common.loadSigningKey())
+        f_build.addStep(common.getBuildPrep())
+        override=['install', 'nexus-staging:deploy', 'nexus-staging:release', '-P', 'release,none', '-s', 'settings.xml', '-DstagingProgressTimeoutMinutes=10']
+        self._addBuildSteps(f_build, override=override, timeout=600)
+        f_build.addStep(common.unloadSigningKey())
+        f_build.addStep(common.unloadMavenSettings())
+        #f_build.addStep(common.getTarballs())
+        #f_build.addStep(github_release)
         f_build.addStep(common.getClean())
 
         return f_build
@@ -152,6 +209,22 @@ class Build():
                 properties=jdk_props,
                 collapseRequests=True,
                 locks=[branch_lock.access('exclusive')]))
+
+{% if deploy_tags | default(false) %}
+        if "develop" != self.props['git_branch_name']:
+            jdk_props = dict(self.props)
+            #We use the oldest JDK for release builds
+            jdk_props['jdk'] = str(self.jdks[0])
+
+            builders.append(util.BuilderConfig(
+                name=self.pretty_branch_name + " Release",
+                factory=self.getReleasePipeline(),
+                workernames=self.props['workernames'],
+                properties=jdk_props,
+                collapseRequests=True,
+                locks=[branch_lock.access('exclusive')]))
+{% endif %}
+
         return builders
 
 
@@ -162,7 +235,7 @@ class Build():
         #Regular builds
         scheds[f"{ self.pretty_branch_name }Build"] = common.getAnyBranchScheduler(
             name=self.pretty_branch_name + " Build",
-            change_filter=util.ChangeFilter(category=None, branch_re=self.props['git_branch_name']),
+            change_filter=util.ChangeFilter(category='push', branch_re=self.props['git_branch_name']),
             fileIsImportant=self.buildFilter,
             builderNames=[ self.pretty_branch_name + " Build JDK " + str(jdk) for jdk in self.jdks ])
 
@@ -177,5 +250,43 @@ class Build():
             name=self.pretty_branch_name + "Build",
             props=self.props,
             builderNames=[ self.pretty_branch_name + " Build JDK " + str(jdk) for jdk in self.jdks ])
+
+{% if deploy_tags | default(false) %}
+        if "develop" != self.props['git_branch_name']:
+            #Regular releases
+            scheds[f"{ self.pretty_branch_name }Release"] = common.getAnyBranchScheduler(
+                name=self.pretty_branch_name + " Release",
+                properties=self.props,
+                #This regex is looking for something like 11.1, so we use the major package version and a static ".*"
+                change_filter=util.ChangeFilter(category='tag_push', branch_re=self.props['pkg_major_version'] + ".*"),
+                builderNames=[ self.pretty_branch_name + " Release"])
+
+            forceParams = [
+                util.CodebaseParameter(
+                    "",
+                    label="Build Settings",
+                    # will generate a combo box
+                    branch=util.StringParameter(
+                        label="Release Version",
+                        name="branch",
+                        default=self.pretty_branch_name,
+                    ),
+                    # will generate nothing in the form, but revision, repository,
+                    # and project are needed by buildbot scheduling system so we
+                    # need to pass a value ("")
+                    revision=util.FixedParameter(name="revision", default="HEAD"),
+                    repository=util.FixedParameter(
+                        name="repository", default="{{ source_repo_url }}"),
+                    project=util.FixedParameter(name="project", default=""),
+                    priority=util.FixedParameter(name="priority", default=0),
+                ),
+            ]
+
+            scheds[f"{ self.pretty_branch_name}ReleaseForce"] = common.getForceScheduler(
+                name=self.pretty_branch_name + "Release",
+                props=self.props,
+                params=forceParams,
+                builderNames=[ self.pretty_branch_name + " Release"])
+{% endif %}
 
         return scheds

@@ -84,7 +84,6 @@
     - { src: "ansible.py", dest: "{{ buildbot_config_master }}/ansible.py" }
     - { src: "maintenance.py", dest: "{{ buildbot_config_master }}/maintenance.py" }
     - { src: "docker_images.py", dest: "{{ buildbot_config_master }}/docker_images.py" }
-    - { src: "release.py", dest: "{{ buildbot_config_master }}/release.py" }
     - { src: "buildbot.conf", dest: "{{ buildbot_home }}/nginx-config/buildbot.conf" }
   notify: ["Stop Buildbot", "Start Buildbot"]
   tags: just-config
