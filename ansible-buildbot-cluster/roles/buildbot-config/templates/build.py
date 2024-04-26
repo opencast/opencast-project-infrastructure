@@ -96,14 +96,23 @@ class Build():
         return f_build
 
 
+    def _addBuildSteps(self, f_build, override=None, timeout=240):
+
+        bs2 = common.getBuild(name="Build attempt 2", override=override, haltOnFailure=True, doStepIf=lambda build: build.build.results != SUCCESS, timeout=timeout)
+        #NoneType object has no attribute 'results' -> going to guess bs2 isn't visible
+        #bs3 = common.getBuild(name="Build attempt 3", override=override, haltOnFailure=False, doStepIf=lambda build: build.build.results != SUCCESS and bs2.build.results != SUCCESS, timeout=timeout)
+
+        f_build.addStep(common.getBuild(override=override, haltOnFailure=False, timeout=timeout))
+        f_build.addStep(bs2)
+        #f_build.addStep(bs3)
+
+
     def getPullRequestPipeline(self):
 
         f_build = self._getBasePipeline()
         f_build.addStep(common.getWorkerPrep())
         f_build.addStep(common.getBuildPrep())
-        f_build.addStep(common.getBuild(haltOnFailure=False))
-        f_build.addStep(common.getBuild(name="Build attempt 2", haltOnFailure=False, doStepIf=lambda build: build.build.results != SUCCESS))
-        f_build.addStep(common.getBuild(name="Build attempt 3", doStepIf=lambda build: build.build.results != SUCCESS))
+        self._addBuildSteps(f_build)
         f_build.addStep(self.getBuildSize)
 {% if push_prs | default(False) %}
         f_build.addStep(common.getTarballs())
@@ -145,9 +154,7 @@ class Build():
         override=['deploy', '-T 1C', '-Pnone', '-s', 'settings.xml'],
 {% endif %}
         f_build.addStep(common.getBuildPrep())
-        f_build.addStep(common.getBuild(override=override, haltOnFailure=False))
-        f_build.addStep(common.getBuild(override=override, name="Build attempt 2", haltOnFailure=False, doStepIf=lambda build: build.build.results != SUCCESS))
-        f_build.addStep(common.getBuild(override=override, name="Build attempt 3", doStepIf=lambda build: build.build.results != SUCCESS))
+        self._addBuildSteps(f_build, override)
         f_build.addStep(self.getBuildSize)
         f_build.addStep(common.unloadMavenSettings())
         f_build.addStep(common.getTarballs())
