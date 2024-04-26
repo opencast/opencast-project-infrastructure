@@ -339,8 +339,10 @@ def getShortBuildRevision():
         name="Get build tarball short revision")
 
 
-def loadSigningKey():
-    pathFrom = "s3://{{ s3_private_bucket }}/{{ groups['master'][0] }}/key/signing.key"
+def loadSigningKey(key_override=None):
+    pathFrom = "s3://{{ s3_private_bucket }}/{{ groups['master'][0] }}/key/%(prop:signing_key_filename)s"
+    if key_override:
+      pathFrom = f"s3://{{ s3_private_bucket }}/{{ groups['master'][0] }}/key/{ key_override }"
     pathTo = "-"
     command = 'cp'
     return shellCommand(
