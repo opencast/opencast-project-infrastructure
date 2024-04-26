@@ -43,6 +43,15 @@ key_url: "https://pkg.opencast.org/gpgkeys/automated.key"
 #The GPG key ID of the key above.  These must match!
 key_id: "048D039F1DAE53EA0357ED824917F260EA15B53F"
 
+#The raw GPG key to use for package and repository signing.
+signing_key: "{{ lookup('passwordstore', 'gpg/nightly/key', returnall=true) }}"
+
+#The GPG key filename to use for package and repository signing.  This is pulled from S3.
+signing_key_filename: "signing.key"
+
+#The signing key to use.  This ID *must* match the key above.
+signing_key_id: "048D039F1DAE53EA0357ED824917F260EA15B53F"
+
 #Where to find the deb and rpm packages
 repo_host: "pkg.opencast.org"
 
