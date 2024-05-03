@@ -10,10 +10,10 @@ opencast:
   Develop:
     branch: 'develop'
     pom: '16'
-    jdk: [ '11', '17' ]
+    jdk: [ '17' ]
     ffmpeg: 13
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
-    el: [ 8, 9 ]
+    el: [ ]
     cores: '1C'
     server: 'develop'
     deb_signing_key_id: "{{ lookup('passwordstore', 'gpg/debian/id') }}"
@@ -24,7 +24,7 @@ opencast:
     jdk: [ '11', '17' ]
     ffmpeg: 13
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
-    el: [ 8, 9 ]
+    el: [ ]
     cores: '1C'
     server: 'stable'
     deb_signing_key_id: "{{ lookup('passwordstore', 'gpg/debian/id') }}"
@@ -35,7 +35,7 @@ opencast:
     jdk: [ '11' ]
     ffmpeg: 13
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
-    el: [ 8, 9 ]
+    el: [ ]
     cores: '1C'
     server: 'legacy'
     deb_signing_key_id: "{{ lookup('passwordstore', 'gpg/debian/id') }}"
