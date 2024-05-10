@@ -15,13 +15,17 @@
     - { path: "{{ buildbot_config_master }}", mode: "0755" }
     - { path: "{{ buildbot_secrets_master }}", mode: "0700" }
 
-- name: Ensure local temp directory exists
+- name: Ensure local temp directories exists
   file:
-    path: "{{ role_path }}/.temp"
+    path: "{{ role_path }}/.temp/{{ item }}"
     state: directory
     mode: 0700
   tags: just-config
   connection: local
+  with_items:
+    - key
+    - mvn
+    - env
 
 - name: Templating embeds locally
   template:
@@ -93,6 +97,7 @@
   args:
     chdir: "{{ buildbot_home }}"
   become: yes
+  ignore_errors: true
   tags: just-config
   register: docker_ps
 
@@ -136,15 +141,38 @@
 - name: Template Buildbot private support files
   template:
     src: "{{ item.src }}"
-    dest: "{{role_path}}/{{ item.dest }}"
+    dest: "{{ role_path }}/{{ item.dest }}"
     mode: 0600
   connection: local
   with_items:
-    - { src: "secrets/signing.key", dest: ".temp/signing.key" }
-    - { src: "secrets/stable", dest: ".temp/stable" }
-    - { src: "secrets/legacy", dest: ".temp/legacy" }
-    - { src: "secrets/develop", dest: ".temp/develop" }
-    - { src: "secrets/settings.xml", dest: ".temp/settings.xml" }
+    #This top signing key is the default automated code signing key used for Maven and nightlies
+    - { src: "secrets/signing.key", dest: ".temp/key/signing.key" }
+    - { src: "secrets/stable", dest: ".temp/env/stable" }
+    - { src: "secrets/legacy", dest: ".temp/env/legacy" }
+    - { src: "secrets/develop", dest: ".temp/env/develop" }
+    - { src: "secrets/settings.xml", dest: ".temp/mvn/settings.xml" }
+
+- name: Templating per-repo deb signing keys
+  copy:
+    content: "{{ item['value']['deb_signing_key'] }}"
+    dest: "{{ role_path }}/.temp/key/deb-{{ item['item'] }}-signing.key"
+    mode: 0600
+  connection: local
+  with_items:
+    - "{{ opencast | dict2items }}"
+  when: item.value.deb_signing_key is defined
+  no_log: true
+
+- name: Templating per-repo rpm signing keys
+  copy:
+    content: "{{ item['rpm_signing_key'] }}"
+    dest: "{{ role_path }}/.temp/key/rpm-{{ item }}-signing.key"
+    mode: 0600
+  connection: local
+  with_items:
+    - "{{ opencast | dict2items }}"
+  when: item.rpm_signing_key is defined
+  no_log: true
 
 - name: Distributing private support files into S3
   aws_s3:
@@ -156,15 +184,13 @@
     overwrite: "always"
     permission: [] #prevents a warning about PutObjectAcl not being implemented by minio
     bucket: "{{ s3_private_bucket }}"
-    src: "{{ role_path }}/{{ item.src }}"
-    object: "{{ item.dest }}"
+    src: "{{ item }}"
+    object: "{{ groups['master'][0] }}/{{ item.split('/')[-2:] | join('/') }}"
   connection: local
-  with_items:
-    - { src: ".temp/signing.key", dest: "{{ groups['master'][0] }}/key/signing.key" }
-    - { src: ".temp/stable", dest: "{{ groups['master'][0] }}/env/stable" }
-    - { src: ".temp/legacy", dest: "{{ groups['master'][0] }}/env/legacy" }
-    - { src: ".temp/develop", dest: "{{ groups['master'][0] }}/env/develop" }
-    - { src: ".temp/settings.xml", dest: "{{ groups['master'][0] }}/mvn/settings.xml" }
+  with_fileglob:
+    - "{{ role_path }}/.temp/key/*"
+    - "{{ role_path }}/.temp/mvn/*"
+    - "{{ role_path }}/.temp/env/*"
   environment:
     PYTHONPATH: "{{ EXTRA_PYTHONPATH if EXTRA_PYTHONPATH is defined else '' }}"
 

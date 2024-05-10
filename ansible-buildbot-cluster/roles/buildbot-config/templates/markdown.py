@@ -290,7 +290,7 @@ class Markdown():
         #PR builds
         scheds[f"{ self.pretty_branch_name }MarkdownPR"] = common.getAnyBranchScheduler(
             name=self.pretty_branch_name + " Pull Request Markdown",
-            change_filter=util.ChangeFilter(category="pull", branch_re=self.props['git_branch_name']),
+            change_filter=util.ChangeFilter(category=["pull", "merge_request"], branch_re=self.props['git_branch_name']),
             fileIsImportant=self.buildFilter,
             builderNames=[ self.pretty_branch_name + " Pull Request Markdown" ])
 

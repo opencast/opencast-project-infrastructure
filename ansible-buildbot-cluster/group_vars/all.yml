@@ -13,35 +13,43 @@ opencast:
     jdk: [ '11', '17' ]
     ffmpeg: 15
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
-    el: [ 8, 9 ]
+    el: [ ]
     cores: '1C'
     server: 'develop'
+    deb_signing_key_id: "{{ lookup('passwordstore', 'gpg/debian/id') }}"
+    deb_signing_key: "{{ lookup('passwordstore', 'gpg/debian/key', returnall=true) }}"
   16.x:
     branch: 'r/16.x'
     pom: '16'
     jdk: [ '11', '17' ]
     ffmpeg: 15
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
-    el: [ 8, 9 ]
+    el: [ ]
     cores: '1C'
     server: 'stable'
+    deb_signing_key_id: "{{ lookup('passwordstore', 'gpg/debian/id') }}"
+    deb_signing_key: "{{ lookup('passwordstore', 'gpg/debian/key', returnall=true) }}"
   15.x:
     branch: 'r/15.x'
     pom: '15'
     jdk: [ '11', '17' ]
     ffmpeg: 15
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
-    el: [ 8, 9 ]
+    el: [ ]
     cores: '1C'
     server: 'legacy'
+    deb_signing_key_id: "{{ lookup('passwordstore', 'gpg/debian/id') }}"
+    deb_signing_key: "{{ lookup('passwordstore', 'gpg/debian/key', returnall=true) }}"
   14.x:
     branch: 'r/14.x'
     pom: '14'
     jdk: [ '11' ]
     ffmpeg: 14
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
-    el: [ 8, 9 ]
+    el: [ ]
     cores: '1C'
+    deb_signing_key_id: "{{ lookup('passwordstore', 'gpg/debian/id') }}"
+    deb_signing_key: "{{ lookup('passwordstore', 'gpg/debian/key', returnall=true) }}"
 
 
 #########################
@@ -117,12 +125,6 @@ github_token: FAKE_TOKEN
 
 #The API key for crowdin uploads
 crowdin_api_key: FAKE_API_KEY
-
-#The raw GPG key to use for package and repository signing.
-signing_key: FAKE_KEY
-
-#The signing key to use.  This ID *must* match the key above.
-signing_key_id: FAKE_KEY_ID
 
 #The access keys for the ci cluster to use.  These must have write access to the public bucket, but can have read-only access to the private bucket.
 public_s3_access_key: FAKE_ACCESS_KEY

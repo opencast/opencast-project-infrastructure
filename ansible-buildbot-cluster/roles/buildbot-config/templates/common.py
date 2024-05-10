@@ -86,7 +86,6 @@ def shellArg(command, logname, haltOnFailure=True, flunkOnFailure=True, warnOnFa
 
 
 def shellSequence(commands, name, workdir="build", env={}, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, alwaysRun=False, doStepIf=True, hideStepIf=False, timeout=240, locks=[]):
-    lock_temp = [ locks ] if type(locks) != list else locks
     return steps.ShellSequence(
         commands=commands,
         name=name,
@@ -99,7 +98,7 @@ def shellSequence(commands, name, workdir="build", env={}, haltOnFailure=True, f
         alwaysRun=alwaysRun,
         doStepIf=doStepIf,
         hideStepIf=hideStepIf,
-        locks=lock_temp)
+        locks=[ locks ] if type(locks) != list else locks)
 
 
 
@@ -238,47 +237,44 @@ def compressDir(dirToCompress, outputFile, workdir="build"):
          name=f"Compressing { dirToCompress }")
 
 
-def copyAWS(pathFrom, pathTo, name, host="{{ s3_host }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key", doStepIf=True, hideStepIf=False):
-    return AWSStep(
-        command=['s3', 'cp', util.Interpolate(pathFrom), util.Interpolate(pathTo)],
+def checkAWS(path, name, host="{{ s3_host }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key", doStepIf=True, hideStepIf=False):
+    return shellCommand(
+        command=['aws', '--endpoint-url', host, 's3', 'ls', '--recursive', util.Interpolate(path)],
         name=name,
-        host=host,
-        access_key_secret_id=access_key_secret_id,
-        secret_key_secret_id=secret_key_secret_id,
+        env={
+            "AWS_ACCESS_KEY_ID": util.Secret(access_key_secret_id),
+            "AWS_SECRET_ACCESS_KEY": util.Secret(secret_key_secret_id)
+        },
+        doStepIf=doStepIf,
+        hideStepIf=hideStepIf)
+
+
+def copyAWS(pathFrom, pathTo, name, host="{{ s3_host }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key", doStepIf=True, hideStepIf=False):
+    return shellCommand(
+        command=['aws', '--endpoint-url', host, 's3', 'cp', util.Interpolate(pathFrom), util.Interpolate(pathTo)],
+        name=name,
+        env={
+            "AWS_ACCESS_KEY_ID": util.Secret(access_key_secret_id),
+            "AWS_SECRET_ACCESS_KEY": util.Secret(secret_key_secret_id)
+        },
         doStepIf=doStepIf,
         hideStepIf=hideStepIf)
 
 
 def syncAWS(pathFrom, pathTo, name, host="{{ s3_host }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key", doStepIf=True, hideStepIf=False):
-    return AWSStep(
-        command=['s3', 'sync', util.Interpolate(pathFrom), util.Interpolate(pathTo)],
-        name=name,
-        host=host,
-        access_key_secret_id=access_key_secret_id,
-        secret_key_secret_id=secret_key_secret_id,
-        doStepIf=doStepIf,
-        hideStepIf=hideStepIf)
 
-
-def AWSStep(command, name, host="{{ s3_host }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key", doStepIf=True, hideStepIf=False):
-    commandAry = list()
-    commandAry.extend(['aws', '--endpoint-url', host]),
-    if type(command) == list:
-        commandAry.extend(command)
-    else:
-        commandAry.append(command)
     return shellCommand(
-        command=commandAry,
+        command=['aws', '--endpoint-url', host, 's3', 'sync', util.Interpolate(pathFrom), util.Interpolate(pathTo)],
+        name=name,
         env={
             "AWS_ACCESS_KEY_ID": util.Secret(access_key_secret_id),
             "AWS_SECRET_ACCESS_KEY": util.Secret(secret_key_secret_id)
         },
-        name=name,
         doStepIf=doStepIf,
         hideStepIf=hideStepIf)
 
 
-def mountS3fs(host="{{ s3_host }}", bucket="{{ s3_public_bucket }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
+def mountS3fs(host="{{ s3_host }}", bucket="{{ s3_public_bucket }}", target="/builder/s3", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
     return shellSequence(
         commands=[
             shellArg(
@@ -289,7 +285,7 @@ def mountS3fs(host="{{ s3_host }}", bucket="{{ s3_public_bucket }}", access_key_
                     "-o", "use_path_request_style",
                     "-o", f"url={ host }/",
                     "-o", util.Interpolate("uid=%(prop:builder_uid)s,gid=%(prop:builder_gid)s,umask=0000"),
-                    f"{ bucket }", "/builder/s3"],
+                    f"{ bucket }", target],
                 logname="mount")
         ],
         env={
@@ -299,9 +295,9 @@ def mountS3fs(host="{{ s3_host }}", bucket="{{ s3_public_bucket }}", access_key_
         },
         name=f"Mounting S3 on { host }")
 
-def unmountS3fs():
+def unmountS3fs(target="/builder/s3"):
     return shellCommand(
-        command=["fusermount", "-u", "/builder/s3"],
+        command=["fusermount", "-u", target],
         name="Unmounting S3")
 
 def cleanupS3Secrets():
@@ -310,7 +306,7 @@ def cleanupS3Secrets():
         name="Cleaning up S3 secrets")
 
 
-def getLatestBuildRevision(host="{{ s3_host }}", bucket="{{ s3_public_bucket }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
+def getLatestBuildRevision(host="{{ s3_host }}", bucket="{{ s3_public_bucket }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key", doStepIf=True, hideStepIf=False):
     pathFrom = f"s3://{ bucket }/builds/%(prop:branch_pretty)s/latest.txt"
     pathTo = "-"
     command = 'cp'
@@ -324,6 +320,8 @@ def getLatestBuildRevision(host="{{ s3_host }}", bucket="{{ s3_public_bucket }}"
         property="got_revision",
         flunkOnFailure=True,
         haltOnFailure=True,
+        doStepIf=doStepIf,
+        hideStepIf=hideStepIf,
         name="Get latest build version")
 
 
@@ -341,8 +339,10 @@ def getShortBuildRevision():
         name="Get build tarball short revision")
 
 
-def loadSigningKey():
-    pathFrom = "s3://{{ s3_private_bucket }}/{{ groups['master'][0] }}/key/signing.key"
+def loadSigningKey(key_override=None):
+    pathFrom = "s3://{{ s3_private_bucket }}/{{ groups['master'][0] }}/key/%(prop:signing_key_filename)s"
+    if key_override:
+      pathFrom = f"s3://{{ s3_private_bucket }}/{{ groups['master'][0] }}/key/{ key_override }"
     pathTo = "-"
     command = 'cp'
     return shellCommand(

@@ -16,7 +16,9 @@ class Debs():
         "git_branch_name",
         "pkg_major_version",
         "branch_pretty",
-        "workernames"
+        "workernames",
+        "deb_signing_key_id",
+        "deb_signing_key_file"
         ]
 
     OPTIONAL_PARAMS = [
@@ -26,6 +28,7 @@ class Debs():
     props = {}
     pretty_branch_name = None
     build_sched = None
+    branch_key_filename = None
 
     def __init__(self, props):
         for key in Debs.REQUIRED_PARAMS:
@@ -44,9 +47,11 @@ class Debs():
         self.pretty_branch_name = self.props["branch_pretty"]
         if 'pkg_minor_version' not in self.props:
             self.props["pkg_minor_version"] = "x"
-        if 'signing_key' not in self.props:
-            self.props['signing_key'] = "{{ hostvars[inventory_hostname]['signing_key_id'] }}"
-
+        #The default, automated key
+        self.props["signing_key_filename"] = "{{ signing_key_filename }}"
+        self.props["signing_key_id"] = "{{ signing_key_id }}"
+        self.branch_key_filename = self.props["deb_signing_key_file"]
+        self.branch_key_id = self.props["deb_signing_key_id"]
 
     def addDebBuild(self, f_package_debs):
 
@@ -64,8 +69,6 @@ class Debs():
             property="pkg_minor_version",
             flunkOnFailure=True,
             haltOnFailure=True,
-            doStepIf=True, #util.Property("release_build", default=False),
-            hideStepIf=False, #not util.Property("release_build", default=False))
             name="Set minor version property")
 
         debsVersion = steps.SetPropertyFromCommand(
@@ -80,19 +83,25 @@ class Debs():
             command=['rm', '-rf', 'outputs'],
             name="Prep cloned repo for CI use")
 
+        debsCheckS3 = common.checkAWS(
+            path="s3://{{ s3_public_bucket }}/builds/{{ builds_fragment }}",
+            name="Checking that build exists in S3",
+            doStepIf=util.Property("release_build", default="false") != "true",
+            hideStepIf=util.Property("release_build", default="false") == "true")
+
         debsFetchFromS3 = common.syncAWS(
             pathFrom="s3://{{ s3_public_bucket }}/builds/{{ builds_fragment }}",
             pathTo="binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/",
             name="Fetch build from S3",
-            doStepIf=not util.Property("release_build", default=False),
-            hideStepIf=util.Property("release_build", default=False))
+            doStepIf=util.Property("release_build", default="false") != "true",
+            hideStepIf=util.Property("release_build", default="false") == "true")
 
         debsFetchFromGitHub = common.shellCommand(
             command=["./fetch.sh", util.Interpolate("%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s")],
             workdir="build/binaries",
             name="Fetch release build from GitHub",
-            doStepIf=util.Property("release_build", default=False),
-            hideStepIf=not util.Property("release_build", default=False))
+            doStepIf=util.Property("release_build", default="false") == "true",
+            hideStepIf=util.Property("release_build", default="false") != "true")
 
         debsPrepBuild = common.shellSequence(
             commands=[
@@ -112,18 +121,17 @@ class Debs():
                     logname='link'),
                 common.shellArg(
                     command=util.Interpolate(
-                        'echo "source library.sh\ndoOpencast %(prop:pkg_major_version)s.%(prop:pkg_minor_version)s %(prop:branch)s %(prop:got_revision)s" | tee build.sh'
+                        'echo "source library.sh\nSIGNING_KEY=%(prop:signing_key_id)s doOpencast %(prop:pkg_major_version)s.%(prop:pkg_minor_version)s %(prop:branch)s %(prop:got_revision)s" | tee build.sh'
                     ),
                     logname='write'),
             ],
             env={
                 "NAME": "Buildbot",
                 "EMAIL": "buildbot@{{ groups['master'][0] }}",
-                "SIGNING_KEY": util.Interpolate("%(prop:signing_key)s")
             },
             name="Prep to build debs",
-            doStepIf=not util.Property("release_build", default=False),
-            hideStepIf=util.Property("release_build", default=False))
+            doStepIf=util.Property("release_build", default="false") != "true",
+            hideStepIf=util.Property("release_build", default="false") == "true")
 
         debsPrepReleaseBuild = common.shellSequence(
             commands=[
@@ -134,13 +142,13 @@ class Debs():
                     logname='link'),
                 common.shellArg(
                     command=util.Interpolate(
-                        'echo "source library.sh\ndoOpencast %(prop:pkg_major_version)s.%(prop:pkg_minor_version)s %(prop:branch)s %(prop:branch)s" | tee build.sh'
+                        'echo "source library.sh\nSIGNING_KEY=%(prop:deb_signing_key_id)s doOpencast %(prop:pkg_major_version)s.%(prop:pkg_minor_version)s %(prop:branch)s %(prop:branch)s" | tee build.sh'
                     ),
                     logname='write'),
             ],
             name="Prep to build release debs",
-            doStepIf=util.Property("release_build", default=False),
-            hideStepIf=not util.Property("release_build", default=False))
+            doStepIf=util.Property("release_build", default="false") == "true",
+            hideStepIf=util.Property("release_build", default="false") != "true")
 
         debsBuild = common.shellSequence(
             commands=[
@@ -156,7 +164,7 @@ class Debs():
             env={
                 "NAME": "Buildbot",
                 "EMAIL": "buildbot@{{ groups['master'][0] }}",
-                "SIGNING_KEY": util.Interpolate("%(prop:signing_key)s")
+                "SIGNING_KEY": util.Interpolate("%(prop:deb_signing_key_id)s")
             },
             name="Build debs")
 
@@ -164,15 +172,21 @@ class Debs():
         f_package_debs.addStep(debsClone)
         f_package_debs.addStep(debsSetMinor)
         f_package_debs.addStep(debsVersion)
-        f_package_debs.addStep(common.getLatestBuildRevision())
+        f_package_debs.addStep(common.getLatestBuildRevision(
+            doStepIf=util.Property("release_build", default="false") != "true",
+            hideStepIf=util.Property("release_build", default="false") == "true"))
         f_package_debs.addStep(common.getShortBuildRevision())
         f_package_debs.addStep(removeSymlinks)
+        f_package_debs.addStep(debsCheckS3)
         f_package_debs.addStep(debsFetchFromS3)
         f_package_debs.addStep(debsFetchFromGitHub)
+        #NB: This can be either the default, or the per-branch depending on the *buidler* below
         f_package_debs.addStep(common.loadSigningKey())
         f_package_debs.addStep(debsPrepBuild)
         f_package_debs.addStep(debsPrepReleaseBuild)
         f_package_debs.addStep(debsBuild)
+        #We unload here since we *might* be using a different key in a minute to sign the actual repo
+        f_package_debs.addStep(common.unloadSigningKey())
 
 
     def setupRepo(self, f_package_debs):
@@ -189,44 +203,53 @@ class Debs():
         f_package_debs.addStep(debRepoLoadKeys)
 
 
-    def mountS3(self, f_package_debs, host="{{ s3_host }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
+    def mountS3(self, f_package_debs, host="rados", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
 
-        f_package_debs.addStep(
-            common.mountS3fs(
-                host=host,
-                access_key_secret_id=access_key_secret_id,
-                secret_key_secret_id=secret_key_secret_id))
+        f_package_debs.addStep(common.shellCommand(
+            command=[f'./mount.{ host }'],
+            env={
+                'AWSACCESSKEYID': util.Secret(access_key_secret_id),
+                'AWSSECRETACCESSKEY': util.Secret(secret_key_secret_id)
+            },
+            name=f"Mounting { host } S3"))
 
 
-    def includeRepo(self, f_package_debs):
+    def includeRepo(self, f_package_debs, s3_target="s3:s3:"):
 
         debRepoCreate = common.shellCommand(
             command=['./create-branch', util.Interpolate("%(prop:pkg_major_version)s.x")],
             name=util.Interpolate("Ensuring %(prop:pkg_major_version)s.x repos exist"),
             locks=repo_lock.access('exclusive'),
-            timeout=300)
+            timeout=4 * 60 * 60)
 
         debRepoIngest = common.shellCommand(
                 command=['./include-binaries', util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:repo_component:-unstable)s"), util.Interpolate("outputs/%(prop:deb_script_rev)s/*.changes")],
             name=util.Interpolate(f"Adding build to %(prop:repo_component:-unstable)s"),
             locks=repo_lock.access('exclusive'),
-            timeout=1800)
+            timeout=4 * 60 * 60)
+
+        debSnapshotCleanup = common.shellCommand(
+            command=["./snapshot-cleanup", util.Interpolate("%(prop:pkg_major_version)s.x"), s3_target],
+            name=util.Interpolate(f"%(prop:pkg_major_version)s.x repository snapshot cleanup"),
+            locks=repo_lock.access('exclusive'),
+            timeout=4 * 60 * 60)
 
         debRepoPrune = common.shellCommand(
-            command=util.Interpolate("./snapshot-cleanup %(prop:pkg_major_version)s.x oc && ./clean-unstable-repo %(prop:pkg_major_version)s.x"),
+            command=["./clean-unstable-repo", util.Interpolate("%(prop:pkg_major_version)s.x")],
             name=util.Interpolate(f"Pruning %(prop:pkg_major_version)s.x unstable repository"),
             locks=repo_lock.access('exclusive'),
-            timeout=300)
+            timeout=4 * 60 * 60)
 
         f_package_debs.addStep(debRepoCreate)
         f_package_debs.addStep(debRepoIngest)
+        f_package_debs.addStep(debSnapshotCleanup)
         f_package_debs.addStep(debRepoPrune)
 
 
     def publishRepo(self, f_package_debs, repo="Testing", s3_target="s3:s3:", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
 
         debRepoPublish = common.shellCommand(
-                command=["./publish-branch", util.Interpolate("%(prop:pkg_major_version)s.x"), s3_target, util.Interpolate("%(prop:repo_signing_key)s")],
+                command=["./publish-branch", util.Interpolate("%(prop:pkg_major_version)s.x"), s3_target, util.Interpolate("%(prop:deb_signing_key_id)s")],
             name=util.Interpolate("Publishing %(prop:pkg_major_version)s.x on " + s3_target),
             env={
                 "AWS_ACCESS_KEY_ID": util.Secret(access_key_secret_id),
@@ -240,12 +263,13 @@ class Debs():
             roomId="{{ default_matrix_room }}",
             warnOnFailure=True,
             flunkOnFailure=False,
-            doStepIf=util.Property("release_build", default=False),
-            hideStepIf=not util.Property("release_build", default=False))
+            doStepIf=util.Property("release_build", default="false") == "true",
+            hideStepIf=util.Property("release_build", default="false") != "true")
 
+        f_package_debs.addStep(common.loadSigningKey(self.branch_key_filename))
         f_package_debs.addStep(debRepoPublish)
         f_package_debs.addStep(debsNotifyMatrix)
-        f_package_debs.addStep(common.unmountS3fs())
+        f_package_debs.addStep(common.unmountS3fs("/builder/s3/repo/debs"))
 
 
     def cleanup(self, f_package_debs):
@@ -257,13 +281,12 @@ class Debs():
 
     def getBuildPipeline(self):
 
-
         f_package_debs = util.BuildFactory()
         self.addDebBuild(f_package_debs)
         self.setupRepo(f_package_debs)
-        self.mountS3(f_package_debs)
-        self.includeRepo(f_package_debs)
-        self.publishRepo(f_package_debs)
+        self.mountS3(f_package_debs, host="rados")
+        self.includeRepo(f_package_debs, s3_target="s3:s3:")
+        self.publishRepo(f_package_debs, s3_target="s3:s3:")
         self.cleanup(f_package_debs)
 
         return f_package_debs
@@ -274,9 +297,10 @@ class Debs():
         f_package_debs = util.BuildFactory()
         self.addDebBuild(f_package_debs)
         self.setupRepo(f_package_debs)
-        self.mountS3(f_package_debs)
-        self.includeRepo(f_package_debs)
-        self.publishRepo(f_package_debs)
+        self.mountS3(f_package_debs, host="rados", access_key_secret_id="rados.access_key", secret_key_secret_id="rados.secret_key")
+        self.includeRepo(f_package_debs, s3_target="s3:s3")
+        #Note the s3 target here is the official default.  We override and re-set it here so it's clear wtf we're doing
+        self.publishRepo(f_package_debs, s3_target="s3:s3:", access_key_secret_id="rados.access_key", secret_key_secret_id="rados.secret_key")
         self.cleanup(f_package_debs)
 
         return f_package_debs
@@ -293,9 +317,10 @@ class Debs():
         #NB: We are not building debs here, just promoting from test!
         f_package_debs = util.BuildFactory()
         self.setupRepo(f_package_debs)
-        self.mountS3(f_package_debs)
+        self.mountS3(f_package_debs, host="rados", access_key_secret_id="rados.access_key", secret_key_secret_id="rados.secret_key")
         f_package_debs.addStep(debRepoPromote)
-        self.publishRepo(f_package_debs)
+        #Note the s3 target here is the official default.  We override and re-set it here so it's clear wtf we're doing
+        self.publishRepo(f_package_debs, repo="Stable", s3_target="s3:s3:", access_key_secret_id="rados.access_key", secret_key_secret_id="rados.secret_key")
         self.cleanup(f_package_debs)
 
         return f_package_debs
@@ -307,6 +332,7 @@ class Debs():
 
         deb_props = dict(self.props)
         deb_props['image'] = random.choice({{ docker_debian_worker_images }})
+        deb_props['release_build'] = 'false'
         lock = util.MasterLock(f"{ self.props['git_branch_name'] }deb_lock", maxCount=1)
 
         builders.append(util.BuilderConfig(
@@ -317,11 +343,15 @@ class Debs():
             collapseRequests=True,
             locks=[lock.access('exclusive')]))
 
+        prod_props = dict(deb_props)
+        prod_props['signing_key_filename'] = self.branch_key_filename
+        prod_props['release_build'] = 'true'
+
         builders.append(util.BuilderConfig(
             name=self.pretty_branch_name + " Testing Debian Packaging",
             factory=self.getTestPipeline(),
             workernames=self.props['workernames'],
-            properties=dict(deb_props) | {"release_build": True},
+            properties=dict(prod_props) | {"repo_component": "testing"},
             collapseRequests=True,
             locks=[lock.access('exclusive')]))
 
@@ -329,7 +359,7 @@ class Debs():
             name=self.pretty_branch_name + " Release Debian Packaging",
             factory=self.getReleasePipeline(),
             workernames=self.props['workernames'],
-            properties=dict(deb_props) | {"release_build": True},
+            properties=dict(prod_props) | {"repo_component": "stable"},
             collapseRequests=True,
             locks=[lock.access('exclusive')]))
 

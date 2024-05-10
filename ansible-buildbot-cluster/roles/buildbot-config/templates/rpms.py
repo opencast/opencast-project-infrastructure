@@ -16,7 +16,9 @@ class Rpms():
         "branch_pretty",
         "profiles",
         "el",
-        "workernames"
+        "workernames",
+        "rpm_signing_key_id",
+        "rpm_signing_key_file"
         ]
 
     OPTIONAL_PARAMS = [
@@ -47,8 +49,8 @@ class Rpms():
         self.profiles = self.props['profiles']
         if 'pkg_minor_version' not in self.props:
             self.props["pkg_minor_version"] = "x"
-        if 'signing_key' not in self.props:
-            self.props['signing_key'] = "{{ hostvars[inventory_hostname]['signing_key_id'] }}"
+        self.props["signing_key_filename"] = self.props["rpm_signing_key_file"]
+        self.props["signing_key_id"] = self.props["rpm_signing_key_id"]
 
     def getRPMBuild(self, profile):
         return common.shellSequence(
@@ -118,6 +120,10 @@ class Rpms():
             workdir="build/rpmbuild",
             name="Prep rpm environment")
 
+        rpmsCheck = common.checkAWS(
+            path="s3://{{ s3_public_bucket }}/builds/{{ builds_fragment }}",
+            name="Checking that build exists in S3")
+
         rpmsFetch = common.syncAWS(
             pathFrom="s3://{{ s3_public_bucket }}/builds/{{ builds_fragment }}",
             pathTo="rpmbuild/SOURCES",
@@ -147,6 +153,7 @@ class Rpms():
         f_package_rpms.addStep(common.getShortBuildRevision())
         f_package_rpms.addStep(rpmsFullVersion)
         f_package_rpms.addStep(rpmsSetup)
+        f_package_rpms.addStep(rpmsCheck)
         f_package_rpms.addStep(rpmsFetch)
         f_package_rpms.addStep(common.loadSigningKey())
         for profile in self.profiles:
