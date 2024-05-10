@@ -16,7 +16,9 @@ class Rpms():
         "branch_pretty",
         "profiles",
         "el",
-        "workernames"
+        "workernames",
+        "rpm_signing_key_id",
+        "rpm_signing_key_file"
         ]
 
     OPTIONAL_PARAMS = [
@@ -47,8 +49,8 @@ class Rpms():
         self.profiles = self.props['profiles']
         if 'pkg_minor_version' not in self.props:
             self.props["pkg_minor_version"] = "x"
-        if 'signing_key' not in self.props:
-            self.props['signing_key'] = "{{ hostvars[inventory_hostname]['signing_key_id'] }}"
+        self.props["signing_key_filename"] = self.props["rpm_signing_key_file"]
+        self.props["signing_key_id"] = self.props["rpm_signing_key_id"]
 
     def getRPMBuild(self, profile):
         return common.shellSequence(
