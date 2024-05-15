@@ -16,9 +16,9 @@ def getAnyBranchScheduler(name, builderNames, fileIsImportant=lambda fn: True, c
         fileIsImportant=fileIsImportant)
 
 
-def getForceScheduler(name, props, builderNames, params=None):
+def getForceScheduler(name, props, builderNames, codebase=None, params=None):
 
-    forceParams = [
+    defaultCodebase = [
         util.CodebaseParameter(
             "",
             label="Main repository",
@@ -37,14 +37,15 @@ def getForceScheduler(name, props, builderNames, params=None):
         ),
     ]
 
-    forceParams = params or forceParams
+    defaultProperties = []
 
     return schedulers.ForceScheduler(
         name=f"FORCE{ name }".replace(".", "c").replace(" ", "s"),
         buttonName="Force Build",
         label="Force Build Settings",
         builderNames=builderNames,
-        codebases=forceParams,
+        codebases=codebase or defaultCodebase,
+        properties=params or defaultProperties,
 
         # will generate a text input
         reason=util.StringParameter(

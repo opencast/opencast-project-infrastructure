@@ -386,15 +386,11 @@ class Debs():
             change_filter=util.ChangeFilter(category=None, branch_re=f'{ self.props["pkg_major_version"] }\.\d*-\d*'),
             builderNames=[ self.pretty_branch_name + " Testing Debian Packaging" ])
 
-        forceParams = [
+        codebase = [
             util.CodebaseParameter(
                 "",
                 label="Build Settings",
                 # will generate a combo box
-                branch=util.FixedParameter(
-                    name="version",
-                    default=self.pretty_branch_name,
-                ),
                 branch=util.FixedParameter(name="branch", default=self.pretty_branch_name),
                 # will generate nothing in the form, but revision, repository,
                 # and project are needed by buildbot scheduling system so we

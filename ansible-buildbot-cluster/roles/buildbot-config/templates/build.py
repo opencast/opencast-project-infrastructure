@@ -268,7 +268,7 @@ class Build():
                 change_filter=util.ChangeFilter(category='tag_push', branch_re=self.props['pkg_major_version'] + ".*"),
                 builderNames=[ self.pretty_branch_name + " Release"])
 
-            forceParams = [
+            codebase = [
                 util.CodebaseParameter(
                     "",
                     label="Build Settings",
@@ -292,7 +292,7 @@ class Build():
             scheds[f"{ self.pretty_branch_name}ReleaseForce"] = common.getForceScheduler(
                 name=self.pretty_branch_name + "Release",
                 props=self.props,
-                params=forceParams,
+                codebase=codebase,
                 builderNames=[ self.pretty_branch_name + " Release"])
 {% endif %}
 
