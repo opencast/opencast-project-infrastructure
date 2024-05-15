@@ -355,13 +355,14 @@ class Debs():
             collapseRequests=True,
             locks=[lock.access('exclusive')]))
 
-        builders.append(util.BuilderConfig(
-            name=self.pretty_branch_name + " Release Debian Packaging",
-            factory=self.getReleasePipeline(),
-            workernames=self.props['workernames'],
-            properties=dict(prod_props) | {"repo_component": "stable"},
-            collapseRequests=True,
-            locks=[lock.access('exclusive')]))
+        if "Develop" != self.pretty_branch_name:
+            builders.append(util.BuilderConfig(
+                name=self.pretty_branch_name + " Release Debian Packaging",
+                factory=self.getReleasePipeline(),
+                workernames=self.props['workernames'],
+                properties=dict(prod_props) | {"repo_component": "stable", "tag_version": self.props['branch']},
+                collapseRequests=True,
+                locks=[lock.access('exclusive')]))
 
         return builders
 
@@ -377,9 +378,32 @@ class Debs():
             change_filter=util.ChangeFilter(category=None, branch_re=f'{ self.props["pkg_major_version"] }\.\d*-\d*'),
             builderNames=[ self.pretty_branch_name + " Testing Debian Packaging" ])
 
-        scheds[f"{ self.pretty_branch_name}DebsRelease"] = common.getForceScheduler(
-            name=self.pretty_branch_name + "DebsRelease",
-            props=self.props,
-            builderNames=[ self.pretty_branch_name + " Release Debian Packaging"])
+        forceParams = [
+            util.CodebaseParameter(
+                "",
+                label="Build Settings",
+                # will generate a combo box
+                branch=util.FixedParameter(
+                    name="version",
+                    default=self.pretty_branch_name,
+                ),
+                branch=util.FixedParameter(name="branch", default=self.pretty_branch_name),
+                # will generate nothing in the form, but revision, repository,
+                # and project are needed by buildbot scheduling system so we
+                # need to pass a value ("")
+                revision=util.FixedParameter(name="revision", default="HEAD"),
+                repository=util.FixedParameter(
+                    name="repository", default="{{ source_repo_url }}"),
+                project=util.FixedParameter(name="project", default=""),
+                priority=util.FixedParameter(name="priority", default=0),
+            ),
+        ]
+
+        if "Develop" != self.pretty_branch_name:
+          scheds[f"{ self.pretty_branch_name}DebsRelease"] = common.getForceScheduler(
+              name=self.pretty_branch_name + "DebsRelease",
+              props=self.props,
+                  params=forceParams,
+              builderNames=[ self.pretty_branch_name + " Release Debian Packaging"])
 
         return scheds
