@@ -79,6 +79,13 @@ class Debs():
             workdir="build",
             name="Get Debian script revision")
 
+        debsTagVersion = steps.SetProperty(
+          property="tag_version",
+          value=util.Interpolate("%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s-%(prop:buildnumber)s-%(prop:short_revision)s"),
+          doStepIf=util.Property("release_build", default="false") != "true",
+          hideStepIf=util.Property("release_build", default="false") == "true",
+          name="Calculate expected build version")
+
         removeSymlinks = common.shellCommand(
             command=['rm', '-rf', 'outputs'],
             name="Prep cloned repo for CI use")
@@ -176,6 +183,7 @@ class Debs():
             doStepIf=util.Property("release_build", default="false") != "true",
             hideStepIf=util.Property("release_build", default="false") == "true"))
         f_package_debs.addStep(common.getShortBuildRevision())
+        f_package_debs.addStep(debsTagVersion)
         f_package_debs.addStep(removeSymlinks)
         f_package_debs.addStep(debsCheckS3)
         f_package_debs.addStep(debsFetchFromS3)
@@ -259,7 +267,7 @@ class Debs():
             timeout=4 * 60 * 60) #Yes, 4 hours.  Publishing from LITE to RADOS can take a *long* time.
 
         debsNotifyMatrix = common.notifyMatrix(
-            message="Opencast %(prop:branch)s is now in the Deb " + repo + " repo",
+            message="Opencast %(prop:tag_version)s is now in the Deb " + repo + " repo",
             roomId="{{ default_matrix_room }}",
             warnOnFailure=True,
             flunkOnFailure=False,
@@ -309,8 +317,8 @@ class Debs():
     def getReleasePipeline(self):
 
         debRepoPromote = common.shellCommand(
-                command=["./promote-package", "opencast", util.Property("branch"), util.Interpolate("%(prop:pkg_major_version)s.x"), "testing", "stable"],
-                name=util.Interpolate("Promoting %(prop:branch)s to stable"),
+                command=["./promote-package", "opencast", util.Property("tag_version"), util.Property("branch"), "testing", "stable"],
+                name=util.Interpolate("Promoting %(prop:tag_version)s to stable"),
             locks=repo_lock.access('exclusive'),
             timeout=300)
 
@@ -351,7 +359,7 @@ class Debs():
             name=self.pretty_branch_name + " Testing Debian Packaging",
             factory=self.getTestPipeline(),
             workernames=self.props['workernames'],
-            properties=dict(prod_props) | {"repo_component": "testing"},
+            properties=dict(prod_props) | {"repo_component": "testing", "tag_version": util.Property('branch')},
             collapseRequests=True,
             locks=[lock.access('exclusive')]))
 
@@ -360,7 +368,8 @@ class Debs():
                 name=self.pretty_branch_name + " Release Debian Packaging",
                 factory=self.getReleasePipeline(),
                 workernames=self.props['workernames'],
-                properties=dict(prod_props) | {"repo_component": "stable", "tag_version": self.props['branch']},
+                #NB: We'r enot copying the branch proerty to tag_version as above since this *should not get run automatically*, right?
+                properties=dict(prod_props) | {"repo_component": "stable"},
                 collapseRequests=True,
                 locks=[lock.access('exclusive')]))
 
@@ -374,7 +383,6 @@ class Debs():
         #Regular builds
         scheds[f"{ self.pretty_branch_name }DebsTesting"] = common.getAnyBranchScheduler(
             name=self.pretty_branch_name + " Debian Testing Packaging Generation",
-            #FIXME: Set appropriate props (specifically pkg_release_version)
             change_filter=util.ChangeFilter(category=None, branch_re=f'{ self.props["pkg_major_version"] }\.\d*-\d*'),
             builderNames=[ self.pretty_branch_name + " Testing Debian Packaging" ])
 
@@ -399,11 +407,20 @@ class Debs():
             ),
         ]
 
+        params = [
+                util.StringParameter(
+                    name="tag_version",
+                    label="Release tag",
+                    default="N.M-1",
+                )
+            ]
+
         if "Develop" != self.pretty_branch_name:
-          scheds[f"{ self.pretty_branch_name}DebsRelease"] = common.getForceScheduler(
-              name=self.pretty_branch_name + "DebsRelease",
-              props=self.props,
-                  params=forceParams,
-              builderNames=[ self.pretty_branch_name + " Release Debian Packaging"])
+            scheds[f"{ self.pretty_branch_name}DebsRelease"] = common.getForceScheduler(
+                name=self.pretty_branch_name + "DebsRelease",
+                props=self.props,
+                codebase=codebase,
+                params=params,
+                builderNames=[ self.pretty_branch_name + " Release Debian Packaging"])
 
         return scheds
