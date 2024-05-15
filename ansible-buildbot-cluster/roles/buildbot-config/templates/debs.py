@@ -271,6 +271,7 @@ class Debs():
             roomId="{{ default_matrix_room }}",
             warnOnFailure=True,
             flunkOnFailure=False,
+            name="Notifying the Releases room",
             doStepIf=util.Property("release_build", default="false") == "true" and s3_target == "s3:s3:",
             hideStepIf="s3:s3:" != s3_target)
 

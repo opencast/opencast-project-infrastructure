@@ -399,7 +399,7 @@ def setLocale():
         haltOnFailure=True,
         name="Generate locale for testing")
 
-def notifyMatrix(message, roomId="{{ default_matrix_room }}", warnOnFailure=True, flunkOnFailure=False, doStepIf=True, hideStepIf=False):
+def notifyMatrix(message, name, roomId="{{ default_matrix_room }}", warnOnFailure=True, flunkOnFailure=False, doStepIf=True, hideStepIf=False):
     return shellCommand(
         #I have tried so many combinations of f strings, interpolate, jinja, and various escape styles  This appears to be the least worst way of doing this...
         # - f strings don't like the {} from the post data
@@ -408,7 +408,7 @@ def notifyMatrix(message, roomId="{{ default_matrix_room }}", warnOnFailure=True
         # Note: the quote()ed room gets replaced since Interpolate doesn't like things liks %21 (which is !), but handles %%21 correctly.
         command=util.Interpolate('curl -s -XPOST -d \'{"msgtype":"m.text", "body":"' + message +'"}\' ' + \
                                  'https://matrix.org/_matrix/client/r0/rooms/' + quote(roomId).replace("%", "%%") + '/send/m.room.message?access_token=%(secret:matrix_announce_secret)s'), # E: line too long (295 > 79 characters)
-        name=util.Interpolate(message),
+        name=name,
         warnOnFailure=warnOnFailure,
         flunkOnFailure=flunkOnFailure,
         doStepIf=doStepIf,
