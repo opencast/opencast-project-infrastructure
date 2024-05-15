@@ -263,8 +263,8 @@ class Debs():
             roomId="{{ default_matrix_room }}",
             warnOnFailure=True,
             flunkOnFailure=False,
-            doStepIf=util.Property("release_build", default="false") == "true",
-            hideStepIf=util.Property("release_build", default="false") != "true")
+            doStepIf=util.Property("release_build", default="false") == "true" and s3_target == "s3:s3:",
+            hideStepIf="s3:s3:" != s3_target)
 
         f_package_debs.addStep(common.loadSigningKey(self.branch_key_filename))
         f_package_debs.addStep(debRepoPublish)
