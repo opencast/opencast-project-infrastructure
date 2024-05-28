@@ -5,29 +5,25 @@
   tasks:
   - name: Ensuring epel is installed
     package:
-      name: "epel-release"
+      name: epel-release
       state: present
 
   - name: Installing git and python
     package:
-      name: "{{ item }}"
       state: present
-    with_items:
-      - python3-virtualenv
-      - python38
-      - python3-passlib
-      - git
-      - sqlite
-      # These are for nginx
-      - python3-libsemanage
-      - checkpolicy
+      name:
+        - python3-passlib
+        - git
+        - sqlite
+        # These are for nginx
+        - python3-libsemanage
+        - checkpolicy
 
   - name: allow httpd to act as reverse proxy
     seboolean:
       name: httpd_can_network_relay
       state: true
       persistent: true
-    become: true
 
   - name: create diffie hellman ephemeral parameters for nginx
     community.crypto.openssl_dhparam:

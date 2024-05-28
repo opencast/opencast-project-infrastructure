@@ -2,24 +2,14 @@
 
 - name: Cloning adopter reg service
   git:
-    # repo: https://github.com/opencast/adopter-registration-server.git
-    repo: https://github.com/gregorydlogan/adopter-registration-server.git
-    dest: "{{ adopter_reg_home}}"
+    repo: https://github.com/opencast/adopter-registration-server.git
+    dest: "{{ adopter_reg_home }}"
     force: true
 
 - name: Creating python venv
   command:
-    cmd: python3.9 -m venv {{ adopter_reg_venv }}
+    cmd: python3 -m venv {{ adopter_reg_venv }}
     creates: "{{ adopter_reg_venv }}"
-
-- name: Updating python venv
-  pip:
-    name: "{{ item }}"
-    state: latest
-    executable: "{{ adopter_reg_venv }}/bin/pip3"
-  with_items:
-    - pip
-    - setuptools
 
 - name: Installing dependencies
   pip:
@@ -32,7 +22,7 @@
     dest: /etc/systemd/system/oc-reg-server.service
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   become: true
 
 - name: Generating Flask key
@@ -53,7 +43,7 @@
     name: oc-reg-server
     state: stopped
     daemon_reload: true
-  become: yes
+  become: true
 
 - name: Enabling and starting systemd unit
   systemd:
