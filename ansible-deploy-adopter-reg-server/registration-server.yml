@@ -13,6 +13,7 @@
       state: present
       name:
         - python3-passlib
+        - python3-packaging
         - git
         - sqlite
         # These are for nginx
