@@ -60,11 +60,8 @@
   delegate_to: 127.0.0.1
   become: false
 
-- name: Removing hardcoded superuser
-  command: sqlite3 {{ adopter_reg_home }}/instance/app.db 'DELETE FROM user WHERE email="admin"; DELETE FROM roles_users WHERE user_id=1'
-
-- name: Removing generated user to update its password
-  command: sqlite3 {{ adopter_reg_home }}/instance/app.db 'DELETE FROM user WHERE email="{{ reg_server_user }}"; DELETE FROM roles_users WHERE user_id={{ opencast_user_db_id }};'
+- name: Clearing user table
+  command: sqlite3 {{ adopter_reg_home }}/instance/app.db 'DELETE FROM user'
 
   # Role ID 1 is superuser
 - name: Adding user and role
