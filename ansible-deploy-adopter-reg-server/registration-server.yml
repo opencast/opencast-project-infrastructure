@@ -5,29 +5,43 @@
   tasks:
   - name: Ensuring epel is installed
     package:
-      name: "epel-release"
+      name: epel-release
       state: present
 
   - name: Installing git and python
     package:
-      name: "{{ item }}"
       state: present
-    with_items:
-      - python3-virtualenv
-      - python38
-      - python3-passlib
-      - git
-      - sqlite
-      # These are for nginx
-      - python3-libsemanage
-      - checkpolicy
+      name:
+        - python3-passlib
+        - python3-packaging
+        - git
+        - sqlite
+        # These are for nginx
+        - python3-libsemanage
+        - checkpolicy
 
   - name: allow httpd to act as reverse proxy
     seboolean:
       name: httpd_can_network_relay
       state: true
       persistent: true
-    become: true
+
+  - name: allow http and https via firewalld
+    firewalld:
+      service: "{{ item }}"
+      permanent: true
+      state: enabled
+    loop:
+      - http
+      - https
+
+  - name: ensure ssl directory exists
+    file:
+      path: /etc/nginx/ssl
+      state: directory
+      owner: root
+      group: root
+      mode: '0640'
 
   - name: create diffie hellman ephemeral parameters for nginx
     community.crypto.openssl_dhparam:
@@ -40,6 +54,7 @@
 - hosts: all
   become: true
   roles:
+    - geerlingguy.certbot
     - nginxinc.nginx
     - nginxinc.nginx_config
     - adopter-reg-server
@@ -48,6 +63,15 @@
     - reg_server_user: "opencast@opencast.org"
     - reg_server_pass: "{{ lookup('passwordstore', 'register.opencast.org/opencast@opencast.org') }}"
     - reg_server_salt: "{{ lookup('passwordstore', 'register.opencast.org/salt') }}"
+    - certbot_create_if_missing: true
+    - certbot_create_method: standalone
+    - certbot_hsts: true
+    - certbot_admin_email: cloud@opencast.org
+    - certbot_certs:
+        - domains:
+            - "{{ inventory_hostname }}"
+    - certbot_create_standalone_stop_services:
+        - nginx
     - nginx_manage_repo: false
     - nginx_install_from: os_repository
     - nginx_setup_license: false
@@ -77,8 +101,8 @@
                   client_max_body_size: 0
                   server_name: "{{ inventory_hostname }}"
                 ssl:
-                  certificate_key: /etc/nginx/ssl/{{ inventory_hostname }}.key
-                  certificate: /etc/nginx/ssl/{{ inventory_hostname }}.crt
+                  certificate_key: /etc/letsencrypt/live/{{ inventory_hostname }}/privkey.pem
+                  certificate: /etc/letsencrypt/live/{{ inventory_hostname }}/fullchain.pem
                   dhparam: /etc/nginx/ssl/dhparam.pem
                   prefer_server_ciphers: true
                   ciphers: "HIGH:!aNULL:!MD5:!3DES"
