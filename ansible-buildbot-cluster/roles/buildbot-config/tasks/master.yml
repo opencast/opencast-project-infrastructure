@@ -155,7 +155,7 @@
 - name: Templating per-repo deb signing keys
   copy:
     content: "{{ item['value']['deb_signing_key'] }}"
-    dest: "{{ role_path }}/.temp/key/deb-{{ item['item'] }}-signing.key"
+    dest: "{{ role_path }}/.temp/key/deb-{{ item['key'] }}-signing.key"
     mode: 0600
   connection: local
   with_items:
@@ -165,8 +165,8 @@
 
 - name: Templating per-repo rpm signing keys
   copy:
-    content: "{{ item['rpm_signing_key'] }}"
-    dest: "{{ role_path }}/.temp/key/rpm-{{ item }}-signing.key"
+    content: "{{ item['value']['rpm_signing_key'] }}"
+    dest: "{{ role_path }}/.temp/key/rpm-{{ item['key'] }}-signing.key"
     mode: 0600
   connection: local
   with_items:
