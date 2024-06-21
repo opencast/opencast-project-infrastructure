@@ -183,7 +183,7 @@ class Build():
         f_build.addStep(common.loadSigningKey())
         f_build.addStep(common.getBuildPrep())
         override=['install', 'nexus-staging:deploy', 'nexus-staging:release', '-P', 'release,none', '-s', 'settings.xml', '-DstagingProgressTimeoutMinutes=10']
-        self._addBuildSteps(f_build, override=override, timeout=600)
+        self._addBuildSteps(f_build, override=override, timeout=1200)
         f_build.addStep(common.unloadSigningKey())
         f_build.addStep(common.unloadMavenSettings())
         #f_build.addStep(common.getTarballs())
