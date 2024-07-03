@@ -89,10 +89,10 @@ docker_worker_image_tag: "{{ docker_image_tag }}"
 docker_worker_base_image: "worker-base"
 
 #The list of possible Debian based distro images
-docker_debian_worker_images: [ "deb10", "deb11", "deb12", "ubu20", "ubu22"]
+docker_debian_worker_images: ["deb11", "deb12", "ubu20", "ubu22", "ubu24"]
 
 #The list of possible CentOS based distro images
-docker_centos_worker_images: ["cent8", "cent9"]
+docker_centos_worker_images: ["cent9"]
 
 #The docker images currently supported
 docker_worker_images: "{{ docker_debian_worker_images + docker_centos_worker_images }}"

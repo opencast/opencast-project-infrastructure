@@ -1,4 +1,4 @@
-FROM debian:10
+FROM ubuntu:24.04
 MAINTAINER Greg Logan <gregorydlogan@gmail.com>
 
 #Needed to work around pip bug: https://githubmemory.com/repo/pypa/pip/issues/10219
@@ -11,8 +11,8 @@ ARG BUILD_DATE=unknown
 ARG         DEBIAN_FRONTEND=noninteractive
 
 LABEL maintainer="Greg Logan <gregorydlogan@gmail.com>" \
-      org.opencontainers.image.title="Opencast QA Debian 10 Image" \
-      org.opencontainers.image.description="Opencast QA image based on a Debian 10 environment" \
+      org.opencontainers.image.title="Opencast QA Ubuntu 22.04 Image" \
+      org.opencontainers.image.description="Opencast QA image based on an Ubuntu 22.04 environment" \
       org.opencontainers.image.version="${VERSION}" \
       org.opencontainers.image.vendor="Opencast" \
       org.opencontainers.image.authors="Greg Logan <gregorydlogan@gmail.com>" \
@@ -22,6 +22,7 @@ LABEL maintainer="Greg Logan <gregorydlogan@gmail.com>" \
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+        software-properties-common \
         sudo \
         apt-transport-https \
         gnupg \ 
@@ -33,22 +34,22 @@ RUN mkdir -p /etc/apt/keyrings/
 COPY keys/* /etc/apt/keyrings/
 COPY repos/* /etc/apt/sources.list.d/
 
-#JDK17 is not present in buster, but lives in bullseye instead
-#This file prevents the whole system from upgrading due to the above configuration
-COPY releases.pref /etc/apt/preferences.d/
-
 COPY aws-config /builder/.aws/config
 
-RUN apt-get update && \
+COPY mozilla-firefox /etc/apt/preferences.d/
+
+#This automatically apt-get updates
+RUN add-apt-repository -y ppa:mozillateam/ppa && \
     apt-get install -y --no-install-recommends \
         bash \
         locales \
      # Run deps
         tesseract-ocr \
-        netcat \
+        netcat-openbsd \
         sox \
         hunspell \
         openjdk-11-jre \
+        openjdk-17-jre \
      # Build deps
         openssh-client \
         tar gzip bzip2 unzip \
@@ -56,7 +57,8 @@ RUN apt-get update && \
         maven \
         curl wget \
         openjdk-11-jdk \
-        firefox-esr && \
+        openjdk-17-jdk \
+        firefox && \
     apt-get clean
 
 #Requires appimage, which doesn't work in Docker.
@@ -91,11 +93,7 @@ RUN apt-get install -y --no-install-recommends \
      # Crowdin
         crowdin && \
     apt-get install -y -t squeeze aptly && \
-    #future is needed by buildbot, installing it with pip doesn't seem to work
-    apt-get install -y -t bullseye python3-future python3-autobahn && \
     apt-get clean
-
-RUN apt-get install -y --no-install-recommends -t bullseye openjdk-17-jre openjdk-17-jdk && apt-get clean
 
 RUN update-java-alternatives -s java-1.11.0-openjdk-amd64
 
@@ -105,14 +103,12 @@ RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
     sed -i -e 's/# fr_FR.UTF-8 UTF-8/fr_FR.UTF-8 UTF-8/' /etc/locale.gen && \
     locale-gen
 
-RUN python3 -m pip --no-cache-dir install --upgrade pip
-RUN python3 -m pip --no-cache-dir install --upgrade setuptools
     # Ansible deploy bits
-RUN python3 -m pip --no-cache-dir install ansible paramiko
+RUN python3 -m pip --no-cache-dir install ansible paramiko --break-system-packages
     # Buildbot s3 deploy bits
-RUN python3 -m pip --no-cache-dir install awscli
+RUN python3 -m pip --no-cache-dir install awscli --break-system-packages
     # Vosk and vosk-cli
-RUN python3 -m pip --no-cache-dir install vosk vosk-cli webvtt-py && \
+RUN python3 -m pip --no-cache-dir install vosk vosk-cli webvtt-py --break-system-packages && \
     mkdir -p /usr/share/vosk/models && \
     wget https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip -O /usr/share/vosk/models/vosk-model-small-en-us-0.15.zip && \
     unzip /usr/share/vosk/models/vosk-model-small-en-us-0.15.zip -d /usr/share/vosk/models/ && \
@@ -136,7 +132,7 @@ RUN echo "buildbot ALL = (root) NOPASSWD : /usr/bin/apt-get, /usr/bin/yum, /usr/
 
 COPY buildbot.tac /builder/buildbot.tac
     # Install required python packages, and twisted
-RUN python3 -m pip --no-cache-dir install buildbot-worker==${VERSION}
+RUN python3 -m pip --no-cache-dir install future buildbot-worker==${VERSION} --break-system-packages
 
 COPY install-ffmpeg.sh /builder/install-ffmpeg.sh
 RUN chmod 755 /builder/install-ffmpeg.sh

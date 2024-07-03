@@ -24,8 +24,6 @@ do
   docker pull debian:$major
 done
 
-docker pull centos:7
-docker pull quay.io/centos/centos:stream8
 docker image prune -f
 
 ls | grep worker-base | cut -f 2 -d "-" | while read image
