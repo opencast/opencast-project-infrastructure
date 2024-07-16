@@ -20,24 +20,12 @@
   handlers:
     - import_tasks: handlers/handlers.yml
 
-  # Special handling for installing on a virgin system
-- hosts: master
-  gather_facts: false
-  user: "{{ login_user }}"
-  tasks:
-    - name: Check if certs already exists
-      stat:
-        path: /etc/letsencrypt/live/{{ inventory_hostname }}
-      register: certs
-      become: yes
-
 - hosts: master
   gather_facts: false
   user: "{{ login_user }}"
   roles:
-    - { role: geerlingguy.certbot, when: "not certs.stat.exists", become: yes }
-  vars:
-    - certbot_create_method: standalone
+    - { role: certbot-init, become: yes }
+    - { role: geerlingguy.certbot, become: yes }
   handlers:
     - import_tasks: handlers/handlers.yml
 
@@ -62,14 +50,6 @@
   user: "{{ login_user }}"
   roles:
     - { role: buildbot-config, tags: [ buildbot, reconfig ] }
-  handlers:
-    - import_tasks: handlers/handlers.yml
-
-- hosts: master
-  gather_facts: false
-  user: "{{ login_user }}"
-  roles:
-    - { role: geerlingguy.certbot, become: yes }
   handlers:
     - import_tasks: handlers/handlers.yml
 

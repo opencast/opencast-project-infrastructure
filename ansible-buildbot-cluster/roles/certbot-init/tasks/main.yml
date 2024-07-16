@@ -1,0 +1,41 @@
+---
+# vim: et:ts=2:sw=2:sts=2
+- name: Check if certs already exists
+  stat:
+    path: /etc/letsencrypt/live/{{ inventory_hostname }}
+  register: certs
+  become: true
+
+- name: Getting inital certs
+  block:
+    - name: Ensuring config directory exists
+      file:
+        state: directory
+        path: "{{ buildbot_home }}/nginx_root"
+        owner: "{{ buildbot_user }}"
+        group: "{{ buildbot_user }}"
+        mode: "0755"
+
+    - name: Deploying temporary nginx config
+      template:
+        src: "buildbot-nocerts.conf"
+        dest: "{{ buildbot_home }}/nginx-config/buildbot.conf"
+        owner: "{{ buildbot_user }}"
+        group: "{{ buildbot_user }}"
+        mode: "0644"
+
+    - name: Deploying docker compose file
+      template:
+        src: "docker-compose.yml"
+        dest: "{{ buildbot_home }}/docker-compose.yml"
+        owner: "{{ buildbot_user }}"
+        group: "{{ buildbot_user }}"
+        mode: "0644"
+
+    - name: Starting up nginx
+      shell: docker compose up -d proxy
+      args:
+        chdir: "{{ buildbot_home }}"
+
+  when: not certs.stat.exists
+  become: true

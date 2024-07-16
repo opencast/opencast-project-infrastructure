@@ -1,0 +1,14 @@
+version: '2'
+services:
+  proxy:
+    image: "nginx:stable"
+    restart: always
+    #This doesn't *need* to be host, but it's easier
+    network_mode: host
+    volumes:
+      - "{{ buildbot_home }}/nginx-config/buildbot.conf:/etc/nginx/conf.d/buildbot.conf"
+      - "/etc/letsencrypt:/etc/letsencrypt"
+      - "{{ buildbot_home }}/nginx-config/dhparam.pem:/etc/nginx/ssl/dhparam.pem"
+      - "{{ disk_base }}:{{ disk_base }}"
+      - "{{ buildbot_home }}/keys:{{ buildbot_home }}/keys"
+      - "{{ buildbot_home }}/nginx_root:/var/www"
