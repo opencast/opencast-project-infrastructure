@@ -115,6 +115,7 @@ class Docker():
 
     pruneDockerImages = common.shellCommand(
             command=["docker", "system", "prune", "-f"],
+            timeout=600,
             name="Pruning Docker")
 
 
