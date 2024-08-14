@@ -41,7 +41,7 @@ media:
     - creator: Lars Kiesow
     - license: CC0
     - identifier: ID-goat
-    - source: https://radosgw.public.os.wwu.de
+    - source: https://data.lkiesow.de
     - created: '2018-04-21T13:14:31Z'
     - isPartOf: ID-openmedia-opencast
 
@@ -51,7 +51,7 @@ media:
     - creator: Lars Kiesow
     - license: CC0
     - identifier: ID-3d-print
-    - source: https://radosgw.public.os.wwu.de
+    - source: https://data.lkiesow.de
     - created: '2021-04-17T17:22:40Z'
     - isPartOf: ID-openmedia-opencast
 
@@ -61,7 +61,7 @@ media:
     - creator: Lars Kiesow
     - license: CC0
     - identifier: ID-marguerite
-    - source: https://radosgw.public.os.wwu.de
+    - source: https://data.lkiesow.de
     - created: '2021-06-13T19:18:47Z'
     - isPartOf: ID-openmedia-opencast
 
@@ -71,7 +71,7 @@ media:
     - creator: Lars Kiesow
     - license: CC0
     - identifier: ID-dog-rose
-    - source: https://radosgw.public.os.wwu.de
+    - source: https://data.lkiesow.de
     - created: '2021-06-13T19:33:33Z'
     - isPartOf: ID-openmedia-opencast
 
@@ -81,7 +81,7 @@ media:
     - creator: Lars Kiesow
     - license: CC-BY
     - identifier: ID-westerberg
-    - source: https://radosgw.public.os.wwu.de
+    - source: https://data.lkiesow.de
     - created: '2020-10-16T17:38:53Z'
     - spatial: DE, Osnabrück, Westerberg
     - isPartOf: ID-openmedia-opencast
@@ -124,20 +124,20 @@ media:
     - title: View of Planet Earth (4K)
     - creator: NASA Johnson
     - description: >
-        NASA monitors Earth's vital signs from land, air and space with a 
-        fleet of satellites and ambitious airborne and ground-based observation campaigns. 
-        The International Space Station hosts a variety of payloads and experiments supporting 
-        climate research, weather predictions, hurricane monitoring, pollution tracking, 
-        disaster response and more. For more on how NASA uses space to understand our home planet, 
+        NASA monitors Earth's vital signs from land, air and space with a
+        fleet of satellites and ambitious airborne and ground-based observation campaigns.
+        The International Space Station hosts a variety of payloads and experiments supporting
+        climate research, weather predictions, hurricane monitoring, pollution tracking,
+        disaster response and more. For more on how NASA uses space to understand our home planet,
         visit: http://www.nasa.gov/earthrightnow
-        Read more on 4K in space: NASA monitors Earth's vital signs from land, air and space 
-        with a fleet of satellites and ambitious airborne and ground-based observation campaigns. 
-        The International Space Station hosts a variety of payloads and experiments supporting 
-        climate research, weather predictions, hurricane monitoring, pollution tracking, 
+        Read more on 4K in space: NASA monitors Earth's vital signs from land, air and space
+        with a fleet of satellites and ambitious airborne and ground-based observation campaigns.
+        The International Space Station hosts a variety of payloads and experiments supporting
+        climate research, weather predictions, hurricane monitoring, pollution tracking,
         disaster response and more.
-        For more on how NASA uses space to understand our home planet, 
+        For more on how NASA uses space to understand our home planet,
         visit: http://www.nasa.gov/earthrightnow
-        Read more on 4K in space: 
+        Read more on 4K in space:
         http://www.nasa.gov/mission_pages/station/research/news/red_epic_dragon_camera
     - identifier: ID-nasa-earth-4k
     - license: Public Domain
