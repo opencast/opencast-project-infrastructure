@@ -265,7 +265,7 @@ class Build():
                 name=self.pretty_branch_name + " Release",
                 properties=self.props,
                 #This regex is looking for something like 11.1, so we use the major package version and a static ".*"
-                change_filter=util.ChangeFilter(category='tag_push', branch_re=self.props['pkg_major_version'] + ".*"),
+                change_filter=util.ChangeFilter(category='tag_push', branch_re=self.props['pkg_major_version'] + ".*", repository_re=".*opencast.git"),
                 builderNames=[ self.pretty_branch_name + " Release"])
 
             codebase = [
