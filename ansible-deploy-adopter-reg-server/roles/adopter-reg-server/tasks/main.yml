@@ -1,20 +1,38 @@
 ---
 
+  # This is due to crappy git behaviour generating
+  #  fatal: detected dubious ownership in repository at '/opt/oc_adopter_reg'
+- name: Ensure clone directory exists
+  file:
+    path: "{{ adopter_reg_home }}"
+    owner: "{{ adopter_server_user }}"
+    group: "{{ adopter_server_user }}"
+    state: directory
+
 - name: Cloning adopter reg service
   git:
     repo: https://github.com/opencast/adopter-registration-server.git
     dest: "{{ adopter_reg_home }}"
     force: true
+  become_user: "{{ adopter_server_user }}"
 
 - name: Creating python venv
   command:
     cmd: python3 -m venv {{ adopter_reg_venv }}
     creates: "{{ adopter_reg_venv }}"
+  become_user: "{{ adopter_server_user }}"
 
 - name: Installing dependencies
   pip:
     requirements: "{{ adopter_reg_home }}/requirements.txt"
     executable: "{{ adopter_reg_venv }}/bin/pip3"
+  become_user: "{{ adopter_server_user }}"
+
+- name: Changing the permissions
+  file:
+    path: "{{ adopter_reg_home }}"
+    owner: "{{ adopter_server_user }}"
+    group: "{{ adopter_server_user }}"
 
 - name: Templating systemd unit file
   template:
@@ -55,10 +73,14 @@
 
 - name: Ensuring the database file exists
   uri:
-    url: https://{{ inventory_hostname }}/admin
+    url: https://{{ inventory_hostname }}
     return_content: true
   delegate_to: 127.0.0.1
   become: false
+  register: result
+  until: result.content.find("Weiter zur Admin Page") != -1
+  retries: 5
+  delay: 10
 
 - name: Clearing user table
   command: sqlite3 {{ adopter_reg_home }}/instance/app.db 'DELETE FROM user'

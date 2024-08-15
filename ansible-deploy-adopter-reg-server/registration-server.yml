@@ -51,6 +51,20 @@
       group: root
       mode: '0640'
 
+  - name: Create the Opencast group for the server
+    group:
+      name: 'opencast'
+      system: true
+
+  - name: Create the Opencast user for the server
+    user:
+      name: 'opencast'
+      group: 'opencast'
+      password: '!'
+      system: true
+      create_home: false
+
+
 - hosts: all
   become: true
   roles:
@@ -67,6 +81,7 @@
     - certbot_create_method: standalone
     - certbot_hsts: true
     - certbot_admin_email: cloud@opencast.org
+    - certbot_auto_renew_user: opencast
     - certbot_certs:
         - domains:
             - "{{ inventory_hostname }}"
