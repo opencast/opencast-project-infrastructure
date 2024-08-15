@@ -3,7 +3,8 @@ Description=Opencast adopter registration server
 After=network.target
 
 [Service]
-#User=ubuntu
+User={{ adopter_server_user }}
+Group={{ adopter_server_user }}
 WorkingDirectory={{ adopter_reg_home }}
 ExecStart={{ adopter_reg_venv }}/bin/gunicorn -b localhost:8080 -w 2 app:app
 Restart=always
