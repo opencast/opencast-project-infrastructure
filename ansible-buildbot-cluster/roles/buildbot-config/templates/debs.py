@@ -222,6 +222,30 @@ class Debs():
             name=f"Mounting { host } S3"))
 
 
+    def notifyMatrix(self, f_package_debs, message="", doStepIf=True, hideStepIf=False):
+
+        notifyMatrix = common.notifyMatrix(
+            message=message,
+            roomId="{{ default_matrix_room }}",
+            warnOnFailure=True,
+            flunkOnFailure=False,
+            name="Notifying the Releases room",
+            doStepIf=doStepIf and message != "",
+            hideStepIf=hideStepIf or message == "")
+
+        notifyMatrixProp = common.notifyMatrix(
+            message="%(prop:matrix_message)s",
+            roomId="{{ default_matrix_room }}",
+            warnOnFailure=True,
+            flunkOnFailure=False,
+            name="Notifying the Releases room",
+            doStepIf=doStepIf and util.Property("matrix_message", default="") != "",
+            hideStepIf=hideStepIf or util.Property("matrix_message", default="") == "")
+
+        f_package_debs.addStep(notifyMatrix)
+        f_package_debs.addStep(notifyMatrixProp)
+
+
     def includeRepo(self, f_package_debs, s3_target="s3:s3:"):
 
         debRepoCreate = common.shellCommand(
@@ -231,7 +255,7 @@ class Debs():
             timeout=4 * 60 * 60)
 
         debRepoIngest = common.shellCommand(
-                command=['./include-binaries', util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:repo_component:-unstable)s"), util.Interpolate("outputs/%(prop:deb_script_rev)s/*.changes")],
+            command=['./include-binaries', util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:repo_component:-unstable)s"), util.Interpolate("outputs/%(prop:deb_script_rev)s/*.changes")],
             name=util.Interpolate(f"Adding build to %(prop:repo_component:-unstable)s"),
             locks=repo_lock.access('exclusive'),
             timeout=4 * 60 * 60)
@@ -254,31 +278,67 @@ class Debs():
         f_package_debs.addStep(debRepoPrune)
 
 
-    def publishRepo(self, f_package_debs, repo="Testing", s3_target="s3:s3:", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
+    def publishRepo(self, f_package_debs, s3_target="s3:s3:", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
 
         debRepoPublish = common.shellCommand(
-                command=["./publish-branch", util.Interpolate("%(prop:pkg_major_version)s.x"), s3_target, util.Interpolate("%(prop:deb_signing_key_id)s")],
+            command=["./publish-branch", util.Interpolate("%(prop:pkg_major_version)s.x"), s3_target, util.Interpolate("%(prop:deb_signing_key_id)s")],
             name=util.Interpolate("Publishing %(prop:pkg_major_version)s.x on " + s3_target),
             env={
                 "AWS_ACCESS_KEY_ID": util.Secret(access_key_secret_id),
                 "AWS_SECRET_ACCESS_KEY": util.Secret(secret_key_secret_id)
             },
             locks=repo_lock.access('exclusive'),
-            timeout=4 * 60 * 60) #Yes, 4 hours.  Publishing from LITE to RADOS can take a *long* time.
-
-        debsNotifyMatrix = common.notifyMatrix(
-            message="Opencast %(prop:tag_version)s is now in the Deb " + repo + " repo",
-            roomId="{{ default_matrix_room }}",
-            warnOnFailure=True,
-            flunkOnFailure=False,
-            name="Notifying the Releases room",
-            doStepIf=util.Property("release_build", default="false") == "true" and s3_target == "s3:s3:",
-            hideStepIf="s3:s3:" != s3_target)
+            # Yes, 4 hours. Publishing can take a while.
+            timeout=4 * 60 * 60)
 
         f_package_debs.addStep(common.loadSigningKey(self.branch_key_filename))
         f_package_debs.addStep(debRepoPublish)
         f_package_debs.addStep(debsNotifyMatrix)
         f_package_debs.addStep(common.unmountS3fs("/builder/s3/repo/debs"))
+
+
+    def promotePackage(self, f_package_debs):
+
+        debRepoPromote = common.shellCommand(
+            command=["./promote-package", util.Property("pkg_name"), util.Property("tag_version"), util.Interpolate("%(prop:pkg_major_version)s.x"), "testing", "stable"],
+            name=util.Interpolate("Promoting %(prop:pkg_name)s in %(prop:branch)s to stable"),
+            locks=repo_lock.access('exclusive'),
+            timeout=300)
+
+        #NB: We are not building debs here, just promoting from test!
+        f_package_debs.addStep(debRepoPromote)
+
+        return f_package_debs
+
+
+    def dropPackage(self, f_package_debs):
+
+        debRepoDropPackage = common.shellCommand(
+            command=['./drop-package', util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:repo_component:-unstable)s"), util.Property("pkg_name"), util.Property("tag_version")],
+            name=util.Interpolate("Dropping opencast %(prop:tag_version)s from %(prop:repo_component:-unstable)s"),
+            locks=repo_lock.access('exclusive'),
+            timeout=4 * 60 * 60)
+
+        f_package_debs.addStep(debRepoDropPackage)
+
+
+    def syncRepo(self, f_package_debs, access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
+
+        #NB: This doesn't know, or care at all about branches.  Sync the full state of the repo, minus the unstable bits
+        #NB: Not hiding this step since we want to know we thought about it in non-release cases
+        debRepoSync = common.shellCommand(
+                command=["./rados-sync"],
+                name="Syncing repo state from LITE infra to rados",
+                env={
+                    'AWS_ACCESS_KEY_ID': util.Secret(access_key_secret_id),
+                    'AWS_SECRET_ACCESS_KEY': util.Secret(secret_key_secret_id)
+                },
+                doStepIf=util.Property("release_build", default="false") == "true",
+                locks=repo_lock.access('exclusive'),
+                timeout=1200)
+
+        f_package_debs.addStep(debRepoSync)
+        f_package_debs.addStep(common.unmountS3fs("/builder/s3/repo/published"))
 
 
     def cleanup(self, f_package_debs):
@@ -303,13 +363,15 @@ class Debs():
 
     def getTestPipeline(self):
 
+        pubmessage="Opencast %(prop:tag_version)s is now in the Deb %(prop:repo_component)s repo"
+
         f_package_debs = util.BuildFactory()
         self.addDebBuild(f_package_debs)
         self.setupRepo(f_package_debs)
-        self.mountS3(f_package_debs, host="rados", access_key_secret_id="rados.access_key", secret_key_secret_id="rados.secret_key")
-        self.includeRepo(f_package_debs, s3_target="s3:s3")
-        #Note the s3 target here is the official default.  We override and re-set it here so it's clear wtf we're doing
-        self.publishRepo(f_package_debs, s3_target="s3:s3:", access_key_secret_id="rados.access_key", secret_key_secret_id="rados.secret_key")
+        self.mountS3(f_package_debs, host="rados")
+        self.includeRepo(f_package_debs, s3_target="s3:s3:")
+        self.publishRepo(f_package_debs, s3_target="s3:s3:")
+        self.notifyMatrix(f_package_debs, pubmessage)
         self.cleanup(f_package_debs)
 
         return f_package_debs
@@ -317,19 +379,40 @@ class Debs():
 
     def getReleasePipeline(self):
 
-        debRepoPromote = common.shellCommand(
-                command=["./promote-package", "opencast", util.Property("tag_version"), util.Property("branch"), "testing", "stable"],
-                name=util.Interpolate("Promoting %(prop:tag_version)s to stable"),
-            locks=repo_lock.access('exclusive'),
-            timeout=300)
+        pubmessage="Opencast %(prop:tag_version)s is now in the Deb %(prop:repo_component)s repo"
 
         #NB: We are not building debs here, just promoting from test!
         f_package_debs = util.BuildFactory()
         self.setupRepo(f_package_debs)
-        self.mountS3(f_package_debs, host="rados", access_key_secret_id="rados.access_key", secret_key_secret_id="rados.secret_key")
-        f_package_debs.addStep(debRepoPromote)
-        #Note the s3 target here is the official default.  We override and re-set it here so it's clear wtf we're doing
-        self.publishRepo(f_package_debs, repo="Stable", s3_target="s3:s3:", access_key_secret_id="rados.access_key", secret_key_secret_id="rados.secret_key")
+        self.mountS3(f_package_debs, host="rados")
+        self.promotePackage(f_package_debs)
+        self.publishRepo(f_package_debs, s3_target="s3:s3:")
+        self.notifyMatrixf_package_debs, pubmessage)
+        self.cleanup(f_package_debs)
+
+        return f_package_debs
+
+
+    def getSyncPipeline(self):
+
+        f_package_debs = util.BuildFactory()
+        self.setupRepo(f_package_debs)
+        #NB: We mount LITE's published file so we can sync between that and rados
+        self.mountS3(f_package_debs, host="published")
+        self.syncRepo(f_package_debs, access_key_secret_id="rados.access_key", secret_key_secret_id="rados.secret_key")
+        self.notifyMatrix(f_package_debs)
+        self.cleanup(f_package_debs)
+
+        return f_package_debs
+
+
+    def getDropPipeline(self):
+
+        f_package_debs = util.BuildFactory()
+        self.setupRepo(f_package_debs)
+        self.mountS3(f_package_debs, host="rados")
+        self.dropPackage(f_package_debs)
+        self.publishRepo(f_package_debs, s3_target="s3:s3:")
         self.cleanup(f_package_debs)
 
         return f_package_debs
@@ -345,10 +428,10 @@ class Debs():
         lock = util.MasterLock(f"{ self.props['git_branch_name'] }deb_lock", maxCount=1)
 
         builders.append(util.BuilderConfig(
-            name=self.pretty_branch_name + " Debian Packaging",
+            name=self.pretty_branch_name + " Deb Pkg Unstable",
             factory=self.getBuildPipeline(),
             workernames=self.props['workernames'],
-            properties=deb_props,
+            properties=dict(deb_props) | {"repo_component": "unstable"},
             collapseRequests=True,
             locks=[lock.access('exclusive')]))
 
@@ -357,7 +440,7 @@ class Debs():
         prod_props['release_build'] = 'true'
 
         builders.append(util.BuilderConfig(
-            name=self.pretty_branch_name + " Testing Debian Packaging",
+            name=self.pretty_branch_name + " Deb Pkg Testing",
             factory=self.getTestPipeline(),
             workernames=self.props['workernames'],
             properties=dict(prod_props) | {"repo_component": "testing", "tag_version": util.Property('branch')},
@@ -365,12 +448,21 @@ class Debs():
             locks=[lock.access('exclusive')]))
 
         if "Develop" != self.pretty_branch_name:
+
             builders.append(util.BuilderConfig(
-                name=self.pretty_branch_name + " Release Debian Packaging",
+                name=self.pretty_branch_name + " Deb Drop Release",
+                factory=self.getDropPipeline(),
+                workernames=self.props['workernames'],
+                properties=prod_props,
+                collapseRequests=True,
+                locks=[lock.access('exclusive')]))
+
+            builders.append(util.BuilderConfig(
+                name=self.pretty_branch_name + " Deb Promote Release",
                 factory=self.getReleasePipeline(),
                 workernames=self.props['workernames'],
                 #NB: We'r enot copying the branch proerty to tag_version as above since this *should not get run automatically*, right?
-                properties=dict(prod_props) | {"repo_component": "stable"},
+                properties=dict(prod_props) | {"repo_component": "stable" },
                 collapseRequests=True,
                 locks=[lock.access('exclusive')]))
 
@@ -383,16 +475,16 @@ class Debs():
 
         #Regular builds
         scheds[f"{ self.pretty_branch_name }DebsTesting"] = common.getAnyBranchScheduler(
-            name=self.pretty_branch_name + " Debian Testing Packaging Generation",
+            name=self.pretty_branch_name + " Debian Testing Packaging",
             change_filter=util.ChangeFilter(category=None, branch_re=f'{ self.props["pkg_major_version"] }\.\d*-\d*'),
-            builderNames=[ self.pretty_branch_name + " Testing Debian Packaging" ])
+            builderNames=[ self.pretty_branch_name + " Deb Pkg Testing" ])
 
         codebase = [
             util.CodebaseParameter(
                 "",
                 label="Build Settings",
                 # will generate a combo box
-                branch=util.FixedParameter(name="branch", default=self.pretty_branch_name),
+                branch=util.StringParameter(name="branch", default=util.Interpolate("%(prop:pkg_major_version)s.x")),
                 # will generate nothing in the form, but revision, repository,
                 # and project are needed by buildbot scheduling system so we
                 # need to pass a value ("")
@@ -405,19 +497,38 @@ class Debs():
         ]
 
         params = [
-                util.StringParameter(
-                    name="tag_version",
-                    label="Release tag",
-                    default="N.M-1",
-                )
-            ]
+            util.StringParameter(
+                name="tag_version",
+                label="Release tag",
+                default="N.M-1",
+            ),
+            util.StringParameter(
+                name="pkg_name",
+                label="Package name",
+                default="opencast",
+            )
+        ]
 
         if "Develop" != self.pretty_branch_name:
-            scheds[f"{ self.pretty_branch_name}DebsRelease"] = common.getForceScheduler(
-                name=self.pretty_branch_name + "DebsRelease",
+            scheds[f"{ self.pretty_branch_name}DebsTest"] = common.getForceScheduler(
+                name=self.pretty_branch_name + "DebsTest",
                 props=self.props,
                 codebase=codebase,
                 params=params,
-                builderNames=[ self.pretty_branch_name + " Release Debian Packaging"])
+                builderNames=[ self.pretty_branch_name + " Deb Pkg Testing" ])
+
+            scheds[f"{ self.pretty_branch_name}DebsPromote"] = common.getForceScheduler(
+                name=self.pretty_branch_name + "DebsPromote",
+                props=self.props,
+                codebase=codebase,
+                params=params,
+                builderNames=[ self.pretty_branch_name + " Deb Promote Release" ])
+
+            scheds[f"{ self.pretty_branch_name}DebsDrop"] = common.getForceScheduler(
+                name=self.pretty_branch_name + "DebsDrop",
+                props=self.props,
+                codebase=codebase,
+                params=params,
+                builderNames=[ self.pretty_branch_name + " Deb Drop Release" ])
 
         return scheds
