@@ -88,6 +88,25 @@ docker_worker_image_tag: "{{ docker_image_tag }}"
 #The base image to use when building workers.  Override this if you need a worker-specific setting.
 docker_worker_base_image: "worker-base"
 
+docker_jdk:
+  11:
+    - "deb11"
+    - "ubu20"
+    - "ubu22"
+    - "cent9"
+  17:
+    - "deb11"
+    - "deb12"
+    - "ubu20"
+    - "ubu22"
+    - "ubu24"
+    - "cent9"
+  21:
+    - "ubu20"
+    - "ubu22"
+    - "ubu24"
+    - "cent9"
+
 #The list of possible Debian based distro images
 docker_debian_worker_images: ["deb11", "deb12", "ubu20", "ubu22", "ubu24"]
 

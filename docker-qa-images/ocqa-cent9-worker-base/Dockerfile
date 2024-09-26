@@ -1,4 +1,4 @@
-FROM quay.io/centos/centos:stream9
+FROM quay.io/centos/centos:stream9 AS base
 
 #Needed to work around pip bug: https://githubmemory.com/repo/pypa/pip/issues/10219
 ARG LANG=en_US.UTF-8
@@ -7,7 +7,7 @@ ARG VERSION=unknown
 ARG BUILD_DATE=unknown
 
 
-LABEL maintainer="Greg Logan <gregorydlogan@gmail.com>" \
+LABEL org.opencontainers.image.authors="Greg Logan <gregorydlogan@gmail.com>" \
       org.opencontainers.image.title="Opencast QA CentOS Stream 9 Image" \
       org.opencontainers.image.description="Opencast QA image based on a CentOS Stream 9 environment" \
       org.opencontainers.image.version="${VERSION}" \
@@ -41,18 +41,13 @@ RUN yum install -y \
         nmap-ncat \
         sox \
         hunspell \
-        java-11-openjdk \
-        java-17-openjdk \
      # Build deps
         openssh-clients \
         tar gzip bzip2 unzip \
         git \
-        maven \
        #curl is provided in the image and breaks the install if you try and update it again
        #curl \
         wget \
-        java-11-openjdk-devel \
-        java-17-openjdk-devel \
         firefox && \
     yum clean all
 
@@ -85,9 +80,6 @@ RUN yum install -y \
      # Crowdin
         crowdin && \
     yum clean all
-
-RUN alternatives --set java java-11-openjdk.x86_64
-RUN alternatives --set javac java-11-openjdk.x86_64
 
 RUN dnf module install -y nodejs:18
 
@@ -127,7 +119,6 @@ RUN yum install -y docker-ce-cli && \
 RUN curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.1/dumb-init_1.2.1_amd64 && \
      chmod +x /usr/local/bin/dumb-init
 
-COPY opencast.repo /etc/yum.repos.d/opencast.repo
 #Allow buildbot to install packages (ffmpeg) later
 RUN echo "buildbot ALL = (root) NOPASSWD : /usr/bin/apt-get, /usr/bin/yum, /usr/local/bin/dumb-init, /bin/sed" > /etc/sudoers.d/buildbot
 
@@ -137,3 +128,39 @@ RUN python3 -m pip --no-cache-dir install future buildbot-worker==${VERSION}
 
 COPY install-ffmpeg.sh /builder/install-ffmpeg.sh
 RUN chmod 755 /builder/install-ffmpeg.sh
+
+
+FROM base AS jdk11
+
+RUN yum install -y \
+        java-11-openjdk \
+        java-11-openjdk-devel && \
+    #Do this after to prevent installing the default jdk
+    yum install -y \
+        maven
+
+COPY opencast.repo /etc/yum.repos.d/opencast.repo
+
+
+FROM base AS jdk17
+
+RUN yum install -y \
+        java-17-openjdk \
+        java-17-openjdk-devel && \
+    #Do this after to prevent installing the default jdk
+    yum install -y \
+        maven
+
+COPY opencast.repo /etc/yum.repos.d/opencast.repo
+
+
+FROM base AS jdk21
+
+RUN yum install -y \
+        java-21-openjdk \
+        java-21-openjdk-devel && \
+    #Do this after to prevent installing the default jdk
+    yum install -y \
+        maven
+
+COPY opencast.repo /etc/yum.repos.d/opencast.repo

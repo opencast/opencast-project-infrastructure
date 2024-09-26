@@ -5,6 +5,12 @@
   shell: docker pull {{ docker_image_user }}/ocqa-{{ distro }}-worker-base:{{ docker_worker_image_tag }}
   become: yes
 
+- include_tasks: jdk.yml
+  when: distro in docker_jdk[jdk.key]
+  loop: "{{ docker_jdk | dict2items }}"
+  loop_control:
+    loop_var: jdk
+
 - name: Finding all built {{ distro }} worker images
   shell: docker images -q {{ hostvars[inventory_hostname]['name'] }}_*
   become: yes

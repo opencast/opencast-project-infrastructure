@@ -1,33 +1,31 @@
 #!/bin/bash
 
 DOCKER_OWNER=greglogan
-TAG=latest
+DOCKER_TAG=latest
+BUILDBOT_VERSION="v3.9.2"
+BUILD_DATE="`date --iso-8601`"
+
 if [ $# -gt 1 ]; then
   echo "Usage: $0 [TAG]"
   exit 1
 elif [ $# -eq 1 ]; then
-  TAG=$1
+  DOCKER_TAG=$1
 fi
-
-doBuild() {
-  bash build-container.sh $DOCKER_OWNER $1 $2 $TAG
-  docker image prune -f
-}
-
-ls | grep ubu | cut -f 2 -d "-" | cut -c 4- | while read major
-do
-  docker pull ubuntu:$major.04
-done
-
-ls | grep deb | cut -f 2 -d "-" | cut -c 4- | while read major
-do
-  docker pull debian:$major
-done
-
-docker image prune -f
 
 ls | grep worker-base | cut -f 2 -d "-" | while read image
 do
-  doBuild $image worker-base
+  pushd . 2>&1 > /dev/null
+  cd ocqa-$image-worker-base
+  docker build . --pull --build-arg VERSION="$BUILDBOT_VERSION" --build-arg BUILD_DATE="$BUILD_DATE" --target base -t $DOCKER_OWNER/ocqa-$image-worker-base:$DOCKER_TAG
+  grep "AS jdk" Dockerfile | cut -f 4 -d " " | while read jdk
+  do
+    docker build . --build-arg VERSION="$BUILDBOT_VERSION" --build-arg BUILD_DATE="$BUILD_DATE" --target $jdk -t $DOCKER_OWNER/ocqa-$image-worker-base-$jdk:$DOCKER_TAG
+  done
+  popd  2>&1 > /dev/null
 done
-doBuild buildbot master
+cd ocqa-buildbot-master
+docker build .  --build-arg BUILD_DATE="$BUILD_DATE" -t $DOCKER_OWNER/ocqa-buildbot-master:$DOCKER_TAG
+cd ..
+
+docker image prune -f
+

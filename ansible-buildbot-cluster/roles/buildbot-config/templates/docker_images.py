@@ -50,6 +50,99 @@ class GenerateDockerBuilds(buildstep.ShellMixin, steps.BuildStep):
         return result
 
 
+class GeneratePerImageBuilds(buildstep.ShellMixin, steps.BuildStep):
+
+    def __init__(self, **kwargs):
+        kwargs = self.setupShellMixin(kwargs)
+        super().__init__(**kwargs)
+        self.observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.observer)
+
+    def extract_targets(self, stdout):
+        targets = []
+        for line in stdout.split('\n'):
+            target = str(line.strip())
+            if target:
+                targets.append(target)
+        return targets
+
+    @util.renderer
+    def getDatetime(self):
+        return datetime.utcnow().strftime('%Y-%m-%d:T%H:%M:%SZ')
+
+    @defer.inlineCallbacks
+    def run(self):
+        # run the command to get the list of targets
+        cmd = yield self.makeRemoteShellCommand()
+        yield self.runCommand(cmd)
+
+        # if the command passes extract the list of stages
+        result = cmd.results()
+        if result == util.SUCCESS:
+            # create a ShellCommand for each stage and add them to the build
+            self.build.addStepsAfterCurrentStep([ docker(target) for target in self.extract_targets(self.observer.getStdout())
+                for docker in (
+                    lambda target:
+                        steps.SetProperty(
+                            property="fdnwj",
+                            doStepIf=target == "base",
+                            hideStepIf=target != "base",
+                            value=util.Interpolate(f"ocqa-%(prop:docker_image)s-worker-base"),
+                            name=util.Interpolate("Blanking fdnwj build variable")),
+                    lambda target:
+                        steps.SetProperty(
+                            property="fdnwj",
+                            doStepIf=target != "base",
+                            hideStepIf=target == "base",
+                            value=util.Interpolate(f"ocqa-%(prop:docker_image)s-worker-base-{ target }"),
+                            name=f"Setting fdnwj variable to { target }"),
+                    lambda target:
+                        common.shellCommand(
+                            command=["docker", "build", ".",
+                                "--build-arg", util.Interpolate("VERSION=%(prop:buildbot_version)s"),
+                                "--build-arg", util.Interpolate(f"BUILD_DATE={ self.getDatetime }"),
+                                "--target", target,
+                                "-t", util.Interpolate(f"%(prop:docker_host)s/%(prop:fdnwj)s:latest")],
+                            workdir=util.Interpolate("build/docker-qa-images/%(prop:fdn)s"),
+                            name=util.Interpolate(f"Building %(prop:docker_image)s { target } %(prop:docker_tag:-buildbot_version)s")),
+                    lambda target:
+                        common.shellCommand(
+                            command=["docker", "tag",
+                                util.Interpolate("%(prop:docker_host)s/%(prop:fdnwj)s:latest"),
+                                util.Interpolate("%(prop:docker_host)s/%(prop:fdnwj)s:%(prop:docker_tag:-buildbot_version)s")],
+                            name=util.Interpolate(f"Tagging %(prop:docker_imagej)s { target } latest as %(prop:docker_tag:-buildbot_version)s")),
+                    lambda target:
+                        common.shellCommand(
+                            command=["docker", "tag",
+                                util.Interpolate("%(prop:docker_host)s/%(prop:fdnwj)s:latest"),
+                                util.Interpolate("greglogan/%(prop:fdnwj)s:latest")],
+                            doStepIf="greglogan" != util.Property("docker_host"),
+                            hideStepIf="greglogan" == util.Property("docker_host"),
+                            name=util.Interpolate(f"Tagging %(prop:docker_image)s { target } latest for upstream as well")),
+                    lambda target:
+                        common.shellCommand(
+                            command=["docker", "push", util.Interpolate("%(prop:docker_host)s/%(prop:fdnwj)s:latest")],
+                            timeout=240,
+                            name=util.Interpolate(f"Pushing %(prop:docker_image)s { target } latest")),
+                    lambda target:
+                        common.shellCommand(
+                            command=["docker", "push", util.Interpolate("greglogan/%(prop:fdnwj)s:latest")],
+                            timeout=240,
+                            doStepIf="greglogan" != util.Property("docker_host"),
+                            hideStepIf="greglogan" == util.Property("docker_host"),
+                            name=util.Interpolate(f"Pushing greglogan %(prop:docker_image)s { target } latest")),
+                    lambda target:
+                        common.shellCommand(
+                            command=["docker", "push", util.Interpolate("%(prop:docker_host)s/%(prop:fdnwj)s:%(prop:docker_tag)s")],
+                            timeout=240,
+                            name=util.Interpolate(f"Pushing %(prop:docker_image)s { target } %(prop:docker_tag)s"),
+                            doStepIf=lambda step: "latest" != util.Property("docker_tag"),
+                            hideStepIf=lambda results, step: "latest" != util.Property("docker_tag"))
+                )
+            ])
+        return result
+
+
 class Docker():
 
     REQUIRED_PARAMS = [
@@ -86,17 +179,11 @@ class Docker():
         return util.Secret(secretId)
 
 
-    @util.renderer
-    def getDatetime(self):
-        return datetime.utcnow().strftime('%Y-%m-%d:T%H:%M:%SZ')
-
-
     cloneDockerfiles = common.getClone(url="{{ infra_repo_url }}", branch=util.Property("docker_branch", default=util.Property("branch")))
 
     setFullDockerImageName = steps.SetProperty(
             property="fdn",
             value=util.Interpolate("ocqa-%(prop:docker_image)s-worker-base"))
-
 
     dockerLogin = common.shellCommand(
             command=["docker", "login", "-u", selectDockerHostUserSecret, "-p", selectDockerHostPassSecret, util.Interpolate("%(prop:docker_host)s")],
@@ -121,58 +208,19 @@ class Docker():
 
     def getPushPipeline(self):
 
-        buildDockerImage = common.shellCommand(
-            command=["docker", "build", ".",
-                "--build-arg", util.Interpolate("VERSION=%(prop:buildbot_version)s"),
-                "--build-arg", f"BUILD_DATE={ str(self.getDatetime) }",
-                "-t", util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:latest")],
-            workdir=util.Interpolate("build/docker-qa-images/%(prop:fdn)s"),
-            name=util.Interpolate("Building %(prop:fdn)s:%(prop:docker_tag:-buildbot_version)s"))
-
-        tagImage = common.shellCommand(
-            command=["docker", "tag",
-                util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:latest"),
-                util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:%(prop:docker_tag:-buildbot_version)s")],
-            name=util.Interpolate("Tagging %(prop:fdn)s:latest as %(prop:docker_tag:-buildbot_version)s"))
-
-        tagUpstreamImage = common.shellCommand(
-            command=["docker", "tag",
-                util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:latest"),
-                util.Interpolate("greglogan/%(prop:fdn)s:latest")],
-            doStepIf="greglogan" != util.Property("docker_host"),
-            hideStepIf="greglogan" == util.Property("docker_host"),
-            name=util.Interpolate("Tagging for latest for upstream as well"))
-
-
-        pushlatestDockerImage = common.shellCommand(
-            command=["docker", "push", util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:latest")],
-            name=util.Interpolate("Pushing %(prop:fdn)s:latest"))
-
-        pushUpstreamLatestDockerImage = common.shellCommand(
-            command=["docker", "push", util.Interpolate("greglogan/%(prop:fdn)s:latest")],
-            doStepIf="greglogan" != util.Property("docker_host"),
-            hideStepIf="greglogan" == util.Property("docker_host"),
-            name=util.Interpolate("Pushing greglogan/%(prop:fdn)s:latest"))
-
-        pushDockerImage = common.shellCommand(
-            command=["docker", "push", util.Interpolate("%(prop:docker_host)s/%(prop:fdn)s:%(prop:docker_tag)s")],
-            name=util.Interpolate("Pushing %(prop:fdn)s:%(prop:docker_tag)s"),
-            doStepIf=lambda step: "latest" != util.Property("docker_tag"),
-            hideStepIf=lambda results, step: "latest" != util.Property("docker_tag"))
-
+        generatePerImageBuilds = GeneratePerImageBuilds(
+            command=util.Interpolate("grep FROM docker-qa-images/%(prop:fdn)s/Dockerfile | cut -f 4 -d ' '"),
+            name="Determining image targets",
+            haltOnFailure=True,
+            flunkOnFailure=True)
 
         # This pipeline runs once per image type
         f_build = util.BuildFactory()
         f_build.addStep(self.cloneDockerfiles)
         f_build.addStep(self.setFullDockerImageName)
-        f_build.addStep(buildDockerImage)
-        f_build.addStep(tagImage)
-        f_build.addStep(tagUpstreamImage)
         f_build.addStep(self.dockerLogin)
         f_build.addStep(self.dockerLoginUpstream)
-        f_build.addStep(pushlatestDockerImage)
-        f_build.addStep(pushUpstreamLatestDockerImage)
-        f_build.addStep(pushDockerImage)
+        f_build.addStep(generatePerImageBuilds)
         f_build.addStep(steps.Trigger(
             name=util.Interpolate("Triggering pull of %(prop:docker_image)s"),
                 schedulerNames=["ocqa finalizer triggerable"],

@@ -1,5 +1,4 @@
-FROM ubuntu:20.04
-MAINTAINER Greg Logan <gregorydlogan@gmail.com>
+FROM ubuntu:20.04 AS base
 
 #Needed to work around pip bug: https://githubmemory.com/repo/pypa/pip/issues/10219
 ARG LANG=C.UTF-8
@@ -10,7 +9,7 @@ ARG BUILD_DATE=unknown
 # This will make apt-get install without question
 ARG         DEBIAN_FRONTEND=noninteractive
 
-LABEL maintainer="Greg Logan <gregorydlogan@gmail.com>" \
+LABEL org.opencontainers.image.authors="Greg Logan <gregorydlogan@gmail.com>" \
       org.opencontainers.image.title="Opencast QA Ubuntu 20.04 Image" \
       org.opencontainers.image.description="Opencast QA image based on an Ubuntu 20.04 environment" \
       org.opencontainers.image.version="${VERSION}" \
@@ -44,16 +43,11 @@ RUN apt-get update && \
         netcat \
         sox \
         hunspell \
-        openjdk-11-jre \
-        openjdk-17-jre \
      # Build deps
         openssh-client \
         tar gzip bzip2 unzip \
         git \
-        maven \
         curl wget \
-        openjdk-11-jdk \
-        openjdk-17-jdk \
         firefox && \
     apt-get clean
 
@@ -91,8 +85,6 @@ RUN apt-get install -y --no-install-recommends \
     apt-get install -y -t squeeze aptly && \
     apt-get clean
 
-RUN update-java-alternatives -s java-1.11.0-openjdk-amd64
-
 RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
     sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen && \
     sed -i -e 's/# es_ES.UTF-8 UTF-8/es_ES.UTF-8 UTF-8/' /etc/locale.gen && \
@@ -125,7 +117,7 @@ RUN apt-get install -y docker-ce-cli && \
 RUN curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.1/dumb-init_1.2.1_amd64 && \
      chmod +x /usr/local/bin/dumb-init
 
-COPY opencast.list /etc/apt/sources.list.d
+#Allow buildbot to install packages (ffmpeg) later
 RUN echo "buildbot ALL = (root) NOPASSWD : /usr/bin/apt-get, /usr/bin/yum, /usr/local/bin/dumb-init, /bin/sed" > /etc/sudoers.d/buildbot
 
 COPY buildbot.tac /builder/buildbot.tac
@@ -135,3 +127,44 @@ RUN python3 -m pip --no-cache-dir install future buildbot-worker==${VERSION}
 COPY install-ffmpeg.sh /builder/install-ffmpeg.sh
 RUN chmod 755 /builder/install-ffmpeg.sh
 
+
+FROM base AS jdk11
+
+RUN apt-get update && \
+    apt-get install -y \
+        openjdk-11-jre \
+        openjdk-11-jdk && \
+    #Do this after to prevent installing the default jdk
+    apt-get install -y \
+        maven && \
+    apt-get clean
+
+COPY opencast.list /etc/apt/sources.list.d
+
+
+FROM base AS jdk17
+
+RUN apt-get update && \
+    apt-get install -y \
+        openjdk-17-jre \
+        openjdk-17-jdk && \
+    #Do this after to prevent installing the default jdk
+    apt-get install -y \
+        maven && \
+    apt-get clean
+
+COPY opencast.list /etc/apt/sources.list.d
+
+
+FROM base AS jdk21
+
+RUN apt-get update && \
+    apt-get install -y \
+        openjdk-21-jre \
+        openjdk-21-jdk && \
+    #Do this after to prevent installing the default jdk
+    apt-get install -y \
+        maven && \
+    apt-get clean
+
+COPY opencast.list /etc/apt/sources.list.d

@@ -1,0 +1,6 @@
+---
+
+- name: Pulling jdk-specific image
+  shell: docker pull {{ docker_image_user }}/ocqa-{{ distro }}-worker-base-jdk{{ jdk.key }}:{{ docker_worker_image_tag }}
+  loop: "{{ jdk.value if distro in docker_jdk[jdk.key] }}"
+  become: true
