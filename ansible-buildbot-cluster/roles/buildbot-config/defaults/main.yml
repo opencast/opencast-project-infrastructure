@@ -162,20 +162,6 @@ rpm_repo_fragment: "{{ repo_fragment }}/rpms"
 #String needs to start with a non-slash, and end with a slash (ie, buildbot/, not /buildbot or /builtbot/)
 buildbot_url: ""
 
-#Build url base
-url_base: /builds
-
-
-#Build url with build properties
-artifacts_url: "{{ url_base }}/{{ artifacts_fragment }}"
-
-#Build url for the reports
-reports_url: "{{ url_base }}/reports/%(prop:branch_pretty)s"
-#Build url for the debs
-debs_url: "{{ url_base }}/{{ debs_fragment }}"
-#Build url for the rpms
-rpms_url: "{{ url_base }}/{{ rpms_fragment }}"
-
 
 #################
 # Disk Settings #
