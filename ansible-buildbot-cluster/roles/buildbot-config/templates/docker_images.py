@@ -104,7 +104,8 @@ class GeneratePerImageBuilds(buildstep.ShellMixin, steps.BuildStep):
                                 "--target", target,
                                 "-t", util.Interpolate(f"%(prop:docker_host)s/%(prop:fdnwj)s:latest")],
                             workdir=util.Interpolate("build/docker-qa-images/%(prop:fdn)s"),
-                            name=util.Interpolate(f"Building %(prop:docker_image)s { target } %(prop:docker_tag:-buildbot_version)s")),
+                            name=util.Interpolate(f"Building %(prop:docker_image)s { target } %(prop:docker_tag:-buildbot_version)s"),
+                            timeout=300),
                     lambda target:
                         common.shellCommand(
                             command=["docker", "tag",
