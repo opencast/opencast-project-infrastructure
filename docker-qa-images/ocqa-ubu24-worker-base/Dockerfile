@@ -84,6 +84,7 @@ RUN apt-get install -y --no-install-recommends \
         fakeroot \
      # s3fs since aptly needs it
         s3fs \
+        s3cmd \
      # Crowdin
         crowdin && \
     apt-get install -y -t squeeze aptly && \
