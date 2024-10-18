@@ -10,7 +10,7 @@ opencast:
   Develop:
     branch: 'develop'
     pom: '17'
-    jdk: [ '11', '17' ]
+    jdk: [ '17', '21' ]
     ffmpeg: 15
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     el: [ ]
