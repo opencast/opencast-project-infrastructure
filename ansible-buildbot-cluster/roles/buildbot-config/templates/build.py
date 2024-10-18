@@ -260,10 +260,14 @@ class Build():
 
 {% if deploy_tags | default(false) %}
         if "develop" != self.props['git_branch_name']:
+            #Set the jdk to use at the scheduler level.  We want the oldest jdk supported by a branch.
+            jdkprops = dict(self.props)
+            jdkprops['jdk'] = sorted(self.jdks)[0]
+
             #Regular releases
             scheds[f"{ self.pretty_branch_name }Release"] = common.getAnyBranchScheduler(
                 name=self.pretty_branch_name + " Release",
-                properties=self.props,
+                properties=jdkprops,
                 #This regex is looking for something like 11.1, so we use the major package version and a static ".*"
                 change_filter=util.ChangeFilter(category='tag_push', branch_re=self.props['pkg_major_version'] + ".*", repository_re=".*opencast.git"),
                 builderNames=[ self.pretty_branch_name + " Release"])
@@ -291,7 +295,7 @@ class Build():
 
             scheds[f"{ self.pretty_branch_name}ReleaseForce"] = common.getForceScheduler(
                 name=self.pretty_branch_name + "Release",
-                props=self.props,
+                props=jdkprops,
                 codebase=codebase,
                 builderNames=[ self.pretty_branch_name + " Release"])
 {% endif %}
