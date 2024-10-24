@@ -8,13 +8,17 @@
 
 - name: Getting inital certs
   block:
-    - name: Ensuring config directory exists
+    - name: Ensuring nginx directories exists
       file:
         state: directory
-        path: "{{ buildbot_home }}/nginx_root"
+        path: "{{ buildbot_home }}/{{ item }}"
         owner: "{{ buildbot_user }}"
         group: "{{ buildbot_user }}"
         mode: "0755"
+      loop:
+        - nginx_root
+        - nginx-config
+
 
     - name: Deploying temporary nginx config
       template:
