@@ -13,6 +13,7 @@
   user: "{{ login_user }}"
   roles:
     - { role: buildbot-base }
+    - { role: geerlingguy.docker, become: true }
     - { role: docker-tcp-connectable }
     - { role: buildbot-keysync, tags: [ rekey ] }
     - { role: autossh, when: "'master' not in group_names", tags: [ rekey ] }

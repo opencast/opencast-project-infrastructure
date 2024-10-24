@@ -4,12 +4,16 @@
   - "autossh"
   - "sudo"
   - "python3"
-  - "docker-ce"
   - "acl"
 
 "11":
   - "autossh"
   - "sudo"
   - "python3"
-  - "docker-ce"
+  - "acl"
+
+"12":
+  - "autossh"
+  - "sudo"
+  - "python3"
   - "acl"

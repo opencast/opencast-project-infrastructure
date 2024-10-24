@@ -93,7 +93,7 @@
   tags: just-config
 
 - name: Checking if Buildbot is already running
-  shell: docker-compose ps -q buildbot
+  shell: docker compose ps -q buildbot
   args:
     chdir: "{{ buildbot_home }}"
   become: yes
@@ -102,7 +102,7 @@
   register: docker_ps
 
 - name: Sanity check the files we just templated
-  shell: docker-compose run --rm buildbot /buildbot_venv/bin/buildbot checkconfig
+  shell: docker compose run --rm buildbot /buildbot_venv/bin/buildbot checkconfig
   args:
     chdir: "{{ buildbot_home }}"
   become: yes
@@ -110,7 +110,7 @@
   when: docker_ps.stdout_lines | length == 0
 
 - name: Sanity check the files we just templated
-  shell: docker-compose exec -T buildbot /buildbot_venv/bin/buildbot checkconfig
+  shell: docker compose exec -T buildbot /buildbot_venv/bin/buildbot checkconfig
   args:
     chdir: "{{ buildbot_home }}"
   become: yes

@@ -17,15 +17,5 @@
   package:
     name: "{{ lookup('vars', ansible_distribution_major_version) }}"
     state: present
-  become: yes
-
-- name: Installing docker-compose
-  get_url:
-    url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64"
-    dest: /usr/bin/docker-compose
-    force: yes
-    owner: root
-    group: root
-    mode: 0755
-  become: yes
+  become: true
 
