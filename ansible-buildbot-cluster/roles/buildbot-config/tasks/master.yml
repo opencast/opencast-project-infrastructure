@@ -195,7 +195,7 @@
     PYTHONPATH: "{{ EXTRA_PYTHONPATH if EXTRA_PYTHONPATH is defined else '' }}"
 
 - name: Extracting public signing key from private key
-  shell: gpg --no-default-keyring --keyring=./.temp/keyring.gpg --import ./.temp/signing.key && gpg --no-default-keyring --keyring=./.temp/keyring.gpg -a --export {{ signing_key_id }} >> ./.temp/{{ signing_key_id }}.asc
+  shell: "gpg --no-default-keyring --keyring={{ role_path }}/.temp/keyring.gpg --import {{ role_path }}/.temp/key/signing.key && gpg --no-default-keyring --keyring={{ role_path }}/.temp/keyring.gpg -a --export {{ signing_key_id }} >> {{ role_path }}/.temp/{{ signing_key_id }}.asc"
   args:
     chdir: "{{ role_path }}"
   connection: local
