@@ -1,5 +1,7 @@
 ---
 
+adopter_server_user: "opencast"
+
 adopter_reg_home: /opt/oc_adopter_reg
 
 adopter_reg_venv: "{{ adopter_reg_home }}/venv"
