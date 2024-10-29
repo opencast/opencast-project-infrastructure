@@ -43,6 +43,11 @@ sudo systemctl restart elasticsearch.service
 
 sleep 10
 
+if [ ! -d /usr/share/elasticsearch/plugins/analysis-icu ]; then
+  #If the analysis-icu directory does not exist, install the thing
+  /usr/share/elasticsearch/bin/elasticsearch-plugin install -b analysis-icu
+fi
+
 # Start Opencast
 sudo systemctl start opencast.service
 
