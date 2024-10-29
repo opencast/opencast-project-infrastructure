@@ -194,19 +194,30 @@
   environment:
     PYTHONPATH: "{{ EXTRA_PYTHONPATH if EXTRA_PYTHONPATH is defined else '' }}"
 
-- name: Extracting public signing key from private key
-  shell: "gpg --no-default-keyring --keyring={{ role_path }}/.temp/keyring.gpg --import {{ role_path }}/.temp/key/signing.key && gpg --no-default-keyring --keyring={{ role_path }}/.temp/keyring.gpg -a --export {{ signing_key_id }} >> {{ role_path }}/.temp/{{ signing_key_id }}.asc"
+- name: Building private keyring containing all signing keys
+  shell: "gpg --no-default-keyring --keyring={{ role_path }}/.temp/keyring.gpg --import {{ role_path }}/.temp/key/*-signing.key"
   args:
     chdir: "{{ role_path }}"
   connection: local
 
-- name: Distributing public signing key
+- name: Extracting public signing keys from private keys
+  shell: "gpg --no-default-keyring --keyring={{ role_path }}/.temp/keyring.gpg -a --export {{ item }} >> {{ role_path }}/.temp/key/{{ item }}.asc"
+  args:
+    chdir: "{{ role_path }}"
+  with_items:
+    - "{{ opencast | dict2items | map(attribute='value.deb_signing_key_id', default='') }}"
+    - "{{ opencast | dict2items | map(attribute='value.rpm_signing_key_id', default='') }}"
+  connection: local
+
+- name: Distributing public signing keys
   copy:
-    src: .temp/{{ signing_key_id }}.asc
-    dest: "{{ buildbot_home }}/keys/public-signing-key.gpg"
+    src: "{{ item  }}"
+    dest: "{{ buildbot_home }}/key/{{ item }}"
     owner: "{{ buildbot_user }}"
     group: "{{ buildbot_user }}"
     mode: 0644
+  with_fileglob:
+    - "{{ role_path }}/.temp/*.asc"
   become: yes
 
 - name: Removing private support files from local disk
