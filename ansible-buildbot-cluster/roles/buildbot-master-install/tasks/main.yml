@@ -55,11 +55,14 @@
     force: yes
   become: yes
 
-- name: Ensuring s3fs is installed
+- name: Ensuring s3fs and postgres are installed
   package:
-    name: s3fs
+    name: "{{ item }}"
     state: present
   become: yes
+  loop:
+    - s3fs
+    - postgresql-client
 
 - name: Setting fstab and mounting
   mount:
