@@ -28,6 +28,18 @@
         group: "{{ buildbot_user }}"
         mode: "0644"
 
+    - name: Checking if dh params have been built
+      stat:
+        path: "{{ buildbot_home }}/nginx-config/dhparam.pem"
+      register: dhparam
+
+    - name: Generating dh params
+      shell: openssl dhparam -out dhparam.pem 4096 && chown {{ buildbot_user }}:{{ buildbot_user }} dhparam.pem
+      args:
+        chdir: "{{ buildbot_home }}/nginx-config"
+      become: yes
+      when: not dhparam.stat.exists
+
     - name: Deploying docker compose file
       template:
         src: "docker-compose.yml"
