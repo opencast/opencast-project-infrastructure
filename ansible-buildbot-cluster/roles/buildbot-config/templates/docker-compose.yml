@@ -1,4 +1,3 @@
-version: '2'
 services:
   buildbot:
     user: "{{ hostvars[inventory_hostname]['uid'] }}:{{ hostvars[inventory_hostname]['gid'] }}"
