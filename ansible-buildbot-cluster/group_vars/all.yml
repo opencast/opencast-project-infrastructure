@@ -9,6 +9,17 @@
 opencast:
   Develop:
     branch: 'develop'
+    pom: '18'
+    jdk: [ '17', '21' ]
+    ffmpeg: 15
+    profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
+    el: [ ]
+    cores: '1C'
+    server: 'develop'
+    deb_signing_key_id: "{{ lookup('passwordstore', 'gpg/debian/id') }}"
+    deb_signing_key: "{{ lookup('passwordstore', 'gpg/debian/key', returnall=true) }}"
+  17.x:
+    branch: 'r/17.x'
     pom: '17'
     jdk: [ '17', '21' ]
     ffmpeg: 15
