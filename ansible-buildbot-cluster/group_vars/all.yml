@@ -51,16 +51,6 @@ opencast:
     server: 'legacy'
     deb_signing_key_id: "{{ lookup('passwordstore', 'gpg/debian/id') }}"
     deb_signing_key: "{{ lookup('passwordstore', 'gpg/debian/key', returnall=true) }}"
-  14.x:
-    branch: 'r/14.x'
-    pom: '14'
-    jdk: [ '11' ]
-    ffmpeg: 14
-    profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
-    el: [ ]
-    cores: '1C'
-    deb_signing_key_id: "{{ lookup('passwordstore', 'gpg/debian/id') }}"
-    deb_signing_key: "{{ lookup('passwordstore', 'gpg/debian/key', returnall=true) }}"
 
 
 #########################
