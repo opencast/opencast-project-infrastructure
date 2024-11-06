@@ -69,7 +69,7 @@ class Packages():
         if None == self.build_sched:
             scheds[f"{ self.pretty_branch_name }UnstablePackages"] = schedulers.Nightly(
                 name=self.pretty_branch_name + ' Unstable Package Generation',
-                change_filter=util.ChangeFilter(category=None, branch_re=self.props['git_branch_name']),
+                change_filter=util.ChangeFilter(repository=["https://code.loganite.ca/opencast/debian-packaging.git", "git@code.loganite.ca:opencast/debian-packaging.git"], branch_re=self.props['git_branch_name']),
                 hour={{ nightly_build_hour }},
                 onlyIfChanged=True,
                 properties=self.props,

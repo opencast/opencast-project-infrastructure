@@ -242,14 +242,14 @@ class Build():
         #Regular builds
         scheds[f"{ self.pretty_branch_name }Build"] = common.getAnyBranchScheduler(
             name=self.pretty_branch_name + " Build",
-            change_filter=util.ChangeFilter(category='push', branch_re=self.props['git_branch_name']),
+            change_filter=util.ChangeFilter(repository=["https://code.loganite.ca/opencast/opencast.git", "git@code.loganite.ca:opencast/opencast.git"], category='push', branch_re=self.props['git_branch_name']),
             fileIsImportant=self.buildFilter,
             builderNames=[ self.pretty_branch_name + " Build JDK " + str(jdk) for jdk in self.jdks ])
 
         #PR builds
         scheds[f"{ self.pretty_branch_name }BuildPR"] = common.getAnyBranchScheduler(
             name=self.pretty_branch_name + " Pull Requests",
-            change_filter=util.ChangeFilter(category=["pull", "merge_request"], branch_re=self.props['git_branch_name']),
+            change_filter=util.ChangeFilter(repository=["https://code.loganite.ca/opencast/opencast.git", "git@code.loganite.ca:opencast/opencast.git"], category=["pull", "merge_request"], branch_re=self.props['git_branch_name']),
             fileIsImportant=self.buildFilter,
             builderNames=[ self.pretty_branch_name + " Pull Request Build JDK " + str(jdk) for jdk in self.jdks ])
 
@@ -269,7 +269,7 @@ class Build():
                 name=self.pretty_branch_name + " Release",
                 properties=jdkprops,
                 #This regex is looking for something like 11.1, so we use the major package version and a static ".*"
-                change_filter=util.ChangeFilter(category='tag_push', branch_re=self.props['pkg_major_version'] + ".*", repository_re=".*opencast.git"),
+                change_filter=util.ChangeFilter(repository="https://code.loganite.ca/opencast/opencast.git", category='tag_push', branch_re=self.props['pkg_major_version'] + ".*", repository_re=".*opencast.git"),
                 builderNames=[ self.pretty_branch_name + " Release"])
 
             codebase = [

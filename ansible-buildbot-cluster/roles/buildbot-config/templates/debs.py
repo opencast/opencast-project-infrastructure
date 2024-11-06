@@ -476,7 +476,7 @@ class Debs():
         #Regular builds
         scheds[f"{ self.pretty_branch_name }DebsTesting"] = common.getAnyBranchScheduler(
             name=self.pretty_branch_name + " Debian Testing Packaging",
-            change_filter=util.ChangeFilter(category=None, branch_re=f'{ self.props["pkg_major_version"] }\.\d*-\d*'),
+            change_filter=util.ChangeFilter(repository=["https://code.loganite.ca/opencast/debian-packaging.git", "git@code.loganite.ca:opencast/debian-packaging.git"], branch_re=f'{ self.props["pkg_major_version"] }\.\d*-\d*'),
             builderNames=[ self.pretty_branch_name + " Deb Pkg Testing" ])
 
         codebase = [

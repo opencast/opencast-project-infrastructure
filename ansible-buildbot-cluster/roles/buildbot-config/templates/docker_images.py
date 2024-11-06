@@ -324,7 +324,7 @@ class Docker():
             builderNames=["ocqa worker build spawner"],
             fileIsImportant=lambda change: any(map(lambda filename: "docker-qa-images" in filename, change.files)),
             onlyImportant=True,
-            change_filter=util.ChangeFilter(category="push", branch_re='f/buildbot'))
+            change_filter=util.ChangeFilter(repository=["https://code.loganite.ca/opencast/infra.git", "git@code.loganite.ca:opencast/infra.git"], category="push", branch_re='f/buildbot'))
 
         scheds['docker_image'] = schedulers.Triggerable(
             name="ocqa image triggerable",
