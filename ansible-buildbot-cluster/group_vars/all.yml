@@ -11,7 +11,7 @@ opencast:
     branch: 'develop'
     pom: '18'
     jdk: [ '17', '21' ]
-    ffmpeg: 15
+    ffmpeg: 16
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     el: [ ]
     cores: '1C'
@@ -22,7 +22,7 @@ opencast:
     branch: 'r/17.x'
     pom: '17'
     jdk: [ '17', '21' ]
-    ffmpeg: 15
+    ffmpeg: 16
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     el: [ ]
     cores: '1C'
@@ -33,7 +33,7 @@ opencast:
     branch: 'r/16.x'
     pom: '16'
     jdk: [ '11', '17' ]
-    ffmpeg: 15
+    ffmpeg: 16
     profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
     el: [ ]
     cores: '1C'
