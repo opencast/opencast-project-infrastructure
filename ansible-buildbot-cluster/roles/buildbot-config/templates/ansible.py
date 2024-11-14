@@ -195,7 +195,6 @@ class Ansible():
         "ffmpeg",
         "cores",
         "branch_pretty",
-        "jdk",
         "workernames",
         "deploy_env",
         "UnstablePackages"
@@ -224,7 +223,6 @@ class Ansible():
                 self.props[key] = props[key]
 
         self.pretty_branch_name = self.props["branch_pretty"]
-
 
 
     def getBuildPipeline(self):
