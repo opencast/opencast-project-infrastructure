@@ -72,8 +72,7 @@ class Build():
 
         self.pretty_branch_name = self.props["branch_pretty"]
         self.jdks = self.props["jdk"]
-        build_triggers = [ "assemblies", "modules", "pom.xml" ]
-        self.buildFilter = lambda change: any(map(lambda filename: [ substr in filename for substr in build_triggers ], change.files))
+        self.buildFilter = lambda change: any(True in m for m in map(lambda filename: [ substr in filename for substr in [ "assemblies", "modules", "pom.xml" ] ], change.files))
 
     getBuildSize = common.shellCommand(
         command=['du', '-ch'],
@@ -250,7 +249,8 @@ class Build():
         scheds[f"{ self.pretty_branch_name }BuildPR"] = common.getAnyBranchScheduler(
             name=self.pretty_branch_name + " Pull Requests",
             change_filter=util.ChangeFilter(repository=["https://code.loganite.ca/opencast/opencast.git", "git@code.loganite.ca:opencast/opencast.git"], category=["pull", "merge_request"], branch_re=self.props['git_branch_name']),
-            fileIsImportant=self.buildFilter,
+            #NB: The MR events from gitlab *do not contain a list of changed files*, so we can't filter here.  In theory we could check if it's a MR, then query to see the relevant push to see the changed files, but meh
+            #fileIsImportant=self.buildFilter,
             builderNames=[ self.pretty_branch_name + " Pull Request Build JDK " + str(jdk) for jdk in self.jdks ])
 
         scheds[f"{ self.pretty_branch_name}BuildForce"] = common.getForceScheduler(
