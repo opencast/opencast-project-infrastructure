@@ -138,7 +138,7 @@
 
 
   #The following files then get uploaded to S3 next
-- name: Template Buildbot private support files
+- name: Prepping local Buildbot private support files
   template:
     src: "{{ item.src }}"
     dest: "{{ role_path }}/{{ item.dest }}"
@@ -212,13 +212,35 @@
 - name: Distributing public signing keys
   copy:
     src: "{{ item  }}"
-    dest: "{{ buildbot_home }}/key/{{ item }}"
+    dest: "{{ buildbot_home }}/keys/{{ item | basename }}"
     owner: "{{ buildbot_user }}"
     group: "{{ buildbot_user }}"
     mode: 0644
   with_fileglob:
-    - "{{ role_path }}/.temp/*.asc"
+    - "{{ role_path }}/.temp/key/*.asc"
   become: yes
+
+- name: Ensuring deb signing keys are linked
+  file:
+    src: "{{ buildbot_home }}/keys/{{ item['value']['deb_signing_key_id'] }}.asc"
+    dest: "{{ buildbot_home }}/keys/deb-{{ item['key'] }}-signing.key"
+    state: link
+    force: true
+  become: true
+  with_items:
+    - "{{ opencast | dict2items }}"
+  when: item.value.deb_signing_key_id is defined
+
+- name: Ensuring rpm signing keys are linked
+  file:
+    src: "{{ buildbot_home }}/keys/{{ item['value']['rpm_signing_key_id'] }}.asc"
+    dest: "{{ buildbot_home }}/keys/rpm-{{ item['key'] }}-signing.key"
+    state: link
+    force: true
+  become: true
+  with_items:
+    - "{{ opencast | dict2items }}"
+  when: item.rpm_signing_key_id is defined
 
 - name: Removing private support files from local disk
   file:
