@@ -78,7 +78,7 @@ buildbot_home: /opt/buildbot
 docker_image_user: "opencast"
 
 #The version of Buildbot which should be inside the various images
-docker_image_buildbot_version: "v3.9.2"
+docker_image_buildbot_version: "v4.1.0"
 
 #The version tag to use for all of the images
 docker_image_tag: "{{ docker_image_buildbot_version }}"

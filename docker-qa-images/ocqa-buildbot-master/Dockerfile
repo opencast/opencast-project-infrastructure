@@ -1,4 +1,4 @@
-FROM buildbot/buildbot-master:v3.9.2
+FROM buildbot/buildbot-master:v4.1.0
 # This overlay adds a few missing bits required for Opencast's use of BuildBot, notably requests (to power Github)
 
 ARG BUILD_DATE
