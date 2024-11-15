@@ -393,6 +393,19 @@ class Debs():
         return f_package_debs
 
 
+    def getPublishPipeline(self):
+
+        #NB: We are not building debs here, just promoting from test!
+        f_package_debs = util.BuildFactory()
+        self.setupRepo(f_package_debs)
+        self.mountS3(f_package_debs, host="loganite")
+        #NB: The default S3 is LITE, so publish there
+        self.publishRepo(f_package_debs, s3_target="s3:loganite:")
+        self.cleanup(f_package_debs)
+
+        return f_package_debs
+
+
     def getSyncPipeline(self):
 
         f_package_debs = util.BuildFactory()
@@ -444,6 +457,14 @@ class Debs():
             factory=self.getTestPipeline(),
             workernames=self.props['workernames'],
             properties=dict(prod_props) | {"repo_component": "testing", "tag_version": util.Property('branch')},
+            collapseRequests=True,
+            locks=[lock.access('exclusive')]))
+
+        builders.append(util.BuilderConfig(
+            name=self.pretty_branch_name + " Deb Publish",
+            factory=self.getPublishPipeline(),
+            workernames=self.props['workernames'],
+            properties=dict(prod_props) | {"tag_version": util.Property('branch')},
             collapseRequests=True,
             locks=[lock.access('exclusive')]))
 
@@ -530,5 +551,11 @@ class Debs():
             codebase=codebase,
             params=params,
             builderNames=[ self.pretty_branch_name + " Deb Drop Release" ])
+
+        scheds[f"{ self.pretty_branch_name}DebsPubForce"] = common.getForceScheduler(
+            name=self.pretty_branch_name + "DebsPubForce",
+            props=self.props,
+            codebase=codebase,
+            builderNames=[ self.pretty_branch_name + " Deb Publish" ])
 
         return scheds
