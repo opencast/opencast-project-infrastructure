@@ -447,15 +447,15 @@ class Debs():
             collapseRequests=True,
             locks=[lock.access('exclusive')]))
 
-        if "Develop" != self.pretty_branch_name:
+        builders.append(util.BuilderConfig(
+            name=self.pretty_branch_name + " Deb Drop Release",
+            factory=self.getDropPipeline(),
+            workernames=self.props['workernames'],
+            properties=prod_props,
+            collapseRequests=True,
+            locks=[lock.access('exclusive')]))
 
-            builders.append(util.BuilderConfig(
-                name=self.pretty_branch_name + " Deb Drop Release",
-                factory=self.getDropPipeline(),
-                workernames=self.props['workernames'],
-                properties=prod_props,
-                collapseRequests=True,
-                locks=[lock.access('exclusive')]))
+        if "Develop" != self.pretty_branch_name:
 
             builders.append(util.BuilderConfig(
                 name=self.pretty_branch_name + " Deb Promote Release",
@@ -524,11 +524,11 @@ class Debs():
                 params=params,
                 builderNames=[ self.pretty_branch_name + " Deb Promote Release" ])
 
-            scheds[f"{ self.pretty_branch_name}DebsDrop"] = common.getForceScheduler(
-                name=self.pretty_branch_name + "DebsDrop",
-                props=self.props,
-                codebase=codebase,
-                params=params,
-                builderNames=[ self.pretty_branch_name + " Deb Drop Release" ])
+        scheds[f"{ self.pretty_branch_name}DebsDrop"] = common.getForceScheduler(
+            name=self.pretty_branch_name + "DebsDrop",
+            props=self.props,
+            codebase=codebase,
+            params=params,
+            builderNames=[ self.pretty_branch_name + " Deb Drop Release" ])
 
         return scheds

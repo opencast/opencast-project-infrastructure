@@ -62,7 +62,7 @@ class Packages():
     def getSchedulers(self):
 
         builders = [ builder.name for builder in self.getBuilders() ]
-        unstable_builders = [ builder for builder in builders if "Testing" not in builder and "Release" not in builder ]
+        unstable_builders = [ builder for builder in builders if "Unstable" in builder ]
 
         scheds = self.debs.getSchedulers() | self.rpms.getSchedulers()
 
