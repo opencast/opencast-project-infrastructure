@@ -7,14 +7,14 @@ from twisted.internet import defer
 import common
 
 params = [
-    "deb_repo_suite=%(prop:deploy_suite)s",
+    "deb_repo_suite=%(prop:repo_component)s",
     "oc_deb_repo_url=http://%(prop:package_repo_host)s/debian",
-    "oc_deb_key_url=%(prop:key_url)s",
-    "oc_deb_key_id=%(prop:key_id)s",
-    "rpm_repo_suite=%(prop:deploy_suite)s",
+    "oc_deb_key_url=%(prop:deb_signing_key_file)s",
+    "oc_deb_key_id=%(prop:deb_signing_key_id)s",
+    "rpm_repo_suite=%(prop:repo_component)s",
     "oc_rpm_repo_base_url=http://%(prop:package_repo_host)s/rpms",
-    "oc_rpm_key_url=%(prop:key_url)s",
-    "oc_rpm_key_id=%(prop:key_id)s",
+    "oc_rpm_key_url=%(prop:rpm_signing_key_file)s",
+    "oc_rpm_key_id=%(prop:rpm_signing_key_id)s",
     "ansible_user={{ buildbot_user }}"
 ]
 
@@ -197,6 +197,11 @@ class Ansible():
         "branch_pretty",
         "workernames",
         "deploy_env",
+        "deb_signing_key_file",
+        "deb_signing_key_id",
+        "rpm_signing_key_file",
+        "rpm_signing_key_id",
+        "repo_component",
         "UnstablePackages"
         ]
 
@@ -302,10 +307,7 @@ class Ansible():
         builders = []
 
         deploy_props = dict(self.props)
-        deploy_props['deploy_suite'] = '{{ repo_deploy_suite }}'
         deploy_props['package_repo_host'] = "{{ repo_host }}"
-        deploy_props['key_url'] = "{{ key_url }}"
-        deploy_props['key_id'] = "{{ key_id }}"
 
         builders.append(util.BuilderConfig(
             name=self.pretty_branch_name + " Ansible Deploy",
