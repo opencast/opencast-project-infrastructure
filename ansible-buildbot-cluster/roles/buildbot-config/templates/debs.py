@@ -53,6 +53,7 @@ class Debs():
         self.branch_key_filename = self.props["deb_signing_key_file"]
         self.branch_key_id = self.props["deb_signing_key_id"]
 
+
     def addDebBuild(self, f_package_debs):
 
         debsClone = steps.Git(repourl="{{ source_deb_repo_url }}",
@@ -193,6 +194,158 @@ class Debs():
         f_package_debs.addStep(debsPrepBuild)
         f_package_debs.addStep(debsPrepReleaseBuild)
         f_package_debs.addStep(debsBuild)
+        #We unload here since we *might* be using a different key in a minute to sign the actual repo
+        f_package_debs.addStep(common.unloadSigningKey())
+
+
+    def addTobiraBuild(self, f_package_debs):
+
+        debsClone = steps.Git(repourl="{{ source_deb_repo_url }}",
+                              branch=util.Property('branch'),
+                              alwaysUseLatest=True,
+                              mode="full",
+                              method="fresh",
+                              flunkOnFailure=True,
+                              haltOnFailure=True,
+                              name="Cloning deb packaging configs")
+
+        removeSymlinks = common.shellCommand(
+            command=['rm', '-rf', 'outputs'],
+            name="Prep cloned repo for CI use")
+
+        fetchTobiraFromGitHub = common.shellCommand(
+            command=["./tobira-fetch.sh", util.Interpolate("%(prop:tobira_version)s")],
+            workdir="build/binaries",
+            name="Fetch Tobira release build from GitHub")
+
+        buildTobira = common.shellSequence(
+            commands=[
+                common.shellArg(
+                    command=util.Interpolate(
+                        'echo "source library.sh\nSIGNING_KEY=%(prop:signing_key_id)s doTobira %(prop:tobira_version)s %(prop:branch)s %(prop:buildnumber)s" | tee build.sh'
+                    ),
+                    logname='write'),
+                common.shellArg(
+                    command=['bash', 'build.sh'],
+                    logname='build')
+            ],
+            env={
+                "NAME": "Buildbot",
+                "EMAIL": "buildbot@{{ groups['master'][0] }}",
+                "SIGNING_KEY": util.Interpolate("%(prop:deb_signing_key_id)s")
+            },
+            name="Build Tobira")
+
+        f_package_debs.addStep(common.getPreflightChecks())
+        f_package_debs.addStep(debsClone)
+        f_package_debs.addStep(removeSymlinks)
+        f_package_debs.addStep(fetchTobiraFromGitHub)
+        #NB: This can be either the default, or the per-branch depending on the *buidler* below
+        f_package_debs.addStep(common.loadSigningKey())
+        f_package_debs.addStep(buildTobira)
+        #We unload here since we *might* be using a different key in a minute to sign the actual repo
+        f_package_debs.addStep(common.unloadSigningKey())
+
+
+    def addWhisperBuild(self, f_package_debs):
+
+        debsClone = steps.Git(repourl="{{ source_deb_repo_url }}",
+                              branch=util.Property('branch'),
+                              alwaysUseLatest=True,
+                              mode="full",
+                              method="fresh",
+                              flunkOnFailure=True,
+                              haltOnFailure=True,
+                              name="Cloning deb packaging configs")
+
+        removeSymlinks = common.shellCommand(
+            command=['rm', '-rf', 'outputs'],
+            name="Prep cloned repo for CI use")
+
+        fetchWhisperFromGithub = common.shellCommand(
+            command=["./whisper-fetch.sh", util.Interpolate("%(prop:whisper_version)s")],
+            workdir="build/binaries",
+            name="Fetch Whisper release build from GitHub")
+
+        buildWhisper = common.shellSequence(
+            commands=[
+                common.shellArg(
+                    command=util.Interpolate(
+                        'echo "source library.sh\nSIGNING_KEY=%(prop:signing_key_id)s doWhisper %(prop:whisper_version)s %(prop:branch)s %(prop:buildnumber)s" | tee build.sh'
+                    ),
+                    logname='write'),
+                common.shellArg(
+                    command=['bash', 'build.sh'],
+                    logname='build')
+            ],
+            env={
+                "NAME": "Buildbot",
+                "EMAIL": "buildbot@{{ groups['master'][0] }}",
+                "SIGNING_KEY": util.Interpolate("%(prop:deb_signing_key_id)s")
+            },
+            name="Build Whisper")
+
+        f_package_debs.addStep(common.getPreflightChecks())
+        f_package_debs.addStep(debsClone)
+        f_package_debs.addStep(removeSymlinks)
+        f_package_debs.addStep(fetchWhisperFromGithub)
+        #NB: This can be either the default, or the per-branch depending on the *buidler* below
+        f_package_debs.addStep(common.loadSigningKey())
+        f_package_debs.addStep(buildWhisper)
+        #We unload here since we *might* be using a different key in a minute to sign the actual repo
+        f_package_debs.addStep(common.unloadSigningKey())
+
+
+    def addFfmpegBuild(self, f_package_debs):
+
+        debsClone = steps.Git(repourl="{{ source_deb_repo_url }}",
+                              branch=util.Property('branch'),
+                              alwaysUseLatest=True,
+                              mode="full",
+                              method="fresh",
+                              flunkOnFailure=True,
+                              haltOnFailure=True,
+                              name="Cloning deb packaging configs")
+
+        removeSymlinks = common.shellCommand(
+            command=['rm', '-rf', 'outputs'],
+            name="Prep cloned repo for CI use")
+
+        fetchFfmpeg = common.shellCommand(
+            command=["./ffmpeg-fetch.sh"],
+            workdir="build/binaries",
+            name="Fetch ffmpeg build from s3")
+
+        buildFfmpeg = common.shellSequence(
+            commands=[
+                common.shellArg(
+                    command=util.Interpolate(
+                        'echo "source library.sh\nSIGNING_KEY=%(prop:signing_key_id)s doFfmpeg %(prop:ffmpeg_version)s amd64 %(prop:branch)s ffmpeg-%(prop:ffmpeg_version)s-amd64 %(prop:buildnumber)s" | tee build.sh'
+                    ),
+                    logname='amd64'),
+                common.shellArg(
+                    command=util.Interpolate(
+                        'echo "source library.sh\nSIGNING_KEY=%(prop:signing_key_id)s doFfmpeg %(prop:ffmpeg_version)s arm64 %(prop:branch)s ffmpeg-%(prop:ffmpeg_version)s-arm64 %(prop:buildnumber)s" | tee build.sh'
+                    ),
+                    logname='arm64'),
+                common.shellArg(
+                    command=['bash', 'build.sh'],
+                    logname='build')
+            ],
+            env={
+                "NAME": "Buildbot",
+                "EMAIL": "buildbot@{{ groups['master'][0] }}",
+                "SIGNING_KEY": util.Interpolate("%(prop:deb_signing_key_id)s")
+            },
+            name="Build ffmpeg")
+
+        f_package_debs.addStep(common.getPreflightChecks())
+        f_package_debs.addStep(debsClone)
+        f_package_debs.addStep(removeSymlinks)
+        f_package_debs.addStep(fetchFfmpeg)
+        #NB: This can be either the default, or the per-branch depending on the *buidler* below
+        f_package_debs.addStep(common.loadSigningKey())
+        f_package_debs.addStep(buildFfmpeg)
         #We unload here since we *might* be using a different key in a minute to sign the actual repo
         f_package_debs.addStep(common.unloadSigningKey())
 
@@ -348,10 +501,17 @@ class Debs():
         f_package_debs.addStep(common.getClean())
 
 
-    def getBuildPipeline(self):
+    def getBuildPipeline(self, buildType="oc"):
 
         f_package_debs = util.BuildFactory()
-        self.addDebBuild(f_package_debs)
+        if "ffmpeg" == buildType:
+            self.addFfmpegBuild(f_package_debs)
+        elif "tobira" == buildType:
+            self.addTobiraBuild(f_package_debs)
+        elif "ffmpeg" == buildType:
+            self.addFfmpegBuild(f_package_debs)
+        else:
+            self.addDebBuild(f_package_debs)
         self.setupRepo(f_package_debs)
         self.mountS3(f_package_debs, host="rados")
         self.includeRepo(f_package_debs, s3_target="s3:s3:")
@@ -440,13 +600,13 @@ class Debs():
         deb_props['release_build'] = 'false'
         lock = util.MasterLock(f"{ self.props['git_branch_name'] }deb_lock", maxCount=1)
 
-        builders.append(util.BuilderConfig(
-            name=self.pretty_branch_name + " Deb Pkg Unstable",
-            factory=self.getBuildPipeline(),
-            workernames=self.props['workernames'],
-            properties=dict(deb_props) | {"repo_component": "unstable"},
-            collapseRequests=True,
-            locks=[lock.access('exclusive')]))
+            builders.append(util.BuilderConfig(
+                name=self.pretty_branch_name + " " + buildType + " Deb Pkg Unstable",
+                factory=self.getBuildPipeline(),
+                workernames=self.props['workernames'],
+                properties=dict(deb_props) | {"repo_component": "unstable"},
+                collapseRequests=True,
+                locks=[lock.access('exclusive')]))
 
         prod_props = dict(deb_props)
         prod_props['signing_key_filename'] = self.branch_key_filename
@@ -477,7 +637,6 @@ class Debs():
             locks=[lock.access('exclusive')]))
 
         if "Develop" != self.pretty_branch_name:
-
             builders.append(util.BuilderConfig(
                 name=self.pretty_branch_name + " Deb Promote Release",
                 factory=self.getReleasePipeline(),
@@ -486,6 +645,17 @@ class Debs():
                 properties=dict(prod_props) | {"repo_component": "stable" },
                 collapseRequests=True,
                 locks=[lock.access('exclusive')]))
+        else:
+            #We only provide this for develop.  Use the promote/copy builder to spread the resulting files around
+            for buildtype in [ "ffmpeg", "tobira", "whisper" ]:
+                builders.append(util.BuilderConfig(
+                    name=f"{ buildtype.capitalize() } Pkg Testing",
+                    factory=self.getBuildPipeline(buildtype),
+                    workernames=self.props['workernames'],
+                    properties=dict(prod_props) | {"repo_component": "testing"},
+                    collapseRequests=True,
+                    locks=[lock.access('exclusive')]))
+
 
         return builders
 
@@ -544,6 +714,16 @@ class Debs():
                 codebase=codebase,
                 params=params,
                 builderNames=[ self.pretty_branch_name + " Deb Promote Release" ])
+        else:
+            #We only provide this for develop.  Use the promote/copy builder to spread the resulting files around
+            for buildtype in [ "ffmpeg", "tobira", "whisper" ]:
+                scheds[f"{ self.pretty_branch_name}{ buildtype }Promote"] = common.getForceScheduler(
+                    name=self.pretty_branch_name + f"{ buildtype }Promote",
+                    props=self.props,
+                    codebase=codebase,
+                    params=params,
+                    builderNames=[ f"{ buildtype.capitalize() } Pkg Testing" ])
+
 
         scheds[f"{ self.pretty_branch_name}DebsDrop"] = common.getForceScheduler(
             name=self.pretty_branch_name + "DebsDrop",
