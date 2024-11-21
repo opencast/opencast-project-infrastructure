@@ -9,11 +9,11 @@ import common
 params = [
     "deb_repo_suite=%(prop:repo_component)s",
     "oc_deb_repo_url=http://%(prop:package_repo_host)s/debian",
-    "oc_deb_key_url=%(prop:deb_signing_key_file)s",
+    "oc_deb_key_url=%(prop:key_base_url)s/%(prop:deb_signing_key_filename)s",
     "oc_deb_key_id=%(prop:deb_signing_key_id)s",
     "rpm_repo_suite=%(prop:repo_component)s",
     "oc_rpm_repo_base_url=http://%(prop:package_repo_host)s/rpms",
-    "oc_rpm_key_url=%(prop:rpm_signing_key_file)s",
+    "oc_rpm_key_url=%(prop:key_base_url)s/%(prop:rpm_signing_key_filename)s",
     "oc_rpm_key_id=%(prop:rpm_signing_key_id)s",
     "ansible_user={{ buildbot_user }}"
 ]
@@ -197,15 +197,16 @@ class Ansible():
         "branch_pretty",
         "workernames",
         "deploy_env",
-        "deb_signing_key_file",
+        "deb_signing_key_filename",
         "deb_signing_key_id",
-        "rpm_signing_key_file",
+        "rpm_signing_key_filename",
         "rpm_signing_key_id",
         "repo_component",
         "UnstablePackages"
         ]
 
     OPTIONAL_PARAMS = [
+        "key_base_url"
         ]
 
 
@@ -214,6 +215,7 @@ class Ansible():
     packages_sched = None
 
     def __init__(self, props):
+        self.props["key_base_url"] = "{{ key_base_url }}"
         for key in Ansible.REQUIRED_PARAMS:
             if not key in props:
                 pass

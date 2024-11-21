@@ -68,6 +68,7 @@ class Build():
             if key in props and type(props[key]) in [str, list]:
                 self.props[key] = props[key]
 
+        #All releases need to be signed by this key, enforced by Sonatype.  If we change we need to tell them.
         self.props['signing_key_filename'] = "{{ signing_key_filename }}"
 
         self.pretty_branch_name = self.props["branch_pretty"]

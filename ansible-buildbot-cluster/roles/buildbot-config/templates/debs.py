@@ -18,7 +18,7 @@ class Debs():
         "branch_pretty",
         "workernames",
         "deb_signing_key_id",
-        "deb_signing_key_file"
+        "deb_signing_key_filename"
         ]
 
     OPTIONAL_PARAMS = [
@@ -28,7 +28,6 @@ class Debs():
     props = {}
     pretty_branch_name = None
     build_sched = None
-    branch_key_filename = None
 
     def __init__(self, props):
         for key in Debs.REQUIRED_PARAMS:
@@ -47,11 +46,11 @@ class Debs():
         self.pretty_branch_name = self.props["branch_pretty"]
         if 'pkg_minor_version' not in self.props:
             self.props["pkg_minor_version"] = "x"
-        #The default, automated key
+
+        # Remember, these are the *private* keys
+        # For the debian packages, for the repo metadata we use deb_signing_key_*
         self.props["signing_key_filename"] = "{{ signing_key_filename }}"
         self.props["signing_key_id"] = "{{ signing_key_id }}"
-        self.branch_key_filename = self.props["deb_signing_key_file"]
-        self.branch_key_id = self.props["deb_signing_key_id"]
 
     def addDebBuild(self, f_package_debs):
 
@@ -149,7 +148,7 @@ class Debs():
                     logname='link'),
                 common.shellArg(
                     command=util.Interpolate(
-                        'echo "source library.sh\nSIGNING_KEY=%(prop:deb_signing_key_id)s doOpencast %(prop:pkg_major_version)s.%(prop:pkg_minor_version)s %(prop:branch)s %(prop:branch)s" | tee build.sh'
+                        'echo "source library.sh\nSIGNING_KEY=%(prop:signing_key_id)s doOpencast %(prop:pkg_major_version)s.%(prop:pkg_minor_version)s %(prop:branch)s %(prop:branch)s" | tee build.sh'
                     ),
                     logname='write'),
             ],
@@ -171,7 +170,7 @@ class Debs():
             env={
                 "NAME": "Buildbot",
                 "EMAIL": "buildbot@{{ groups['master'][0] }}",
-                "SIGNING_KEY": util.Interpolate("%(prop:deb_signing_key_id)s")
+                "SIGNING_KEY": util.Interpolate("%(prop:signing_key_id)s")
             },
             name="Build debs")
 
@@ -189,7 +188,7 @@ class Debs():
         f_package_debs.addStep(debsFetchFromS3)
         f_package_debs.addStep(debsFetchFromGitHub)
         #NB: This can be either the default, or the per-branch depending on the *buidler* below
-        f_package_debs.addStep(common.loadSigningKey())
+        f_package_debs.addStep(common.loadSigningKey("%(prop:signing_key_filename)s"))
         f_package_debs.addStep(debsPrepBuild)
         f_package_debs.addStep(debsPrepReleaseBuild)
         f_package_debs.addStep(debsBuild)
@@ -291,7 +290,7 @@ class Debs():
             # Yes, 4 hours. Publishing can take a while.
             timeout=4 * 60 * 60)
 
-        f_package_debs.addStep(common.loadSigningKey(self.branch_key_filename))
+        f_package_debs.addStep(common.loadSigningKey("%(prop:deb_signing_key_filename)s"))
         f_package_debs.addStep(debRepoPublish)
         f_package_debs.addStep(debsNotifyMatrix)
         f_package_debs.addStep(common.unmountS3fs("/builder/s3/repo/debs"))
@@ -449,7 +448,6 @@ class Debs():
             locks=[lock.access('exclusive')]))
 
         prod_props = dict(deb_props)
-        prod_props['signing_key_filename'] = self.branch_key_filename
         prod_props['release_build'] = 'true'
 
         builders.append(util.BuilderConfig(
