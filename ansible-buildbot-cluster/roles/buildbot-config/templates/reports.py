@@ -39,8 +39,7 @@ class Reports():
         self.props['cores'] = "1" #cores # Fixed at 1 since the reports aren't multithreaded
         self.pretty_branch_name = self.props["branch_pretty"]
         self.jdks = self.props["jdk"]
-        build_triggers = [ "assemblies", "modules", "pom.xml" ]
-        self.buildFilter = lambda change: any(True in m for m in map(lambda filename: [ substr in filename for substr in build_triggers ], change.files))
+        self.buildFilter = lambda change: any(True in m for m in map(lambda filename: [ substr in filename for substr in [ "assemblies", "modules", "pom.xml" ] ], change.files))
 
     def __getBasePipeline(self):
 
