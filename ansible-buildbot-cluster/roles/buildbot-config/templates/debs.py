@@ -2,13 +2,12 @@
 # ex: set filetype=python:
 
 from buildbot.plugins import steps, util, schedulers
-from buildbot.process import buildstep, logobserver
-from twisted.internet import defer
+
 import common
-import json
 import random
 
 repo_lock = util.MasterLock("deb_repo_lock", maxCount=1)
+
 
 class Debs():
 
@@ -31,9 +30,8 @@ class Debs():
 
     def __init__(self, props):
         for key in Debs.REQUIRED_PARAMS:
-            if not key in props:
+            if key not in props:
                 pass
-                #fail
             if type(props[key]) in [str, list]:
                 self.props[key] = props[key]
 
