@@ -464,6 +464,19 @@ class Debs():
         return f_package_debs
 
 
+    def copyPackage(self, f_package_debs):
+
+        debRepoCopy = common.shellCommand(
+                command=["./copy-package", util.Property("pkg_name"), util.Property("tag_version"), util.Property("from_brach"), util.Property("to_branch"), util.Property("from_component"), util.Property("to_component")],
+                name=util.Interpolate("Copying %(prop:pkg_name)s %(prop:tag_version)s from %(prop:from_branch)s %(prop:from_component)s to %(prop:to_branch)s %(prop:to_component)s"),
+            locks=repo_lock.access('exclusive'),
+            timeout=300)
+
+        #NB: We are not building debs here, just copying
+        f_package_debs.addStep(debRepoCopy)
+
+        return f_package_debs
+
     def dropPackage(self, f_package_debs):
 
         debRepoDropPackage = common.shellCommand(
@@ -548,6 +561,19 @@ class Debs():
         self.promotePackage(f_package_debs)
         self.publishRepo(f_package_debs, s3_target="s3:s3:")
         self.notifyMatrixf_package_debs, pubmessage)
+        self.cleanup(f_package_debs)
+
+        return f_package_debs
+
+
+    def getCopyPipeline(self):
+
+        #NB: We are not building debs here, just promoting from test!
+        f_package_debs = util.BuildFactory()
+        self.setupRepo(f_package_debs)
+        self.mountS3(f_package_debs, host="loganite")
+        #NB: The default S3 is LITE, so publish there
+        self.publishRepo(f_package_debs, s3_target="s3:loganite:")
         self.cleanup(f_package_debs)
 
         return f_package_debs
