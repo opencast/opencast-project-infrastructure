@@ -178,7 +178,7 @@ class Markdown():
         pip_install = common.shellSequence(
             commands=[
                 common.shellArg(
-                    command=['python3', '-m', 'pip', 'install', '-r', 'requirements.txt'],
+                    command=['python3', '-m', 'pip', 'install', '-r', 'requirements.txt', '--break-system-packages'],
                     haltOnFailure=False,
                     logname='markdown-cli'),
             ],
