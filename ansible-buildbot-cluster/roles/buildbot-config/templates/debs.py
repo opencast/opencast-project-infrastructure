@@ -690,12 +690,6 @@ class Debs():
 
         scheds = {}
 
-        #Regular builds
-        scheds[f"{ self.pretty_branch_name }DebsTesting"] = common.getAnyBranchScheduler(
-            name=self.pretty_branch_name + " Debian Testing Packaging",
-            change_filter=util.ChangeFilter(repository=["https://code.loganite.ca/opencast/debian-packaging.git", "git@code.loganite.ca:opencast/debian-packaging.git"], branch_re=f'{ self.props["pkg_major_version"] }\.\d*-\d*'),
-            builderNames=[ self.pretty_branch_name + " Deb Pkg Testing" ])
-
         codebase = [
             util.CodebaseParameter(
                 "",
@@ -727,6 +721,12 @@ class Debs():
         ]
 
         if "Develop" != self.pretty_branch_name:
+            #Regular builds
+            scheds[f"{ self.pretty_branch_name }DebsTesting"] = common.getAnyBranchScheduler(
+                name=self.pretty_branch_name + " Debian Testing Packaging",
+                change_filter=util.ChangeFilter(repository=["https://code.loganite.ca/opencast/debian-packaging.git", "git@code.loganite.ca:opencast/debian-packaging.git"], branch_re=f'{ self.props["pkg_major_version"] }\.\d*-\d*'),
+                builderNames=[ self.pretty_branch_name + " Deb Pkg Testing" ])
+
             scheds[f"{ self.pretty_branch_name}DebsTest"] = common.getForceScheduler(
                 name=self.pretty_branch_name + "DebsTest",
                 props=self.props,
@@ -740,17 +740,18 @@ class Debs():
                 codebase=codebase,
                 params=params,
                 builderNames=[ self.pretty_branch_name + " Deb Promote Release" ])
+
         else:
             #We only provide this for develop.  Use the promote/copy builder to spread the resulting files around
             for buildtype in [ "ffmpeg", "tobira", "whisper" ]:
-                scheds[f"{ self.pretty_branch_name}{ buildtype }Promote"] = common.getForceScheduler(
-                    name=self.pretty_branch_name + f"{ buildtype }Promote",
+                scheds[f"{ buildtype }Build"] = common.getForceScheduler(
+                    name=self.pretty_branch_name + f"{ buildtype }Build",
                     props=self.props,
                     codebase=codebase,
                     params=params,
                     builderNames=[ f"{ buildtype.capitalize() } Pkg Testing" ])
 
-
+        # These two are provided since we may need to force remove, or publish develop *and* current branches
         scheds[f"{ self.pretty_branch_name}DebsDrop"] = common.getForceScheduler(
             name=self.pretty_branch_name + "DebsDrop",
             props=self.props,
