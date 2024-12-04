@@ -623,24 +623,16 @@ class Debs():
         deb_props['release_build'] = 'false'
         lock = util.MasterLock(f"{ self.props['git_branch_name'] }deb_lock", maxCount=1)
 
-            builders.append(util.BuilderConfig(
-                name=self.pretty_branch_name + " " + buildType + " Deb Pkg Unstable",
-                factory=self.getBuildPipeline(),
-                workernames=self.props['workernames'],
-                properties=dict(deb_props) | {"repo_component": "unstable"},
-                collapseRequests=True,
-                locks=[lock.access('exclusive')]))
+        builders.append(util.BuilderConfig(
+            name=self.pretty_branch_name + " Deb Pkg Unstable",
+            factory=self.getBuildPipeline(),
+            workernames=self.props['workernames'],
+            properties=dict(deb_props) | {"repo_component": "unstable"},
+            collapseRequests=True,
+            locks=[lock.access('exclusive')]))
 
         prod_props = dict(deb_props)
         prod_props['release_build'] = 'true'
-
-        builders.append(util.BuilderConfig(
-            name=self.pretty_branch_name + " Deb Pkg Testing",
-            factory=self.getTestPipeline(),
-            workernames=self.props['workernames'],
-            properties=dict(prod_props) | {"repo_component": "testing", "tag_version": util.Property('branch')},
-            collapseRequests=True,
-            locks=[lock.access('exclusive')]))
 
         builders.append(util.BuilderConfig(
             name=self.pretty_branch_name + " Deb Publish",
@@ -659,6 +651,14 @@ class Debs():
             locks=[lock.access('exclusive')]))
 
         if "Develop" != self.pretty_branch_name:
+            builders.append(util.BuilderConfig(
+                name=self.pretty_branch_name + " Deb Pkg Testing",
+                factory=self.getTestPipeline(),
+                workernames=self.props['workernames'],
+                properties=dict(prod_props) | {"repo_component": "testing", "tag_version": util.Property('branch')},
+                collapseRequests=True,
+                locks=[lock.access('exclusive')]))
+
             builders.append(util.BuilderConfig(
                 name=self.pretty_branch_name + " Deb Promote Release",
                 factory=self.getReleasePipeline(),
