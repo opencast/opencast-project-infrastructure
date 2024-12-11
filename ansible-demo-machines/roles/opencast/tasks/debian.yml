@@ -7,7 +7,7 @@
 - name: Install opencast dependencies
   ansible.builtin.package:
     name:
-      - openjdk-11-jre
+      - openjdk-17-jre
       - curl
       - ffmpeg-dist
       - netcat
