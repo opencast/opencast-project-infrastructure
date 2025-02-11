@@ -14,6 +14,7 @@
     repo: https://github.com/opencast/adopter-registration-server.git
     dest: "{{ adopter_reg_home }}"
     force: true
+    version: "{{ adopter_reg_version }}"
   become_user: "{{ adopter_server_user }}"
 
 - name: Creating python venv
