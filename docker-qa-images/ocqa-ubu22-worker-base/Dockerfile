@@ -82,6 +82,7 @@ RUN apt-get install -y --no-install-recommends \
         dh-exec \
         libdistro-info-perl \
         fakeroot \
+        cmake \
      # s3fs since aptly needs it
         s3fs \
         s3cmd \
