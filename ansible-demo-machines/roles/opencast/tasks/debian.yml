@@ -8,6 +8,7 @@
   ansible.builtin.package:
     name:
       - openjdk-17-jre
+      - openjdk-21-jre
       - curl
       - ffmpeg-dist
       - netcat

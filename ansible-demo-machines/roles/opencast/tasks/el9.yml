@@ -12,6 +12,7 @@
       - ffmpeg
       - tar
       - java-17-openjdk
+      - java-21-openjdk
       - gzip
       - tesseract
       - elasticsearch-oss
