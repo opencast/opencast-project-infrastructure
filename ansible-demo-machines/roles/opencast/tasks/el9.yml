@@ -19,3 +19,11 @@
       # ingest script
       - python3-pyyaml
       - python3-requests
+      - python3-yaml
+
+- name: Set default java
+  community.general.alternatives:
+    name: java
+    family: java-{{ java_version }}-openjdk.x86_64
+    state: selected
+  become: true

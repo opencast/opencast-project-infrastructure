@@ -19,3 +19,10 @@
       - python3
       - python3-requests
       - python3-yaml
+
+- name: Set default java
+  community.general.alternatives:
+    name: java
+    family: /usr/lib/jvm/java-{{ java_version }}-openjdk-amd64/bin/java
+    state: selected
+  become: true
