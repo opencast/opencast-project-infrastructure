@@ -23,6 +23,7 @@ class GenerateDockerBuilds(buildstep.ShellMixin, steps.BuildStep):
                 targets.append(target)
         return targets
 
+
     @defer.inlineCallbacks
     def run(self):
         # run the command to get the list of targets
@@ -37,6 +38,8 @@ class GenerateDockerBuilds(buildstep.ShellMixin, steps.BuildStep):
                 steps.Trigger(
                     name=f"Triggering build of { target }",
                     schedulerNames=["ocqa image triggerable"],
+                    #This doesn't work, change is undefined.  Need to get at hte build's changes, and (worse) we need to support a manual force build too which wouldn't have any changes
+                    #doStepIf=lambda change: any(True in m for m in map(lambda filename: [ substr in filename for substr in [ "docker-qa-images" ] ], change.files)),
                     waitForFinish=False,
                     alwaysUseLatest=True,
                     set_properties={
@@ -66,7 +69,6 @@ class GeneratePerImageBuilds(buildstep.ShellMixin, steps.BuildStep):
                 targets.append(target)
         return targets
 
-    @util.renderer
     def getDatetime(self):
         return datetime.utcnow().strftime('%Y-%m-%d:T%H:%M:%SZ')
 
@@ -97,10 +99,17 @@ class GeneratePerImageBuilds(buildstep.ShellMixin, steps.BuildStep):
                             value=util.Interpolate(f"ocqa-%(prop:docker_image)s-worker-base-{ target }"),
                             name=f"Setting fdnwj variable to { target }"),
                     lambda target:
+                        steps.SetProperty(
+                            property="base_jdk",
+                            doStepIf=lambda step: step.getProperty("base_jdk", default="") == "" and target != "base",
+                            hideStepIf=lambda _, step: step.getProperty("base_jdk", default="") != "" or target == "base",
+                            value=target,
+                            name="Finding house JDK setting"),
+                    lambda target:
                         common.shellCommand(
                             command=["docker", "build", ".",
                                 "--build-arg", util.Interpolate("VERSION=%(prop:buildbot_version)s"),
-                                "--build-arg", util.Interpolate(f"BUILD_DATE={ self.getDatetime }"),
+                                "--build-arg", util.Interpolate(f"BUILD_DATE={ self.getDatetime() }"),
                                 "--target", target,
                                 "-t", util.Interpolate(f"%(prop:docker_host)s/%(prop:fdnwj)s:latest")],
                             workdir=util.Interpolate("build/docker-qa-images/%(prop:fdn)s"),
@@ -192,8 +201,8 @@ class Docker():
 
     dockerLoginUpstream = common.shellCommand(
             command=["docker", "login", "-u", util.Secret("greglogan-docker-user"), "-p", util.Secret("greglogan-docker-pass")],
-            doStepIf="greglogan" != util.Property("docker_host"),
-            hideStepIf="greglogan" == util.Property("docker_host"),
+            doStepIf=lambda step: "greglogan" != step.getProperty("docker_host"),
+            hideStepIf=lambda _, step: "greglogan" == step.getProperty("docker_host"),
             name="Logging into Dockerhub")
 
     #FIXME: Unused?
@@ -226,7 +235,7 @@ class Docker():
             name=util.Interpolate("Triggering pull of %(prop:docker_image)s"),
                 schedulerNames=["ocqa finalizer triggerable"],
                 #We need to check for tags like 'v3.7.0', where we remove the v, and 'latest', where we don't.
-                doStepIf=util.Property("docker_tag", default="latest") in ("{{ docker_image_tag[1:] }}", "{{ docker_image_tag }}"),
+                doStepIf=lambda step: step.getProperty("docker_tag", default="latest") in ("{{ docker_image_tag[1:] }}", "{{ docker_image_tag }}"),
                 waitForFinish=False,
                 alwaysUseLatest=True,
                 set_properties={
