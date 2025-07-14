@@ -1,18 +1,6 @@
 ---
 
-"10":
-  - "autossh"
-  - "sudo"
-  - "python3"
-  - "acl"
-
-"11":
-  - "autossh"
-  - "sudo"
-  - "python3"
-  - "acl"
-
-"12":
+"packages":
   - "autossh"
   - "sudo"
   - "python3"
