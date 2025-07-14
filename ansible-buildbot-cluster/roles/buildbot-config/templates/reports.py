@@ -67,8 +67,8 @@ class Reports():
             '-P', 'none,!frontend'
         ]
         site = common.getBuild(override=reports, name="Build site report", haltOnFailure=False)
-        site2 = common.getBuild(override=reports, name="Build site report attempt 2", haltOnFailure=False, doStepIf=lambda build: build.build.results != SUCCESS)
-        site3 = common.getBuild(override=reports, name="Build site report attempt 3", doStepIf=lambda build: build.build.results != SUCCESS)
+        site2 = common.getBuild(override=reports, name="Build site report attempt 2", haltOnFailure=False, doStepIf=lambda step: step.build.results != SUCCESS)
+        site3 = common.getBuild(override=reports, name="Build site report attempt 3", doStepIf=lambda step: step.build.results != SUCCESS)
 
         f_build = util.BuildFactory()
         f_build.addStep(common.getPreflightChecks())
@@ -78,8 +78,8 @@ class Reports():
         f_build.addStep(common.setLocale())
         f_build.addStep(common.getBuildPrep())
         f_build.addStep(common.getBuild(haltOnFailure=False))
-        f_build.addStep(common.getBuild(name="Build attempt 2", haltOnFailure=False, doStepIf=lambda build: build.build.results != SUCCESS))
-        f_build.addStep(common.getBuild(name="Build attempt 3", doStepIf=lambda build: build.build.results != SUCCESS))
+        f_build.addStep(common.getBuild(name="Build attempt 2", haltOnFailure=False, doStepIf=lambda step: step.build.results != SUCCESS))
+        f_build.addStep(common.getBuild(name="Build attempt 3", doStepIf=lambda step: step.build.results != SUCCESS))
         f_build.addStep(checkSpaces)
         f_build.addStep(site)
         f_build.addStep(site2)
