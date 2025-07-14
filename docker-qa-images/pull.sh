@@ -2,7 +2,7 @@
 
 DOCKER_OWNER=greglogan
 DOCKER_TAG=latest
-BUILDBOT_VERSION="v3.9.2"
+BUILDBOT_VERSION="v4.3.0"
 
 if [ $# -gt 1 ]; then
   echo "Usage: $0 [TAG]"

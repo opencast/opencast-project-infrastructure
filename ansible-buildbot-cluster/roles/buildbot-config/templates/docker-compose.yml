@@ -29,7 +29,7 @@ services:
   db:
     env_file:
       - db.env
-    image: "postgres:9.4"
+    image: "postgres:17"
     restart: always
     ports:
       - "127.0.0.1:5432:5432"

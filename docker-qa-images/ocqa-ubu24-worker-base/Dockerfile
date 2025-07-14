@@ -123,6 +123,8 @@ RUN curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases
 
 #Allow buildbot to install packages (ffmpeg) later
 RUN echo "buildbot ALL = (root) NOPASSWD : /usr/bin/apt-get, /usr/bin/yum, /usr/local/bin/dumb-init, /bin/sed" > /etc/sudoers.d/buildbot
+#Remove the default ubuntu user, which is colliding with the buildbot user
+RUN deluser ubuntu && rm -rf /home/ubuntu
 
 COPY buildbot.tac /builder/buildbot.tac
     # Install required python packages, and twisted

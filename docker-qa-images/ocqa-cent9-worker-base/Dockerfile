@@ -91,8 +91,7 @@ RUN yum install -y \
         glibc-langpack-fr && \
     yum clean all
 
-RUN python3 -m pip --no-cache-dir install --upgrade pip
-RUN python3 -m pip --no-cache-dir install --upgrade setuptools
+RUN python3 -m pip --no-cache-dir install --upgrade pip setuptools
     # Ansible deploy bits
 RUN python3 -m pip --no-cache-dir install ansible paramiko
     # Buildbot s3 deploy bits
@@ -124,7 +123,7 @@ RUN echo "buildbot ALL = (root) NOPASSWD : /usr/bin/apt-get, /usr/bin/yum, /usr/
 
 COPY buildbot.tac /builder/buildbot.tac
     # Install required python packages, and twisted
-RUN python3 -m pip --no-cache-dir install future buildbot-worker==${VERSION}
+RUN python3 -m pip --no-cache-dir install buildbot-worker==${VERSION}
 
 COPY install-ffmpeg.sh /builder/install-ffmpeg.sh
 RUN chmod 755 /builder/install-ffmpeg.sh

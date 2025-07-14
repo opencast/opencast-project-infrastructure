@@ -2,7 +2,7 @@
 
 DOCKER_OWNER=greglogan
 DOCKER_TAG=latest
-BUILDBOT_VERSION="v3.9.2"
+BUILDBOT_VERSION="v4.3.0"
 BUILD_DATE="`date --iso-8601`"
 
 if [ $# -gt 1 ]; then
