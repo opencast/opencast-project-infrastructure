@@ -59,9 +59,29 @@ def getForceScheduler(name, props, builderNames, codebase=None, params=None):
         # input for user to type his name
         username=util.UserNameParameter(label="your name:", size=80))
 
+#If the command does not start with echo or df, prepend echo
+# We're excluding echo since that's required in some places (cf the deb builds)
+# We're excluding df since that's used in the preflight checks
+# We *can't* just exclude "|" because it's used in places where we should prepend, like the AWS steps in this file
+def testing_mode(command):
+    if list == type(command):
+        if not (command[0].startswith("echo") or command[0].startswith("df")):
+            return ["echo"] + command
+    elif util.Interpolate == type(command):
+        return ["echo", command]
+    else:
+        if not (command.startswith("echo") or command.startswith("df")):
+            from shlex import quote
+            return "echo " + quote(command)
+    return command
 
-def shellCommand(command, name, workdir="build", env={}, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, alwaysRun=False, doStepIf=True, hideStepIf=False, locks=[], timeout=60):
+
+def shellCommand(command, name, workdir="build", env={}, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, alwaysRun=False, doStepIf=True, hideStepIf=False, locks=[], timeout=60, exclude=False):
     lock_temp = [ locks ] if type(locks) != list else locks
+{% if testing_mode %}
+    if not exclude:
+        command=testing_mode(command)
+{% endif %}
     return steps.ShellCommand(
         command=command,
         name=name,
@@ -77,7 +97,11 @@ def shellCommand(command, name, workdir="build", env={}, haltOnFailure=True, flu
         timeout=timeout)
 
 
-def shellArg(command, logname, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True):
+def shellArg(command, logname, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, exclude=False):
+{% if testing_mode %}
+    if not exclude:
+        command=testing_mode(command)
+{% endif %}
     return util.ShellArg(
         command=command,
         logname=logname,
@@ -299,11 +323,13 @@ def mountS3fs(host="{{ s3_host }}", bucket="{{ s3_public_bucket }}", target="/bu
 def unmountS3fs(target="/builder/s3"):
     return shellCommand(
         command=["fusermount", "-u", target],
+        alwaysRun=True,
         name="Unmounting S3")
 
 def cleanupS3Secrets():
     return shellCommand(
         command=["rm", "-f", ".passwd-s3fs"],
+        alwaysRun=True,
         name="Cleaning up S3 secrets")
 
 
@@ -399,20 +425,24 @@ def setLocale():
         haltOnFailure=True,
         name="Generate locale for testing")
 
-def notifyMatrix(message, name, roomId="{{ default_matrix_room }}", warnOnFailure=True, flunkOnFailure=False, doStepIf=True, hideStepIf=False):
+def notifyMatrix(message, name, roomId="{{ default_matrix_room }}", secretId="matrix_announce_secret", warnOnFailure=True, flunkOnFailure=False, doStepIf=True, hideStepIf=False):
     return shellCommand(
         #I have tried so many combinations of f strings, interpolate, jinja, and various escape styles  This appears to be the least worst way of doing this...
         # - f strings don't like the {} from the post data
         # - jinja doesn't like the method of escaping {} in the f string
         # - and just for fun, interpolate doesn't like the escaping that jinja uses
         # Note: the quote()ed room gets replaced since Interpolate doesn't like things liks %21 (which is !), but handles %%21 correctly.
-        command=util.Interpolate('curl -s -XPOST -d \'{"msgtype":"m.text", "body":"' + message +'"}\' ' + \
-                                 'https://matrix.org/_matrix/client/r0/rooms/' + quote(roomId).replace("%", "%%") + '/send/m.room.message?access_token=%(secret:matrix_announce_secret)s'), # E: line too long (295 > 79 characters)
+        command=[
+            'curl', '-s', '-XPOST',
+            '-d', util.Interpolate('{"msgtype":"m.text", "body": "' + message + '"}'),
+            util.Interpolate('https://matrix.org/_matrix/client/r0/rooms/' + quote(roomId).replace("%", "%%") + '/send/m.room.message?access_token=%(secret:' + secretId + ')s')]
+        ,
         name=name,
         warnOnFailure=warnOnFailure,
         flunkOnFailure=flunkOnFailure,
         doStepIf=doStepIf,
-        hideStepIf=hideStepIf)
+        hideStepIf=hideStepIf,
+        exclude=True)
 
 
 def getClean():
