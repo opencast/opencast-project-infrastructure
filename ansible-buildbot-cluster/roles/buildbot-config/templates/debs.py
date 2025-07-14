@@ -28,6 +28,24 @@ class Debs():
     pretty_branch_name = None
     build_sched = None
 
+    debsClone = steps.Git(
+        repourl="{{ source_deb_repo_url }}",
+        branch=util.Property('branch'),
+        alwaysUseLatest=True,
+        mode="full",
+        method="fresh",
+        flunkOnFailure=True,
+        haltOnFailure=True,
+        name="Cloning deb packaging configs")
+
+    debsVersion = steps.SetPropertyFromCommand(
+        command="git rev-parse HEAD",
+        property="deb_script_rev",
+        flunkOnFailure=True,
+        haltOnFailure=True,
+        workdir="build",
+        name="Get Debian script revision")
+
     def __init__(self, props):
         for key in Debs.REQUIRED_PARAMS:
             if key not in props:
@@ -53,36 +71,41 @@ class Debs():
 
     def addDebBuild(self, f_package_debs):
 
-        debsClone = steps.Git(repourl="{{ source_deb_repo_url }}",
-                              branch=util.Property('branch'),
-                              alwaysUseLatest=True,
-                              mode="full",
-                              method="fresh",
-                              flunkOnFailure=True,
-                              haltOnFailure=True,
-                              name="Cloning deb packaging configs")
+        # Override the branch property with the pkg_version.  This needs to run PRIOR to clone.
+        # This is used for the FORCE schedulers since they don't have the branch value set correctly, but *do* have the pkg_version set right.
+        debBranchOverride = steps.SetProperty(
+            property="branch",
+            value=util.Property("pkg_version"),
+            doStepIf=lambda step: step.getProperty("release_build", default="false") == "true" and step.getProperty("pkg_version", default="") != "",
+            hideStepIf=lambda _, step: step.getProperty("release_build", default="false") == "false" or step.getProperty("pkg_version", default="") == "",
+            name="Set branch variable based on pkg_verison variable")
 
+        #This runs after the clone
         debsSetMinor = steps.SetPropertyFromCommand(
             command=util.Interpolate("echo %(prop:branch)s | cut -f 2 -d '.' | cut -f 1 -d '-'"),
             property="pkg_minor_version",
             flunkOnFailure=True,
             haltOnFailure=True,
+            doStepIf=lambda step: step.getProperty("release_build", default="false") == "true",
+            hideStepIf=lambda _, step: step.getProperty("release_build", default="false") == "false",
             name="Set minor version property")
 
-        debsVersion = steps.SetPropertyFromCommand(
-            command="git rev-parse HEAD",
-            property="deb_script_rev",
-            flunkOnFailure=True,
-            haltOnFailure=True,
-            workdir="build",
-            name="Get Debian script revision")
+        # This sets pkg_version == branch, for release builds.
+        # This is needed for builds where the branch is set right but the pkg_version is missing - ie, push events
+        debsSetPkgVersion = steps.SetProperty(
+            property="pkg_version",
+            value=util.Interpolate("%(prop:branch)s"),
+            doStepIf=lambda step: step.getProperty("release_build", default="false") == "true" and step.getProperty("pkg_version", default="") != "",
+            hideStepIf=lambda _, step: step.getProperty("release_build", default="false") == "false" or step.getProperty("pkg_version", default="") == "",
+            name="Calculate expected build version")
 
-        debsTagVersion = steps.SetProperty(
-          property="tag_version",
-          value=util.Interpolate("%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s-%(prop:buildnumber)s-%(prop:short_revision)s"),
-          doStepIf=util.Property("release_build", default="false") != "true",
-          hideStepIf=util.Property("release_build", default="false") == "true",
-          name="Calculate expected build version")
+        # This sets pkg_version for non-release builds
+        debsCalcVersion = steps.SetProperty(
+            property="pkg_version",
+            value=util.Interpolate("%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s-%(prop:buildnumber)s-%(prop:short_revision)s"),
+            doStepIf=lambda step: step.getProperty("release_build", default="false") == "false",
+            hideStepIf=lambda _, step: step.getProperty("release_build", default="false") == "true",
+            name="Calculate expected build version")
 
         removeSymlinks = common.shellCommand(
             command=['rm', '-rf', 'outputs'],
@@ -91,22 +114,22 @@ class Debs():
         debsCheckS3 = common.checkAWS(
             path="s3://{{ s3_public_bucket }}/builds/{{ builds_fragment }}",
             name="Checking that build exists in S3",
-            doStepIf=util.Property("release_build", default="false") != "true",
-            hideStepIf=util.Property("release_build", default="false") == "true")
+            doStepIf=lambda step: step.getProperty("release_build", default="false") == "false",
+            hideStepIf=lambda _, step: step.getProperty("release_build", default="false") == "true")
 
         debsFetchFromS3 = common.syncAWS(
             pathFrom="s3://{{ s3_public_bucket }}/builds/{{ builds_fragment }}",
             pathTo="binaries/%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s/",
             name="Fetch build from S3",
-            doStepIf=util.Property("release_build", default="false") != "true",
-            hideStepIf=util.Property("release_build", default="false") == "true")
+            doStepIf=lambda step: step.getProperty("release_build", default="false") != "true",
+            hideStepIf=lambda _, step: step.getProperty("release_build", default="false") == "true")
 
         debsFetchFromGitHub = common.shellCommand(
             command=["./fetch.sh", util.Interpolate("%(prop:pkg_major_version)s.%(prop:pkg_minor_version)s")],
             workdir="build/binaries",
             name="Fetch release build from GitHub",
-            doStepIf=util.Property("release_build", default="false") == "true",
-            hideStepIf=util.Property("release_build", default="false") != "true")
+            doStepIf=lambda step: step.getProperty("release_build", default="false") == "true",
+            hideStepIf=lambda _, step: step.getProperty("release_build", default="false") != "true")
 
         debsPrepBuild = common.shellSequence(
             commands=[
@@ -135,8 +158,8 @@ class Debs():
                 "EMAIL": "buildbot@{{ groups['master'][0] }}",
             },
             name="Prep to build debs",
-            doStepIf=util.Property("release_build", default="false") != "true",
-            hideStepIf=util.Property("release_build", default="false") == "true")
+            doStepIf=lambda step: step.getProperty("release_build", default="false") != "true",
+            hideStepIf=lambda _, step: step.getProperty("release_build", default="false") == "true")
 
         debsPrepReleaseBuild = common.shellSequence(
             commands=[
@@ -152,8 +175,8 @@ class Debs():
                     logname='write'),
             ],
             name="Prep to build release debs",
-            doStepIf=util.Property("release_build", default="false") == "true",
-            hideStepIf=util.Property("release_build", default="false") != "true")
+            doStepIf=lambda step: step.getProperty("release_build", default="false") == "true",
+            hideStepIf=lambda _, step: step.getProperty("release_build", default="false") != "true")
 
         debsBuild = common.shellSequence(
             commands=[
@@ -174,14 +197,23 @@ class Debs():
             name="Build debs")
 
         f_package_debs.addStep(common.getPreflightChecks())
-        f_package_debs.addStep(debsClone)
-        f_package_debs.addStep(debsSetMinor)
-        f_package_debs.addStep(debsVersion)
+        # This step overrides the branch value, so must run prior to clone!
+        f_package_debs.addStep(debBranchOverride)
+        f_package_debs.addStep(self.debsClone)
+        # Set the debian packaging version as deb_script_rev
+        f_package_debs.addStep(self.debsVersion)
+        # Set got_revision to the latest Opencast build version
         f_package_debs.addStep(common.getLatestBuildRevision(
-            doStepIf=util.Property("release_build", default="false") != "true",
-            hideStepIf=util.Property("release_build", default="false") == "true"))
+            doStepIf=lambda step: step.getProperty("release_build", default="false") != "true",
+            hideStepIf=lambda _, step: step.getProperty("release_build", default="false") == "true"))
+        # Get a short hash of the aboev with cut -c
         f_package_debs.addStep(common.getShortBuildRevision())
-        f_package_debs.addStep(debsTagVersion)
+        # Calculate the pkg_version value from the above variables, for non-release builds
+        f_package_debs.addStep(debsCalcVersion)
+        # Set the minor version, for release builds
+        f_package_debs.addStep(debsSetMinor)
+        # Set pkg_version to equal the branch variable, for release builds
+        f_package_debs.addStep(debsSetPkgVersion)
         f_package_debs.addStep(removeSymlinks)
         f_package_debs.addStep(debsCheckS3)
         f_package_debs.addStep(debsFetchFromS3)
@@ -197,21 +229,12 @@ class Debs():
 
     def addTobiraBuild(self, f_package_debs):
 
-        debsClone = steps.Git(repourl="{{ source_deb_repo_url }}",
-                              branch=util.Property('branch'),
-                              alwaysUseLatest=True,
-                              mode="full",
-                              method="fresh",
-                              flunkOnFailure=True,
-                              haltOnFailure=True,
-                              name="Cloning deb packaging configs")
-
         removeSymlinks = common.shellCommand(
             command=['rm', '-rf', 'outputs'],
             name="Prep cloned repo for CI use")
 
         fetchTobiraFromGitHub = common.shellCommand(
-            command=["./tobira-fetch.sh", util.Interpolate("%(prop:tobira_version)s")],
+            command=["./tobira-fetch.sh", util.Interpolate("%(prop:pkg_version)s")],
             workdir="build/binaries",
             name="Fetch Tobira release build from GitHub")
 
@@ -219,7 +242,7 @@ class Debs():
             commands=[
                 common.shellArg(
                     command=util.Interpolate(
-                        'echo "source library.sh\nSIGNING_KEY=%(prop:signing_key_id)s doTobira %(prop:tobira_version)s %(prop:branch)s %(prop:buildnumber)s" | tee build.sh'
+                        'echo "source library.sh\nSIGNING_KEY=%(prop:signing_key_id)s doTobira %(prop:pkg_version)s %(prop:branch)s %(prop:deb_version)s" | tee build.sh'
                     ),
                     logname='write'),
                 common.shellArg(
@@ -234,7 +257,8 @@ class Debs():
             name="Build Tobira")
 
         f_package_debs.addStep(common.getPreflightChecks())
-        f_package_debs.addStep(debsClone)
+        f_package_debs.addStep(self.debsClone)
+        f_package_debs.addStep(self.debsVersion)
         f_package_debs.addStep(removeSymlinks)
         f_package_debs.addStep(fetchTobiraFromGitHub)
         #NB: This can be either the default, or the per-branch depending on the *buidler* below
@@ -246,21 +270,12 @@ class Debs():
 
     def addWhisperBuild(self, f_package_debs):
 
-        debsClone = steps.Git(repourl="{{ source_deb_repo_url }}",
-                              branch=util.Property('branch'),
-                              alwaysUseLatest=True,
-                              mode="full",
-                              method="fresh",
-                              flunkOnFailure=True,
-                              haltOnFailure=True,
-                              name="Cloning deb packaging configs")
-
         removeSymlinks = common.shellCommand(
             command=['rm', '-rf', 'outputs'],
             name="Prep cloned repo for CI use")
 
         fetchWhisperFromGithub = common.shellCommand(
-            command=["./whisper-fetch.sh", util.Interpolate("%(prop:whisper_version)s")],
+            command=["./whisper-fetch.sh", util.Interpolate("%(prop:pkg_version)s")],
             workdir="build/binaries",
             name="Fetch Whisper release build from GitHub")
 
@@ -268,7 +283,7 @@ class Debs():
             commands=[
                 common.shellArg(
                     command=util.Interpolate(
-                        'echo "source library.sh\nSIGNING_KEY=%(prop:signing_key_id)s doWhisper %(prop:whisper_version)s %(prop:branch)s %(prop:buildnumber)s" | tee build.sh'
+                        'echo "source library.sh\nSIGNING_KEY=%(prop:signing_key_id)s doWhisper %(prop:pkg_version)s %(prop:branch)s %(prop:deb_version)s" | tee build.sh'
                     ),
                     logname='write'),
                 common.shellArg(
@@ -280,10 +295,12 @@ class Debs():
                 "EMAIL": "buildbot@{{ groups['master'][0] }}",
                 "SIGNING_KEY": util.Interpolate("%(prop:deb_signing_key_id)s")
             },
+            timeout=2400,
             name="Build Whisper")
 
         f_package_debs.addStep(common.getPreflightChecks())
-        f_package_debs.addStep(debsClone)
+        f_package_debs.addStep(self.debsClone)
+        f_package_debs.addStep(self.debsVersion)
         f_package_debs.addStep(removeSymlinks)
         f_package_debs.addStep(fetchWhisperFromGithub)
         #NB: This can be either the default, or the per-branch depending on the *buidler* below
@@ -294,15 +311,6 @@ class Debs():
 
 
     def addFfmpegBuild(self, f_package_debs):
-
-        debsClone = steps.Git(repourl="{{ source_deb_repo_url }}",
-                              branch=util.Property('branch'),
-                              alwaysUseLatest=True,
-                              mode="full",
-                              method="fresh",
-                              flunkOnFailure=True,
-                              haltOnFailure=True,
-                              name="Cloning deb packaging configs")
 
         removeSymlinks = common.shellCommand(
             command=['rm', '-rf', 'outputs'],
@@ -317,12 +325,12 @@ class Debs():
             commands=[
                 common.shellArg(
                     command=util.Interpolate(
-                        'echo "source library.sh\nSIGNING_KEY=%(prop:signing_key_id)s doFfmpeg %(prop:ffmpeg_version)s amd64 %(prop:branch)s ffmpeg-%(prop:ffmpeg_version)s-amd64 %(prop:buildnumber)s" | tee build.sh'
+                        'echo "source library.sh\nSIGNING_KEY=%(prop:signing_key_id)s doFfmpeg %(prop:pkg_version)s amd64 %(prop:branch)s ffmpeg-%(prop:pkg_version)s-amd64 %(prop:deb_version)s" | tee build.sh'
                     ),
                     logname='amd64'),
                 common.shellArg(
                     command=util.Interpolate(
-                        'echo "source library.sh\nSIGNING_KEY=%(prop:signing_key_id)s doFfmpeg %(prop:ffmpeg_version)s arm64 %(prop:branch)s ffmpeg-%(prop:ffmpeg_version)s-arm64 %(prop:buildnumber)s" | tee build.sh'
+                        'echo "source library.sh\nSIGNING_KEY=%(prop:signing_key_id)s doFfmpeg %(prop:pkg_version)s arm64 %(prop:branch)s ffmpeg-%(prop:pkg_version)s-arm64 %(prop:deb_version)s" | tee build.sh'
                     ),
                     logname='arm64'),
                 common.shellArg(
@@ -337,7 +345,8 @@ class Debs():
             name="Build ffmpeg")
 
         f_package_debs.addStep(common.getPreflightChecks())
-        f_package_debs.addStep(debsClone)
+        f_package_debs.addStep(self.debsClone)
+        f_package_debs.addStep(self.debsVersion)
         f_package_debs.addStep(removeSymlinks)
         f_package_debs.addStep(fetchFfmpeg)
         #NB: This can be either the default, or the per-branch depending on the *buidler* below
@@ -361,7 +370,7 @@ class Debs():
         f_package_debs.addStep(debRepoLoadKeys)
 
 
-    def mountS3(self, f_package_debs, host="rados", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
+    def mountS3(self, f_package_debs, host="loganite", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
 
         f_package_debs.addStep(common.shellCommand(
             command=[f'./mount.{ host }'],
@@ -372,7 +381,7 @@ class Debs():
             name=f"Mounting { host } S3"))
 
 
-    def notifyMatrix(self, f_package_debs, message="", doStepIf=True, hideStepIf=False):
+    def notifyMatrix(self, f_package_debs, message="", lite_message=""):
 
         notifyMatrix = common.notifyMatrix(
             message=message,
@@ -380,20 +389,21 @@ class Debs():
             warnOnFailure=True,
             flunkOnFailure=False,
             name="Notifying the Releases room",
-            doStepIf=doStepIf and message != "",
-            hideStepIf=hideStepIf or message == "")
+            doStepIf=lambda step: message != "" and step.getProperty("pkg_name") == "opencast",
+            hideStepIf=message == "")
 
-        notifyMatrixProp = common.notifyMatrix(
-            message="%(prop:matrix_message)s",
-            roomId="{{ default_matrix_room }}",
+        notifyMatrixLite = common.notifyMatrix(
+            message=lite_message,
+            roomId="!AaWaUyuMWuqAWaUFsK:matrix.org",
+            secretId="lite_announce_secret",
             warnOnFailure=True,
             flunkOnFailure=False,
-            name="Notifying the Releases room",
-            doStepIf=doStepIf and util.Property("matrix_message", default="") != "",
-            hideStepIf=hideStepIf or util.Property("matrix_message", default="") == "")
+            name="Notifying the LITE Releases room",
+            doStepIf=lambda step: lite_message != "" and step.getProperty("pkg_name") == "opencast",
+            hideStepIf=lite_message == "")
 
         f_package_debs.addStep(notifyMatrix)
-        f_package_debs.addStep(notifyMatrixProp)
+        f_package_debs.addStep(notifyMatrixLite)
 
 
     def includeRepo(self, f_package_debs, s3_target="s3:s3:"):
@@ -410,6 +420,12 @@ class Debs():
             locks=repo_lock.access('exclusive'),
             timeout=4 * 60 * 60)
 
+        f_package_debs.addStep(debRepoCreate)
+        f_package_debs.addStep(debRepoIngest)
+
+
+    def snapshotCleanup(self, f_package_debs, s3_target="s3:s3"):
+
         debSnapshotCleanup = common.shellCommand(
             command=["./snapshot-cleanup", util.Interpolate("%(prop:pkg_major_version)s.x"), s3_target],
             name=util.Interpolate(f"%(prop:pkg_major_version)s.x repository snapshot cleanup"),
@@ -417,13 +433,11 @@ class Debs():
             timeout=4 * 60 * 60)
 
         debRepoPrune = common.shellCommand(
-            command=["./clean-unstable-repo", util.Interpolate("%(prop:pkg_major_version)s.x")],
+            command=["./clean-unstable-repo", util.Interpolate("%(prop:pkg_major_version)s.x"), util.Property("max_left")],
             name=util.Interpolate(f"Pruning %(prop:pkg_major_version)s.x unstable repository"),
             locks=repo_lock.access('exclusive'),
             timeout=4 * 60 * 60)
 
-        f_package_debs.addStep(debRepoCreate)
-        f_package_debs.addStep(debRepoIngest)
         f_package_debs.addStep(debSnapshotCleanup)
         f_package_debs.addStep(debRepoPrune)
 
@@ -443,14 +457,13 @@ class Debs():
 
         f_package_debs.addStep(common.loadSigningKey("%(prop:deb_signing_key_filename)s"))
         f_package_debs.addStep(debRepoPublish)
-        f_package_debs.addStep(debsNotifyMatrix)
         f_package_debs.addStep(common.unmountS3fs("/builder/s3/repo/debs"))
 
 
     def promotePackage(self, f_package_debs):
 
         debRepoPromote = common.shellCommand(
-            command=["./promote-package", util.Property("pkg_name"), util.Property("tag_version"), util.Interpolate("%(prop:pkg_major_version)s.x"), "testing", "stable"],
+            command=["./promote-package", util.Property("pkg_name"), util.Property("pkg_version"), util.Interpolate("%(prop:pkg_major_version)s.x"), "testing", "stable"],
             name=util.Interpolate("Promoting %(prop:pkg_name)s in %(prop:branch)s to stable"),
             locks=repo_lock.access('exclusive'),
             timeout=300)
@@ -464,8 +477,8 @@ class Debs():
     def copyPackage(self, f_package_debs):
 
         debRepoCopy = common.shellCommand(
-                command=["./copy-package", util.Property("pkg_name"), util.Property("tag_version"), util.Property("from_brach"), util.Property("to_branch"), util.Property("from_component"), util.Property("to_component")],
-                name=util.Interpolate("Copying %(prop:pkg_name)s %(prop:tag_version)s from %(prop:from_branch)s %(prop:from_component)s to %(prop:to_branch)s %(prop:to_component)s"),
+                command=["./copy-package", util.Property("pkg_name"), util.Property("pkg_version"), util.Interpolate("%(prop:from_branch)s.x"), util.Interpolate("%(prop:to_branch)s.x"), util.Property("from_component"), util.Property("to_component")],
+            name=util.Interpolate("Copying %(prop:pkg_name)s %(prop:pkg_version)s"),
             locks=repo_lock.access('exclusive'),
             timeout=300)
 
@@ -477,8 +490,8 @@ class Debs():
     def dropPackage(self, f_package_debs):
 
         debRepoDropPackage = common.shellCommand(
-            command=['./drop-package', util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:repo_component:-unstable)s"), util.Property("pkg_name"), util.Property("tag_version")],
-            name=util.Interpolate("Dropping opencast %(prop:tag_version)s from %(prop:repo_component:-unstable)s"),
+            command=['./drop-package', util.Interpolate("%(prop:pkg_major_version)s.x"), util.Interpolate("%(prop:repo_component:-unstable)s"), util.Property("pkg_name"), util.Property("pkg_version")],
+            name=util.Interpolate("Drop %(prop:pkg_name)s from %(prop:pkg_major_version)s.x %(prop:repo_component:-unstable)s"),
             locks=repo_lock.access('exclusive'),
             timeout=4 * 60 * 60)
 
@@ -496,10 +509,12 @@ class Debs():
                     'AWS_ACCESS_KEY_ID': util.Secret(access_key_secret_id),
                     'AWS_SECRET_ACCESS_KEY': util.Secret(secret_key_secret_id)
                 },
-                doStepIf=util.Property("release_build", default="false") == "true",
+                doStepIf=lambda step: step.getProperty("release_build", default="false") == "true",
                 locks=repo_lock.access('exclusive'),
                 timeout=1200)
 
+        #NB: We mount LITE's published file so we can sync between that and rados
+        self.mountS3(f_package_debs, host="published")
         f_package_debs.addStep(debRepoSync)
         f_package_debs.addStep(common.unmountS3fs("/builder/s3/repo/published"))
 
@@ -513,19 +528,34 @@ class Debs():
 
     def getBuildPipeline(self, buildType="oc"):
 
+        lite_message = "DEB: %(prop:pkg_name)s %(prop:pkg_version)s in %(prop:pkg_major_version)s.x %(prop:repo_component)s"
+
         f_package_debs = util.BuildFactory()
         if "ffmpeg" == buildType:
             self.addFfmpegBuild(f_package_debs)
         elif "tobira" == buildType:
             self.addTobiraBuild(f_package_debs)
-        elif "ffmpeg" == buildType:
-            self.addFfmpegBuild(f_package_debs)
+        elif "whisper" == buildType:
+            self.addWhisperBuild(f_package_debs)
         else:
             self.addDebBuild(f_package_debs)
         self.setupRepo(f_package_debs)
-        self.mountS3(f_package_debs, host="rados")
-        self.includeRepo(f_package_debs, s3_target="s3:s3:")
-        self.publishRepo(f_package_debs, s3_target="s3:s3:")
+        self.mountS3(f_package_debs, host="loganite")
+        self.includeRepo(f_package_debs, s3_target="s3:loganite:")
+        self.snapshotCleanup(f_package_debs, s3_target="s3:loganite:")
+        self.publishRepo(f_package_debs, s3_target="s3:loganite:")
+        self.notifyMatrix(f_package_debs, lite_message=lite_message)
+        self.cleanup(f_package_debs)
+
+        return f_package_debs
+
+
+    def getCleanupPipeline(self):
+
+        f_package_debs = util.BuildFactory()
+        self.setupRepo(f_package_debs)
+        self.mountS3(f_package_debs, host="loganite")
+        self.snapshotCleanup(f_package_debs, s3_target="s3:loganite:")
         self.cleanup(f_package_debs)
 
         return f_package_debs
@@ -533,44 +563,39 @@ class Debs():
 
     def getTestPipeline(self):
 
-        pubmessage="Opencast %(prop:tag_version)s is now in the Deb %(prop:repo_component)s repo"
+        lite_message = "DEB: %(prop:pkg_name)s %(prop:pkg_version)s in %(prop:pkg_major_version)s.x %(prop:repo_component)s"
+        matrix_message = "%(prop:pkg_name)s %(prop:pkg_version)s now in Deb %(prop:repo_component)s repo"
 
         f_package_debs = util.BuildFactory()
         self.addDebBuild(f_package_debs)
         self.setupRepo(f_package_debs)
-        self.mountS3(f_package_debs, host="rados")
-        self.includeRepo(f_package_debs, s3_target="s3:s3:")
-        self.publishRepo(f_package_debs, s3_target="s3:s3:")
-        self.notifyMatrix(f_package_debs, pubmessage)
+        self.mountS3(f_package_debs, host="loganite")
+        self.includeRepo(f_package_debs, s3_target="s3:loganite:")
+        self.snapshotCleanup(f_package_debs, s3_target="s3:loganite:")
+        #NB: The default S3 is LITE, so publish there
+        self.publishRepo(f_package_debs, s3_target="s3:loganite:")
+        self.notifyMatrix(f_package_debs, lite_message=lite_message)
+        self.syncRepo(f_package_debs, access_key_secret_id="rados.access_key", secret_key_secret_id="rados.secret_key")
+        self.notifyMatrix(f_package_debs, message=matrix_message)
         self.cleanup(f_package_debs)
 
         return f_package_debs
 
 
-    def getReleasePipeline(self):
+    def getPromotePipeline(self):
 
-        pubmessage="Opencast %(prop:tag_version)s is now in the Deb %(prop:repo_component)s repo"
-
-        #NB: We are not building debs here, just promoting from test!
-        f_package_debs = util.BuildFactory()
-        self.setupRepo(f_package_debs)
-        self.mountS3(f_package_debs, host="rados")
-        self.promotePackage(f_package_debs)
-        self.publishRepo(f_package_debs, s3_target="s3:s3:")
-        self.notifyMatrixf_package_debs, pubmessage)
-        self.cleanup(f_package_debs)
-
-        return f_package_debs
-
-
-    def getCopyPipeline(self):
-
+        lite_message = "DEB: %(prop:pkg_name)s %(prop:pkg_version)s in %(prop:pkg_major_version)s.x %(prop:repo_component)s"
+        matrix_message = "%(prop:pkg_name)s %(prop:pkg_version)s now in Deb %(prop:repo_component)s repo"
         #NB: We are not building debs here, just promoting from test!
         f_package_debs = util.BuildFactory()
         self.setupRepo(f_package_debs)
         self.mountS3(f_package_debs, host="loganite")
+        self.promotePackage(f_package_debs)
         #NB: The default S3 is LITE, so publish there
         self.publishRepo(f_package_debs, s3_target="s3:loganite:")
+        self.notifyMatrix(f_package_debs, lite_message=lite_message)
+        self.syncRepo(f_package_debs, access_key_secret_id="rados.access_key", secret_key_secret_id="rados.secret_key")
+        self.notifyMatrix(f_package_debs, message=matrix_message)
         self.cleanup(f_package_debs)
 
         return f_package_debs
@@ -589,14 +614,32 @@ class Debs():
         return f_package_debs
 
 
+    def getCopyPipeline(self):
+
+        #NB: We are not building debs here, just promoting from test!
+        f_package_debs = util.BuildFactory()
+        self.setupRepo(f_package_debs)
+        self.mountS3(f_package_debs, host="loganite")
+        self.copyPackage(f_package_debs)
+        f_package_debs.addStep(
+            steps.SetProperty(
+                property="pkg_major_version",
+                value=util.Property("to_branch"),
+                flunkOnFailure=True,
+                haltOnFailure=True,
+                name="Set major version property"))
+        #NB: The default S3 is LITE, so publish there
+        self.publishRepo(f_package_debs, s3_target="s3:loganite:")
+        self.cleanup(f_package_debs)
+
+        return f_package_debs
+
+
     def getSyncPipeline(self):
 
         f_package_debs = util.BuildFactory()
         self.setupRepo(f_package_debs)
-        #NB: We mount LITE's published file so we can sync between that and rados
-        self.mountS3(f_package_debs, host="published")
         self.syncRepo(f_package_debs, access_key_secret_id="rados.access_key", secret_key_secret_id="rados.secret_key")
-        self.notifyMatrix(f_package_debs)
         self.cleanup(f_package_debs)
 
         return f_package_debs
@@ -606,12 +649,25 @@ class Debs():
 
         f_package_debs = util.BuildFactory()
         self.setupRepo(f_package_debs)
-        self.mountS3(f_package_debs, host="rados")
+        self.mountS3(f_package_debs, host="loganite")
+        f_package_debs.addStep(
+            steps.SetPropertyFromCommand(
+                command=util.Interpolate("echo %(prop:repo_branch)s | cut -f 1 -d '.'"),
+                property="pkg_major_version",
+                flunkOnFailure=True,
+                haltOnFailure=True,
+                name="Set major version property"))
         self.dropPackage(f_package_debs)
-        self.publishRepo(f_package_debs, s3_target="s3:s3:")
+        #NB: The default S3 is LITE, so publish there
+        self.publishRepo(f_package_debs, s3_target="s3:loganite:")
         self.cleanup(f_package_debs)
 
         return f_package_debs
+
+
+    @util.renderer
+    def pickRandomDebImage(self):
+        return random.choice({{ docker_debian_worker_images }})
 
 
     def getBuilders(self):
@@ -619,15 +675,16 @@ class Debs():
         builders = []
 
         deb_props = dict(self.props)
-        deb_props['image'] = random.choice({{ docker_debian_worker_images }})
+        deb_props['image'] = self.pickRandomDebImage
         deb_props['release_build'] = 'false'
+
         lock = util.MasterLock(f"{ self.props['git_branch_name'] }deb_lock", maxCount=1)
 
         builders.append(util.BuilderConfig(
             name=self.pretty_branch_name + " Deb Pkg Unstable",
             factory=self.getBuildPipeline(),
             workernames=self.props['workernames'],
-            properties=dict(deb_props) | {"repo_component": "unstable"},
+            properties=dict(deb_props) | {"repo_component": "unstable", "branch": self.props['git_branch_name'] },
             collapseRequests=True,
             locks=[lock.access('exclusive')]))
 
@@ -638,46 +695,71 @@ class Debs():
             name=self.pretty_branch_name + " Deb Publish",
             factory=self.getPublishPipeline(),
             workernames=self.props['workernames'],
-            properties=dict(prod_props) | {"tag_version": util.Property('branch')},
+            properties=dict(prod_props),
             collapseRequests=True,
             locks=[lock.access('exclusive')]))
 
-        builders.append(util.BuilderConfig(
-            name=self.pretty_branch_name + " Deb Drop Release",
-            factory=self.getDropPipeline(),
-            workernames=self.props['workernames'],
-            properties=prod_props,
-            collapseRequests=True,
-            locks=[lock.access('exclusive')]))
 
         if "Develop" != self.pretty_branch_name:
             builders.append(util.BuilderConfig(
                 name=self.pretty_branch_name + " Deb Pkg Testing",
                 factory=self.getTestPipeline(),
                 workernames=self.props['workernames'],
-                properties=dict(prod_props) | {"repo_component": "testing", "tag_version": util.Property('branch')},
+                # Setting tag_version here from the branch, which is something like N.M-O
+                properties=dict(prod_props) | {"repo_component": "testing"},
                 collapseRequests=True,
                 locks=[lock.access('exclusive')]))
 
             builders.append(util.BuilderConfig(
                 name=self.pretty_branch_name + " Deb Promote Release",
-                factory=self.getReleasePipeline(),
+                factory=self.getPromotePipeline(),
                 workernames=self.props['workernames'],
-                #NB: We'r enot copying the branch proerty to tag_version as above since this *should not get run automatically*, right?
+                # tag_version set in the scheduler props below
                 properties=dict(prod_props) | {"repo_component": "stable" },
                 collapseRequests=True,
                 locks=[lock.access('exclusive')]))
         else:
+            builders.append(util.BuilderConfig(
+                name="Deb Drop Release",
+                factory=self.getDropPipeline(),
+                workernames=self.props['workernames'],
+                properties=prod_props,
+                collapseRequests=True,
+                locks=[lock.access('exclusive')]))
+
+            builders.append(util.BuilderConfig(
+                name="Deb Repo Sync",
+                factory=self.getSyncPipeline(),
+                workernames=self.props['workernames'],
+                properties=prod_props,
+                collapseRequests=True,
+                locks=[lock.access('exclusive')]))
+
+            builders.append(util.BuilderConfig(
+                name="Deb Repo Copy",
+                factory=self.getCopyPipeline(),
+                workernames=self.props['workernames'],
+                properties=prod_props,
+                collapseRequests=True,
+                locks=[lock.access('exclusive')]))
+
+            builders.append(util.BuilderConfig(
+                name="Deb Repo Cleanup",
+                factory=self.getCleanupPipeline(),
+                workernames=self.props['workernames'],
+                properties=prod_props,
+                collapseRequests=True,
+                locks=[lock.access('exclusive')]))
+
             #We only provide this for develop.  Use the promote/copy builder to spread the resulting files around
             for buildtype in [ "ffmpeg", "tobira", "whisper" ]:
                 builders.append(util.BuilderConfig(
                     name=f"{ buildtype.capitalize() } Pkg Testing",
                     factory=self.getBuildPipeline(buildtype),
                     workernames=self.props['workernames'],
-                    properties=dict(prod_props) | {"repo_component": "testing"},
+                    properties=dict(prod_props) | {"repo_component": "testing", "pkg_name": buildtype},
                     collapseRequests=True,
                     locks=[lock.access('exclusive')]))
-
 
         return builders
 
@@ -691,7 +773,7 @@ class Debs():
                 "",
                 label="Build Settings",
                 # will generate a combo box
-                branch=util.StringParameter(name="branch", default=util.Interpolate("%(prop:pkg_major_version)s.x")),
+                branch=util.FixedParameter(name="branch", default=self.props['git_branch_name']),
                 # will generate nothing in the form, but revision, repository,
                 # and project are needed by buildbot scheduling system so we
                 # need to pass a value ("")
@@ -704,61 +786,147 @@ class Debs():
         ]
 
         params = [
-            util.StringParameter(
-                name="tag_version",
-                label="Release tag",
-                default="N.M-1",
-            ),
-            util.StringParameter(
+            util.FixedParameter(
                 name="pkg_name",
                 label="Package name",
-                default="opencast",
-            )
+                default="opencast"),
+            util.StringParameter(
+                name="pkg_version",
+                label="Package Version",
+                default="N.M-Z")
         ]
 
         if "Develop" != self.pretty_branch_name:
-            #Regular builds
-            scheds[f"{ self.pretty_branch_name }DebsTesting"] = common.getAnyBranchScheduler(
+            # Regular builds
+            scheds[f"{self.pretty_branch_name}DebsTesting"] = common.getAnyBranchScheduler(
                 name=self.pretty_branch_name + " Debian Testing Packaging",
-                change_filter=util.ChangeFilter(repository=["https://code.loganite.ca/opencast/debian-packaging.git", "git@code.loganite.ca:opencast/debian-packaging.git"], branch_re=f'{ self.props["pkg_major_version"] }\.\d*-\d*'),
-                builderNames=[ self.pretty_branch_name + " Deb Pkg Testing" ])
+                change_filter=util.ChangeFilter(repository=["https://code.loganite.ca/opencast/debian-packaging.git", "git@code.loganite.ca:opencast/debian-packaging.git"], branch_re=f'{self.props["pkg_major_version"]}\.\d*-\d*'),
+                properties=self.props,
+                builderNames=[self.pretty_branch_name + " Deb Pkg Testing"])
 
-            scheds[f"{ self.pretty_branch_name}DebsTest"] = common.getForceScheduler(
+            scheds[f"{self.pretty_branch_name}DebsTest"] = common.getForceScheduler(
                 name=self.pretty_branch_name + "DebsTest",
                 props=self.props,
                 codebase=codebase,
                 params=params,
-                builderNames=[ self.pretty_branch_name + " Deb Pkg Testing" ])
+                builderNames=[self.pretty_branch_name + " Deb Pkg Testing"])
 
-            scheds[f"{ self.pretty_branch_name}DebsPromote"] = common.getForceScheduler(
+            scheds[f"{self.pretty_branch_name}DebsPromote"] = common.getForceScheduler(
                 name=self.pretty_branch_name + "DebsPromote",
                 props=self.props,
                 codebase=codebase,
                 params=params,
-                builderNames=[ self.pretty_branch_name + " Deb Promote Release" ])
+                builderNames=[self.pretty_branch_name + " Deb Promote Release"])
 
         else:
-            #We only provide this for develop.  Use the promote/copy builder to spread the resulting files around
-            for buildtype in [ "ffmpeg", "tobira", "whisper" ]:
-                scheds[f"{ buildtype }Build"] = common.getForceScheduler(
-                    name=self.pretty_branch_name + f"{ buildtype }Build",
+            # We only provide this for develop.  Use the promote/copy builder to spread the resulting files around
+            for buildtype in ["ffmpeg", "tobira", "whisper"]:
+                toolparams = [
+                    util.FixedParameter(
+                        name="pkg_name",
+                        label="Package name",
+                        default=buildtype),
+                    util.StringParameter(
+                        name="pkg_version",
+                        label="Release tag",
+                        default="N.M"),
+                    util.StringParameter(
+                        name="deb_version",
+                        label="Package version",
+                        default="1")
+                ]
+                scheds[f"{buildtype}Build"] = common.getForceScheduler(
+                    name=self.pretty_branch_name + f"{buildtype}Build",
                     props=self.props,
                     codebase=codebase,
-                    params=params,
-                    builderNames=[ f"{ buildtype.capitalize() } Pkg Testing" ])
+                    params=toolparams,
+                    builderNames=[f"{buildtype.capitalize()} Pkg Testing"])
 
-        # These two are provided since we may need to force remove, or publish develop *and* current branches
-        scheds[f"{ self.pretty_branch_name}DebsDrop"] = common.getForceScheduler(
-            name=self.pretty_branch_name + "DebsDrop",
-            props=self.props,
-            codebase=codebase,
-            params=params,
-            builderNames=[ self.pretty_branch_name + " Deb Drop Release" ])
+            scheds["DebsSyncForce"] = common.getForceScheduler(
+                name="DebsSyncForce",
+                props=self.props,
+                codebase=codebase,
+                builderNames=["Deb Repo Sync"])
+            scheds["DebsSync"] = schedulers.Triggerable(
+                name="Debian Repository Sync",
+                builderNames=["Deb Repo Sync"])
 
-        scheds[f"{ self.pretty_branch_name}DebsPubForce"] = common.getForceScheduler(
+            scheds["DebsCopyForce"] = common.getForceScheduler(
+                name="DebsCopyForce",
+                props=self.props,
+                codebase=codebase,
+                params=[
+                    util.StringParameter(
+                        name="pkg_name",
+                        label="Package name"),
+                    util.StringParameter(
+                        name="pkg_version",
+                        label="Package version",
+                        default="N.M-1"),
+                    util.StringParameter(
+                        name="from_component",
+                        label="Copy from component",
+                        default="unstable"),
+                    util.StringParameter(
+                        name="from_branch",
+                        label="Copy from branch",
+                        default="eg: 17, NOT 17.x"),
+                    util.StringParameter(
+                        name="to_component",
+                        label="Copy to component",
+                        default="unstable"),
+                    util.StringParameter(
+                        name="to_branch",
+                        label="Copy to branch",
+                        default="eg: 18, NOT 18.x")
+                ],
+                builderNames=["Deb Repo Copy"])
+
+            scheds["DebsDrop"] = common.getForceScheduler(
+                name="DebsDrop",
+                props=self.props,
+                codebase=codebase,
+                params=[
+                    util.StringParameter(
+                        name="repo_branch",
+                        label="Repository branch",
+                        default=self.props['pkg_major_version'] + ".x"),
+                    util.StringParameter(
+                        name="pkg_name",
+                        label="Package name"),
+                    util.StringParameter(
+                        name="pkg_version",
+                        label="Version",
+                        default="N.M-Z"),
+                    util.StringParameter(
+                        name="repo_component",
+                        label="Repo Component",
+                        default="unstable")
+                ],
+                builderNames=["Deb Drop Release"])
+
+            scheds["DebsCleanup"] = common.getForceScheduler(
+                name="DebsCleanup",
+                props=self.props,
+                codebase=codebase,
+                params=[
+                    util.StringParameter(
+                        name="repo_branch",
+                        label="Repository branch",
+                        default=self.props['pkg_major_version'] + ".x"),
+                    util.StringParameter(
+                        name="max_left",
+                        label="Maximum number of unstable versions left",
+                        default="5")
+                ],
+                builderNames=["Deb Repo Cleanup"])
+
+        #THis is the bacikup force-publish scheduler.  Keeping just inc ase we end up with damaged publish states - this can force a refresh.
+        scheds[f"{self.pretty_branch_name}DebsPubForce"] = common.getForceScheduler(
             name=self.pretty_branch_name + "DebsPubForce",
             props=self.props,
             codebase=codebase,
-            builderNames=[ self.pretty_branch_name + " Deb Publish" ])
+            builderNames=[self.pretty_branch_name + " Deb Publish"])
+
 
         return scheds
