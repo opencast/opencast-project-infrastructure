@@ -82,7 +82,6 @@
     - { src: "packages.py", dest: "{{ buildbot_config_master }}/packages.py" }
     - { src: "debs.py", dest: "{{ buildbot_config_master }}/debs.py" }
     - { src: "markdown.py", dest: "{{ buildbot_config_master }}/markdown.py" }
-    - { src: "database.py", dest: "{{ buildbot_config_master }}/database.py" }
     - { src: "reports.py", dest: "{{ buildbot_config_master }}/reports.py" }
     - { src: "rpms.py", dest: "{{ buildbot_config_master }}/rpms.py" }
     - { src: "ansible.py", dest: "{{ buildbot_config_master }}/ansible.py" }
