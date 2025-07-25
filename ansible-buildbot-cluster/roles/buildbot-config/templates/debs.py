@@ -317,7 +317,7 @@ class Debs():
             name="Prep cloned repo for CI use")
 
         fetchFfmpeg = common.shellCommand(
-            command=["./ffmpeg-fetch.sh"],
+            command=["./ffmpeg-fetch.sh", util.Property("pkg_version")],
             workdir="build/binaries",
             name="Fetch ffmpeg build from s3")
 
