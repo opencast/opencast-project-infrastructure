@@ -330,7 +330,7 @@ class Debs():
                     logname='amd64'),
                 common.shellArg(
                     command=util.Interpolate(
-                        'echo "source library.sh\nSIGNING_KEY=%(prop:signing_key_id)s doFfmpeg %(prop:pkg_version)s arm64 %(prop:branch)s ffmpeg-%(prop:pkg_version)s-arm64 %(prop:deb_version)s" | tee build.sh'
+                        'echo "source library.sh\nSIGNING_KEY=%(prop:signing_key_id)s doFfmpeg %(prop:pkg_version)s arm64 %(prop:branch)s ffmpeg-%(prop:pkg_version)s-arm64 %(prop:deb_version)s" | tee -a build.sh'
                     ),
                     logname='arm64'),
                 common.shellArg(
