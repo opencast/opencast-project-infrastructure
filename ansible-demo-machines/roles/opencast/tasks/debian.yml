@@ -7,12 +7,12 @@
 - name: Install opencast dependencies
   ansible.builtin.package:
     name:
-      - openjdk-17-jre
-      - openjdk-21-jre
+      - openjdk-21-jre-headless
       - curl
       - ffmpeg-dist
       - netcat
-      - elasticsearch-oss
+      - opensearch
+      - opensearch-analysis-icu
       - tesseract-ocr
       - tesseract-ocr-deu
       # for ingest script
@@ -25,4 +25,3 @@
     name: java
     family: /usr/lib/jvm/java-{{ java_version }}-openjdk-amd64/bin/java
     state: selected
-  become: true

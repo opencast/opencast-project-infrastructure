@@ -36,16 +36,10 @@ restorecon -r /srv/opencast/ || :
 chcon -Rt httpd_sys_content_t /srv/opencast/opencast-dist-allinone/data/log || :
 chcon -R system_u:object_r:bin_t:s0 /srv/opencast/opencast-dist-allinone/bin/ || :
 
-#Ensure the plugin required for 16.x+ is present
-if [ ! -d /usr/share/elasticsearch/plugins/analysis-icu ]; then
-  #If the analysis-icu directory does not exist, install the thing
-  sudo /usr/share/elasticsearch/bin/elasticsearch-plugin install -b analysis-icu
-fi
-
-# Clear Elasticsearch
-sudo systemctl stop elasticsearch.service
-sudo rm -rf /var/lib/elasticsearch/nodes
-sudo systemctl restart elasticsearch.service
+# Clear OpenSearch
+sudo systemctl stop opensearch.service
+sudo rm -rf /var/lib/opensearch/nodes
+sudo systemctl restart opensearch.service
 
 sleep 10
 

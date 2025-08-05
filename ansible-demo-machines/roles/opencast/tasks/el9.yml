@@ -11,11 +11,12 @@
       - curl
       - ffmpeg
       - tar
-      - java-17-openjdk
-      - java-21-openjdk
+      - java-17-openjdk-headless
+      - java-21-openjdk-headless
       - gzip
       - tesseract
-      - elasticsearch-oss
+      - opensearch
+      - opensearch-plugin-analysis-icu
       # ingest script
       - python3-pyyaml
       - python3-requests

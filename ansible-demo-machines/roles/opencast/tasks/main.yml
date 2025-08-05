@@ -11,6 +11,26 @@
   ansible.builtin.include_tasks: el9.yml
   when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '9'
 
+###
+# Configure OpenSearch
+
+- name: OpenSearch Install | Copy Configuration File
+  ansible.builtin.blockinfile:
+    block: |
+      cluster.name: "opensearch-cluster"
+      node.name: "{{ inventory_hostname }}"
+      network.host: "127.0.0.1"
+      http.port: "9200"
+      discovery.type: single-node
+      bootstrap.memory_lock: true
+      plugins.security.disabled: true
+    dest: /etc/opensearch/opensearch.yml
+    state: present
+    create: true
+    marker: "## {mark} opensearch main configuration ##"
+    owner: "opensearch"
+    group: "opensearch"
+    mode: "0600"
 
 ###
 # Create opencast directories
