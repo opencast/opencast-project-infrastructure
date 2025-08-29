@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -uex
 
 cd /opt/opencast-build/
@@ -54,3 +54,25 @@ sleep 120
 curl -i -s -u admin:opencast \
 	'http://127.0.0.1:8080/admin-ng/adopter/registration' \
 	--data-raw 'contactMe=false&allowsStatistics=false&allowsErrorReports=false&agreedToPolicy=false&organisationName=&departmentName=&country=&postalCode=&city=&firstName=&lastName=&street=&streetNo=&email=&registered='
+
+# Add test users
+echo "Start adding users: $(date +%s)"
+for i in {00000..25000}
+do
+  curl -s -u admin:opencast 'http://127.0.0.1:8080/user-utils/' \
+    -F username="u${i}" \
+    -F password="p${i}" \
+    -F 'roles=["ROLE_TEST"]' \
+    -F name="$(shuf -n 1 /usr/share/dict/words) $(shuf -n 1 /usr/share/dict/words)"
+done
+echo "Finished adding users: $(date +%s)"
+
+# Add test series
+echo "Start adding series: $(date +%s)"
+for i in {00000..15000}
+do
+  curl -s -u admin:opencast 'http://127.0.0.1:8080/series/' \
+    -F title="$(shuf -n 1 /usr/share/dict/words)" \
+    -F identifier="s${i}"
+done
+echo "Finished adding series: $(date +%s)"
