@@ -63,7 +63,7 @@ do
     -F username="u${i}" \
     -F password="p${i}" \
     -F 'roles=["ROLE_TEST"]' \
-    -F name="$(shuf -n 1 /usr/share/dict/words) $(shuf -n 1 /usr/share/dict/words)"
+    -F name="$(shuf -n 1 /usr/share/dict/words || echo user) $(shuf -n 1 /usr/share/dict/words || echo "${i}")"
 done
 echo "Finished adding users: $(date +%s)"
 
@@ -72,7 +72,16 @@ echo "Start adding series: $(date +%s)"
 for i in {00000..15000}
 do
   curl -s -u admin:opencast 'http://127.0.0.1:8080/series/' \
-    -F title="$(shuf -n 1 /usr/share/dict/words)" \
+    -F title="$(shuf -n 1 /usr/share/dict/words || echo "s${i}")" \
     -F identifier="s${i}"
 done
 echo "Finished adding series: $(date +%s)"
+
+# add creators and series to metadata selector
+curl -u admin:opencast http://127.0.0.1:8080/ingest/addMediaPackage/fast \
+	-F 'flavor=presenter/source' \
+	-F mediaUri=https://data.lkiesow.io/opencast/test-media/goat.mp4 \
+	-F creator='Lars Kiesow' \
+	$(for i in {00000..25000}; do echo "-F contributor=u${i}"; done) \
+	$(for i in {00000..15000}; do echo "-F isPartOf=s${i}"; done) \
+	-F title=test
