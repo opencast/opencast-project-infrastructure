@@ -120,10 +120,6 @@ s3_public_bucket: "public"
 #This is assumed to be readable by the CI system and no one else
 s3_private_bucket: "private"
 
-#Whether to enable and expose the debug port, or not
-# This doesn't work anymore because of buildbot changes
-#debug_enabled: False
-
 #Whether to enable auth, or leave things wide open
 enable_auth: True
 
