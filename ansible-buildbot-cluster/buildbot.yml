@@ -13,10 +13,10 @@
   user: "{{ login_user }}"
   roles:
     - { role: buildbot-base }
-    - { role: geerlingguy.docker, become: true }
-    - { role: docker-tcp-connectable }
-    - { role: buildbot-keysync, tags: [ rekey ] }
-    - { role: autossh, when: "'master' not in group_names", tags: [ rekey ] }
+    - { role: geerlingguy.docker, become: true, when: 'inventory_hostname != "localhost"' }
+    - { role: docker-tcp-connectable, when: 'inventory_hostname != "localhost"' }
+    - { role: buildbot-keysync, tags: [ rekey ], when: 'inventory_hostname != "localhost"' }
+    - { role: autossh, when: "'master' not in group_names and inventory_hostname != 'localhost'", tags: [ rekey ] }
     - { role: buildbot-id-mapping, tags: [ buildbot, reconfig ] }
   handlers:
     - import_tasks: handlers/handlers.yml
@@ -25,8 +25,8 @@
   gather_facts: false
   user: "{{ login_user }}"
   roles:
-    - { role: certbot-init, become: yes }
-    - { role: geerlingguy.certbot, become: yes }
+    - { role: certbot-init, become: yes, when: 'inventory_hostname != "localhost"' }
+    - { role: geerlingguy.certbot, become: yes, when: 'inventory_hostname != "localhost"' }
   handlers:
     - import_tasks: handlers/handlers.yml
 

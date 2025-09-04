@@ -21,7 +21,7 @@
     state: directory
     mode: 0700
   tags: just-config
-  connection: local
+  delegate_to: localhost
   with_items:
     - key
     - mvn
@@ -33,7 +33,7 @@
     dest: "{{ role_path }}/.temp/{{ item }}"
     mode: 0600
   tags: just-config
-  connection: local
+  delegate_to: localhost
   with_items:
     - ssh_config
     - known_hosts
@@ -44,7 +44,7 @@
     regexp: '(\w+[^\\])\n(\w+)' #This adds the backslashes on empty lines
     replace: '\1\\\\n\2'
   tags: just-config
-  connection: local
+  delegate_to: localhost
   with_items:
     - ssh_config
     - known_hosts
@@ -55,7 +55,7 @@
     regexp: '([a-zA-Z0-9\/\-]+[^\\])\n' #This adds the backslash on everything else
     replace: '\1\\\\n'
   tags: just-config
-  connection: local
+  delegate_to: localhost
   with_items:
     - ssh_config
     - known_hosts
@@ -71,8 +71,6 @@
   become: yes
   with_items:
     - { src: "docker-compose.yml", dest: "{{ buildbot_home }}/docker-compose.yml" }
-    - { src: "buildbot.service", dest: "/etc/systemd/system/buildbot.service" }
-    - { src: "nginx.service", dest: "/etc/systemd/system/nginx.service" }
     - { src: "db.env", dest: "{{ buildbot_home }}/db.env" }
     - { src: "backup_database.sh", dest: "{{ buildbot_home }}/backup_database.sh", mode: "0700" }
     - { src: "restore_database.sh", dest: "{{ buildbot_home }}/restore_database.sh", mode: "0700" }
@@ -88,6 +86,22 @@
     - { src: "maintenance.py", dest: "{{ buildbot_config_master }}/maintenance.py" }
     - { src: "docker_images.py", dest: "{{ buildbot_config_master }}/docker_images.py" }
     - { src: "buildbot.conf", dest: "{{ buildbot_home }}/nginx-config/buildbot.conf" }
+  notify: ["Stop Buildbot", "Start Buildbot"]
+  tags: just-config
+
+- name: Template systemd config files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: "{{ item.mode | default('0600') }}"
+    force: yes
+  become: yes
+  when: "'local' != ansible_connection"
+  with_items:
+    - { src: "buildbot.service", dest: "/etc/systemd/system/buildbot.service" }
+    - { src: "nginx.service", dest: "/etc/systemd/system/nginx.service" }
   notify: ["Stop Buildbot", "Start Buildbot"]
   tags: just-config
 
@@ -142,7 +156,7 @@
     src: "{{ item.src }}"
     dest: "{{ role_path }}/{{ item.dest }}"
     mode: 0600
-  connection: local
+  delegate_to: localhost
   with_items:
     #This top signing key is the default automated code signing key used for Maven and nightlies
     - { src: "secrets/signing.key", dest: ".temp/key/signing.key" }
@@ -156,7 +170,7 @@
     content: "{{ item['value']['deb_signing_key'] }}"
     dest: "{{ role_path }}/.temp/key/deb-{{ item['key'] }}-signing.key"
     mode: 0600
-  connection: local
+  delegate_to: localhost
   with_items:
     - "{{ opencast | dict2items }}"
   when: item.value.deb_signing_key is defined
@@ -167,7 +181,7 @@
     content: "{{ item['value']['rpm_signing_key'] }}"
     dest: "{{ role_path }}/.temp/key/rpm-{{ item['key'] }}-signing.key"
     mode: 0600
-  connection: local
+  delegate_to: localhost
   with_items:
     - "{{ opencast | dict2items }}"
   when: item.rpm_signing_key is defined
@@ -185,7 +199,7 @@
     bucket: "{{ s3_private_bucket }}"
     src: "{{ item }}"
     object: "{{ groups['master'][0] }}/{{ item.split('/')[-2:] | join('/') }}"
-  connection: local
+  delegate_to: localhost
   with_fileglob:
     - "{{ role_path }}/.temp/key/*"
     - "{{ role_path }}/.temp/mvn/*"
@@ -197,7 +211,7 @@
   shell: "gpg --no-default-keyring --keyring={{ role_path }}/.temp/keyring.gpg --import {{ role_path }}/.temp/key/*-signing.key"
   args:
     chdir: "{{ role_path }}"
-  connection: local
+  delegate_to: localhost
 
 - name: Extracting public signing keys from private keys
   shell: "gpg --no-default-keyring --keyring={{ role_path }}/.temp/keyring.gpg -a --export {{ item }} >> {{ role_path }}/.temp/key/{{ item }}.asc"
@@ -206,7 +220,7 @@
   with_items:
     - "{{ opencast | dict2items | map(attribute='value.deb_signing_key_id', default='') }}"
     - "{{ opencast | dict2items | map(attribute='value.rpm_signing_key_id', default='') }}"
-  connection: local
+  delegate_to: localhost
 
 - name: Distributing public signing keys
   copy:
@@ -245,5 +259,5 @@
   file:
     path: "{{ role_path }}/.temp"
     state: absent
-  connection: local
+  delegate_to: localhost
   tags: always

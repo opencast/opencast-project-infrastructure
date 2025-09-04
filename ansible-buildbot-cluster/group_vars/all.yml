@@ -183,3 +183,4 @@ certbot_certs:
   - domains:
     - "{{ inventory_hostname }}"
 certbot_create_standalone_stop_services:
+  - nginx.service

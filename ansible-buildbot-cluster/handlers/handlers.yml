@@ -6,6 +6,7 @@
     state: started
     enabled: yes
     daemon_reload: yes
+  when: "'local' != ansible_connection"
   become: yes
 
 - name: Start Buildbot
@@ -14,6 +15,7 @@
     state: started
     enabled: yes
     daemon_reload: yes
+  when: "'local' != ansible_connection"
   become: yes
 
 - name: Start Autossh

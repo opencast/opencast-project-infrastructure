@@ -43,7 +43,7 @@
   args:
     chdir: "{{ buildbot_home }}/nginx-config"
   become: yes
-  when: not dhparam.stat.exists
+  when: not dhparam.stat.exists and 'local' != ansible_connection
 
 - name: Templating S3 auth details
   template:
@@ -71,4 +71,5 @@
     fstype: "fuse.s3fs"
     opts: "_netdev,allow_other,use_path_request_style,uid={{ hostvars[inventory_hostname]['uid'] }},gid={{ hostvars[inventory_hostname]['gid'] }},umask=0002,url={{ s3_host }}/,passwd_file={{ buildbot_home }}/s3_auth"
     state: mounted
+  when: "'local' != ansible_connection"
   become: yes
