@@ -1,5 +1,4 @@
 #!/bin/bash
 
-export PGPASSWORD="change_me"
-
-pg_dump -h 127.0.0.1 -U buildbot buildbot | bzip2 -9 -
+docker compose -f /opt/buildbot/docker-compose.yml exec -t db bash -c 'PGPASSWORD=change_me pg_dump -h db -d buildbot -U buildbot' \
+| bzip2 -9 -
