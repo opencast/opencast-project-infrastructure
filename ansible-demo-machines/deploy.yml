@@ -1,5 +1,4 @@
 ---
-
 - name: Deploy Opencast test server
   hosts: all
   become: true
@@ -10,3 +9,5 @@
     - role: opencast
     - role: lkiesow.dnf_autoupdate
       when: ansible_os_family == 'RedHat'
+    - role: lkiesow.apt_autoupdate
+      when: ansible_os_family == 'Debian'
