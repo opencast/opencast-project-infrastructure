@@ -1,0 +1,97 @@
+#!/bin/sh
+
+token="$(gopass show -o opencast/matrix.org/opencast_access_token)"
+user="@lkiesow:uni-osnabrueck.de"
+# Should be something like:
+# - Opencast Summit 2026 (Manchester)
+# - Opencast DACH 2025 (Jena)
+name="Opencast DACH 2026 (Wien)"
+# Should be something like:
+# - Opencast Summit Manchester on February 24-27, 2026
+topic="Opencast DACH, 2.-3. September 2026, TU Wien"
+# This room alias needs to be unique
+# This should be something like:
+# - #oc-summit-2026:matrix.org
+# - #oc-dach-2026:matrix.org
+alias="#oc-dach-2026:matrix.org"
+
+set -eux
+
+url_encode() {
+  echo "${1}" \
+    | sed 's/:/%3A/' \
+    | sed 's/#/%23/'
+}
+
+# Create the room
+room_id="$(curl -fs -X POST \
+  "https://matrix.org/_matrix/client/r0/createRoom" \
+  -H "Authorization: Bearer ${token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "'"${name}"'",
+    "topic": "'"${topic}"'",
+    "preset": "public_chat"
+  }' | jq -r .room_id)"
+room_id_enc="$(url_encode "${room_id}")"
+
+sleep 3
+
+# Invite moderator
+curl -fs -X POST \
+  "https://matrix.org/_matrix/client/r0/rooms/${room_id}/invite" \
+  -H "Authorization: Bearer ${token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id": "'"${user}"'"
+  }'
+
+sleep 3
+
+# Upgrade invited user to moderator
+curl -fs -X PUT \
+  "https://matrix.org/_matrix/client/v3/rooms/${room_id_enc}/state/m.room.power_levels" \
+  -H "Authorization: Bearer ${token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "users": {
+      "@opencast:matrix.org": 100,
+      "'"${user}"'": 50
+    }
+  }'
+
+sleep 3
+
+# Create a nice alias for the room
+alias_enc="$(url_encode "${alias}")"
+curl -fs -X PUT \
+  "https://matrix.org/_matrix/client/v3/directory/room/${alias_enc}" \
+  -H "Authorization: Bearer ${token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "room_id": "'"${room_id}"'"
+  }'
+
+sleep 3
+
+# Set alias as main room address
+curl -fs -X PUT \
+  "https://matrix.org/_matrix/client/v3/rooms/${room_id_enc}/state/m.room.canonical_alias/" \
+  -H "Authorization: Bearer ${token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "alias": "'"${alias}"'",
+    "alt_aliases": []
+  }'
+
+sleep 3
+
+# Add room to space Opencast
+curl -fs -X PUT \
+  "https://matrix.org/_matrix/client/v3/rooms/!XQzgVBEAUxkxclbvYe%3Amatrix.org/state/m.space.child/${room_id_enc}" \
+  -H "Authorization: Bearer ${token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "via": ["matrix.org"],
+    "suggested": false
+  }'
