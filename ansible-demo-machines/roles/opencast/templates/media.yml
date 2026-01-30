@@ -149,7 +149,7 @@ media:
     - mediaUri: https://radosgw.public.os.wwu.de/opencast-test-media/dualstream-presentation.mp4
     - flavor: captions/source+en
     - mediaUri: https://radosgw.public.os.wwu.de/opencast-test-media/dualstream.vtt
-    - title: Dual-Stream Demo
+    - title: Dual-Stream Demo (READ ONLY)
     - creator: Lars Kiesow
     - identifier: ID-dual-stream-demo
     - license: CC-BY-SA
