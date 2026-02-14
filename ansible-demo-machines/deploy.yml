@@ -11,3 +11,4 @@
       when: ansible_os_family == 'RedHat'
     - role: lkiesow.apt_autoupdate
       when: ansible_os_family == 'Debian'
+      apt_autoupdate_reboot_time: "01:30"
