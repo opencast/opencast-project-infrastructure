@@ -3,6 +3,10 @@ Description=Opencast
 After=local-fs.target
 After=network.target
 
+# Maybe Wants= would be better?
+# Requires= causes Opencast to be stopped if OpenSearch isn't running.
+Requires=opensearch.service
+
 [Service]
 ExecStart=/srv/opencast/opencast-dist-allinone/bin/start-opencast server
 ExecStop=/srv/opencast/opencast-dist-allinone/bin/stop-opencast

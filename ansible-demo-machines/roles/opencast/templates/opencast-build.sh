@@ -41,13 +41,15 @@ sudo systemctl stop opensearch.service
 sudo rm -rf /var/lib/opensearch/nodes
 sudo systemctl restart opensearch.service
 
-sleep 10
+# Wait for OpenSearch to be available
+curl -fisS --retry 60 --retry-delay 1 --retry-all-errors \
+  http://localhost:9200/
 
 # Start Opencast
 sudo systemctl start opencast.service
 
 # Wait until Opencast is up before ingesting media
-sleep 120
+sleep 90
 ./ingest.py
 
 # Avoid registration form
