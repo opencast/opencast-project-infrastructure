@@ -1,7 +1,7 @@
 ---
 roles:
   - name: lkiesow.dnf_autoupdate
-    version: 2.0.1
+    version: 3.0.0
   - name: lkiesow.apt_autoupdate
     version: 1.0.0
   - name: elan.opencast_firewalld
