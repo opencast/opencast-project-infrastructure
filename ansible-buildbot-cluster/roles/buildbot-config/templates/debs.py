@@ -687,6 +687,10 @@ class Debs():
         self.notifyMatrix(f_package_debs, lite_message=lite_message)
         self.syncRepo(f_package_debs, access_key_secret_id="rados.access_key", secret_key_secret_id="rados.secret_key")
         self.notifyMatrix(f_package_debs, message=matrix_message)
+        f_package_debs.addStep(steps.Trigger(schedulerNames=[util.Interpolate("%(prop:branch_pretty)sDebsPromoteTriggerable")],
+                                             waitForFinish=False,
+                                             set_properties={"pkg_version": util.Property("pkg_version"),
+                                                             "basedir": util.Property("basedir")}))
         self.cleanup(f_package_debs)
 
         return f_package_debs
@@ -930,6 +934,10 @@ class Debs():
                 props=self.props,
                 codebase=codebase,
                 params=params,
+                builderNames=[self.pretty_branch_name + " Deb Promote Release"])
+
+            scheds[f"{self.pretty_branch_name}DebsPromote"] = schedulers.Triggerable(
+                name=self.pretty_branch_name + "DebsPromoteTriggerable",
                 builderNames=[self.pretty_branch_name + " Deb Promote Release"])
 
         else:
