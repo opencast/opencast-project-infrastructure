@@ -22,6 +22,3426 @@ series:
     description: Media snippets published as test media for Opencast.
     publisher: Lars Kiesow
     title: Open Media for Opencast
+  - identifier: 412e69c0-5d1b-40b1-a80b-dca94bf73b95
+    title: Kurs_65267
+  - identifier: 611e87c6-6f12-4953-a35c-90b68262892a
+    title: Kurs_64583
+  - identifier: 7fee2849-b60a-4a53-980b-12b8ee51c161
+    title: Kurs_68690
+  - identifier: 7d02fbd4-e886-4b2f-8949-adde48687e6c
+    title: Kurs_43851
+  - identifier: c964da23-55d4-43ff-bc5e-b06bd81d83d9
+    title: Kurs_43917
+  - identifier: 6c88580e-5cf2-42db-a337-4e2e755f0019
+    title: Kurs_47801
+  - identifier: d75193d8-e864-4678-9483-f924b14130e4
+    title: Kurs_46310
+  - identifier: 56c5a19c-7695-42b8-960e-006b165cde12
+    title: Kurs_45697
+  - identifier: 72cd160c-a4f7-4432-8ed2-ca7a575b15b5
+    title: Kurs_67068
+  - identifier: 79c82e82-6ebd-422a-b951-4831b40919bb
+    title: Kurs_43874
+  - identifier: 69f36d13-52e7-4206-99db-40a25e65b0ec
+    title: Kurs_43876
+  - identifier: 1409c07e-8ba2-48a2-b6a2-750024fd8841
+    title: Kurs_44837
+  - identifier: b8dfec47-2806-4ccc-ae99-5b47e810f83a
+    title: Kurs_45013
+  - identifier: 1520b8d0-1128-495f-8c35-821318318af0
+    title: Kurs_51127
+  - identifier: 9ff4acc0-cbce-4e23-9c27-9a6af9380516
+    title: Kurs_61732
+  - identifier: 9cd5c7dd-63e9-4769-b33d-e558411af804
+    title: Kurs_64025
+  - identifier: 8d3e89d0-3fed-4df1-9c20-18c719f49feb
+    title: Kurs_51197
+  - identifier: 99165f47-eb27-44ef-a891-6da52c99b041
+    title: Kurs_56212
+  - identifier: 2e6754c1-8a1a-4c32-8215-1c7fa519ec08
+    title: Kurs_64293
+  - identifier: 5a41d4d0-c0a3-4d4a-ab19-33e10a70c220
+    title: Kurs_49680
+  - identifier: 4003cc1c-89f8-41ba-bad6-27efd267d8d7
+    title: Kurs_71776
+  - identifier: e3b3f7aa-8f79-48b0-b602-4c236a5dbda0
+    title: Kurs_68467
+  - identifier: c080e0b9-8ae1-4fa1-85f5-66a684a86d7d
+    title: Kurs_78367
+  - identifier: 9d885428-a284-4892-8141-fb8529148907
+    title: Kurs_79092
+  - identifier: 150e1aab-06a5-4842-9cda-56a5285dfda9
+    title: Kurs_79572
+  - identifier: d09b79c5-50a1-4001-8a75-c90e131b3efa
+    title: Kurs_81113
+  - identifier: b6679eaf-4019-4d62-b160-7a626d31b649
+    title: Kurs_80522
+  - identifier: f6c0a7cf-efc2-45e2-974d-641ab2a2f637
+    title: Kurs_80677
+  - identifier: a8963aa7-8493-4799-8c45-f33fe3ed69a5
+    title: Kurs_43739
+  - identifier: 99391c73-a204-440d-84b4-b240b957b82a
+    title: Kurs_50995
+  - identifier: 59c0dc98-a009-442b-b3fc-8f04a1385a55
+    title: Kurs_44958
+  - identifier: ffbd09ad-7efe-4a73-bd6f-84ab98be16a8
+    title: Kurs_41554
+  - identifier: b6bac07c-8a94-4535-b46e-397a70533d2e
+    title: Kurs_43423
+  - identifier: cf7bdb7a-7815-4a95-9757-c1b94d0a563f
+    title: Kurs_66223
+  - identifier: 504413a4-45e8-4358-80a0-77f3f73a6c2d
+    title: Kurs_67747
+  - identifier: 09a214a2-caed-4103-8052-c260a14af3b6
+    title: Kurs_56964
+  - identifier: 2f32f6c0-e5af-4873-a0e5-0e2cd1b2dc0d
+    title: Kurs_67348
+  - identifier: aab47e82-82f4-4a67-adfd-ca0b8177d11a
+    title: Kurs_49980
+  - identifier: 65972e74-f38f-4df5-bcdd-33c880d66257
+    title: Kurs_26762
+  - identifier: bfbfbd48-8ee1-495c-8257-518734d9e609
+    title: Kurs_50034
+  - identifier: 4dd56dd7-5905-47e6-9c70-3d48cb56cbce
+    title: Kurs_71039
+  - identifier: 51945395-f370-4508-b739-81a3af16df6f
+    title: Kurs_47842
+  - identifier: 77d9c244-9a3e-49b0-bb51-86956417b572
+    title: Kurs_57371
+  - identifier: ddf2f45d-ecae-4d82-b6fd-ad745aa82ada
+    title: Kurs_44815
+  - identifier: 2581a8da-5cc6-4169-beb2-e50b131165a3
+    title: Kurs_39431
+  - identifier: 1cc010df-c475-4dce-8fa5-79e6f4f42a9f
+    title: Kurs_62750
+  - identifier: 51b1e564-6370-425c-b030-7cbeae356c56
+    title: Kurs_46201
+  - identifier: 5ad4fac3-c05a-4fdf-b2c0-90389771303e
+    title: Kurs_64411
+  - identifier: c6574c39-d0a2-4cf4-837f-1570f18e8e6c
+    title: Kurs_62950
+  - identifier: ad872192-f792-4384-9127-f72db3873ab9
+    title: Kurs_55606
+  - identifier: 9234ad2b-477e-415e-bd41-39c40fc2d767
+    title: Kurs_46000
+  - identifier: d2b927be-20f3-4469-b02e-52e88071c195
+    title: Kurs_62785
+  - identifier: ebec251a-a991-43a8-8544-a4408f17eab2
+    title: Kurs_45606
+  - identifier: 8446db03-a727-4234-afdf-15e86b0fec05
+    title: Kurs_47497
+  - identifier: 0b35afbe-1843-41c0-89f3-e08c1ed62731
+    title: Kurs_66530
+  - identifier: c012cf15-d781-4633-a86e-ea4f960f5c98
+    title: Kurs_55858
+  - identifier: 49d40cc9-67ea-44ca-b44d-55444adc986e
+    title: Kurs_61213
+  - identifier: 89225a8a-59e9-4e0b-a064-47697bcda7a7
+    title: Kurs_61324
+  - identifier: e0b70cd9-94c7-402c-91ab-5912f459612e
+    title: Kurs_67078
+  - identifier: f95c1d6b-ebd8-4c2b-9474-07d61b96938b
+    title: Kurs_62953
+  - identifier: 17f09144-c87e-4b01-9d55-4f4962e48ab2
+    title: Kurs_71067
+  - identifier: 06c96778-1976-4c04-ba0a-b02858687771
+    title: Kurs_38815
+  - identifier: 520a686a-4336-4e7e-aa24-3ffeb6e032dc
+    title: Kurs_70292
+  - identifier: 8f43266e-60fd-4132-823c-0b1be0caa3ff
+    title: Kurs_71003
+  - identifier: cb7f7b41-c55d-45c7-b57a-f84e07de09e4
+    title: Kurs_65219
+  - identifier: 9265316f-c024-405e-afeb-4e009a929026
+    title: Kurs_65379
+  - identifier: f8da9f81-2648-473e-91bc-7a79fd7db25c
+    title: Kurs_70640
+  - identifier: 2b98f4ec-b457-4f31-b50c-c70d7c734927
+    title: Kurs_68598
+  - identifier: cedd88dd-286e-449a-8d38-2a0bd24e5428
+    title: Kurs_42119
+  - identifier: c4d17abc-061a-43df-87c7-e78ddfeb4580
+    title: Kurs_40235
+  - identifier: c52c7848-8ca9-46a6-82ca-30c3aaf6ea0d
+    title: Kurs_52524
+  - identifier: d94e3418-adc5-4b2e-94dd-a575d4c6e639
+    title: Kurs_70942
+  - identifier: c2e60580-8cd2-49f3-bbf4-d8f8de547de7
+    title: Kurs_54979
+  - identifier: 721b97fd-0e3c-4836-8f2a-fd62b12539ee
+    title: Kurs_44889
+  - identifier: f9c2fc65-69d5-4a2f-a0e4-a01e831c3752
+    title: Kurs_47676
+  - identifier: 778474fa-3ff5-4257-9142-ec0541c2df36
+    title: Kurs_62241
+  - identifier: dfb97b75-1374-4199-898c-f869655bd6a3
+    title: Kurs_60867
+  - identifier: f4cab152-3d89-439e-b54b-ce0ac13d61bd
+    title: Kurs_48918
+  - identifier: 5aa63d8d-9c66-453d-8ce6-a7999fc4579a
+    title: Kurs_54428
+  - identifier: 84698b65-b4a8-4379-ab1e-6b82aba33d84
+    title: Kurs_71341
+  - identifier: 38894daf-917c-4dfa-9505-8ca33749cd1f
+    title: Kurs_30025
+  - identifier: 0a78739e-3220-4179-a11f-0e56235e71dc
+    title: Kurs_66540
+  - identifier: 5aacfa33-a1d1-487e-8c64-53e8d7453ccf
+    title: Kurs_66431
+  - identifier: 22abdd3c-b100-44b6-a36f-988513617340
+    title: Kurs_65941
+  - identifier: bfbae408-289d-4137-b23e-8b77c8400ec1
+    title: Kurs_67750
+  - identifier: 558e8c9d-449e-4c2c-aa09-51543d5636d3
+    title: Kurs_57090
+  - identifier: ef8f15ea-3e19-4115-8fa5-847cf4aca230
+    title: Kurs_44069
+  - identifier: a2082d79-867b-4666-b6b8-d222438921ac
+    title: Kurs_40592
+  - identifier: 14548704-e8b1-401c-bbb4-77903e56d458
+    title: Kurs_61642
+  - identifier: 2abec8a9-1a17-4c67-82fd-5b1cd3211d0f
+    title: Kurs_52459
+  - identifier: a1ab1f86-d345-49bb-af33-feae2d7cbe27
+    title: Kurs_54775
+  - identifier: ac0c351b-8c97-4178-81b9-07695bac74d2
+    title: Kurs_62760
+  - identifier: afc79d25-d0a2-4310-b095-1c458a8b0df3
+    title: Kurs_469
+  - identifier: 1da5862a-789d-4777-9191-f4a1ba8cbec2
+    title: Kurs_50993
+  - identifier: 4de816d3-586c-4c8c-8524-ce8fa1dd83ae
+    title: Kurs_62197
+  - identifier: 65d2f6f4-9376-4692-82ce-38c4e570d1d7
+    title: Kurs_51119
+  - identifier: 50199cb5-9b4b-40e9-9033-52b687973f40
+    title: Kurs_64581
+  - identifier: 50e74335-7936-48eb-ae45-d89603883455
+    title: Kurs_50876
+  - identifier: 5cd09280-e896-4315-b6f0-67914ad2fc4e
+    title: Kurs_64584
+  - identifier: 3c14b01b-cff8-4e4c-ba2f-877d65cc3f13
+    title: Kurs_71006
+  - identifier: 8a4378ac-2a5f-4642-80a6-2dc3a84f711e
+    title: Kurs_63177
+  - identifier: b4c3c303-cfd6-48aa-8d0a-c1813159001e
+    title: Kurs_62779
+  - identifier: cb2ba5c6-acba-41a8-b3d3-545e0c0cde27
+    title: Kurs_52135
+  - identifier: 73b384be-28cd-4926-a03b-a9dd25b7b498
+    title: Kurs_64410
+  - identifier: c5cfcb13-486b-45e1-a112-473a7f5888bb
+    title: Kurs_64409
+  - identifier: 0c64774e-70f2-43d2-aebb-0dba30fe2e2a
+    title: Kurs_62281
+  - identifier: 18701545-1423-4e93-a698-baa189122b0a
+    title: Kurs_50570
+  - identifier: b4c54ecd-977e-4e2f-9560-99849a1e61cc
+    title: Kurs_47252
+  - identifier: eace2b31-f211-40eb-abe1-56d3b7d05871
+    title: Kurs_62763
+  - identifier: 6d1a06bb-3f70-484b-b0a0-2574d9c60a9f
+    title: Kurs_67587
+  - identifier: 0331f9e7-0c3e-47f9-86b1-ef1d4ed95206
+    title: Kurs_70972
+  - identifier: 08a1b5c5-9577-4ed0-b58e-5ea0a8328745
+    title: Kurs_65738
+  - identifier: 709b87d1-be0b-4c2e-801b-d9461fe544fd
+    title: Kurs_50527
+  - identifier: d768f976-0fc9-4344-aa80-2e6daf7b3fd7
+    title: Kurs_56900
+  - identifier: 127933ad-0cb7-40eb-b852-3a8a75ea8231
+    title: Kurs_55416
+  - identifier: 37dd8f12-db77-4782-9736-b1d7d2ae2b34
+    title: Kurs_40133
+  - identifier: fd8017e9-d417-43ed-ab7c-044bfd1cb08b
+    title: Kurs_40671
+  - identifier: 68493e4b-11bb-4890-bdb2-a50fbbf80f74
+    title: Kurs_60318
+  - identifier: a6d965f5-adbd-472c-9bfb-8f780036128f
+    title: Kurs_50992
+  - identifier: 981d2953-524b-4661-9942-6dd225bb795d
+    title: Kurs_60419
+  - identifier: 1897f37d-85fd-4f22-a4e0-dc3cf9cbe3eb
+    title: Kurs_67741
+  - identifier: ba6036d8-6a29-49fb-a129-f1be834a2ba8
+    title: Kurs_55881
+  - identifier: 22a70926-9559-4bd3-91d2-0fd28b13e20e
+    title: Kurs_67489
+  - identifier: e28766d5-4309-4714-bb08-3f87d3fbf739
+    title: Kurs_70917
+  - identifier: 0ef5c53a-f631-491e-83d1-ac45c9d6ef29
+    title: Kurs_44509
+  - identifier: 57dca580-22b6-4aff-8a19-aa8442dc9c33
+    title: Kurs_65612
+  - identifier: 85a14944-21ba-4111-81b9-0db40f0e78ef
+    title: Kurs_58448
+  - identifier: fa151551-1c7b-4bc5-b115-a53eb5e5c202
+    title: Kurs_52064
+  - identifier: f519c5d3-61b1-4552-bfce-5c795df76d1d
+    title: Kurs_44349
+  - identifier: 03af0987-acdf-42e1-8d4b-c1faf3c03e1f
+    title: Kurs_56841
+  - identifier: b5bcc943-2a33-4ad5-8a43-391b16241ea8
+    title: Kurs_39878
+  - identifier: 179825d9-e337-4364-8383-a39bc0326eae
+    title: Kurs_50496
+  - identifier: 03644908-3f46-48ce-abda-ec42a08f1515
+    title: Kurs_56960
+  - identifier: 4903d9a1-de09-4f0b-94ad-3ff7865d98b6
+    title: Kurs_48874
+  - identifier: 8950bfff-f5d5-4d31-9bd0-5ff936512019
+    title: Kurs_44206
+  - identifier: 9be6c2a7-2c21-493e-9ffb-e0c94b24ef83
+    title: Kurs_50002
+  - identifier: e25474cf-a5da-4d14-a3bc-9a7e26fc8301
+    title: Kurs_55674
+  - identifier: a5db3d04-6b2f-4ab8-9345-88230a6ac5a6
+    title: Kurs_57755
+  - identifier: a9870710-7c51-46e0-b372-a24a8c44b477
+    title: Kurs_55226
+  - identifier: d5ead744-4f69-4cbb-a9e9-7ebbcc9e7ed3
+    title: Kurs_40467
+  - identifier: b810fd33-a07a-4b36-8af2-d14e23d2981c
+    title: Kurs_38248
+  - identifier: 4b97a3ad-fed6-4e3d-9c02-22ac8eb769c9
+    title: Kurs_53805
+  - identifier: 101c078f-2a7e-48f9-8cea-f22f4eb16e18
+    title: Kurs_53934
+  - identifier: 31d6b7cd-a37d-4923-8c7d-adeb089828ec
+    title: Kurs_57046
+  - identifier: c6f3ab46-980b-4ae1-af5e-3e6e3d888433
+    title: Kurs_42243
+  - identifier: 5e6173f6-a611-44db-941c-485e4e761ff1
+    title: Kurs_56894
+  - identifier: e66fd999-5e23-4a66-a80e-b3b95295c427
+    title: Kurs_50879
+  - identifier: 93ec24ad-8cfd-46a8-b9b2-23b7f6f9577c
+    title: Kurs_48460
+  - identifier: 418cecce-1061-4eaf-a376-f614a79a1819
+    title: Kurs_61219
+  - identifier: 5617a760-59ef-4955-9993-2e38ec4dda9c
+    title: Kurs_60665
+  - identifier: e3f9b685-d906-43c8-bc83-d941e1fad9ea
+    title: Kurs_60566
+  - identifier: 5d0a0f98-c304-479e-8dcf-a37b2664dc7f
+    title: Kurs_56996
+  - identifier: 68dd327e-6f05-46ad-a0b2-1a4b9ce6adb2
+    title: Kurs_60829
+  - identifier: e371ab23-35a3-4b0a-a0b5-4d0feeb0c30e
+    title: Kurs_61184
+  - identifier: a8bba121-ec05-4ca7-b8ec-644e80fd6d64
+    title: Kurs_55434
+  - identifier: 6bb6fbd5-8e39-4d26-afc9-4e1710d92ab6
+    title: Kurs_47401
+  - identifier: cdc3d319-bf34-451c-aa64-5a23f1cd041b
+    title: Kurs_56285
+  - identifier: 6248c216-111d-47b4-9bd8-ab850df6973d
+    title: Kurs_49794
+  - identifier: 267389ad-d5c8-4ba4-ad14-be3b1bc1b9c2
+    title: Kurs_44935
+  - identifier: ad290324-f774-404a-8dad-22abd5ace1f5
+    title: Kurs_47502
+  - identifier: 23a623d4-db0c-42dd-9809-89d298fec7fe
+    title: Kurs_68884
+  - identifier: 3e872a75-c38b-4fb7-969b-97e0d0bd4d1a
+    title: Kurs_70151
+  - identifier: 5c3c2bdf-a33f-4739-b4f2-236f0475fcc8
+    title: Kurs_67992
+  - identifier: 3034931c-0769-4513-9fcc-6297c2775df9
+    title: Kurs_68903
+  - identifier: 6796bab3-67af-4602-87d6-865704407430
+    title: Kurs_70524
+  - identifier: bb0716a0-c0e7-4965-90b9-302e3baae475
+    title: Kurs_68443
+  - identifier: 19aafbd4-2e5c-4f48-a046-d62cbe635595
+    title: Kurs_70512
+  - identifier: 07979e09-0ee1-4a61-bf6f-9a60b4c43445
+    title: Kurs_48889
+  - identifier: 4ba95c10-4859-4d84-8d04-8ec0f494c5ac
+    title: Kurs_68955
+  - identifier: e7b30b88-a578-460a-ad3f-9ea731a8c0bb
+    title: Kurs_70964
+  - identifier: 88cff0cf-93db-435a-a13f-30f1c53298c9
+    title: Kurs_71335
+  - identifier: 38587d7c-fb73-4817-a50a-5c0d86f23c50
+    title: Kurs_71339
+  - identifier: 1533f578-4494-4729-9d47-6aed91ade8e3
+    title: Kurs_71337
+  - identifier: c98e8de4-2d7c-4698-9195-7caa957a2516
+    title: Kurs_35958
+  - identifier: 8d99fa76-b55d-44fb-af64-450acd997393
+    title: Kurs_71562
+  - identifier: 53f35130-7083-49b6-ac58-68b1c9267767
+    title: Kurs_71338
+  - identifier: fd36576d-32f3-46a2-ae7e-3c1e71505d02
+    title: Kurs_71894
+  - identifier: ca5bf62e-5c51-4f40-a3b4-450e86274bc9
+    title: Kurs_69028
+  - identifier: 3e6a3fee-f024-40d4-af8f-1cfc2f20036e
+    title: Kurs_58161
+  - identifier: c4900880-85f9-492f-b5c7-c865f2653e84
+    title: Kurs_72003
+  - identifier: 76699ab8-1c4b-48f4-9f8a-6d8e16d6c618
+    title: Kurs_71890
+  - identifier: 832a9ac0-1d4d-4daf-bd56-6b9523c4d28c
+    title: Kurs_71889
+  - identifier: aeb520e2-0cc7-48ce-bb92-207aa377de75
+    title: Kurs_71819
+  - identifier: c8f73def-26b3-42c6-b63f-7f922805e807
+    title: Kurs_69730
+  - identifier: b43652cd-f670-4d19-a233-794d247d74b0
+    title: Kurs_68891
+  - identifier: 3e7d23b5-d240-4e76-9a2b-5e85400a8839
+    title: Kurs_68890
+  - identifier: a5e1c773-9641-4bea-a858-ec5f7a16cf55
+    title: Kurs_70955
+  - identifier: 7825215f-8744-4aaf-b0bb-1708586fbe0c
+    title: Kurs_45270
+  - identifier: 2b192875-c0c6-40ed-afec-c6012c57a76d
+    title: Kurs_69465
+  - identifier: afe1fb6e-5a36-40ca-bc8a-dd3554cdf9d9
+    title: Kurs_69219
+  - identifier: 130fc118-498a-4cd6-9151-89f058149a75
+    title: Kurs_69220
+  - identifier: ffb524f6-6eed-4e59-9b22-9916fc6da00f
+    title: Kurs_68747
+  - identifier: 115fbea8-ddc8-4291-940c-d2c925dec6f4
+    title: Kurs_70425
+  - identifier: 8bd30e77-ea05-4926-96b7-0c5b871c1442
+    title: Kurs_71329
+  - identifier: 8c61f388-8652-44bb-8beb-883dd0e2de69
+    title: Kurs_70965
+  - identifier: 942261c8-298a-4ad3-8c84-71e4b6d7029a
+    title: Kurs_70269
+  - identifier: 9075b1ca-9156-455a-9ea6-027d9229991d
+    title: Kurs_70518
+  - identifier: ab249f65-4cb2-4f54-b87f-1424e22db818
+    title: Kurs_71336
+  - identifier: 0a23288a-0ce5-4205-b3b5-d7d1f9a0a8a7
+    title: Kurs_266
+  - identifier: 0711f0b0-ce18-4ace-92f7-d82e804343db
+    title: Kurs_71649
+  - identifier: 22f8f92f-d28f-41fa-a3e8-f881920d19c1
+    title: Kurs_65908
+  - identifier: b4ef6d9d-f255-43b0-895b-4c5cc116b7ec
+    title: Kurs_65940
+  - identifier: c959b22c-ffea-4596-be4b-7e8c9e5ebf73
+    title: Kurs_65927
+  - identifier: 3238867e-fa05-464b-877b-e1707d9cd300
+    title: Kurs_49585
+  - identifier: 80ab96e3-ba3c-4a78-8c5d-a6b9e3ce9e56
+    title: Kurs_67234
+  - identifier: dc795d73-fd60-4b35-bca0-5ec4adb370f5
+    title: Kurs_67970
+  - identifier: a687a937-265c-4c01-862e-3ba8e22a3063
+    title: Kurs_50758
+  - identifier: 2c49b58b-9f17-4d83-a1bc-2bd296ca89fe
+    title: Kurs_51128
+  - identifier: 37fcc1a0-9e87-480b-946f-48ab5f03abb0
+    title: Kurs_50615
+  - identifier: 92562c4f-f16c-4565-9931-d5c61da32c67
+    title: Kurs_57032
+  - identifier: 4b07d7c4-9be2-4661-be67-24ff5d6b80a3
+    title: Kurs_50454
+  - identifier: cbabab55-5f51-49c5-984a-d00156bfe914
+    title: Kurs_51675
+  - identifier: 9f7ee391-2e0f-4f0d-b658-19176ecb4156
+    title: Kurs_49238
+  - identifier: c27bb259-4a90-4ad5-b246-45421e3bed6c
+    title: Kurs_14932
+  - identifier: f586c01c-c8ac-460f-a08e-6af020722782
+    title: Kurs_75397
+  - identifier: 0f690821-2f6e-4245-8a49-1f93baa801dc
+    title: Kurs_520
+  - identifier: b8e4e2c8-ebbb-47c5-a1d4-c136fa38aa64
+    title: Kurs_49598
+  - identifier: ee656713-2693-46cf-8f95-b0fd6b520444
+    title: Kurs_51277
+  - identifier: 06b6ddcf-b521-4b94-a88c-6e0828bf2d58
+    title: Kurs_62105
+  - identifier: 00215429-2e79-4da1-a194-f2e9a2abd221
+    title: Kurs_51480
+  - identifier: e2004a72-239f-4e57-8f2c-e97b23865361
+    title: Kurs_4000
+  - identifier: 9cbd3f04-78eb-4197-ba95-6f126b05571f
+    title: Kurs_46609
+  - identifier: a0197e2a-4b52-4152-a290-7138f17bd505
+    title: Kurs_65912
+  - identifier: 447df552-9426-4c5d-8645-29c6d2ed9b35
+    title: Kurs_46773
+  - identifier: cd383a08-d93e-455f-8adf-253f3db38bb9
+    title: Kurs_46035
+  - identifier: c51f4f73-57e3-4140-8c71-e92a59d4758d
+    title: Kurs_50571
+  - identifier: f0e0f692-8bee-4335-a980-4798529d2e15
+    title: Kurs_68232
+  - identifier: 4ab90378-7f51-4c8e-9f57-8e303fc7eea3
+    title: Kurs_43717
+  - identifier: 7e8d867b-beba-4253-a04c-7574586edaec
+    title: Kurs_50495
+  - identifier: a8c23f62-7c4c-4b5f-9c71-1e7281ce2488
+    title: Kurs_68017
+  - identifier: c4b65105-5d13-438f-87bc-8f67bdfb8fde
+    title: Kurs_39314
+  - identifier: 3fe26805-edf4-4702-8220-f0cfdc29cba9
+    title: Kurs_50558
+  - identifier: b812924b-5eee-4bec-a84a-21c00f9438a4
+    title: Kurs_66858
+  - identifier: 5440ec05-dbaf-4df3-8e0b-e170358f5ea7
+    title: Kurs_50556
+  - identifier: af3c7da8-c1fe-4b98-94fd-16fba0bc39bd
+    title: Kurs_66020
+  - identifier: 99ceebea-d6f9-42fd-9084-84c974c6868b
+    title: Kurs_58932
+  - identifier: 45702c03-3c1f-48dd-b942-93aee19b550f
+    title: Kurs_48995
+  - identifier: 2a3dedb9-535e-4ab2-afbb-54c37e89637f
+    title: Kurs_49605
+  - identifier: d24cbb40-6641-4ec1-9473-c97e92ba9958
+    title: Kurs_65475
+  - identifier: 54f87125-ad2a-476d-a5c7-b7fde40aaa2e
+    title: Kurs_67934
+  - identifier: b064a839-4432-4263-9102-bb4c61aa92d0
+    title: Kurs_50426
+  - identifier: a37e28c2-eecf-4a9c-82de-a43ba327e11f
+    title: Kurs_64557
+  - identifier: 4ef93fbd-697a-400c-9e68-32108dbdeda8
+    title: Kurs_64651
+  - identifier: a709c3ca-1356-4648-abb5-f5dc01fd389c
+    title: Kurs_47088
+  - identifier: 3ba827c6-a422-4860-96e6-17bf95ed93eb
+    title: Kurs_64597
+  - identifier: ba1d806e-3a08-4a24-a259-2d69308ac0c2
+    title: Kurs_43122
+  - identifier: 1ab7dabd-dd8d-4ba3-8314-7502a35ecdf4
+    title: Kurs_43926
+  - identifier: 50a9e059-e25d-4aeb-bb30-f7ffb8ac627b
+    title: Kurs_54773
+  - identifier: 375b7385-011b-4dee-b8a2-871e7d16f81c
+    title: Kurs_66044
+  - identifier: be17f0ed-aa75-4939-8cd1-cc3614ed34c8
+    title: Kurs_43013
+  - identifier: 0f2da307-76be-4a1e-bf8c-18410f1f5c5b
+    title: Kurs_44796
+  - identifier: 7d35cc42-d2c5-4996-9435-4d69c0ce3786
+    title: Kurs_50805
+  - identifier: e33b14a2-ff49-463f-8ff5-42ba2a4b7cc3
+    title: Kurs_44605
+  - identifier: 445d8a64-8714-4d41-bb10-98ff48de42b6
+    title: Kurs_45028
+  - identifier: c1573980-aeca-428c-92ce-c19299c196ec
+    title: Kurs_63770
+  - identifier: 4c29c696-f4fe-47a9-90cc-4bcbd58e56b6
+    title: Kurs_50068
+  - identifier: d9c9a486-3401-4354-8e27-e3687f85a4fc
+    title: Kurs_62794
+  - identifier: c2798092-fb4d-450b-9177-8b86b6277668
+    title: Kurs_43737
+  - identifier: f2a2a885-569c-4c28-9d9c-6fdb803f1f00
+    title: Kurs_63307
+  - identifier: 7015228e-a39d-4905-bed8-92e834df26cd
+    title: Kurs_44335
+  - identifier: c2b694f5-f1eb-497f-91bf-94ead4b03e9f
+    title: Kurs_50990
+  - identifier: c31cc17c-2214-4b34-bbcc-ef87bea1da5e
+    title: Kurs_44359
+  - identifier: 2ec9cefb-dc91-4d28-84c4-4735c4bd6ffa
+    title: Kurs_43756
+  - identifier: eace51b8-a32d-4c45-a078-ddc24d99f21c
+    title: Kurs_44415
+  - identifier: d99223db-9a48-439c-afec-6580ee30ea12
+    title: Kurs_42893
+  - identifier: 1122185c-f5ab-4a3c-9cac-f41a18c14ea3
+    title: Kurs_43426
+  - identifier: a7dc8361-5a93-4764-b100-5e2c03e6f878
+    title: Kurs_62445
+  - identifier: 3b14cca5-be0e-4361-a62d-7a8c8579f293
+    title: Kurs_43942
+  - identifier: 401c3320-2f21-4f9f-b3f9-76458de4ac58
+    title: Kurs_62528
+  - identifier: 687f0df1-e2c4-40d5-88e2-771e5596da0f
+    title: Kurs_43853
+  - identifier: 5e5a14b8-68ec-41f1-90a8-95f2998abb7e
+    title: Kurs_44850
+  - identifier: a1e0cf26-1dbd-4d9f-b5b6-1b375de59e04
+    title: Kurs_65574
+  - identifier: 79309efc-ccc8-4c23-95b2-fa4a23dffafb
+    title: Kurs_68015
+  - identifier: c374fe79-7664-4014-bb69-c0be8b17bfb3
+    title: Kurs_65986
+  - identifier: f1020587-5da4-4565-8d1f-c2ab5d4883ad
+    title: Kurs_65061
+  - identifier: 8fe036b7-3735-4627-a185-e65452c88cca
+    title: Kurs_65472
+  - identifier: 7517fe18-3300-4d47-8ad3-d030b2d9ff2b
+    title: Kurs_51021
+  - identifier: 16f2e0a2-08fb-4411-806f-80213b209fc4
+    title: Kurs_56766
+  - identifier: 8c4f937d-57be-44d8-be33-8a2cdc46f98f
+    title: Kurs_52669
+  - identifier: 294d1a15-f5e5-467b-9eaa-1454f0ccb8a1
+    title: Kurs_67959
+  - identifier: 4386aa62-f4e3-4723-8939-17ad95581fb1
+    title: Kurs_47084
+  - identifier: 3b744b5a-88a8-4da3-8170-887e381a1acf
+    title: Kurs_62196
+  - identifier: 66cf3bfb-a6e7-437a-9e3a-5c1e7c3f8b58
+    title: Kurs_48791
+  - identifier: 86d5afd3-2b54-45e9-b9f7-52927d36b69b
+    title: Kurs_52399
+  - identifier: ac903f28-2a43-431f-9a1d-3a3096b58233
+    title: Kurs_52540
+  - identifier: c90ad7dc-0a90-4b5c-9e22-221e6ab5ad0c
+    title: Kurs_53135
+  - identifier: faea4713-96b2-4bd7-a57b-d88362d373ec
+    title: Kurs_62219
+  - identifier: 4c7e6b91-86af-4f70-b2aa-09c542b21cb7
+    title: Kurs_54336
+  - identifier: 5dd40d4c-39b2-493c-8734-e5a5cfe98e3d
+    title: Kurs_40781
+  - identifier: 0d4cdeb4-f659-456d-b795-2cac9f9be3d2
+    title: Kurs_54146
+  - identifier: 63a6adeb-e054-4522-a5bd-88f58e51d636
+    title: Kurs_18293
+  - identifier: 12171394-2785-4493-bd3f-6968fb81abf9
+    title: Kurs_64609
+  - identifier: b57ef66e-82db-4774-b6fd-5c75c9c224a2
+    title: Kurs_52580
+  - identifier: 5af3f53b-19fb-4e86-a0f7-0abf109af2a5
+    title: Kurs_39441
+  - identifier: cdeccd16-9c6c-45f2-95ee-432ced7036d8
+    title: Kurs_54530
+  - identifier: 84c7e4a4-eac9-4e23-af55-97cf216b26f1
+    title: Kurs_53652
+  - identifier: 648d3168-f528-467d-93f6-f37ad5bfbd7e
+    title: Kurs_53658
+  - identifier: 37e03af3-8b62-4968-ab56-7cafb9c131e7
+    title: Kurs_55206
+  - identifier: 9d205522-00b2-4689-b588-1a2af8621391
+    title: Kurs_54797
+  - identifier: b6bd96a0-05ad-400d-8aef-ba7661263e4d
+    title: Kurs_52599
+  - identifier: bc87cd81-0c48-4e86-89e5-7b9c66cd51b8
+    title: Kurs_54889
+  - identifier: 36ea840e-d964-4d7c-8598-b412d83d3aa8
+    title: Kurs_45719
+  - identifier: 5ddc93e0-935a-49e0-97b7-9cf97d2455af
+    title: Kurs_48360
+  - identifier: 928f74b3-5d53-4195-800c-a4df4580c308
+    title: Kurs_46402
+  - identifier: 2cfd5f6f-3666-4610-98a0-adae73ba86a9
+    title: Kurs_52832
+  - identifier: ac2af66a-0676-41f7-a4e0-270254ea5147
+    title: Kurs_52155
+  - identifier: d177317a-1035-4b13-ae6f-967263a836f8
+    title: Kurs_52683
+  - identifier: 2078abcf-b933-4ecb-ab93-aa7b883e9875
+    title: Kurs_53977
+  - identifier: 3a912b68-90fe-4e56-a545-1f817585d68e
+    title: Kurs_67383
+  - identifier: b78eaa22-5a33-4ebd-9a9f-37cb4458dc1d
+    title: Kurs_47328
+  - identifier: 5359b854-6b6a-4c5d-b371-8548b2e7181c
+    title: Kurs_27022
+  - identifier: 638140fb-d8bd-4052-9cb6-fd577b912809
+    title: Kurs_40404
+  - identifier: d9ffd5a0-4222-4441-9a38-f9ba896474fc
+    title: Kurs_68019
+  - identifier: 9f186fd5-4f51-4249-b6af-4734dfc45ca2
+    title: Kurs_42434
+  - identifier: ee5067f5-671f-4237-94d3-b19a3cef3fc2
+    title: Kurs_52833
+  - identifier: 4985e001-d173-40b5-808e-931c9bcae977
+    title: Kurs_45884
+  - identifier: b9cca745-e3f5-477c-8e23-53c64f14bb9c
+    title: Kurs_47279
+  - identifier: c7d8d5ec-0678-4961-8eb0-d5d216d79277
+    title: Kurs_47250
+  - identifier: 14b237f1-6ee5-452d-b121-86c63f885c8e
+    title: Kurs_46258
+  - identifier: 499c1d9b-b13e-44ec-9b4c-9c94f20b4255
+    title: Kurs_47288
+  - identifier: d3ec8369-9fbf-4195-a77e-b2ad065449dd
+    title: Kurs_64291
+  - identifier: 16c312d5-6950-41f1-b7d8-2060dcd177ed
+    title: Kurs_55843
+  - identifier: 5d5244c2-a0c5-49a2-9025-1637b02283ab
+    title: Kurs_26845
+  - identifier: 838a2175-53f2-4884-a0f5-7cc9c16dd8cc
+    title: Kurs_62843
+  - identifier: 24a4536f-87e3-4145-906f-748786c33e8a
+    title: Kurs_55633
+  - identifier: 8f768b4c-09e9-4993-b218-9195d9a1d3bf
+    title: Kurs_58460
+  - identifier: 67a4cebc-2a1d-4dae-9b87-057f714ebf5a
+    title: Kurs_43849
+  - identifier: 236b6e5a-2cca-48c7-85b4-456f0d44dc39
+    title: Kurs_43078
+  - identifier: 8157046c-8178-4746-8aab-ab51f142fedc
+    title: Kurs_43959
+  - identifier: 87eeb2d7-00c0-4d3d-8809-31838f38d092
+    title: Kurs_44878
+  - identifier: 1a78e434-74de-44ee-84bf-d98cb0a6f503
+    title: Kurs_65031
+  - identifier: 8c187633-5a58-4f97-acbe-f55527e72db9
+    title: Kurs_62697
+  - identifier: 7a3af525-d16d-410d-8424-d8ef525739d6
+    title: Kurs_62477
+  - identifier: c07a41de-7554-46ce-aebb-3b915835521f
+    title: Kurs_44278
+  - identifier: 507e8ff4-e645-40ec-b8f3-b36a564722c2
+    title: Kurs_50850
+  - identifier: 0540665e-ac17-41e8-b78e-bbde51eda6c5
+    title: Kurs_64229
+  - identifier: d6f21821-d875-46f6-8ea1-840c9c737859
+    title: Kurs_64292
+  - identifier: b27fddce-2143-4eab-94fa-458ee5e5317e
+    title: Kurs_62754
+  - identifier: 5fddc20e-4d94-4f20-97f3-aa86fc01576e
+    title: Kurs_63593
+  - identifier: 08bd7294-5628-4470-acfd-caffa449cfb9
+    title: Kurs_62786
+  - identifier: 1ac30a9f-bba4-4c2f-b54d-31380e2470d1
+    title: Kurs_54420
+  - identifier: bf305352-50db-44c9-9e2b-35b445d7db0a
+    title: Kurs_53185
+  - identifier: 0fd1b1f7-8488-4fe3-8a2d-c4def75fe3f6
+    title: Kurs_54488
+  - identifier: 625b9874-1f54-4c6e-9fe0-56e818b4e482
+    title: Kurs_54505
+  - identifier: a383655a-586b-4115-b22f-e3ab2c3b78e8
+    title: Kurs_53845
+  - identifier: 64d854fb-5ecf-4eb5-b1e0-3660fd1817bb
+    title: Kurs_54432
+  - identifier: 355d3f4b-9603-44ef-8302-9667cba9b712
+    title: Kurs_53975
+  - identifier: 06034d38-1918-41e8-8449-3bb1f9361389
+    title: Kurs_54443
+  - identifier: 59e4f28b-540e-40c0-bcfc-1391cf4f0a83
+    title: Kurs_53785
+  - identifier: 387eb93e-b20a-4b62-8af6-9a9fe34b5905
+    title: Kurs_54456
+  - identifier: 3c48a01f-ef10-419b-8c68-c72d0e2c3dec
+    title: Kurs_54446
+  - identifier: e5f9a8e7-7d64-4648-9a9b-950760ec4285
+    title: Kurs_52666
+  - identifier: 5407cb90-9842-4a87-8af0-a4a6107fced9
+    title: Kurs_53899
+  - identifier: db70a013-fa2b-4003-b7c1-820466ebcf96
+    title: Kurs_52532
+  - identifier: b939e58a-db51-4c32-a6f3-6e4709d66a34
+    title: Kurs_54490
+  - identifier: 3004009b-8663-4036-8ce3-f3f33abe2369
+    title: Kurs_65179
+  - identifier: 844c8694-9834-4101-a6a0-d15d81412912
+    title: Kurs_53908
+  - identifier: 8c2b6f00-d05f-4075-bb2b-b4b375e82456
+    title: Kurs_36183
+  - identifier: e3037a17-06c6-42f1-8c46-e97d91c00ea6
+    title: Kurs_51143
+  - identifier: bbe986d3-24b9-4e79-bad0-d78fca064fa2
+    title: Kurs_54804
+  - identifier: c118dedc-0a28-470b-9fe6-9b9abaf1d69f
+    title: Kurs_53907
+  - identifier: 6ca1fd15-49d4-448a-a5c0-8e7cc29e93df
+    title: Kurs_57752
+  - identifier: 3a9c2763-8045-4241-a7b5-a6cc8dde7919
+    title: Kurs_57740
+  - identifier: 9fd30345-7046-4b08-8c32-42e088f6275a
+    title: Kurs_57803
+  - identifier: c5a5ab7d-41fb-4d38-abcd-da26898faaa4
+    title: Kurs_57091
+  - identifier: ed2e940f-0b15-4159-a5d0-03b488c9e0cf
+    title: Kurs_57800
+  - identifier: 5bf731c1-2ddf-40fc-b0c6-f3d21b866b24
+    title: Kurs_57756
+  - identifier: 55089808-8f2c-4ed5-8f8a-e350f06f45fe
+    title: Kurs_56926
+  - identifier: 88247b0f-6928-46cf-aa5a-b12988f4b239
+    title: Kurs_56252
+  - identifier: e95f0f0d-28e2-41f6-8e0d-dba1562c5df5
+    title: Kurs_57703
+  - identifier: 0fcb4c00-ad23-4239-ab11-3d5bb235fbc8
+    title: Kurs_20374
+  - identifier: 02f66234-1e6f-4fd6-996e-17d2f919b532
+    title: Kurs_57395
+  - identifier: 5dcd1d61-59ff-4719-b78b-acfe34fedf0f
+    title: Kurs_57725
+  - identifier: 20eb54b1-469a-4cfb-aacc-1c6562e16f93
+    title: Kurs_56036
+  - identifier: 6c1f181d-03ac-47a0-ae81-e22b7e2f599c
+    title: Kurs_32649
+  - identifier: 421af31d-0b22-44f2-b25a-004aad36c9cc
+    title: Kurs_55028
+  - identifier: cbc24760-068e-47e1-b6bb-690352282e23
+    title: Kurs_58332
+  - identifier: fe2f02fa-40cb-4aac-87e7-a7f4e595e0d4
+    title: Kurs_57470
+  - identifier: bcef66dd-4666-4621-9a04-9cbfbceca74a
+    title: Kurs_57766
+  - identifier: d08758ca-537a-4192-b07a-b9f1a9fe0b29
+    title: Kurs_56206
+  - identifier: 01f27e59-633c-497b-be71-888076ab0699
+    title: Kurs_42896
+  - identifier: eee51447-d7f8-4768-8de1-81b678f2d3fa
+    title: Kurs_74029
+  - identifier: 2397c0ae-6803-4201-81c8-4b94ee3c839d
+    title: Kurs_39303
+  - identifier: 1c839d13-d7c3-4c86-9ae6-c335be599002
+    title: Kurs_40486
+  - identifier: eaf251e4-2d6b-46bf-8228-2490b1437541
+    title: Kurs_51172
+  - identifier: 41d0734e-b8fb-4b75-8203-b6c9ca8cf80d
+    title: Kurs_71008
+  - identifier: 1df745ae-0475-44ec-9e91-3a3fc9e5d42c
+    title: Kurs_41155
+  - identifier: 31dff5c4-85e6-4444-850c-e1393978b55b
+    title: Kurs_41325
+  - identifier: a757965c-8ce8-4a76-9a10-834044970873
+    title: Kurs_39784
+  - identifier: baf52d6d-465c-476b-88e7-006bf783add6
+    title: Kurs_39792
+  - identifier: 9e1c45cb-31e7-4e6a-9393-fbac095f5ca2
+    title: Kurs_46181
+  - identifier: 4fbb49b1-5247-4d30-9374-c009433194f5
+    title: Kurs_50515
+  - identifier: 349f1145-5731-441b-a35f-cc8193557ea6
+    title: Kurs_55346
+  - identifier: 39f0d972-68c3-4d9a-a1dd-4924290daf5e
+    title: Kurs_50761
+  - identifier: daa1bc88-1fd4-4aff-a555-31b09c6e1bb2
+    title: Kurs_62706
+  - identifier: 1c5d1d52-1a46-4003-87b3-180ce4f9a20f
+    title: Kurs_74748
+  - identifier: 58bf0433-cadd-4ece-b9ec-929831960721
+    title: Kurs_39382
+  - identifier: 5d91a1d6-9c32-445a-8987-2c4dc701b37d
+    title: Kurs_57092
+  - identifier: de715ffa-af55-4d3d-a76f-d8781fae9c38
+    title: Kurs_41127
+  - identifier: 59744945-0099-4c5b-bc56-29b043ad4782
+    title: Kurs_57023
+  - identifier: 96d392fd-54dd-4287-9ca4-2c30a73b2f55
+    title: Kurs_68385
+  - identifier: 6c3ce8eb-51fc-46d0-9a80-1ca71b2b01f0
+    title: Kurs_67746
+  - identifier: d26ff14a-6201-4ba5-9bef-cbdda54c82e7
+    title: Kurs_67487
+  - identifier: c212e5ee-c09a-4735-8d8d-055f72a7efa8
+    title: Kurs_67645
+  - identifier: 4fe27d4c-b984-4e68-bd3d-ea40089c58d9
+    title: Kurs_64281
+  - identifier: 1e762886-df8a-4bd0-bc37-dbde250dd65c
+    title: Kurs_67643
+  - identifier: bdac9b7a-03bd-4933-ae1a-ad29c72d6d38
+    title: Kurs_67641
+  - identifier: 678c7876-e776-4ddb-a2a5-bd24b89a2027
+    title: Kurs_65932
+  - identifier: 21c744ba-f147-4c9b-bc01-7e7b47d3f8b9
+    title: Kurs_66151
+  - identifier: c2d780eb-2e14-4066-b687-c4c5324f1dfe
+    title: Kurs_68388
+  - identifier: 24415bf8-a41f-448f-af55-55b5c67ff35e
+    title: Kurs_67642
+  - identifier: 752e71e1-5d54-4854-b5b0-346bd4d8e408
+    title: Kurs_67644
+  - identifier: 68cf1b35-f130-42c8-bbfd-128d2ad14b36
+    title: Kurs_48589
+  - identifier: 2ed6b382-5e91-4a6e-914d-4bdb3768db99
+    title: Kurs_49205
+  - identifier: a49cf6ec-afb0-4483-b314-7050f3189e6e
+    title: Kurs_18792
+  - identifier: 2b55137c-2c19-4c90-8b35-c183016761ff
+    title: Kurs_41064
+  - identifier: 50248ac7-252c-4703-b64c-13724f9bc95b
+    title: Kurs_58044
+  - identifier: 7d0ab531-c32f-48bd-8e48-3594a1b62344
+    title: Kurs_40482
+  - identifier: 0a171309-ccb4-4e38-9d40-546984e37862
+    title: Kurs_65664
+  - identifier: 6345f782-4028-452a-a080-0dd8a48f52bc
+    title: Kurs_57022
+  - identifier: 4552d304-f4d7-4f05-9b08-57f6078a03bd
+    title: Kurs_58967
+  - identifier: d2194897-3ce2-43b0-9f4e-b14e55a3d957
+    title: Kurs_45316
+  - identifier: f59e10af-bca3-4d2a-9454-2e175a81457c
+    title: Kurs_42546
+  - identifier: 8bc8542a-ad10-469b-88ae-2ac123077682
+    title: Kurs_62434
+  - identifier: d947131a-4cf2-4efb-83f4-b8a94ceb8f33
+    title: Kurs_42345
+  - identifier: ac22cea6-7d05-4176-a40b-e7b7a2e568cd
+    title: Kurs_70464
+  - identifier: 268573a6-6d0e-4d5c-8d30-beac0efcb05c
+    title: Kurs_43838
+  - identifier: 9af41dd7-7aee-4e4f-86de-18d935c15224
+    title: Kurs_42885
+  - identifier: 64224f64-f6c3-440f-bae9-a1e895082853
+    title: Kurs_58720
+  - identifier: 3f7edbc0-d15e-4737-90e0-0d94ccfc2da3
+    title: Kurs_43083
+  - identifier: 1466776c-0c4f-4e2f-be73-40c9c0dbebcf
+    title: Kurs_61452
+  - identifier: 106ee86f-a3ca-418b-a644-d1786b5a8c9e
+    title: Kurs_44924
+  - identifier: c7a19cc7-0d49-4881-9938-0e571af59342
+    title: Kurs_55415
+  - identifier: 6dbdd476-6ce1-4574-9e03-6d941068a970
+    title: Kurs_59098
+  - identifier: 3c0e0324-7256-4918-b430-230e84626bf7
+    title: Kurs_68691
+  - identifier: 8586f55d-200d-4c3e-8d56-ee2d241caece
+    title: Kurs_59084
+  - identifier: dda70dd4-7cbe-4588-b033-bd6c6a65c0f9
+    title: Kurs_60507
+  - identifier: 48e91f3f-41d8-4cdc-8bf6-3588ab0807c6
+    title: Kurs_50596
+  - identifier: bbc2d60f-61e2-43c9-845e-f835d488e834
+    title: Kurs_59048
+  - identifier: 4317ffd5-a618-49ad-9cc3-421668cb839f
+    title: Kurs_55034
+  - identifier: 4fdc5193-acda-4ca1-a9ab-4c83a8544278
+    title: Kurs_39571
+  - identifier: 248fe792-8df2-4b22-a52e-b94e23e70e1e
+    title: Kurs_41560
+  - identifier: 4929958a-8a4a-4260-9e04-4ecf9ef74f34
+    title: Kurs_49370
+  - identifier: 1560dc05-4c7e-42ee-bd17-679b17593ac3
+    title: Kurs_40782
+  - identifier: e09b43af-bd3e-470b-a54c-47451a8f7c1f
+    title: Kurs_3264
+  - identifier: 1ded9677-4c90-4287-a23e-4f672a7a98b9
+    title: Kurs_58880
+  - identifier: d6f4e2a1-3ae0-4c61-b240-22e4cd221309
+    title: Kurs_41561
+  - identifier: 22854ef6-8ed1-42dd-b78c-36bc089139f4
+    title: Kurs_51174
+  - identifier: 59dee5f4-1e79-48a2-baa3-22e2561e2635
+    title: Kurs_52760
+  - identifier: 9b9768d7-7afa-45ab-8f75-a01a80075ed4
+    title: Kurs_55450
+  - identifier: 2fbcfb89-1a20-4487-adab-b01cf62c9b38
+    title: Kurs_48934
+  - identifier: 6525af61-a3e2-46ad-98a1-4729cdffea34
+    title: Kurs_55417
+  - identifier: e61d6594-e992-47cb-99ba-6b79577ee394
+    title: Kurs_43071
+  - identifier: cdb3813f-28b6-40b1-ab9c-2064c905b781
+    title: Kurs_51079
+  - identifier: 3462a4a4-d050-4643-8485-c32834fdbc95
+    title: Kurs_68873
+  - identifier: e47a7d19-b566-4375-8cd8-fbc1c5a79ca1
+    title: Kurs_5694
+  - identifier: 2f2e6ba0-d0cf-4ac6-97c5-9e1be2627760
+    title: Kurs_51111
+  - identifier: 7c54285c-ab41-4c7a-b566-a217d43c03dc
+    title: Kurs_45314
+  - identifier: 073a9c05-1cb4-4679-85f4-fa31b0435bbe
+    title: Kurs_49002
+  - identifier: b8472f1c-ca8c-42f3-805b-20a71f4852e7
+    title: Kurs_64568
+  - identifier: 814807e7-dd75-4714-919c-487987323195
+    title: Kurs_61364
+  - identifier: cf1ce1a0-0553-4fd1-9265-acf733ac2d1b
+    title: Kurs_43159
+  - identifier: 86127daf-f890-4f70-aa63-3ae6ffd5b48c
+    title: Kurs_70150
+  - identifier: 4e1fe5f8-d947-44fb-b0fd-0bd8c7c54507
+    title: Kurs_37271
+  - identifier: 9b56a922-25c3-47dd-8d80-3ffc6822ee2c
+    title: Kurs_60527
+  - identifier: d60b74dc-c598-493d-a54a-ccbba0bdeebb
+    title: Kurs_62263
+  - identifier: 0c15e653-1a46-4ca8-866e-aa802ebf27d2
+    title: Kurs_45020
+  - identifier: 4295b74e-c29d-4d09-9ef6-cd8ec253a9e0
+    title: Kurs_55880
+  - identifier: a9027af6-b5dc-4246-b282-6ab0729dbf67
+    title: Kurs_67328
+  - identifier: 08628609-f80c-4f78-8d35-9b9a5604eddb
+    title: Kurs_60432
+  - identifier: 1de4e06c-e298-406a-b9f9-f50ea95f90e3
+    title: Kurs_62164
+  - identifier: 82ebdbf7-996c-4015-9dc0-6b97444229fe
+    title: Kurs_62165
+  - identifier: 852281e5-bb0a-4c7c-95c2-1cfbb50db248
+    title: Kurs_62172
+  - identifier: 24369e3f-2e79-431e-9b15-2f24824a909e
+    title: Kurs_47853
+  - identifier: 19d6abf5-0ff1-4b67-b927-c169969d0efa
+    title: Kurs_42891
+  - identifier: bf0d3c65-0274-4ff4-900f-c3758c6f4234
+    title: Kurs_48588
+  - identifier: a10ea513-e0a1-4830-abd9-3c2a88498f8c
+    title: Kurs_67488
+  - identifier: e91d06cc-3eca-4999-a8f3-7a2f567cefdf
+    title: Kurs_40132
+  - identifier: e3db39eb-038a-4cce-9b6c-7e6018982b7a
+    title: Kurs_66335
+  - identifier: b0906dfa-bfe2-4017-9cde-55a47a817e9c
+    title: Kurs_43096
+  - identifier: e8c4a442-7b92-4daf-b711-541771cd42ba
+    title: Kurs_65486
+  - identifier: 659be116-47f1-4f92-91e2-6b49372c8db9
+    title: Kurs_59261
+  - identifier: 4dfa2b9a-c2e0-44bb-b652-372c7bcf1b36
+    title: Kurs_50854
+  - identifier: 778b5f05-4d93-4951-8970-a7f6d6ab853e
+    title: Kurs_955
+  - identifier: ce45fe3a-c848-436d-a5b8-2795a7e7ad15
+    title: Kurs_39501
+  - identifier: 89126046-f9db-4cc8-83f5-8be484bac587
+    title: Kurs_47776
+  - identifier: fa6944a5-8e0c-47d2-b5be-e0921e39a349
+    title: Kurs_51055
+  - identifier: 7b9690f7-6769-4380-85eb-d3520bc29508
+    title: Kurs_42698
+  - identifier: e08cadce-01d7-4d9b-8eb6-db48a054746c
+    title: Kurs_50015
+  - identifier: 514419b6-6281-4be6-8dc3-fefe8c3a20bf
+    title: Kurs_40829
+  - identifier: f87f7c59-34eb-4549-96c7-9a1fc1d1e8d6
+    title: Kurs_50885
+  - identifier: e209bc83-8ed5-4221-a2bf-358309f0e144
+    title: Kurs_39985
+  - identifier: a8879581-4a4a-4375-9ba0-1d1dae159c01
+    title: Kurs_42437
+  - identifier: d57db8d0-161d-482c-909a-09c4e3a4aedb
+    title: Kurs_50889
+  - identifier: 71f38ada-c038-4084-96fe-9ff59f1cf17b
+    title: Kurs_37754
+  - identifier: 5d89c537-8918-40c4-a127-6efbc0824140
+    title: Kurs_14920
+  - identifier: ab80e423-8060-42f2-a6e9-b93d5dfaa56c
+    title: Kurs_42443
+  - identifier: d7079659-2844-4e45-a8fa-1280dd5a13b8
+    title: Kurs_43313
+  - identifier: b2709c38-5008-422b-833d-7ae0db0605d9
+    title: Kurs_44285
+  - identifier: 67a1e60c-6f3d-44a2-bdd6-f94063a3f2c0
+    title: Kurs_44489
+  - identifier: 78e00cae-2aba-42ba-b69b-91e70e99235c
+    title: Kurs_59063
+  - identifier: d31c12aa-b594-4140-b2c6-4db48e842280
+    title: Kurs_55675
+  - identifier: b4fa4527-de49-4ef0-ba6a-623680ce98e7
+    title: Kurs_58731
+  - identifier: c4006f81-9acd-4a34-be0b-060a732eded9
+    title: Kurs_59278
+  - identifier: e20aa27a-155e-481b-bc7d-87eae74a591d
+    title: Kurs_58453
+  - identifier: a7b9b9f4-f320-4e6f-a83a-a3094f567a1c
+    title: Kurs_58360
+  - identifier: 561c459f-92e2-4c4d-bbbb-ac558ddfd032
+    title: Kurs_58365
+  - identifier: d67d413b-3c76-491b-bf92-23b61963bcf8
+    title: Kurs_54933
+  - identifier: 7f402894-3ed1-4a59-9ae8-407e7f866dd8
+    title: Kurs_59218
+  - identifier: 4d455ca5-53eb-4c89-9fae-9a66ddb1ccca
+    title: Kurs_67969
+  - identifier: b36fc7f7-ed4e-44ad-942f-85e717f6e8fd
+    title: Kurs_49932
+  - identifier: 1b4df764-3746-4499-86b4-9a45da1df58a
+    title: Kurs_59054
+  - identifier: 4f0266af-5442-4142-b87d-90f6f89e8c4f
+    title: Kurs_49231
+  - identifier: b105055a-533e-48af-8495-015c258d5039
+    title: Kurs_59290
+  - identifier: 60b41f58-da5a-4b3f-ac46-8b6ba128f658
+    title: Kurs_49443
+  - identifier: b6dde48e-208b-4f56-9941-3db388ea29f6
+    title: Kurs_50779
+  - identifier: 8760e020-38e6-4533-9d93-20fc97b83e0d
+    title: Kurs_40828
+  - identifier: 0f37b2ee-8f43-4d3c-bf6c-1f349dd8cfd4
+    title: Kurs_66229
+  - identifier: 3cf3a67d-8814-4e6b-b94b-bdb34bc93044
+    title: Kurs_67983
+  - identifier: 0ff3f620-8b15-41bd-a928-a445ae38765e
+    title: Kurs_58308
+  - identifier: c0baea99-dcf0-43cf-8a0a-5ab6ca341200
+    title: Kurs_47356
+  - identifier: 6690f963-4e9d-40e8-b0b3-1a6bc29deb01
+    title: Kurs_46128
+  - identifier: b0f693c1-417a-4491-90e1-fffbf4bb1111
+    title: Kurs_50416
+  - identifier: 6e05a939-0406-4d32-b730-3084d9d40e8a
+    title: Kurs_45821
+  - identifier: 25532300-9a38-474d-bd26-77914193c0b2
+    title: Kurs_65613
+  - identifier: c24db339-6b91-4480-9561-b7f9ec2b9eec
+    title: Kurs_65453
+  - identifier: 45257254-0ecb-4514-956c-4578fa92f14a
+    title: Kurs_45814
+  - identifier: 09d610d2-4bf7-4c05-86f7-7c3354ac1e65
+    title: Kurs_66013
+  - identifier: 66e0300b-c1b9-44bc-a2f1-a222043f0646
+    title: Kurs_65469
+  - identifier: 13616dff-8944-42ea-8ef2-04426be0ab75
+    title: Kurs_67275
+  - identifier: 2a9768c5-c9ae-44b0-9c66-92b0a5543774
+    title: Kurs_65985
+  - identifier: 6e64ee4d-3245-4a5a-9cba-4d6ec19b6fc4
+    title: Kurs_49202
+  - identifier: d7cc605f-0c4d-4a17-9655-304c8b2bb386
+    title: Kurs_59531
+  - identifier: 8b399dff-1e24-461a-b194-037d1c6d1ca6
+    title: Kurs_57791
+  - identifier: 274ec985-e155-4d9c-b3a3-9be3dca68b06
+    title: Kurs_49324
+  - identifier: 67082f10-2f0b-44d3-b364-63a8c941dd9e
+    title: Kurs_46006
+  - identifier: ec895129-8a24-4a02-a40c-38f7e30ed458
+    title: Kurs_47321
+  - identifier: 7923d3d3-0229-4609-8887-525786b15bbd
+    title: Kurs_60957
+  - identifier: e5b41a7f-6341-4cb8-b2ff-a99cb80d13de
+    title: Kurs_46262
+  - identifier: d3ab07a2-538c-4571-b357-3cac00fd37e6
+    title: Kurs_47081
+  - identifier: e28b9c08-972b-45f1-884a-89f8fc92904e
+    title: Kurs_70147
+  - identifier: 566f2c03-dbdc-4fc4-830a-ade5a550b609
+    title: Kurs_49182
+  - identifier: e23bf2b2-448e-4d0e-8829-eb3550155ca5
+    title: Kurs_62123
+  - identifier: 0c712cb1-960d-4e5c-978a-481649ff345e
+    title: Kurs_62485
+  - identifier: 2ae3d93b-fba1-4024-a57b-0d006b9717ef
+    title: Kurs_70971
+  - identifier: 7b98cb7c-67fc-4af6-b579-6bfd7df1a22f
+    title: Kurs_70721
+  - identifier: 49e5209b-4f03-4509-b699-23eb18b2fad1
+    title: Kurs_69430
+  - identifier: bd029cd7-590b-4dc2-9b90-35f7c0f8be6e
+    title: Kurs_70255
+  - identifier: 63556b6f-fc81-4dc3-a4fc-2732b3dc49e6
+    title: Kurs_70946
+  - identifier: 527a2df7-00b4-45ce-9209-ec9f88cf32a0
+    title: Kurs_47675
+  - identifier: 97e95ded-f530-48c4-94ae-b1117ad2fd94
+    title: Kurs_70712
+  - identifier: 860ebed7-ccac-4465-839a-d1352a0372b1
+    title: Kurs_68757
+  - identifier: f103111d-d191-4b16-8419-ac3089979221
+    title: Kurs_70906
+  - identifier: 4f96b22c-0c3c-4ef3-8f1d-3e5934dea13e
+    title: Kurs_65260
+  - identifier: 974ae92e-aa4e-4fd4-aec5-483d6f2e6c34
+    title: Kurs_65410
+  - identifier: fd9fb7e2-a4d0-4f1a-8bbc-3b7ece289d31
+    title: Kurs_40014
+  - identifier: fae259de-602c-4e49-a4b4-f0d586e01dbe
+    title: Kurs_1305
+  - identifier: c34a69c9-e6ef-4bbf-b2d5-0071cda8ba94
+    title: Kurs_62234
+  - identifier: 815f4f92-6642-4529-8ae3-92a22e148811
+    title: Kurs_71784
+  - identifier: cfd6ec1c-97bc-4108-b9ee-6327b730ae91
+    title: Kurs_68961
+  - identifier: bea4f7c3-4830-42e5-ad61-f4dbd6fcb5e7
+    title: Kurs_64948
+  - identifier: d4c3eb40-53d6-4003-b4c0-c57f345a0f29
+    title: Kurs_68872
+  - identifier: e6bd331e-0dfc-4fc1-b747-7f22c71ccc38
+    title: Kurs_69265
+  - identifier: 8240696a-ff33-4d63-b013-278544bcf0d4
+    title: Kurs_70499
+  - identifier: 86c05550-6828-4f08-be87-57edfd4dadd8
+    title: Kurs_61259
+  - identifier: ea6f4af2-9f9a-4314-ba66-560cf1587b12
+    title: Kurs_74724
+  - identifier: 0902fa20-3b9f-4c01-a0d8-56e4d8a6fd5a
+    title: Kurs_67381
+  - identifier: e968c4c8-f930-4527-a6ef-68c45635378a
+    title: Kurs_41506
+  - identifier: b1066dad-cdb2-44c2-8a86-afcb704d0d2d
+    title: Kurs_71906
+  - identifier: e5b304d0-b4d4-4141-b2bc-d1bb12ec51da
+    title: Kurs_69264
+  - identifier: 769b3941-e15c-4e6f-9593-d99e6b63b086
+    title: Kurs_54451
+  - identifier: c57f5ac9-4d22-46fa-a21f-8758ef32a174
+    title: Kurs_47210
+  - identifier: 841685f1-684e-421d-b2f3-93c3e9cc81c3
+    title: Kurs_48072
+  - identifier: bd573173-86ca-4b16-aec9-7e7272d43f09
+    title: Kurs_54392
+  - identifier: f2271f5e-5c89-4eaa-bfd0-84f3a896be5b
+    title: Kurs_57047
+  - identifier: c4c40ae5-f3e3-46aa-b1a7-4fe74bb36741
+    title: Kurs_61138
+  - identifier: d8c94ad3-8ded-47da-8704-cb8e0bc7694a
+    title: Kurs_47674
+  - identifier: 05d78f04-ac27-458f-8752-c33b3c825b6c
+    title: Kurs_69267
+  - identifier: d0e7aa7e-6935-4e05-a962-ed326eeda4d3
+    title: Kurs_52534
+  - identifier: afa96fc5-a83a-472a-a0f4-700ce13389da
+    title: Kurs_43904
+  - identifier: d6d1caef-862f-4887-9a41-212ee2757498
+    title: Kurs_51179
+  - identifier: df61e7e9-995e-4d0a-abd6-0ab7c44feadf
+    title: Kurs_70735
+  - identifier: 38d33039-d42f-46d5-8090-74b0fde7418c
+    title: Kurs_50646
+  - identifier: 32179246-49f0-42f8-a977-41a86a3b3359
+    title: Kurs_47272
+  - identifier: fbfb9c47-6100-41e5-b532-614d5552bdbe
+    title: Kurs_50536
+  - identifier: c758986e-0817-485c-b4cf-e5b90fe1f692
+    title: Kurs_51022
+  - identifier: 321457f0-a3cd-48e9-8d05-3976c8257d56
+    title: Kurs_58038
+  - identifier: 18d44465-4bfb-4875-b64f-649e11ef3afe
+    title: Kurs_70229
+  - identifier: 0261defe-c318-4617-bacc-0ac10e1a5db4
+    title: Kurs_58039
+  - identifier: d8fb8fdc-46b5-4e33-bbe9-3e3e938f8563
+    title: Kurs_69432
+  - identifier: 3490f1dd-18a4-4c6c-8df9-1c0e66c8af34
+    title: Kurs_57100
+  - identifier: e526d01b-dc71-447f-b078-1acf06e236c0
+    title: Kurs_55771
+  - identifier: 80565a98-6c17-46e6-8519-9de7a90fef37
+    title: Kurs_56035
+  - identifier: 7d98932b-dc8d-48d5-8222-66a0d02dd95b
+    title: Kurs_68877
+  - identifier: d32095b8-936c-4316-a4fb-eeb574a3aac9
+    title: Kurs_68900
+  - identifier: 9144098d-6704-4851-b544-7fa1b5600b4a
+    title: Kurs_68876
+  - identifier: b6714e8f-4382-48d2-8037-5a0380059bc1
+    title: Kurs_57794
+  - identifier: 48365d9e-b4cf-458f-bc11-2c0a83b0974c
+    title: Kurs_68901
+  - identifier: cdfda3d9-4925-4c5f-b5e3-dfe0c52e5a9b
+    title: Kurs_57845
+  - identifier: e59e43bf-7f3e-41ff-b9ff-77683549a92e
+    title: Kurs_73946
+  - identifier: 18285110-4cdc-4426-9f6d-d3a4a4a55fe7
+    title: Kurs_44831
+  - identifier: 49c7e8ab-f19c-432a-aa6f-2d268d22ec0e
+    title: Kurs_54978
+  - identifier: 88d57357-57b3-4d07-b62f-2eb42f4fa1e7
+    title: Kurs_43830
+  - identifier: 882f1ee0-e80c-4869-ac63-5372b86a8061
+    title: Kurs_45077
+  - identifier: e9903e4b-59d8-4604-9dd3-4eae4e0b1fc7
+    title: Kurs_43992
+  - identifier: 43f49ac3-46b3-4ad9-8add-81fd2c4e0fed
+    title: Kurs_51107
+  - identifier: 9199fc9e-d904-4003-b2a8-6e9e7d98a83e
+    title: Kurs_51136
+  - identifier: c074d9c6-e47e-4e29-a9ae-0a39885aafe3
+    title: Kurs_70473
+  - identifier: 2b6fadb3-87ea-4e52-9779-542e3caa10bb
+    title: Kurs_50915
+  - identifier: 8b9eca27-35d8-46d8-9219-3a3140a11c8d
+    title: Kurs_38295
+  - identifier: 4f01ba40-7c67-4980-b369-70bd66fd758b
+    title: Kurs_52125
+  - identifier: 1b975c51-0bdb-4709-8472-88739845fd7c
+    title: Kurs_45511
+  - identifier: 5ebd15a9-5aa4-46f5-9a85-78da9788495d
+    title: Kurs_45877
+  - identifier: dcbd4de7-a584-48c5-bdea-061b0dbe1c2b
+    title: Kurs_71897
+  - identifier: 7a4136c5-cbad-4060-bc38-00b24fd217ae
+    title: Kurs_48932
+  - identifier: f02248ae-87ed-4b23-8e5b-9cdaa2f5697a
+    title: Kurs_62207
+  - identifier: af8d9ee5-0de8-4454-b14a-ac328a258926
+    title: Kurs_69027
+  - identifier: 16cf4830-1efc-4938-9625-0f89bffa7d9d
+    title: Kurs_67898
+  - identifier: 5390533f-d9ad-41fa-bfa9-9482ddf4c109
+    title: Kurs_61232
+  - identifier: 22a03784-2262-494d-b2ea-a507bb65541d
+    title: Kurs_51106
+  - identifier: 6bf79f8b-8195-431d-86f5-d60ce1ffe5ef
+    title: Kurs_46798
+  - identifier: e1023067-b54f-4dd0-ae01-6e33380d17c8
+    title: Kurs_53640
+  - identifier: 03083227-be67-4a3d-b546-5adb1e9fd1d3
+    title: Kurs_45722
+  - identifier: 1f1b15fa-1b64-4926-b44a-1e33d9c4bc2e
+    title: Kurs_42127
+  - identifier: 894c89fd-78a3-486c-87c7-b03fa2f8bef5
+    title: Kurs_64596
+  - identifier: 914a30d5-7e1c-4075-ada8-93e89d96d96a
+    title: Kurs_52650
+  - identifier: a5f7425e-1baa-49cb-b325-a6c788c762c6
+    title: Kurs_52424
+  - identifier: 97a888be-e279-41da-a9f9-9732eb37727c
+    title: Kurs_70877
+  - identifier: 89f52564-f70c-4b50-8f65-56bc57991b9c
+    title: Kurs_53844
+  - identifier: 5cec1de0-4a5e-4915-9654-56a687475c7c
+    title: Kurs_70967
+  - identifier: bb946ca0-c3ba-4895-9e6b-4b1f2427be3b
+    title: Kurs_53858
+  - identifier: 0ad973db-62aa-4b6e-9ea7-f0a702d0bbdb
+    title: Kurs_44864
+  - identifier: 54c011f5-1887-4ab3-914d-341c05070b16
+    title: Kurs_44036
+  - identifier: 3dadaa05-d712-451a-9215-8ff0b8550854
+    title: Kurs_44355
+  - identifier: 2f570467-66f3-4fbe-8e2d-26f88ddf6553
+    title: Kurs_71809
+  - identifier: 833c4c63-5e4e-480d-93d3-0ab482ab04f2
+    title: Kurs_68039
+  - identifier: 1e612154-3e0f-49e9-ba7e-dd0ccaa84bac
+    title: Kurs_52522
+  - identifier: 627aa877-3872-447e-a584-26eb52e88eee
+    title: Kurs_12351
+  - identifier: 86e16f16-1a64-4144-8529-0584ddf833d4
+    title: Kurs_54206
+  - identifier: 5c2cba47-8e62-4fce-ba21-bda0e491bf34
+    title: Kurs_3987
+  - identifier: 0ebfa8fa-d4f9-4bf1-8f7f-7e6003ac7955
+    title: Kurs_51133
+  - identifier: 23831710-5177-4327-a997-2ea0ce5f25f2
+    title: Kurs_44395
+  - identifier: 3949b0dd-0975-4b1a-985d-888e50b6d5b1
+    title: Kurs_43008
+  - identifier: 7edc5ff8-1b52-4dfe-8d78-f9d74c617416
+    title: Kurs_50928
+  - identifier: 325a0aa7-d663-4dc1-ac8d-9c01d77acaa5
+    title: Kurs_42420
+  - identifier: 2f613663-cb39-40d1-a970-e6693ce2a114
+    title: Kurs_70200
+  - identifier: 30edae28-e2d8-46cc-936a-05cc5c0545f2
+    title: Kurs_46314
+  - identifier: 60465f4e-f605-4dd3-860b-e15e5131c3f5
+    title: Kurs_48084
+  - identifier: a806b505-75de-422d-8137-f1183dba2e7c
+    title: Kurs_49237
+  - identifier: ff6c1d9f-1a5e-48c5-adb5-8b1a4c8db7aa
+    title: Kurs_40766
+  - identifier: e3691f80-fd53-40e7-b35c-f3eb7c946970
+    title: Kurs_58333
+  - identifier: a701438e-4bd8-486f-967e-2d3e0c78974e
+    title: Kurs_61226
+  - identifier: bdee1973-0d59-43fd-bcba-9095b52419c3
+    title: Kurs_44396
+  - identifier: 45f3c4c7-2f7a-483b-93c4-8363413e75b2
+    title: Kurs_74793
+  - identifier: 351490f0-318a-4a18-bee9-89dc862fb1e7
+    title: Kurs_39272
+  - identifier: 39266b5b-205c-4857-9fb1-fd1820f0ec27
+    title: Kurs_43872
+  - identifier: 50b74e31-2e0e-4652-b336-c97c2fe47a3c
+    title: Kurs_64724
+  - identifier: 7c60645e-f0ec-4a92-9e12-8e67c3054303
+    title: Kurs_67958
+  - identifier: eab599c8-0766-4cb2-9f5a-8ea23086a869
+    title: Kurs_50916
+  - identifier: 8f01e65c-fa4e-4484-99b5-aad8f2a97b20
+    title: Kurs_50493
+  - identifier: ff8fa81c-16dc-43f0-84f3-dfeddbbbf88e
+    title: Kurs_57769
+  - identifier: 96beb813-6d2a-4e2b-bd31-c70fec92b3a0
+    title: Kurs_60173
+  - identifier: ca944a67-fbca-4396-824e-b5fd37f28cad
+    title: Kurs_70866
+  - identifier: 7496ecb9-6b30-4cd2-9464-7599cf95afe9
+    title: Kurs_60820
+  - identifier: 8e2307ca-81e0-4b58-b489-df5b8a818621
+    title: Kurs_60792
+  - identifier: a89ed9a6-ff96-41dc-b752-8bc68b7a0224
+    title: Kurs_56688
+  - identifier: 44a05a5d-bd23-4ec4-ba24-357907eebd70
+    title: Kurs_57768
+  - identifier: b350c52a-c417-4790-8812-7706cc3b2a79
+    title: Kurs_45687
+  - identifier: 3ee5d19b-6510-4617-8cfb-63987711b82d
+    title: Kurs_60718
+  - identifier: f360bdac-5e56-4ca6-92aa-e835788d803b
+    title: Kurs_42552
+  - identifier: ea5d313e-bf57-469a-82df-cad16d8bf41b
+    title: Kurs_70956
+  - identifier: fc4fba33-9d21-4cde-991f-a14d6866f33b
+    title: Kurs_57302
+  - identifier: 15de608b-8fbc-496d-878c-2d3d882794a3
+    title: Kurs_45852
+  - identifier: 2e82ff95-2967-4e3f-b1e1-a29759d293dc
+    title: Kurs_46140
+  - identifier: bef280ce-4891-4830-9df6-ab234b06c279
+    title: Kurs_62508
+  - identifier: f6eaffe6-cad1-4a00-b98f-6f65d9234b14
+    title: Kurs_62128
+  - identifier: 847827b6-8757-42b7-a4e2-a1bc5389b7d4
+    title: Kurs_62100
+  - identifier: fec40233-b446-4731-862c-994048a24ba1
+    title: Kurs_52639
+  - identifier: c40991a7-066b-4b2e-81c2-f511ec26af5c
+    title: Kurs_40528
+  - identifier: 7d99ad3f-e747-4d34-a327-b0713cb49fe4
+    title: Kurs_74980
+  - identifier: 1ac6a0e9-58a0-44ee-9d1e-11738c40ad29
+    title: Kurs_70196
+  - identifier: 71635f9c-6494-4061-b5f5-6ca3baf10423
+    title: Kurs_68525
+  - identifier: 6b855e22-4858-448e-8eb3-6c3f81dc9490
+    title: Kurs_43801
+  - identifier: 2b8bb0f8-32d2-429c-b721-4153dfcc1ab6
+    title: Kurs_65209
+  - identifier: c90b0f0f-f2d0-4557-a867-8132efc9712c
+    title: Kurs_71891
+  - identifier: 34e0434a-1bab-4193-9c7f-ba89dbbae72d
+    title: Kurs_70878
+  - identifier: 8d8e45af-2117-4a7d-984e-8e0226662cf6
+    title: Kurs_68977
+  - identifier: 59e795fa-729e-4008-871d-e75d83d57bf9
+    title: Kurs_70317
+  - identifier: c1d6b568-0c88-4510-98bf-f7c58ed5d98a
+    title: Kurs_71014
+  - identifier: 191b9e72-3570-4ea6-86ce-f4b89c2137f5
+    title: Kurs_70872
+  - identifier: 06309aaf-498e-421f-bd9e-309e1a7c808d
+    title: Kurs_70951
+  - identifier: 3349f7a8-e5ae-4a40-90be-7df2ae5f07f6
+    title: Kurs_38611
+  - identifier: 8fba0871-5402-4cdd-839b-aa509d16b406
+    title: Kurs_70243
+  - identifier: 898541d7-9053-4fbd-b00f-b92abad151e1
+    title: Kurs_75528
+  - identifier: b59590a5-fd81-41ca-81ab-78ea0066a2ac
+    title: Kurs_47094
+  - identifier: b3e7754b-1aea-45a2-89fc-0dee0ba56802
+    title: Kurs_71994
+  - identifier: 19899f58-ffa2-4ba5-80ba-41ae649bd3f0
+    title: Kurs_65909
+  - identifier: d2213095-638e-4789-ac1e-0ffeab3f9ffb
+    title: Kurs_70310
+  - identifier: a2c3876a-ccf1-47d6-ace1-d9b5d3f718fa
+    title: Kurs_70985
+  - identifier: abe061a8-d283-4287-8cb4-64d1f0b6aa67
+    title: Kurs_44941
+  - identifier: 7d65c8ef-25bf-4275-b8cc-8b45b14aa206
+    title: Kurs_62647
+  - identifier: 9ce99f00-e614-466d-8116-d1a80b47bd0e
+    title: Kurs_70724
+  - identifier: 87ab038c-fa3d-482f-b2f1-ea81fa336d2e
+    title: Kurs_70270
+  - identifier: 1bf791db-7e67-487b-86a8-624746afc4f5
+    title: Kurs_70453
+  - identifier: d6a6baff-3591-426d-87b8-dd2ec8ab058c
+    title: Kurs_65445
+  - identifier: f0cc3ad2-2a74-4fa9-b0a1-3a88e57c6527
+    title: Kurs_48973
+  - identifier: 783bd8d8-3d5a-4853-81c0-f82dd4fcd845
+    title: Kurs_12350
+  - identifier: 5ec30240-ed7b-48e4-a9e8-2b5e2a9726fc
+    title: Kurs_75819
+  - identifier: 61098e18-ca16-4604-b508-88536af947ce
+    title: Kurs_68842
+  - identifier: 866a4801-8d3c-4712-983f-6eec049dee40
+    title: Kurs_68956
+  - identifier: 10ebf822-51c0-4bb5-9dc4-5d17eafe8390
+    title: Kurs_70637
+  - identifier: b6dd0083-0ecd-4b77-bc3e-1412b4714803
+    title: Kurs_70634
+  - identifier: 7d761135-0779-4516-aee8-0b37e734a08b
+    title: Kurs_68881
+  - identifier: 558547e1-eaee-4a6b-bf07-e23480243fc2
+    title: Kurs_64806
+  - identifier: f2739699-4988-49c8-a897-394d259269e8
+    title: Kurs_70633
+  - identifier: 76004d7c-3784-44af-bb2a-4f49abfbd386
+    title: Kurs_70581
+  - identifier: be87bb08-6e26-4e2f-9a0f-3cd6b235ba15
+    title: Kurs_70578
+  - identifier: 8f4f63d3-0077-40c8-a85d-24e2ce8c374c
+    title: Kurs_70868
+  - identifier: e5e7a98a-5e7f-4143-b970-772331c989b5
+    title: Kurs_70636
+  - identifier: 467b020e-6ecc-42be-84ed-4bd4dc550e1a
+    title: Kurs_70579
+  - identifier: 06c610be-67b1-44c1-9d12-14068268038e
+    title: Kurs_79460
+  - identifier: 71c124a6-2582-40cb-ad0b-2817c8b1ac0d
+    title: Kurs_81322
+  - identifier: e4f3220d-04c8-4e7d-afed-f8d66e772a4b
+    title: Kurs_80865
+  - identifier: 1cd0d7fa-d3d2-4ef1-8def-dc51e4a65b0a
+    title: Kurs_81348
+  - identifier: cdde3148-c771-43b7-8b46-731b2f7fc57a
+    title: Kurs_79510
+  - identifier: de38b47c-e213-4517-ac21-f3cb85642664
+    title: Kurs_81274
+  - identifier: 41a44dfa-6470-4401-afbf-d8defd46677b
+    title: Kurs_79015
+  - identifier: 121bfe10-9149-44e4-9ae8-0db680ce8ab0
+    title: Kurs_81298
+  - identifier: 24496a8c-6f40-4260-bd4d-fdb8648b5817
+    title: Kurs_79433
+  - identifier: 3554ae45-d243-4448-8123-3e553fdab966
+    title: Kurs_79019
+  - identifier: 31ffa61f-b775-468d-8e74-3022b90581e1
+    title: Kurs_81255
+  - identifier: 888475bb-4f76-455e-808d-671f4f715196
+    title: Kurs_81217
+  - identifier: 111789d2-56b2-480f-9ecb-5f59a873bcbb
+    title: Kurs_79733
+  - identifier: bbcab15c-aa93-4a6d-8c6d-95d854f8f04a
+    title: Kurs_80505
+  - identifier: 5b82b8c0-9cb2-471d-885e-66e8525d40b0
+    title: Kurs_81511
+  - identifier: 4b870e39-77ac-40b4-ac72-b322ed897c2a
+    title: Kurs_80886
+  - identifier: bae255de-b701-43b5-8b8a-9400e71ebca1
+    title: Kurs_80888
+  - identifier: 77390526-310b-4df4-9624-0569b88013a5
+    title: Kurs_80894
+  - identifier: 17f39681-0e31-44ae-bdec-8a55e3a955cf
+    title: Kurs_80878
+  - identifier: fc96537f-0150-408e-ba34-628cd7a757bf
+    title: Kurs_80866
+  - identifier: eca0fe7c-c6e3-4719-8a6e-81c3fdf90566
+    title: Kurs_81343
+  - identifier: 06a4f535-9680-4c91-b163-c555dccb1886
+    title: Kurs_80885
+  - identifier: 32ecd03b-494f-4566-b94d-d4fa379da70b
+    title: Kurs_79944
+  - identifier: 91a87a26-3e5d-4712-9231-615efa2cfd55
+    title: Kurs_79099
+  - identifier: 7b50bf5b-e9e8-4f56-8927-f8de32968dbf
+    title: Kurs_81031
+  - identifier: 299bafd6-92ac-4038-9c97-30b7ffc6ab97
+    title: Kurs_81323
+  - identifier: 688409fc-2e23-468e-896e-688a5a45e2b3
+    title: Kurs_81328
+  - identifier: 651dbab6-16f0-4198-96b4-fbbce5bbe1ec
+    title: Kurs_81347
+  - identifier: 80ce144d-83d5-452e-9914-e4c92cab8d86
+    title: Kurs_80889
+  - identifier: a6233ba6-637a-4cd7-a7b6-8913daa6a1b6
+    title: Kurs_80847
+  - identifier: 2f7a1c5d-e84a-4727-a7dd-3fdabd9a1d3e
+    title: Kurs_80800
+  - identifier: 76888455-891a-400a-90f0-d3e1b58a70e2
+    title: Kurs_79457
+  - identifier: 8b983f33-4a41-4e85-b8e0-8ca0c9371545
+    title: Kurs_42109
+  - identifier: e1a521b1-b8e0-4b2e-98ac-c7a82937027a
+    title: Kurs_80214
+  - identifier: 53db406b-d585-4db8-aea1-8dea72d4b64e
+    title: Kurs_81660
+  - identifier: e5f5a1bb-f186-4345-b210-20850b1daa18
+    title: Kurs_80149
+  - identifier: bae7a57a-8d25-428b-9342-dcf7b5b992ec
+    title: Kurs_79502
+  - identifier: 1f4fe650-e235-43cb-9c61-4e81bf11d04e
+    title: Kurs_79227
+  - identifier: ba41206e-b5da-41a9-b71f-171d54086a11
+    title: Kurs_79780
+  - identifier: 0c0712cb-297a-4666-af56-65a50a9e8043
+    title: Kurs_81663
+  - identifier: 4d887819-d747-4654-a98d-9fd66289cd79
+    title: Kurs_79503
+  - identifier: e8bd8a4e-3ef8-4c72-b754-0612c7f874f6
+    title: Kurs_79108
+  - identifier: 6d4fbbc9-c288-4970-a41f-17d0c9db877d
+    title: Kurs_80802
+  - identifier: 9e35f928-863d-4a4f-9796-bd19bb1b7033
+    title: Kurs_79917
+  - identifier: 52c47fae-c5c8-4162-a0b9-f1fb12c97c38
+    title: Kurs_79093
+  - identifier: dff82288-ca43-48e5-82df-0fffb8a25294
+    title: Kurs_81465
+  - identifier: f1b08b0a-6193-4a69-9eda-b8b938ad11a6
+    title: Kurs_80835
+  - identifier: cbf2ef63-a75b-4df2-948d-2001c6619d21
+    title: Kurs_79723
+  - identifier: 5a7bbd61-239d-40f8-9114-56bc8bd79e80
+    title: Kurs_81230
+  - identifier: 9a2df652-6010-4f47-8efd-6d0c0a4a4190
+    title: Kurs_78989
+  - identifier: 920d1457-bc14-49de-b024-cbcaab77e895
+    title: Kurs_78858
+  - identifier: 7394df30-81ae-4c84-a5b0-682135e90f5e
+    title: Kurs_79121
+  - identifier: 29a19bd3-6c20-44de-be1b-a97cbc0248c3
+    title: Kurs_79946
+  - identifier: 0bfa86ba-3206-4d1a-bb2d-500be62f168f
+    title: Kurs_81803
+  - identifier: 84c093c3-a09f-4778-a181-97d6e9ab012b
+    title: Kurs_81489
+  - identifier: bcdd8e59-49c1-49f5-a0c1-56eb837661e7
+    title: Kurs_81488
+  - identifier: 1b896233-9fbd-44e1-9699-c157f4aed38a
+    title: Kurs_49363
+  - identifier: 1115330e-2fac-4935-ab03-128b2ec4fd33
+    title: Kurs_80473
+  - identifier: f9105c75-5e58-495a-b225-8f03cb042781
+    title: Kurs_81912
+  - identifier: 0ea83cfc-f2e7-4227-8992-7d317147b88f
+    title: Kurs_52597
+  - identifier: 64c24a8a-239a-48ea-8c36-28c15727b7da
+    title: Kurs_81903
+  - identifier: c986d7ac-08f3-4324-b2b6-2f043b3c4e80
+    title: Kurs_80481
+  - identifier: 22c9911c-d97e-48a5-a8a8-7ab420d1a43e
+    title: Kurs_81970
+  - identifier: 30a78254-535d-4c07-aedd-1df772ff4b6e
+    title: Kurs_51650
+  - identifier: 4daf865f-683a-45cd-8957-a2f3f416ed90
+    title: Kurs_81863
+  - identifier: 2501fd5f-9058-4b2e-983c-2578043f4e19
+    title: Kurs_81864
+  - identifier: d1a0da92-3027-4859-834f-4d6d59d66dad
+    title: Kurs_82013
+  - identifier: 988de3e4-7097-4a63-bc87-1e05405d7205
+    title: Kurs_81974
+  - identifier: f11a38da-0992-4a94-9cd8-183c34fe23f0
+    title: Kurs_81806
+  - identifier: f1c02e1d-0dc8-40e4-a399-7149fd1e3601
+    title: Kurs_82036
+  - identifier: 9c4a97c6-f5d3-4dd9-89e7-3aac92261ee7
+    title: Kurs_82043
+  - identifier: 3e08a19f-ba85-4480-baf6-55ea4bc04021
+    title: Kurs_82211
+  - identifier: 317fee33-4306-4881-96fa-c732ddf7bcd0
+    title: Kurs_82242
+  - identifier: 13fe0bc3-c46c-4cb5-8fdb-eaf68adce370
+    title: Kurs_82161
+  - identifier: de362dba-c9b8-45c1-93f4-3b9e9f8a4e08
+    title: Kurs_80403
+  - identifier: 0036487c-1883-41ad-b361-0ddd8f65f043
+    title: Kurs_82367
+  - identifier: c12635f5-130a-468b-b880-8ccad7f759bc
+    title: Kurs_81804
+  - identifier: 2ecd79fb-7ceb-4039-a94d-e017fbebcd25
+    title: Kurs_46215
+  - identifier: cbda684c-94cc-488d-a1d3-b1fc178efb09
+    title: Kurs_48076
+  - identifier: 702deb3f-ad2f-4b01-96dc-91a6439050be
+    title: Kurs_47338
+  - identifier: 85f8d797-78b0-422a-bd86-3bd821932bc5
+    title: Kurs_67382
+  - identifier: 16cf0fae-f30d-496f-9a14-fb9b6a349b01
+    title: Kurs_67633
+  - identifier: d6a325fb-cd94-47d5-a564-e27a8f910eea
+    title: Kurs_49507
+  - identifier: 954a8b51-7e77-4cc2-93df-f2764cf50453
+    title: Kurs_43095
+  - identifier: c359fc67-46e4-415e-b865-59683639acd2
+    title: Kurs_44937
+  - identifier: eb9e3271-2dc7-41fc-8ab8-e4e9f8005ea1
+    title: Kurs_39309
+  - identifier: 0a0a8de3-9f1f-4121-9f70-3dadb74804c4
+    title: Kurs_70905
+  - identifier: 6bbcddd5-0bc3-4fe0-ad61-df7f86e2f6dc
+    title: Kurs_70309
+  - identifier: 1ea7cf79-16e9-4039-8072-c9532505220f
+    title: Kurs_43983
+  - identifier: 41d06f7f-fcb3-4d28-a473-34c6c77b1a1a
+    title: Kurs_71126
+  - identifier: d60f5553-4549-4b97-9f5d-31ce31bcf2b0
+    title: Kurs_68692
+  - identifier: 1e352f48-ab5d-406f-9f49-8862647586c0
+    title: Kurs_62246
+  - identifier: b8d8a330-4b8a-4c90-9c2d-110354ecee4d
+    title: Kurs_39425
+  - identifier: 22f1f983-ea81-41f5-be0e-74cd22877a20
+    title: Kurs_57367
+  - identifier: 0183e3cc-de70-4fa2-addf-de391928f5e8
+    title: Kurs_56990
+  - identifier: ad2e3d55-8ebb-40a6-ab51-fef0f26f23c2
+    title: Kurs_53698
+  - identifier: 34bffd37-a1d7-4325-a03e-5e79eaa33380
+    title: Kurs_60712
+  - identifier: 336b6406-8416-4143-8796-cdf8090e5dd9
+    title: Kurs_44226
+  - identifier: 53806c4e-4510-4dba-9688-f58590c305db
+    title: Kurs_64579
+  - identifier: 141b89f9-e5c4-4332-b80b-2721a579e772
+    title: Kurs_51124
+  - identifier: b4062016-6919-4960-b0fe-9d808e32cab0
+    title: Kurs_41519
+  - identifier: da6684f7-0322-4d8e-a2cd-8a140314babc
+    title: Kurs_44277
+  - identifier: 69ea68d7-7de0-46df-ac16-6ce058a5f6ff
+    title: Kurs_64065
+  - identifier: 453f8454-becd-471b-bd7c-7bc1f61e721b
+    title: Kurs_65902
+  - identifier: 66d2c60b-de7d-4f72-b3f0-101fe04b5a2a
+    title: Kurs_42261
+  - identifier: 45c9318c-3122-483c-8679-7c18efab8b73
+    title: Kurs_49420
+  - identifier: 0a833adf-61c7-495e-9e81-ebf3779bc4ab
+    title: Kurs_45581
+  - identifier: 6a195e5a-8e80-47ee-bfdf-b2bb798b386f
+    title: Kurs_58881
+  - identifier: ac2f6023-f935-437e-afbe-c2c1a766a974
+    title: Kurs_39230
+  - identifier: d52b603b-94fe-4175-98dc-42bcefdd9261
+    title: Kurs_44888
+  - identifier: e389f2c9-ef09-4a05-ab4f-deadabae551f
+    title: Kurs_1423
+  - identifier: 144c4447-6d87-4e1d-9fa6-2a8b0b777353
+    title: Kurs_64044
+  - identifier: 11ba80fd-a8f6-4da2-ad3f-52856b4cd561
+    title: Kurs_60526
+  - identifier: db4b179f-7383-4498-b7d2-ef43de93ad9b
+    title: Kurs_70202
+  - identifier: 6add6d10-50da-4a23-9c08-59a94f874ea4
+    title: Kurs_70428
+  - identifier: f2bc0440-f912-48ef-b1ba-df3e56c23fa9
+    title: Kurs_42435
+  - identifier: 2ee84e73-4e93-4465-8cd3-ceaece1a5a3d
+    title: Kurs_52454
+  - identifier: c258c0e4-8e90-496e-8ec1-4b6b66b60e05
+    title: Kurs_46706
+  - identifier: 5fb5a5d9-eb0a-4bee-93ef-ee750e848375
+    title: Kurs_65253
+  - identifier: e255fbd4-91cf-46b7-b446-bc08d77c492a
+    title: Kurs_51718
+  - identifier: 49c6a1a7-70ab-4344-b632-96d4948da266
+    title: Kurs_36327
+  - identifier: b6ee2221-ca25-4fcd-8ea2-3fec08261b45
+    title: Kurs_264
+  - identifier: 3d76941d-65e8-4a72-a58d-5582102e57bf
+    title: Kurs_54932
+  - identifier: 24a0ad41-e9fc-449e-96db-605cbd980f33
+    title: Kurs_50337
+  - identifier: f43fc4d9-3ed0-4567-af58-78020e9acf5d
+    title: Kurs_62755
+  - identifier: 07545e79-2a21-4a00-8e87-8ac4be959b04
+    title: Kurs_68713
+  - identifier: a29dd9d1-17c8-4635-b769-17b3f5e446b6
+    title: Kurs_50471
+  - identifier: bd01f705-4b34-4492-81aa-4d96c34ca5aa
+    title: Kurs_40648
+  - identifier: 71455059-2665-4919-881f-d1778feba51a
+    title: Kurs_39350
+  - identifier: 35ef63b1-f487-4fca-82af-de2594d20f42
+    title: Kurs_39558
+  - identifier: a0924c65-57ad-49ba-b87c-dad85d5dea29
+    title: Kurs_58886
+  - identifier: bf0522e1-3db2-459a-8f0d-7001abfb0270
+    title: Kurs_47860
+  - identifier: 1896bc05-7b6b-42f7-ad3e-71cf1b0a9002
+    title: Kurs_58911
+  - identifier: b8f38d06-dfee-42f2-bb76-62948d7cd929
+    title: Kurs_52469
+  - identifier: e9641ae3-f83f-4d2a-9604-887899352fa3
+    title: Kurs_43736
+  - identifier: 60226005-c5ed-486b-bd85-3c5457b5ece9
+    title: Kurs_41839
+  - identifier: 7337bd5c-eb30-41aa-bbd4-0623d67dae0e
+    title: Kurs_40636
+  - identifier: 0a4d2789-a6cd-4729-b6f1-e617200f1a3b
+    title: Kurs_79223
+  - identifier: 7190427c-91eb-43e0-8306-8e0e1b236d91
+    title: Kurs_79578
+  - identifier: ff45998a-757b-4d2c-86ff-b2f4685615fd
+    title: Kurs_79877
+  - identifier: bb8ed26c-2238-42fa-ad00-71a2df0b5ddb
+    title: Kurs_79691
+  - identifier: 7d5b13f5-fdc9-4d82-a5ca-59392346ef6f
+    title: Kurs_81385
+  - identifier: feef288f-6d25-4387-9902-a6da2aa8c717
+    title: Kurs_81324
+  - identifier: 00ebf2f6-4ad8-43da-a3b0-e7aaff10cfe4
+    title: Kurs_80829
+  - identifier: cd33cbf5-0889-4004-b9c7-03d7c568f673
+    title: Kurs_80478
+  - identifier: c2dcf52c-958e-45c9-9693-53831211a5f6
+    title: Kurs_79735
+  - identifier: b86c8a69-ed2a-4f1f-bb6f-73e6b3a7bbf9
+    title: Kurs_70051
+  - identifier: bb758342-284b-47f7-bcb6-21ecb82f9030
+    title: Kurs_68596
+  - identifier: f606728e-2268-44f3-af48-b5eaeaa30bc2
+    title: Kurs_68566
+  - identifier: 4099c2bd-73f7-4090-9ab5-3a4981e79d37
+    title: Kurs_68536
+  - identifier: 44513981-0038-42d4-aa5f-b56516fd0209
+    title: Kurs_41004
+  - identifier: 811a67aa-a74c-4605-8a72-cb98307357ca
+    title: Kurs_68535
+  - identifier: d702b9ef-7ee8-4ded-b64c-884c38b3dea3
+    title: Kurs_44299
+  - identifier: a2f06894-f035-4b5e-a5bc-5aa497f655fb
+    title: Kurs_65662
+  - identifier: 6fd2a897-c06f-442e-a238-1a5b0cb50cb5
+    title: Kurs_70977
+  - identifier: bd0e7b8a-c2e3-467b-8ae4-5ebea6588e05
+    title: Kurs_64366
+  - identifier: bbd04aa3-3916-465c-a07d-56a0cd86e7d2
+    title: Kurs_70403
+  - identifier: f6b789b4-b5fa-41e6-a12f-e0ed2620f42e
+    title: Kurs_73876
+  - identifier: 33fed12a-9563-423d-835e-f794019350af
+    title: Kurs_74047
+  - identifier: 39d8d7c7-f60b-431b-9be2-6e3bf0843e22
+    title: Kurs_73806
+  - identifier: b2ff3098-c2e3-4d17-b33c-0844bc73cbbc
+    title: Kurs_75472
+  - identifier: 7f8a8694-4a66-40e0-bf66-db94445a5d42
+    title: Kurs_72047
+  - identifier: 4113ac49-4818-4032-b9b8-ba5c983e8383
+    title: Kurs_75364
+  - identifier: 639034e0-964a-4a01-a7c6-95419af33feb
+    title: Kurs_73797
+  - identifier: 311f741b-ce5f-4ff8-80bf-ee78c26a51bc
+    title: Kurs_75834
+  - identifier: bc784a0c-398f-4f1d-900a-4be185038ec9
+    title: Kurs_75437
+  - identifier: 677b86a0-1c78-4f42-a8a1-b1bd2ea188e2
+    title: Kurs_75405
+  - identifier: c0cd1b7b-3895-476a-bb6e-02c8d4cc3a25
+    title: Kurs_75947
+  - identifier: 41ce3ec7-9f14-422d-a192-f6a2776b5f8a
+    title: Kurs_77480
+  - identifier: 44e0b6f2-b749-4485-a7a8-5f8ffd8cdbed
+    title: Kurs_51790
+  - identifier: 226cb1ea-53cd-41ec-a13e-a6f680e3c13d
+    title: Kurs_81375
+  - identifier: 07ac5779-a80e-43c4-9ece-054e06409cd2
+    title: Kurs_81376
+  - identifier: 2d288fa0-27ea-4c32-ae70-641379085aed
+    title: Kurs_81030
+  - identifier: be8e4c87-858a-4dde-9606-560615bbaa53
+    title: Kurs_81314
+  - identifier: 3b925862-aaee-486d-9116-af600290af9a
+    title: Kurs_81231
+  - identifier: c1a0c65d-a35d-4ff2-aed5-0e4bee162d67
+    title: Kurs_80624
+  - identifier: 8bd63297-0431-4e7c-8909-0b0d1c050f1b
+    title: Kurs_79120
+  - identifier: 3202f96a-ce84-4170-baa2-8c7900ecd1fc
+    title: Kurs_81029
+  - identifier: d46cef83-239c-46e2-b053-e135b6a30179
+    title: Kurs_79729
+  - identifier: 422c1c1f-5b09-4e14-9484-f76f54961ad2
+    title: Kurs_81222
+  - identifier: cd376d1d-3519-4c56-880a-9888efee7134
+    title: Kurs_78746
+  - identifier: 6ae2b652-1a8c-406a-8a00-9f08dae06f33
+    title: Kurs_79878
+  - identifier: 1d437c4c-2f7d-4439-8baf-ca6048a6a6f7
+    title: Kurs_81340
+  - identifier: 96c7cbf8-d448-4076-b7b6-45836b573e57
+    title: Kurs_79205
+  - identifier: e06f7a7b-a8ec-40bf-90d1-e1416c19140a
+    title: Kurs_79243
+  - identifier: bba17df4-c521-4710-83c9-608177730200
+    title: Kurs_80396
+  - identifier: 260e0d70-6ffa-4de9-9616-29573ac20305
+    title: Kurs_80594
+  - identifier: 67cd42d0-0c21-495b-9f35-5939ec385f5a
+    title: Kurs_80582
+  - identifier: 759c8d00-df8d-4ade-81f2-c84cc4fae9ab
+    title: Kurs_79002
+  - identifier: f2b54295-aee4-47c7-b43c-c4029209f444
+    title: Kurs_79687
+  - identifier: 3a156b01-9e3d-4f3e-a2df-241ff9da57fc
+    title: Kurs_79209
+  - identifier: 12634ba1-12ba-4220-8b71-33de9c298f95
+    title: Kurs_80583
+  - identifier: c076aec8-41a7-4d9b-82c4-46362deb9d3d
+    title: Kurs_79693
+  - identifier: e0641e67-3664-42dc-a039-353cfba63af0
+    title: Kurs_81254
+  - identifier: 06a833ac-a705-4ae1-84e5-d6839d9bbae1
+    title: Kurs_81394
+  - identifier: ff3177d0-8d81-4b8d-9863-eb505524e5a9
+    title: Kurs_81373
+  - identifier: 1242675b-43ce-4efa-8cd6-94157acc38d3
+    title: Kurs_44286
+  - identifier: 15723c22-3978-4985-9c1e-445700fcf96a
+    title: Kurs_42559
+  - identifier: c8d1e821-be01-42cc-b401-d656d5bfebc3
+    title: Kurs_4560
+  - identifier: be933ee0-51c1-414c-95bc-6fdf99622fb7
+    title: Kurs_57753
+  - identifier: 0f6c04f9-301d-499c-a27b-83bcb0aa00c0
+    title: Kurs_68875
+  - identifier: 5b724833-3a7f-4e0a-bae1-007929abebb7
+    title: Kurs_69500
+  - identifier: 6fbcd95c-972c-43f6-9249-3da0e68ed3a1
+    title: Kurs_50463
+  - identifier: 4b33811d-8dc9-42c0-b48a-a44545fe8446
+    title: Kurs_927
+  - identifier: b967054a-5332-4e76-9a4e-894ab0b816af
+    title: Kurs_53894
+  - identifier: 789c7e12-6113-49c0-af80-0c62f67e6637
+    title: Kurs_50763
+  - identifier: da3b4aee-4060-48b6-839d-aa0731c1cfef
+    title: Kurs_51104
+  - identifier: f980bc8a-e2d0-4b69-9a0f-1797f44ad21a
+    title: Kurs_46903
+  - identifier: 0495a3c3-2b9a-41dd-9b60-1554a8dcf7cd
+    title: Kurs_52395
+  - identifier: 5ebad1df-0f89-4def-921f-ac4ebf1dbc25
+    title: Kurs_42671
+  - identifier: 0b7bd417-7c45-474b-9484-9f614eb7485a
+    title: Kurs_58716
+  - identifier: b9546014-5592-4f86-a63e-142847515996
+    title: Kurs_52977
+  - identifier: 561e6eb0-fe9c-4cad-a4fb-19736291a3cb
+    title: Kurs_46461
+  - identifier: df04d5c5-da49-437b-88b3-70659921d64c
+    title: Kurs_70498
+  - identifier: bd039a64-1ce8-426e-bcce-c01f9b8b99ae
+    title: Kurs_69678
+  - identifier: a648c3e6-d22b-407f-8042-e58b87473f86
+    title: Kurs_68697
+  - identifier: e9debc14-eca2-4385-bb3a-10d67d3ba33f
+    title: Kurs_62388
+  - identifier: a79b6234-e338-4895-83d1-8597d5159239
+    title: Kurs_54433
+  - identifier: 1d251e71-72f2-4065-8de3-9e7713ccc654
+    title: Kurs_53223
+  - identifier: 698bcaf5-29db-43ed-b0b9-00be5f90d0be
+    title: Kurs_52594
+  - identifier: b4c897d3-3b88-43b7-9168-28c0ae8cbde4
+    title: Kurs_48539
+  - identifier: 67965ce4-d959-4ba1-bd58-861f70a61542
+    title: Kurs_64284
+  - identifier: a75e21e8-127c-478a-bc5c-7202ca8ab90c
+    title: Kurs_41802
+  - identifier: 8c4e8828-8012-4efc-9926-680927a4c2e7
+    title: Kurs_53853
+  - identifier: 9b7e05b3-b67d-46ff-bf7d-47b1efc60bb3
+    title: Kurs_54860
+  - identifier: 8f04deb5-b1a3-4a18-8be2-5ee66c5651e2
+    title: Kurs_48078
+  - identifier: e43fe759-c723-4ccd-935a-9dc9cfc4245e
+    title: Kurs_53197
+  - identifier: 0d4f135f-e2de-4c0f-be98-3a96060cbb24
+    title: Kurs_52439
+  - identifier: 96c9a3de-0393-4abd-9dde-c05f915df62e
+    title: Kurs_52976
+  - identifier: d0b066c8-92f6-4358-9f9a-35f7eb915b2b
+    title: Kurs_53767
+  - identifier: cb184f96-83d2-4bd2-bd3e-1054d6dbc089
+    title: Kurs_52592
+  - identifier: 94ca59ac-2769-4d02-a027-559d7c5333ac
+    title: Kurs_54337
+  - identifier: 39eb913a-aab7-4dcb-aff2-ffbdebf9ef14
+    title: Kurs_64285
+  - identifier: 33e21e1b-13a6-461c-a168-7d9be3117426
+    title: Kurs_54980
+  - identifier: e3d76e0e-dd1c-436f-8ef6-2751deccc371
+    title: Kurs_65126
+  - identifier: 9f1a2971-1259-43db-9056-3ec0133a267a
+    title: Kurs_54445
+  - identifier: b488dd5b-addf-4872-a094-978b47579870
+    title: Kurs_47501
+  - identifier: b91a1fc7-38d7-4115-a210-da0cc20d1a4d
+    title: Kurs_48060
+  - identifier: 5cd11a05-405f-44b9-b209-81d739357fbc
+    title: Kurs_67065
+  - identifier: 2642d839-1ada-4b2d-9e2e-0b9316c89221
+    title: Kurs_45721
+  - identifier: 88e50392-b487-40b3-9951-823f19a0c2d7
+    title: Kurs_48110
+  - identifier: d7dc38ea-a3c0-4977-92f6-1a6645fa2176
+    title: Kurs_64637
+  - identifier: 62561097-a24f-423d-a47b-bbe084c3380a
+    title: Kurs_48123
+  - identifier: 22a14fb3-ff76-4033-9f42-84f9ec59ac32
+    title: Kurs_47327
+  - identifier: db8d8d74-e62c-4f3f-aea3-f2c001218272
+    title: Kurs_48109
+  - identifier: 77d0fc5a-5dc3-406e-b6ae-6b3101eee80c
+    title: Kurs_47777
+  - identifier: f5545f50-5e51-46de-aeae-a34e6d88f1b4
+    title: Kurs_46487
+  - identifier: ff0efa81-5fec-4efc-ac9e-24ac79c01f37
+    title: Kurs_47594
+  - identifier: 63b7304a-2bda-45fd-860a-46d1045a279b
+    title: Kurs_46666
+  - identifier: 0f3242f7-729a-4eeb-8da3-aab8914545dd
+    title: Kurs_46051
+  - identifier: c866300c-9045-44ec-9d04-abc573767247
+    title: Kurs_44386
+  - identifier: 6f24b00f-2c08-4fd7-bda2-3be130dfaceb
+    title: Kurs_39800
+  - identifier: b0a24b36-810c-4056-9448-5100f45dddd1
+    title: Kurs_46728
+  - identifier: 857cc649-a92a-4df7-8406-cf54d9a42428
+    title: Kurs_46688
+  - identifier: 05445b3d-afb7-41f9-919b-647e21bee7ff
+    title: Kurs_62317
+  - identifier: bfe933f9-a467-4ce2-90a7-6a0c06c8182d
+    title: Kurs_46610
+  - identifier: 351dc449-e6fe-49a1-b1a4-6b91aad9c5ec
+    title: Kurs_41826
+  - identifier: 3821fe58-e097-4116-aba8-94dd831c225e
+    title: Kurs_41047
+  - identifier: 57247d67-3088-4d47-89f6-d4535fa13786
+    title: Kurs_41057
+  - identifier: dfbbf95d-840d-4029-bd60-4da1fe3fa3c0
+    title: Kurs_41210
+  - identifier: 3e5d65c5-5e3d-4a0a-add3-452a5db9f110
+    title: Kurs_40513
+  - identifier: f4ab79d0-4a7c-4062-9c60-f7f5b8dcafae
+    title: Kurs_39630
+  - identifier: fec7e544-2588-48d6-bede-3e5ea51395b3
+    title: Kurs_63769
+  - identifier: 91114e44-bd1a-4b5e-a999-aac3c457a529
+    title: Kurs_40556
+  - identifier: 27d4294e-ecc5-41d9-93c3-58de0dcd2888
+    title: Kurs_46520
+  - identifier: 27356b61-3521-4337-9542-153522837f36
+    title: Kurs_39983
+  - identifier: 515f61fb-d83f-4d58-939e-fb0b2869ebec
+    title: Kurs_521
+  - identifier: 6030eb26-7383-4d98-8838-a6531561d233
+    title: Kurs_47642
+  - identifier: 5e3ad68d-9c77-4607-9f02-b8c6e08896da
+    title: Kurs_48281
+  - identifier: 07d94ea3-aab4-420c-94d2-db78bfeecb41
+    title: Kurs_46658
+  - identifier: 3a398758-1ab5-4202-addf-fe9fd6441fc6
+    title: Kurs_45932
+  - identifier: eeb63893-d9d4-45e4-a224-868a2bfc1cc3
+    title: Kurs_40407
+  - identifier: 53b0477f-d18a-4071-aac7-401977689aa7
+    title: Kurs_47075
+  - identifier: b6870bc0-8891-4a91-a43b-37faf3352fef
+    title: Kurs_47274
+  - identifier: 68dcfe3e-a6e5-4f4c-ba28-79aa3a51e6e7
+    title: Kurs_47235
+  - identifier: d92023cb-9ec0-4850-ad19-81a7aaf46e7d
+    title: Kurs_47106
+  - identifier: 5fbb97b8-d3f3-4bdf-8a9a-6a601ea8ddf3
+    title: Kurs_55433
+  - identifier: c0cba40f-117f-4426-9e57-b761d421c0e7
+    title: Kurs_57197
+  - identifier: 5c6ef465-3599-4412-a8a6-b420b2fd1d7d
+    title: Kurs_57334
+  - identifier: e2a03d7c-a9c5-4f4e-bc19-1589b277dd72
+    title: Kurs_57331
+  - identifier: fc8015be-f853-4ffe-9b3f-406384563859
+    title: Kurs_57802
+  - identifier: ae034e1b-3b35-4bef-b482-f9e6f2864a17
+    title: Kurs_47569
+  - identifier: 17597600-872d-4ac6-9349-289b54a733e8
+    title: Kurs_47479
+  - identifier: 4e8fa79f-6e64-4316-b516-bfefe3f3540f
+    title: Kurs_46002
+  - identifier: 2b61a0d7-6c5e-4832-ab09-f0b6d78c541b
+    title: Kurs_55460
+  - identifier: f2d67461-53c5-4d8f-8ddc-7f4e2ec841f4
+    title: Kurs_55529
+  - identifier: 2a28dd88-525a-4704-9116-ad1ac8df9f1d
+    title: Kurs_47699
+  - identifier: b611fa28-e411-467a-8702-0a99b4cc1731
+    title: Kurs_63768
+  - identifier: 5999af8e-1210-4017-8407-86ba1d160757
+    title: Kurs_47765
+  - identifier: 33b645b0-51b0-4043-86ad-4caf2657cf46
+    title: Kurs_52652
+  - identifier: d3e5388a-e58a-4b2c-a5c4-48e1b1ff3576
+    title: Kurs_75439
+  - identifier: 1ab460b7-fd21-4d5e-b66c-a8c5e2900a78
+    title: Kurs_57477
+  - identifier: 7c5a7e2e-90d7-4c89-80d3-e549d11ee2fe
+    title: Kurs_56772
+  - identifier: 6d119812-7638-490f-8179-92a1b58ff336
+    title: Kurs_57759
+  - identifier: 08e4b008-6ab6-457d-a168-146e49108f98
+    title: Kurs_58329
+  - identifier: 36b6c84f-1881-415d-abab-4f8f3a9156e5
+    title: Kurs_57479
+  - identifier: 4e34411e-2585-4245-b845-f4d907de0fa8
+    title: Kurs_59297
+  - identifier: ca50e750-2f77-4b7e-ab9b-67f3bc9d4509
+    title: Kurs_59308
+  - identifier: 12915df8-cd3d-44fe-8bb7-3c28d9f3b374
+    title: Kurs_59295
+  - identifier: d020e28b-1f8b-400d-867c-d003f0b2b611
+    title: Kurs_59739
+  - identifier: 89c20436-383a-4d10-bf73-14573a090890
+    title: Kurs_43364
+  - identifier: f4e02de6-0460-4e27-9667-49a40f325410
+    title: Kurs_60864
+  - identifier: d76722c4-12db-448c-a5fe-21ac65a0ad11
+    title: Kurs_59585
+  - identifier: 73b35d10-d205-4e59-9908-e7698cab469c
+    title: Kurs_60771
+  - identifier: 03853ddf-2442-4a52-a681-1d8b286f1c1f
+    title: Kurs_59184
+  - identifier: c59847da-e776-4cf3-824b-00b198b6029c
+    title: Kurs_51116
+  - identifier: 8f6884b7-cba0-45f0-8af0-0cecf84936e0
+    title: Kurs_42839
+  - identifier: 4e535f93-23b8-4444-a2bc-40691a5638c2
+    title: Kurs_43183
+  - identifier: 5dbbd314-47af-465c-80f6-f8130702a5c7
+    title: Kurs_45230
+  - identifier: 15496110-f002-4348-958d-659e2d5eaf26
+    title: Kurs_38241
+  - identifier: 96b060f5-9855-4b21-8921-f4f946a26797
+    title: Kurs_70053
+  - identifier: 851afcd8-4885-4788-9a0f-f187b4e16622
+    title: Kurs_49003
+  - identifier: 4b5f3fba-79a6-4d1e-81b6-2c2ba6e704a7
+    title: Kurs_55355
+  - identifier: 59452a9b-5503-4c43-86b7-cc544b2eea61
+    title: Kurs_48570
+  - identifier: 3ec5f4b6-f97a-46d6-8d33-367ae2bdfee7
+    title: Kurs_55435
+  - identifier: 9b485da9-84e0-43ef-afba-78ec1abf999d
+    title: Kurs_49216
+  - identifier: 7c8ef22a-54c0-4eb1-bbff-a078be1b76d6
+    title: Kurs_2139
+  - identifier: 834e62e9-2962-481c-8055-b9e5f9a0248f
+    title: Kurs_54380
+  - identifier: 9be9c76d-cefc-45e9-a465-af3898bf1e08
+    title: Kurs_52837
+  - identifier: e49853f8-958e-4e0f-905d-c6e99c4e6cd1
+    title: Kurs_45451
+  - identifier: 6d8e6a82-2814-4363-801a-d3c967ceb4c2
+    title: Kurs_55595
+  - identifier: 32dce556-17a8-4ba1-9108-dba1272f3ac0
+    title: Kurs_42180
+  - identifier: e53a8e63-4203-4fd6-8c96-2e1425f8657f
+    title: Kurs_62327
+  - identifier: 18b92361-689b-4fa5-a193-d1f8deef5d58
+    title: Kurs_42850
+  - identifier: 7f093f44-41ec-41cc-ad5b-b35432e48ff9
+    title: Kurs_52410
+  - identifier: 08b27da3-119c-486f-bdcc-e730a9901541
+    title: Kurs_49246
+  - identifier: 280501fd-a4c4-4176-9c6f-7df21d2fbfcc
+    title: Kurs_53931
+  - identifier: 73dd9055-ad32-44d9-9847-91bebdc56e6c
+    title: Kurs_40758
+  - identifier: c7a877cc-cdf4-48e7-8743-9c2bf453edc1
+    title: Kurs_39254
+  - identifier: 7397ebbc-0473-4c1f-a431-936d961f3414
+    title: Kurs_52461
+  - identifier: 3c259a8b-1c18-42f1-ad61-c6e2d98fdffe
+    title: Kurs_40826
+  - identifier: 308745b1-3796-4d5d-a458-160f95999799
+    title: Kurs_39298
+  - identifier: 8d002119-eb4a-49c2-a764-de4750d1ad6a
+    title: Kurs_51173
+  - identifier: cc740f69-0ffb-42fd-b48d-51c6ef3572c3
+    title: Kurs_41114
+  - identifier: f0a64c15-026a-4fd2-9d98-08948cc0a235
+    title: Kurs_49343
+  - identifier: bd7994a1-dd5e-487f-bfe3-019dc884d1de
+    title: Kurs_49603
+  - identifier: fc58f7d9-937e-41f1-86df-d067b69413fc
+    title: Kurs_66599
+  - identifier: b54e66db-0a0d-4869-a053-ebcfb5384924
+    title: Kurs_66023
+  - identifier: 9c91e5f8-b1f3-40be-b382-27edd6c5736f
+    title: Kurs_66565
+  - identifier: 47842e41-f859-4a5c-a50e-975ef0755397
+    title: Kurs_67914
+  - identifier: 4323e717-b218-4fb2-818c-1fc63d966e82
+    title: Kurs_70055
+  - identifier: 295940e9-ba38-4471-9ed6-1e7e6567818c
+    title: Kurs_55452
+  - identifier: 12380f4f-04e9-4420-afa1-7014bee80b3a
+    title: Kurs_51056
+  - identifier: 964dd330-d982-4216-91dd-2370a201f1f8
+    title: Kurs_57814
+  - identifier: 4d0eaea3-3771-4a26-9c41-4b0b2a2a62c2
+    title: Kurs_66238
+  - identifier: 00a8f0a1-664b-478c-bcaa-ef84ec5bc3a0
+    title: Kurs_49584
+  - identifier: dec2a880-dac5-48e2-a7f4-3c062f54c205
+    title: Kurs_67900
+  - identifier: 73c205fd-d74c-434d-a8ad-21234f798550
+    title: Kurs_57070
+  - identifier: 1940626d-68a5-493b-8168-2abe735126cd
+    title: Kurs_56141
+  - identifier: 9af9ddf4-f95a-4b41-8bb1-1cdeefd00960
+    title: Kurs_67972
+  - identifier: aeead14c-e15b-4d89-b1bf-79c7535e748f
+    title: Kurs_51196
+  - identifier: dc71f7b8-edaa-4a51-907d-60de6b35238e
+    title: Kurs_64825
+  - identifier: eef5a58f-bbef-4c70-becc-b7f85a467eb2
+    title: Kurs_67355
+  - identifier: 12cc6112-c46c-489c-8ac2-7911d1a51455
+    title: Kurs_57223
+  - identifier: 1de82fe2-4e86-4674-b4c9-ee1deb388ae9
+    title: Kurs_65443
+  - identifier: 8fe3d0ee-dfe0-4b02-8e57-8b0a5d18cff3
+    title: Kurs_49575
+  - identifier: 0c044fa8-0d40-4b1b-81d9-fa5c0390e842
+    title: Kurs_56449
+  - identifier: 7512919a-d204-4e8c-9a64-2377f66d690c
+    title: Kurs_46122
+  - identifier: 36992063-ee34-4950-86ba-af4688159461
+    title: Kurs_48209
+  - identifier: 3c015f1c-35cb-4eb7-804a-f09a449b9d0f
+    title: Kurs_45995
+  - identifier: 0705d745-a143-4bdb-9c09-e6f53ac31911
+    title: Kurs_55223
+  - identifier: d966ff4d-71d7-4128-9898-26754506b739
+    title: Kurs_41760
+  - identifier: d1951cb1-9789-4654-96de-1acd599275f7
+    title: Kurs_54384
+  - identifier: 3e6b6d3a-b07c-443d-a9de-2ca3697f0eaa
+    title: Kurs_59421
+  - identifier: 68505c1f-581d-431e-a763-0b5bef9b4779
+    title: Kurs_66158
+  - identifier: da80c019-cdf8-449b-bd0c-ed85686a0970
+    title: Kurs_49510
+  - identifier: ebe1cb1f-2b10-4a30-8088-8bf9645ed493
+    title: Kurs_30029
+  - identifier: 1599cdcc-b05b-480a-823a-5929b0872994
+    title: Kurs_45920
+  - identifier: 78324570-05eb-4331-a516-5fed28d69a79
+    title: Kurs_45803
+  - identifier: c628eb8c-0381-4256-b051-3bd24f80bb44
+    title: Kurs_65456
+  - identifier: 0c1e5b35-96f6-4700-b7e6-211ebfde295d
+    title: Kurs_67274
+  - identifier: ebdcbcbb-1186-4918-aa39-f69587a23de3
+    title: Kurs_54261
+  - identifier: b3118632-9acd-4f11-9f4a-05650e89d3a9
+    title: Kurs_48425
+  - identifier: f34c2efb-1e5e-4e77-8c6e-2c6bfaf2f54d
+    title: Kurs_50543
+  - identifier: 251d8485-8155-4e2d-bdcc-21c0c6dd8d92
+    title: Kurs_49330
+  - identifier: 7c43a0c7-1358-4260-88be-b23f4954f6ad
+    title: Kurs_51114
+  - identifier: 2d28f3ac-0cc6-4925-8620-7263eb6c93eb
+    title: Kurs_60565
+  - identifier: a1955047-a44a-409b-b2fe-37ecfff68d6c
+    title: Kurs_1001
+  - identifier: 69105515-2c46-48f4-806b-debbe90b45a2
+    title: Kurs_61263
+  - identifier: 131f7b48-b92e-4d15-a6fa-24dd0b8b495c
+    title: Kurs_58139
+  - identifier: d299ecad-706a-4619-b9e5-af172b942f8f
+    title: Kurs_57929
+  - identifier: f151e955-d966-49e3-bcdb-5cb9f630ea43
+    title: Kurs_59533
+  - identifier: f4bc25cc-7863-4581-97b0-d5522b362ace
+    title: Kurs_59074
+  - identifier: 3f30bcb1-f6db-46e3-b7a2-1ef597197dc7
+    title: Kurs_68905
+  - identifier: 51f2c559-09ec-4b53-8cd0-027754a23c9e
+    title: Kurs_54973
+  - identifier: 920d5b69-634e-462f-975b-f9c38ca8f9fb
+    title: Kurs_49429
+  - identifier: bd537f33-9ed1-4719-befc-c669257ca5ff
+    title: Kurs_57790
+  - identifier: e38fb8c3-18d3-4419-b4e5-8d71b8f6cedf
+    title: Kurs_61264
+  - identifier: 9e158949-5f51-4d62-b0b7-cb1e95597919
+    title: Kurs_60339
+  - identifier: 953fefc7-68a9-498f-857f-389ab13c60b8
+    title: Kurs_59694
+  - identifier: 24d8dcff-8d1f-41f6-aa79-1f5a72a1d34e
+    title: Kurs_39826
+  - identifier: 5792823d-a450-4fb3-ab57-39792d6a4996
+    title: Kurs_59319
+  - identifier: a9e1ee04-b7e5-4b50-bb84-394979d2e6ed
+    title: Kurs_59214
+  - identifier: fe41c694-23f2-4500-b0ae-4015ba18d747
+    title: Kurs_60439
+  - identifier: 5318a2ad-8c18-4b52-b919-3addcc35c4fb
+    title: Kurs_60830
+  - identifier: 309f7faf-95ca-48c6-b842-dac68c0dd03e
+    title: Kurs_43072
+  - identifier: d2f35040-a99b-4fab-b5c7-eaeab56d11e9
+    title: Kurs_49606
+  - identifier: bf3e095c-c4c6-4138-b5e0-21fe931b3637
+    title: Kurs_49662
+  - identifier: b2d90505-f19e-41f4-b8b3-15852f51d65a
+    title: Kurs_26662
+  - identifier: fc718f04-1bd3-4eb2-8a5e-7eecdddefb46
+    title: Kurs_60370
+  - identifier: b85bb9f4-f796-4fd5-9395-37341c616d77
+    title: Kurs_55774
+  - identifier: 631f5045-8ed9-4ae2-b544-45f0ce824234
+    title: Kurs_47855
+  - identifier: 06326abb-6d6a-4b67-afff-03fc8465abba
+    title: Kurs_55507
+  - identifier: e58d0e86-cd18-4e91-8736-1af28007ffb6
+    title: Kurs_49453
+  - identifier: b51ba09c-bbe4-4085-98b6-3e4b2e461892
+    title: Kurs_50895
+  - identifier: 7d6f0cd2-a5e2-41f0-a6ec-dc29fc476825
+    title: Kurs_43215
+  - identifier: 37250226-3163-460c-be25-5780753b7749
+    title: Kurs_48066
+  - identifier: c92b2cc5-4ebf-4c3e-9d4c-ca7ebaa308a0
+    title: Kurs_48361
+  - identifier: ab0bf35b-fb59-4061-9ef2-2373516a8034
+    title: Kurs_44508
+  - identifier: 0b6b0670-1cd4-4fb3-9657-deb2aad0b543
+    title: Kurs_46397
+  - identifier: 59c3d7db-e7d5-46bc-a527-1045c78565c6
+    title: Kurs_65748
+  - identifier: e9151b17-dd7f-46ba-bf76-3b809a79b010
+    title: Kurs_58891
+  - identifier: 300068ef-58e9-484a-9603-b7a273574454
+    title: Kurs_45732
+  - identifier: cb32b68d-5f8f-4572-b322-43350d37a14f
+    title: Kurs_50467
+  - identifier: 679811dc-537a-4198-8c1b-8b8806b2e8f7
+    title: Kurs_46263
+  - identifier: cd1c50da-8e68-4924-896e-c9cfd4b5d9b8
+    title: Kurs_46405
+  - identifier: 47528ee6-1eff-446f-8433-822bf0e7a89a
+    title: Kurs_68381
+  - identifier: 7e0dbabc-b059-4f74-9598-f0b132388821
+    title: Kurs_57472
+  - identifier: b7051a7f-14a4-45f0-842f-c757cebf23c4
+    title: Kurs_56863
+  - identifier: 1560b9d1-abfe-4697-b526-672308d13963
+    title: Kurs_55611
+  - identifier: 534c1bd3-4e34-4064-9e7f-e5089535aea5
+    title: Kurs_45679
+  - identifier: 3812be6f-d41a-4ef5-bcc3-6fb88e4ee046
+    title: Kurs_57277
+  - identifier: eef7322a-5c37-4e55-b747-57c876de91d5
+    title: Kurs_60803
+  - identifier: 7232b8b6-02ef-4e6c-9bd8-cb7b784cfc60
+    title: Kurs_60953
+  - identifier: 545eca29-be83-4d49-82c7-9c49efd842be
+    title: Kurs_52128
+  - identifier: ec750b0b-0926-443f-8320-5a9630d9a027
+    title: Kurs_51081
+  - identifier: 5b3d62a1-762b-45bd-af10-864c23abb694
+    title: Kurs_56753
+  - identifier: 7dfa67e0-2a3d-4119-81b6-188c7eee013b
+    title: Kurs_55724
+  - identifier: 0fec2bb1-b195-4d32-9e0a-80673aed4295
+    title: Kurs_50997
+  - identifier: 5f716b3e-cb4c-44c4-8c9b-c48820fced2c
+    title: Kurs_55496
+  - identifier: d4c63f4b-d516-4696-878d-b6cf749bf5ba
+    title: Kurs_56243
+  - identifier: c5810196-5e06-442e-840f-80a0bbc9968f
+    title: Kurs_50826
+  - identifier: e61c28b1-0cf2-481d-ab06-163db6be3afb
+    title: Kurs_56761
+  - identifier: 01fd481c-631b-44c7-b85a-45a2ac4d4530
+    title: Kurs_55490
+  - identifier: 8f0c89be-87b2-4b7a-b49b-46667e899b6b
+    title: Kurs_55617
+  - identifier: 14fc5e9e-2425-4944-82ed-80c9b69d8957
+    title: Kurs_57341
+  - identifier: 89fe38a9-4e5a-4ac4-96a9-d1de4c9a4c22
+    title: Kurs_61372
+  - identifier: 21325d2e-6aea-4ce5-accb-6dd973e089bc
+    title: Kurs_61167
+  - identifier: e5ef88a5-e32e-4493-b78f-d2c1aee49984
+    title: Kurs_59417
+  - identifier: 935c6055-5a0f-48ce-bad1-7893921c0886
+    title: Kurs_60819
+  - identifier: f7cf92c8-4076-44b4-86e0-b00e9cb01894
+    title: Kurs_51390
+  - identifier: ef811a20-0aa9-4f3e-ac2f-ee6e90b9d524
+    title: Kurs_61199
+  - identifier: 18bb4480-f305-40d8-9869-27933d95695a
+    title: Kurs_60831
+  - identifier: 79671b84-32f3-4b2f-a010-ea8b0039843b
+    title: Kurs_59281
+  - identifier: 0c05de9f-6ab3-4d10-b431-7856c3eb76a8
+    title: Kurs_54360
+  - identifier: 20ebe78f-da60-4169-a969-5e8e12514534
+    title: Kurs_44510
+  - identifier: 559b6828-378d-4737-bc72-0aa012554170
+    title: Kurs_60828
+  - identifier: d94a21c5-25e5-4dbc-94ba-ffb8f08a2eaa
+    title: Kurs_60827
+  - identifier: be3f4332-af69-4ef6-9b2c-5fc7334b2acf
+    title: Kurs_61133
+  - identifier: 72b86bb1-3495-4050-a6ac-d49771baba0d
+    title: Kurs_59750
+  - identifier: 60f4ba2e-3859-48cb-ac77-c1fa41411240
+    title: Kurs_44038
+  - identifier: ce3b0c99-3922-4dc4-9a96-b7afdd007f36
+    title: Kurs_60444
+  - identifier: f1655ca7-c631-4fb5-956c-dd25053e3fd7
+    title: Kurs_59180
+  - identifier: 3b7fbaa1-de58-4fc6-a099-d3a0bda60eee
+    title: Kurs_59530
+  - identifier: a902bc70-bd28-4bb0-9855-20b6603587d9
+    title: Kurs_20373
+  - identifier: fbfcd67a-55c3-45c0-9894-78f96db078b4
+    title: Kurs_42296
+  - identifier: 370a46de-4a0f-4685-8f79-60671796f2b3
+    title: Kurs_46106
+  - identifier: f928782b-bc8c-4529-8ab5-144b4ae3a33c
+    title: Kurs_52759
+  - identifier: 110b8f43-2515-49f0-9885-7b97b46a8a70
+    title: Kurs_59368
+  - identifier: dd3ce877-e922-4003-8f0e-981fddf2862a
+    title: Kurs_64185
+  - identifier: e19680e1-33e1-4e0c-b38c-c2bfaeef174b
+    title: Kurs_66148
+  - identifier: 245ee61b-8ef3-4caf-8a3f-85af0c42172c
+    title: Kurs_61205
+  - identifier: f47e5f02-0809-4a5d-bce3-ef60c886cbce
+    title: Kurs_62696
+  - identifier: d68af912-2101-43c5-9c56-7964d1179410
+    title: Kurs_50985
+  - identifier: bb662b64-5cf5-4b7a-845a-3025213cdf00
+    title: Kurs_50460
+  - identifier: 8259c182-84b1-49af-ad8a-1c2e665789a8
+    title: Kurs_71830
+  - identifier: 3b3c9ecd-a8d7-4cab-a54a-20d2c05201ab
+    title: Kurs_47772
+  - identifier: 756924d4-0db8-48af-a4c7-85f95655e6db
+    title: Kurs_41517
+  - identifier: f050329d-ecaa-42b8-bdf3-1482212194f0
+    title: Kurs_50642
+  - identifier: 203e1164-92c4-4152-84c8-9afe02272a98
+    title: Kurs_67964
+  - identifier: e39ac34a-6033-41be-9fd3-7be98f012aea
+    title: Kurs_50938
+  - identifier: 56a46fdd-2492-4572-8759-fd4122c72d86
+    title: Kurs_51118
+  - identifier: d25d1025-a3be-4fe9-ad68-bec7e482819d
+    title: Kurs_54491
+  - identifier: d0c71b8a-efaf-42e8-b7b7-d1ce7e196262
+    title: Kurs_50940
+  - identifier: 19cdf161-d611-4f51-b6bf-449f50d889cc
+    title: Kurs_39409
+  - identifier: 15393ed2-c900-41dc-b07d-eda9a7144ec8
+    title: Kurs_41827
+  - identifier: 946c3b7f-5de1-4f47-87e4-a12f6ab6a4d5
+    title: Kurs_55631
+  - identifier: 953da2d3-b528-4a37-90bd-d07771fec530
+    title: Kurs_40612
+  - identifier: 7ce4ece0-3c78-48a6-a582-fd0e6006475e
+    title: Kurs_56560
+  - identifier: 363f34fd-13ff-4172-a19e-30908470560e
+    title: Kurs_43435
+  - identifier: 2bf05c27-f40a-4e70-b349-74d27d262fad
+    title: Kurs_75504
+  - identifier: 037272c5-125f-48d1-b82b-7c075c672b59
+    title: Kurs_52122
+  - identifier: a7921649-3088-4c68-b0c5-017505d628bb
+    title: Kurs_42562
+  - identifier: 6f0e5509-ac44-408b-88bc-4f48dae9d91e
+    title: Kurs_59377
+  - identifier: 7a41e1e2-5e6d-4f78-8fc5-779bec42c8b2
+    title: Kurs_43740
+  - identifier: a9a51868-5e4d-4fe3-bfb9-ee9bdc07f5ff
+    title: Kurs_71009
+  - identifier: ce56af58-39dd-45ee-9503-717f7486543b
+    title: Kurs_42448
+  - identifier: ed4e818c-ef83-4114-b1b4-7ba59e011c50
+    title: Kurs_68815
+  - identifier: 37dc9deb-1c02-4186-9e2d-a1fa0da16bb0
+    title: Kurs_64588
+  - identifier: ce9e068b-591b-4dd7-a1fc-056951b2c665
+    title: Kurs_63096
+  - identifier: 7218336e-0a00-42c9-9bdf-6a6e46998cdb
+    title: Kurs_64022
+  - identifier: bb6d1b2c-cd10-48b8-8ab8-c5f4221ad0b4
+    title: Kurs_42547
+  - identifier: 67c5a47f-7cb8-43a2-a029-e6a5986b3a14
+    title: Kurs_44502
+  - identifier: 21f5fd67-d677-4de9-84c4-56e414ea3bd2
+    title: Kurs_65318
+  - identifier: aae1cb05-3701-4ecd-8661-d9006479e9c1
+    title: Kurs_527
+  - identifier: b12aa55b-265b-47c6-8b66-7b4bc72296e8
+    title: Kurs_47622
+  - identifier: df72c484-4584-435f-a45f-a730c8613692
+    title: Kurs_64669
+  - identifier: b82df128-3662-463a-a2c1-341ab5d79667
+    title: Kurs_53782
+  - identifier: 296ee50f-c65b-4a02-8f8e-63ea9b3200cc
+    title: Kurs_70876
+  - identifier: 241973b9-75a1-437b-80c2-3464d5947580
+    title: Kurs_39559
+  - identifier: 53397077-e2b4-420e-8e36-06c156583ce5
+    title: Kurs_54099
+  - identifier: 2c384a1f-72e2-404b-9f3f-71ee7272b129
+    title: Kurs_53032
+  - identifier: 120f3f9a-dc5e-4e03-94b1-3be7e549ef65
+    title: Kurs_53053
+  - identifier: 20c3162c-fdfd-4e19-bc33-713178dfca23
+    title: Kurs_62228
+  - identifier: 9aad16ab-172c-4203-805e-3fd2b4ebacf4
+    title: Kurs_54387
+  - identifier: 489792b3-b10d-48f8-823d-be7bf734113a
+    title: Kurs_74261
+  - identifier: 36a49564-3285-4929-a568-52a078532e31
+    title: Kurs_52830
+  - identifier: efd905f7-ed2b-4c44-b97b-4d0de4641da4
+    title: Kurs_63072
+  - identifier: 9c7c2ddd-9a69-4791-a9e2-ef99284043c3
+    title: Kurs_62244
+  - identifier: edfcf2fa-aaf5-4f8e-b009-9d00d2891881
+    title: Kurs_39788
+  - identifier: fc662fd6-a77f-4705-88ce-7d61a3b8fd20
+    title: Kurs_47194
+  - identifier: 6b38d391-443e-47b2-b68c-7534b7d6e694
+    title: Kurs_54438
+  - identifier: dc852741-8b2f-4460-a439-4dfb95038e8c
+    title: Kurs_44832
+  - identifier: 2da0d328-35a4-4483-a138-c95b7818cdba
+    title: Kurs_38607
+  - identifier: 968016e7-dbe4-48a4-a3a1-aa36844c7b8c
+    title: Kurs_54800
+  - identifier: b666b668-c0df-473c-afbe-66a771e82a2e
+    title: Kurs_54803
+  - identifier: 849007f2-3ed4-447e-b09c-5fcc2810137b
+    title: Kurs_49043
+  - identifier: 126b3f5a-7c28-491e-99f6-f7f3bbcbbcf2
+    title: Kurs_49359
+  - identifier: 6a010974-5f6e-41c7-8580-4fa87d296740
+    title: Kurs_41522
+  - identifier: cada13cc-1c81-4675-9911-6315fb8b0896
+    title: Kurs_47644
+  - identifier: 5387e321-45e0-486d-8ff3-09198ae05c2f
+    title: Kurs_42149
+  - identifier: 699c578a-dd02-4df2-9f3a-7d2210c98714
+    title: Kurs_41515
+  - identifier: 17e77a7b-7c7c-4ca6-850d-67d3487f8e11
+    title: Kurs_49854
+  - identifier: b37cd7c8-bd19-4892-9dfb-3cda8978d9c0
+    title: Kurs_41792
+  - identifier: 31f3d3b7-27e2-47e4-a41d-be708d21edad
+    title: Kurs_63069
+  - identifier: 38b38bc7-6d4d-4853-98d6-093525f0e6c8
+    title: Kurs_71472
+  - identifier: 29b2929c-b32b-4341-8e63-838f5f08f62c
+    title: Kurs_44079
+  - identifier: e260d417-aaf1-42e5-af6f-7a14ee956568
+    title: Kurs_62195
+  - identifier: c2990f5d-4bf1-44c3-bc59-e92256c3c925
+    title: Kurs_64361
+  - identifier: c3e760ed-4118-4587-be7f-c305154f7ab7
+    title: Kurs_52237
+  - identifier: 1da4d1dd-f1e0-4131-9548-f94718e22f0a
+    title: Kurs_49290
+  - identifier: e5707f7d-4364-4495-831d-07a887dff36d
+    title: Kurs_68595
+  - identifier: 1709b460-202a-498c-b997-7d48a98a8637
+    title: Kurs_43734
+  - identifier: 0a72defd-d341-46d0-8c26-16a3730c98f5
+    title: Kurs_64539
+  - identifier: a5fead81-c08d-435e-9a2b-be817799f405
+    title: Kurs_332
+  - identifier: 11065b3a-a47e-4be6-9a46-19a3a68fa616
+    title: Kurs_63304
+  - identifier: 78a07f22-d271-49a0-9852-d716e602b254
+    title: Kurs_50414
+  - identifier: 8b30c2b4-1be1-4898-8840-ec12024da419
+    title: Kurs_64640
+  - identifier: 9ca05a7b-d4f4-4b5e-b434-f9558186c19d
+    title: Kurs_64067
+  - identifier: 72503008-b04c-4f5f-956a-90324ce4dc2f
+    title: Kurs_64056
+  - identifier: f7445e8e-d38d-43b3-8668-891292810779
+    title: Kurs_64255
+  - identifier: c6e38c32-4881-49b1-8adc-97d872420cb0
+    title: Kurs_64003
+  - identifier: 2b14db46-2825-4f70-9027-3282df14dca8
+    title: Kurs_61665
+  - identifier: 62bf946b-6c52-4dc7-b954-6c6446fd410b
+    title: Kurs_63303
+  - identifier: 5b08b814-c1c7-4561-980d-b7edeb48fb0b
+    title: Kurs_64163
+  - identifier: e62dc96c-a139-4786-836f-eb653de5bf38
+    title: Kurs_51565
+  - identifier: b15ea34e-8940-421e-8c5a-e795672283a3
+    title: Kurs_65127
+  - identifier: fc581e8b-b132-4eba-94c7-ec3d544de3c2
+    title: Kurs_70278
+  - identifier: b6677603-6518-4bd9-9a36-b5637a776b1c
+    title: Kurs_64026
+  - identifier: f3d3f749-1b96-4dee-a2b5-14ca5b34903f
+    title: Kurs_63590
+  - identifier: 96819ed5-e496-4cf0-ba26-9c88ff040767
+    title: Kurs_63959
+  - identifier: be20e40f-59d6-40af-a3e9-efc3d36c39e2
+    title: Kurs_55101
+  - identifier: ded00f9a-1670-4105-a146-13e50414fb88
+    title: Kurs_67229
+  - identifier: 65b86edd-6444-47f5-bc9b-3e8b9d2e2022
+    title: Kurs_56067
+  - identifier: d7e7bba8-8f55-4ae8-b518-373db3a6f670
+    title: Kurs_63027
+  - identifier: 384821d2-1d9f-4550-b461-240c1c33d5ab
+    title: Kurs_73936
+  - identifier: 0d92839c-e66c-4b27-b773-60f9f023ffd8
+    title: Kurs_44506
+  - identifier: 004b9120-9682-48dc-b7a7-9c09568c1105
+    title: Kurs_61211
+  - identifier: 25128e51-3ab1-424b-b31d-dbe59a7bd154
+    title: Kurs_40535
+  - identifier: 5c02b75f-6ef9-4c5a-b2e0-ff6dea58ea8f
+    title: Kurs_59212
+  - identifier: a72d632b-b35c-4891-8a1d-f3deb3366a23
+    title: Kurs_71038
+  - identifier: 97a32b24-c5c6-40a5-89b1-b179649bd158
+    title: Kurs_60280
+  - identifier: d570423d-51a4-4b42-8cc3-8050fa71f5e7
+    title: Kurs_54917
+  - identifier: a447a980-64f9-4cfb-b87e-f9b87921b628
+    title: Kurs_59560
+  - identifier: 0fecf84b-4204-473a-8b76-465ca0498c2e
+    title: Kurs_59179
+  - identifier: da9a26fc-b056-414b-87b8-46b9e3af2029
+    title: Kurs_58678
+  - identifier: 51d3e1ed-1e0b-464a-9e94-c9fbc9b18cb0
+    title: Kurs_60952
+  - identifier: 429cc520-3c0b-4025-99bc-06a953f795a3
+    title: Kurs_41310
+  - identifier: eadf747e-f7a5-4d37-90d1-1e2b7b45cd1c
+    title: Kurs_39790
+  - identifier: e2102ba8-eee6-4d96-a96c-69bf9c58788f
+    title: Kurs_65726
+  - identifier: eca377cc-111e-405f-88cc-b344195203cb
+    title: Kurs_45810
+  - identifier: c48acdcf-74e3-452b-ae9e-74b3d584393a
+    title: Kurs_48061
+  - identifier: 6228f203-bf2b-4f5d-b1a8-b206b3a45fb1
+    title: Kurs_70736
+  - identifier: e08c7090-2e14-4347-a24d-150b861d1c2a
+    title: Kurs_48088
+  - identifier: f2ddf0ce-b0de-415c-903b-48d8978c5504
+    title: Kurs_60454
+  - identifier: 90a3c9ee-2952-4875-af48-3d7ed12a0008
+    title: Kurs_60619
+  - identifier: ff6d85ad-b4b6-49a3-97a5-60cec9083bf6
+    title: Kurs_62702
+  - identifier: b337a1cc-39da-4cac-a36b-847faa9a2787
+    title: Kurs_64412
+  - identifier: b33478de-5827-4368-a5b7-bf5bea67bcd3
+    title: Kurs_41801
+  - identifier: 9526c4bf-e270-4556-8d95-cd6f03e6f9c7
+    title: Kurs_66336
+  - identifier: 239a96fd-9725-4449-a51d-2817990e78ea
+    title: Kurs_57765
+  - identifier: 841c1163-1eb0-40d0-ba9e-9cb3568d280f
+    title: Kurs_55523
+  - identifier: 59cd26d1-58ad-48a6-8628-b68e676846ca
+    title: Kurs_47690
+  - identifier: 81924fe1-e16b-4a28-b3fb-b9534702682a
+    title: Kurs_61478
+  - identifier: 55042f55-2d31-48ec-99d2-721cbb8dd140
+    title: Kurs_64630
+  - identifier: 0f1a6539-d634-4d81-896a-8854ce3e64d0
+    title: Kurs_70467
+  - identifier: 15a11369-54b9-40af-af34-41125643c971
+    title: Kurs_47686
+  - identifier: 14ae79b9-900b-445e-8b00-f1b9894d5bf7
+    title: Kurs_58465
+  - identifier: fb2201e4-7b74-47e8-91e8-b27d11f31779
+    title: Kurs_59370
+  - identifier: adf643ee-4436-415e-aab7-5be01b6210c6
+    title: Kurs_65992
+  - identifier: 934e82e6-3b8a-4754-aa44-c8dbd8ba2244
+    title: Kurs_56771
+  - identifier: 6bc62505-cc6e-49b2-8adc-f4fda0bfdc8f
+    title: Kurs_58728
+  - identifier: 633fc748-724a-40ce-83ec-90aa3144a85e
+    title: Kurs_61223
+  - identifier: 5d83198f-e015-4df7-a664-577da188cc86
+    title: Kurs_59772
+  - identifier: 3428aee7-6761-4db4-8199-57bdb16e588d
+    title: Kurs_60502
+  - identifier: 4d9a76d4-5f3e-4bd4-a7a2-4a5f10ee25e7
+    title: Kurs_59211
+  - identifier: 29f4b3ca-e1d2-40e7-959e-bb08810e85cb
+    title: Kurs_65975
+  - identifier: 157c13aa-5340-463e-aca3-4067c5c5c45d
+    title: Kurs_67740
+  - identifier: b2ffdfa6-bce4-40d3-9f8f-e22d28d3cbb8
+    title: Kurs_54440
+  - identifier: 0c975a29-c188-4bb8-a854-ab6600fb8303
+    title: Kurs_67634
+  - identifier: bfa3ef4c-4333-436d-9b02-ab41d7b3b7ce
+    title: Kurs_71037
+  - identifier: 7d0cd823-3131-417e-8a7c-ddb8ccbbad7d
+    title: Kurs_67966
+  - identifier: 44fcff0a-f98c-4cb0-ab76-24c77f6a8908
+    title: Kurs_61206
+  - identifier: 91c44241-bf1f-42a6-bd22-ff2c56b9734a
+    title: Kurs_54877
+  - identifier: 7c89b322-d31f-4309-82eb-b18fa50d5451
+    title: Kurs_51392
+  - identifier: 2f47b7d8-6cc8-4f27-bcc2-3883c2eda024
+    title: Kurs_46116
+  - identifier: dda213d3-2a54-4568-8457-173cd590fdc9
+    title: Kurs_58200
+  - identifier: 66109d9d-0d82-4ce5-900c-30cff3c51b14
+    title: Kurs_71040
+  - identifier: e2c0ad1b-f0b6-4f5f-a839-12a51cf50fe3
+    title: Kurs_66570
+  - identifier: dda56265-c377-494d-a0cb-0df0dd2750da
+    title: Kurs_53932
+  - identifier: d8201d48-c80a-4d8a-b36b-44bf0b53eba8
+    title: Kurs_56948
+  - identifier: 0a2b1c29-01ad-4657-bfec-5534d8e3340c
+    title: Kurs_62845
+  - identifier: e8494c1c-87ef-43a5-95d4-996219fc9bcd
+    title: Kurs_62944
+  - identifier: f0e02491-1c82-41c8-a1e4-c592974fcf1f
+    title: Kurs_64192
+  - identifier: a060a714-ee9f-4015-a869-d3051027fa2e
+    title: Kurs_32918
+  - identifier: 6bc81f97-42aa-4fda-bc64-27568ecde798
+    title: Kurs_55637
+  - identifier: d355cbf5-b530-4215-8ff2-2c230abe456a
+    title: Kurs_64595
+  - identifier: 78aaf12b-edc0-4c5e-a15e-ef786ed0266f
+    title: Kurs_63969
+  - identifier: b725d364-25b6-4add-a0c1-971ce5b4103e
+    title: Kurs_64245
+  - identifier: 1b45eaf6-882c-4d85-b90d-9970912c94fa
+    title: Kurs_65001
+  - identifier: 11df63a3-2255-45c7-8a2f-cad694285596
+    title: Kurs_64066
+  - identifier: a2ab7679-f110-4453-b7a9-d7de318e62df
+    title: Kurs_63070
+  - identifier: 92fc2d64-10e8-465b-b87b-4332ff2914ea
+    title: Kurs_63121
+  - identifier: e72e83d2-7aa2-45e8-b57e-f8668e835701
+    title: Kurs_43094
+  - identifier: 260469c4-4f00-4d2c-8362-d361f2ba1201
+    title: Kurs_62919
+  - identifier: b6e5f848-9989-4aca-ad87-2f0b97b395a6
+    title: Kurs_64443
+  - identifier: be8a6d80-059a-4948-bfa5-ad4e8049da14
+    title: Kurs_47120
+  - identifier: 78345794-7433-48f0-8ee5-562f9e0c2f69
+    title: Kurs_43385
+  - identifier: 22c76992-3790-48c0-8fe1-72f5760d2a07
+    title: Kurs_57257
+  - identifier: a90ea127-a3ff-42e9-84dd-c67fb21a4dfe
+    title: Kurs_48208
+  - identifier: edab9a66-9c53-4e62-afd8-c8af1f4fc265
+    title: Kurs_46261
+  - identifier: 75f98615-8c7a-4c73-9a4e-eef276b2c76c
+    title: Kurs_40469
+  - identifier: ec5ac14c-6d58-4e0f-879f-4ef4f3d1dd9f
+    title: Kurs_61498
+  - identifier: d002f92a-72a6-4adc-b1ba-eb4311b59bbf
+    title: Kurs_61209
+  - identifier: 88d8ae0f-4b23-4beb-87e7-7b6e46cdda4f
+    title: Kurs_59273
+  - identifier: ea8748bc-3dd8-4550-a37a-ae8e1e02c3e5
+    title: Kurs_39155
+  - identifier: 8830e35a-c43a-4ff7-bf5f-9f0a2bcbf7c2
+    title: Kurs_78302
+  - identifier: 260605e6-37fa-4907-b9dd-c3d5a93e17ef
+    title: Kurs_69486
+  - identifier: 01946e40-bbbf-4e59-9633-66f98a4cab0b
+    title: Kurs_70679
+  - identifier: ddf553df-7480-4797-9f70-3f4f9fb93755
+    title: Kurs_76382
+  - identifier: 1796f725-a25a-4d63-836c-0370a10d9aed
+    title: Kurs_77520
+  - identifier: b7a181a4-95a5-4d52-877c-494d0d3f7dcd
+    title: Kurs_77104
+  - identifier: 4615f3e2-c6b9-4b47-b014-7d62af799588
+    title: Kurs_70649
+  - identifier: d879a155-1408-4317-917b-f59d891e478d
+    title: Kurs_78463
+  - identifier: 90ff7767-8bc8-41ba-b439-867b89e9402b
+    title: Kurs_77372
+  - identifier: 6b969ff7-c12d-4e82-acf7-d16dd7fb6f39
+    title: Kurs_77430
+  - identifier: c870eb43-fa8f-4778-82db-a6bd8c83700c
+    title: Kurs_78511
+  - identifier: 2b3270e9-e267-4b65-a865-ea85f0cb4561
+    title: Kurs_68467
+  - identifier: 0772fb8b-d7d6-4c65-8150-bca611efd791
+    title: Kurs_77984
+  - identifier: 4d121c68-24d4-438c-a0cc-147e3ece7c5c
+    title: Kurs_65111
+  - identifier: d890f7e2-93d8-407f-892d-080d719b85fd
+    title: Kurs_41228
+  - identifier: 06b0240e-5e0b-4f0e-9d15-1001af41f97f
+    title: Kurs_68904
+  - identifier: ea509689-53f4-4904-b9e9-49fb6905d51b
+    title: Kurs_78397
+  - identifier: efe4743e-d9fc-4485-89f6-1256a012d153
+    title: Kurs_78464
+  - identifier: b958f800-6f2d-4c48-9219-b8fbb018f00a
+    title: Kurs_47779
+  - identifier: 06304b62-98b0-4cca-9da8-21d266fca642
+    title: Kurs_41227
+  - identifier: 87d99bf3-e435-45a9-8b30-79627c339d89
+    title: Kurs_65489
+  - identifier: aaa5453d-0252-4adc-b0f2-022a55a9f5c5
+    title: Kurs_69030
+  - identifier: 5ac9ec72-315f-4d53-b4df-68794c25b6ae
+    title: Kurs_70173
+  - identifier: c3f5fc32-c9b9-4b24-a5e4-51d7e4460e41
+    title: Kurs_78100
+  - identifier: 43442ef9-d33f-414e-9a7c-c2582aaecb57
+    title: Kurs_78695
+  - identifier: 391f9621-4987-4690-a755-3cd7c4daa960
+    title: Kurs_70532
+  - identifier: 26fc4ac8-51e8-4826-a9af-010dcd714a4a
+    title: Kurs_77378
+  - identifier: 72858c4e-cd02-46ad-b235-ae3562238379
+    title: Kurs_78567
+  - identifier: 0fd429b3-4108-4c49-a1da-60db7212a5ce
+    title: Kurs_41815
+  - identifier: f63800a3-1c6d-4e7a-98ab-a3f3684d165e
+    title: Kurs_77678
+  - identifier: efac204e-7393-4f23-bb0b-6b009bd9a57b
+    title: Kurs_77607
+  - identifier: 9b7cd39a-1c81-48ae-a098-06ae4981b184
+    title: Kurs_77679
+  - identifier: 100a14ad-8c4e-41f2-a7f2-ccd621b8a901
+    title: Kurs_78428
+  - identifier: 402b2963-94c8-4e00-9c3d-0a129a42a05f
+    title: Kurs_78683
+  - identifier: 23fde546-acc0-4918-a927-a86af39b5010
+    title: Kurs_78392
+  - identifier: f20bedca-b4c4-4649-89ec-ecd7be345b06
+    title: Kurs_70174
+  - identifier: 5802ca45-7083-4fb0-a91a-6725096df1dc
+    title: Kurs_78152
+  - identifier: 1443fa1c-4757-4e62-a1e8-f0ea4781bdda
+    title: Kurs_78425
+  - identifier: a5bf4095-0cfe-4822-8db8-09b7db13a432
+    title: Kurs_77895
+  - identifier: 7af2c761-8631-49e7-92a2-2156cbf1cb8e
+    title: Kurs_78684
+  - identifier: cbb1690f-b6ce-4ebd-b2e8-c930427e2183
+    title: Kurs_72084
+  - identifier: 524321a2-3e7c-4b1a-b451-e16bd38c8f1d
+    title: Kurs_40716
+  - identifier: 902687e5-62c9-4e45-af0a-6533f0c502d4
+    title: Kurs_74507
+  - identifier: 1d8fd88d-4322-494e-92a2-79cefb9772be
+    title: Kurs_74030
+  - identifier: 209e0e0b-a11c-438a-8562-7cbdb26badc6
+    title: Kurs_71328
+  - identifier: 1993cd62-dd7f-4e8a-a7ce-4020e42e8437
+    title: Kurs_72085
+  - identifier: 58f272b0-9b7c-4a8c-a69a-4486d7a7cf44
+    title: Kurs_61312
+  - identifier: 348f8296-8a7a-411b-92e0-c1d37488b20a
+    title: Kurs_241
+  - identifier: 73dad00b-78f6-46e9-a8ae-0e45acf03ec1
+    title: Kurs_75053
+  - identifier: 822823ee-7238-478b-9f3f-357a169c6c86
+    title: Kurs_72077
+  - identifier: a7cd82ac-bbfc-42da-8be9-9d5259eb0d23
+    title: Kurs_71977
+  - identifier: 848e7e75-cb7f-479b-a61b-991dcc5437d4
+    title: Kurs_73873
+  - identifier: 218128a7-4ffa-417e-9415-935f05c913ec
+    title: Kurs_73872
+  - identifier: 0c7f3ead-49d8-4b8a-92fb-4c2711a01fdc
+    title: Kurs_75425
+  - identifier: 92ae02ac-432d-45c5-bd3e-e1fbe2dcabbc
+    title: Kurs_72079
+  - identifier: 3122aca2-f5e6-45ab-9aeb-65f761324567
+    title: Kurs_56069
+  - identifier: e3a3e22e-81f4-4aca-8b99-65c305ddc207
+    title: Kurs_75894
+  - identifier: 70627ff6-3405-4eef-abdb-21fd51b7a755
+    title: Kurs_75899
+  - identifier: 85f0ac84-4331-43e7-8bb7-1c0b6fcc7601
+    title: Kurs_71903
+  - identifier: 837fba9f-a168-49d6-8091-fe30ca8c6575
+    title: Kurs_50998
+  - identifier: 2773acaa-f548-4f85-b3a4-810838998bb2
+    title: Kurs_52154
+  - identifier: 9d32e855-bb0c-4ddf-8cd8-602fec7834dd
+    title: Kurs_68964
+  - identifier: 9b420a4b-d812-45cd-981a-5dca186cc972
+    title: Kurs_52187
+  - identifier: 2745e541-d71d-4c0e-ab61-82fe7037a16a
+    title: Kurs_47217
+  - identifier: 66926b75-b30d-458e-9b78-9f478ba6137c
+    title: Kurs_61202
+  - identifier: 4a17bbfe-87d8-45fd-a49f-267f50873a64
+    title: Kurs_70478
+  - identifier: 09d6900f-33ae-404c-b1c7-cc4e6add7f70
+    title: Kurs_69411
+  - identifier: a8f5d2fd-2670-454b-9196-f1bad0a77a48
+    title: Kurs_70501
+  - identifier: 2d5ab8f9-5faf-4f49-bb68-2f8dab337922
+    title: Kurs_51382
+  - identifier: a8d38b53-ca4b-4153-ad24-d11c91665f42
+    title: Kurs_71327
+  - identifier: b193008b-8962-4412-8c62-648ca91f4dd1
+    title: Kurs_72083
+  - identifier: 4a714f0c-6593-45a3-9ee0-50789cee926f
+    title: Kurs_71613
+  - identifier: 8b15293c-d1f4-4767-adf6-86dba52bfb8a
+    title: Kurs_74051
+  - identifier: 1afd7025-89dc-4a54-8353-24350dd4ec78
+    title: Kurs_74984
+  - identifier: afb2dfae-440b-4bb6-b551-2cd8d30eb62b
+    title: Kurs_72067
+  - identifier: 94f5c821-b747-4b96-8a5f-86d0edc57993
+    title: Kurs_72070
+  - identifier: 3bd6862a-7ec5-4f9c-93e8-6e8f643b9d2d
+    title: Kurs_71902
+  - identifier: 30089f80-7ae6-45fa-96a0-1cd862f4977c
+    title: Kurs_75434
+  - identifier: 5b30aafc-3373-47ff-97bf-83c2babc9030
+    title: Kurs_75870
+  - identifier: 5211a7aa-c637-4507-951e-224c54064d23
+    title: Kurs_70641
+  - identifier: 92b87514-5d90-4c2f-8322-67fe5fadaa3d
+    title: Kurs_69433
+  - identifier: 1d91874e-32b3-4071-9a93-d7dc91e55777
+    title: Kurs_71387
+  - identifier: dc0e5d59-6711-4dfd-95fc-54d1ef644111
+    title: Kurs_78420
+  - identifier: 2aa7cdbb-d575-4322-bb8c-b74d925ec6f9
+    title: Kurs_77519
+  - identifier: 6d77deec-5e64-48da-b0c2-445f9a8f3cad
+    title: Kurs_77552
+  - identifier: c6b51a1e-7344-47c2-931b-471e1f1a4b33
+    title: Kurs_78159
+  - identifier: 0223ac8d-6948-4650-b97a-82920a642626
+    title: Kurs_78545
+  - identifier: 9cb92ac5-8e30-4a25-aff3-6890bd285f55
+    title: Kurs_76065
+  - identifier: ba91ad4c-ba16-4e52-954a-d7b062781e4c
+    title: Kurs_76439
+  - identifier: 9e563e06-a771-4392-a54b-4358e9947de3
+    title: Kurs_77850
+  - identifier: 11587987-fbf5-4726-9914-35b0a1ddc86d
+    title: Kurs_77386
+  - identifier: 55a28f60-ac6e-4ac7-b282-d3cfc21bae23
+    title: Kurs_78581
+  - identifier: 4121f7e8-ae44-4835-9022-effc223bc921
+    title: Kurs_77443
+  - identifier: 58babd0d-fe1f-4fa6-a19a-8e34236638e3
+    title: Kurs_77988
+  - identifier: f04b4734-8edf-48f2-99a8-26dd57196e6e
+    title: Kurs_78144
+  - identifier: 886c3e63-a3a3-4818-a437-0fcf456f2c14
+    title: Kurs_65499
+  - identifier: e4a34a3d-a33b-4cf4-a4dc-2f1f1d26744a
+    title: Kurs_77654
+  - identifier: 1a97b373-05f1-4163-92ba-da9fd0f61b83
+    title: Kurs_78374
+  - identifier: a72bb614-5f5e-4d48-a440-054f48a244a5
+    title: Kurs_78377
+  - identifier: 1eb6687d-003d-44ba-98ec-3f3e584f11ad
+    title: Kurs_76368
+  - identifier: f1303193-1627-46c3-be78-87b453aa4611
+    title: Kurs_69581
+  - identifier: 059c6040-fd95-4d4c-989f-075100279201
+    title: Kurs_78466
+  - identifier: edae263e-6e8d-4f74-8bcb-6c4597c4299c
+    title: Kurs_76186
+  - identifier: 512cbb76-df39-49a0-a042-f3218d110f73
+    title: Kurs_78388
+  - identifier: 0d6632ac-1766-40f1-81b5-6fce2cb87bc0
+    title: Kurs_78043
+  - identifier: 6329f701-e03e-41ca-90da-525447097977
+    title: Kurs_70952
+  - identifier: 0e0b5ca0-43bb-447f-a418-8d0b4672afb8
+    title: Kurs_71384
+  - identifier: 3c1c17fd-0e71-4e20-8d77-cca84ceecbf4
+    title: Kurs_76193
+  - identifier: 1d092b96-9015-43a5-881f-2719d1d82558
+    title: Kurs_75157
+  - identifier: 272f59b7-2646-47ce-a66e-ab1581479f7e
+    title: Kurs_67751
+  - identifier: 77d61160-8d83-48df-870f-3ed97f7b8a4b
+    title: Kurs_67752
+  - identifier: 0229cfff-2644-4213-af11-34d6141f3ffd
+    title: Kurs_78059
+  - identifier: 1294cbfc-cd2b-42e6-9371-3e3fe49ffad9
+    title: Kurs_78465
+  - identifier: 4e52c6dd-8737-483e-a867-4641128001f5
+    title: Kurs_76190
+  - identifier: 82d82596-00dd-460b-9110-4c3c2505f37c
+    title: Kurs_78122
+  - identifier: 9ad0eca9-f9ae-4daf-92fa-71e8bbdcd03e
+    title: Kurs_78060
+  - identifier: 33f36a1e-f638-49df-9e69-9d0f7287be8a
+    title: Kurs_76851
+  - identifier: 70df19a4-ad55-4f2e-b13f-c1f939511ef2
+    title: Kurs_76414
+  - identifier: 3aa8a764-186e-4896-8c65-045fc220446d
+    title: Kurs_67961
+  - identifier: a65f0211-8749-4e24-8d69-aa1375961a8c
+    title: Kurs_78694
+  - identifier: 9ff0fbc1-60e7-43e2-8c35-3af9599c2046
+    title: Kurs_68467
+  - identifier: 4cc47b3f-31bf-47d1-8302-2b1bbb1085c2
+    title: Kurs_76108
+  - identifier: 1aab5676-4cc2-4f04-9bae-5554c52f4ae9
+    title: Kurs_51032
+  - identifier: 4f9580b8-9cfc-4af3-ac4a-7d76311d43a1
+    title: Kurs_64799
+  - identifier: 49084207-9827-4512-a5eb-b3e0a48e0964
+    title: Kurs_75994
+  - identifier: f8bc5dcf-faff-4a4e-b8f1-73c9a0eaef04
+    title: Kurs_76082
+  - identifier: 9c2f0ce6-a974-4cc4-9bfb-f6e78bf06ca7
+    title: Kurs_76016
+  - identifier: e6580ba3-464e-4731-891e-0d95610b0e41
+    title: Kurs_76079
+  - identifier: 068a8065-2319-4862-bc05-80984d0532d4
+    title: Kurs_76062
+  - identifier: 2fcab3d0-92fc-428b-8121-9c560766aeaa
+    title: Kurs_76379
+  - identifier: 8fe3778b-f533-48e4-ad61-df1754686653
+    title: Kurs_77526
+  - identifier: b8655158-db72-4740-8e08-169093579900
+    title: Kurs_76427
+  - identifier: a8d1b901-8f47-4f05-85df-2ed08c68884a
+    title: Kurs_77374
+  - identifier: d62de20a-cbb5-4723-993f-3e648edb0fae
+    title: Kurs_77667
+  - identifier: 44c0ccfd-9c69-4c4c-940e-7a0fcb2187ba
+    title: Kurs_77429
+  - identifier: aa842d4d-7edc-4220-a339-c478e8095899
+    title: Kurs_77373
+  - identifier: ccc4eb92-89ef-4dd6-ab8c-01f25e7b944a
+    title: Kurs_53745
+  - identifier: 684c4665-0733-4ee9-8777-080e6ff222f9
+    title: Kurs_70227
+  - identifier: f314d2fe-94f1-43c0-b4e2-6188ec08f5e8
+    title: Kurs_78304
+  - identifier: 603cbca1-081f-45ee-9152-1d9ddf69a3a8
+    title: Kurs_77538
+  - identifier: 2f28533e-023e-4130-9691-0344c4d2997a
+    title: Kurs_74022
+  - identifier: 9c74b3bb-999d-42f4-89e6-9d84906648d2
+    title: Kurs_74049
+  - identifier: f0ce1c39-76c2-4493-95c3-96f42a5d48bd
+    title: Kurs_71739
+  - identifier: 6bd3166d-a803-40d9-9f93-a353f67bd14c
+    title: Kurs_71735
+  - identifier: 2550cb60-4eb7-49e5-86de-8e8fddebe029
+    title: Kurs_51740
+  - identifier: c6741dd7-4f73-4ce0-80a5-05aeed0a60a3
+    title: Kurs_75876
+  - identifier: 2608d2cf-73e3-4acf-a12b-a423eca6b45c
+    title: Kurs_73787
+  - identifier: 1a39b408-21a5-4d75-8032-7725b6e7aa8b
+    title: Kurs_65627
+  - identifier: 0bc5cc01-ada5-433a-8ad9-09c4695a34f9
+    title: Kurs_68708
+  - identifier: 15f4dcf9-d7da-466b-9726-99b0a2f11979
+    title: Kurs_68492
+  - identifier: 25720687-d184-45da-b709-7d9bb264b377
+    title: Kurs_76009
+  - identifier: 69469162-edc6-498b-8b53-97c04b5215fe
+    title: Kurs_75996
+  - identifier: 57f50963-f44e-4689-a64e-010df0597bad
+    title: Kurs_75949
+  - identifier: f35afefc-0d74-4aa4-b338-e8506bcc1180
+    title: Kurs_75206
+  - identifier: 4b4e4e26-7c9b-4b1a-a853-69b4823adda0
+    title: Kurs_65220
+  - identifier: 725d0142-bb92-4070-9a37-848c55925517
+    title: Kurs_76035
+  - identifier: dae48bd3-552a-4d1d-9c6e-bf66be161d77
+    title: Kurs_71476
+  - identifier: aa2923b1-1555-4db9-9b0b-cbb41002f5ff
+    title: Kurs_71096
+  - identifier: c8e41ecf-073c-4cdc-9a24-aaa5b5d54430
+    title: Kurs_70516
+  - identifier: bad64286-d365-4247-8f18-333d70fb4809
+    title: Kurs_69370
+  - identifier: 155f7a69-8bfa-4bcb-958c-41798df905cc
+    title: Kurs_77440
+  - identifier: 1fc05961-2152-4ee3-90c1-e8751c0b5385
+    title: Kurs_77891
+  - identifier: 4361ad18-06d7-400b-a11a-be52eb83e5cf
+    title: Kurs_76176
+  - identifier: 888d99b5-ea57-4c16-a5a8-371077443667
+    title: Kurs_76165
+  - identifier: 2eaf9040-5c36-4059-b498-1e6050bf2d5b
+    title: Kurs_78356
+  - identifier: 2b223b71-213d-4cea-a0d0-268e94b30dfb
+    title: Kurs_68350
+  - identifier: 8c8adb8f-634a-4e4a-b852-cf9d8738a31e
+    title: Kurs_70427
+  - identifier: 959a3de1-1270-4f39-8fb1-456a90f3e4dd
+    title: Kurs_77444
+  - identifier: abfa9951-fdb4-4923-9b49-421ae7b0d160
+    title: Kurs_78329
+  - identifier: 5a50aaa1-0bbc-4ca7-8c95-4c7ab402f324
+    title: Kurs_76181
+  - identifier: ecdf1e69-a114-44a8-acea-22b262d15a44
+    title: Kurs_77382
+  - identifier: 8afb6220-cbb3-4324-9c82-d47cefa427ff
+    title: Kurs_76700
+  - identifier: a932fac1-fa69-4f06-80ec-6a243288d83c
+    title: Kurs_77598
+  - identifier: ef2b7f27-1bb9-4d60-916d-6d5631253e68
+    title: Kurs_78426
+  - identifier: 72346252-133d-40a0-a556-75c72c2ceee5
+    title: Kurs_76704
+  - identifier: c96d0123-99b0-41e4-8b38-4ee96655294b
+    title: Kurs_78157
+  - identifier: 7d5e35b1-9b10-4b40-bb5c-de2f59c7932d
+    title: Kurs_77486
+  - identifier: a1cb3772-5cca-4fa2-8beb-ec617b4c961a
+    title: Kurs_78349
+  - identifier: 3a864078-c6ef-4486-8df3-5031bcae646d
+    title: Kurs_76303
+  - identifier: 0bcbc67a-ac41-448a-bba7-473808c89ce3
+    title: Kurs_77475
+  - identifier: 94c3a682-2866-4b38-896c-b4ff4272f861
+    title: Kurs_41677
+  - identifier: 92b4f133-3b5e-4b4d-91eb-a916fcfcebd0
+    title: Kurs_78370
+  - identifier: 3f4dd6b8-2d60-4c42-9866-eef74d12a4f3
+    title: Kurs_78873
+  - identifier: d9c44e30-bc6e-4503-9d13-7dd266d03771
+    title: Kurs_76858
+  - identifier: ecbfad2e-7efc-4865-9ced-69e757a1e583
+    title: Kurs_76059
+  - identifier: 88ea51db-7c2e-483e-a350-9b36a03b4274
+    title: Kurs_76116
+  - identifier: f58a645c-bc42-4886-94b6-b2693c26df6b
+    title: Kurs_77860
+  - identifier: e1532d66-051e-4a4a-97c1-d6eab39c3199
+    title: Kurs_77859
+  - identifier: d19434d3-7fba-487e-a250-37df70e5f9b3
+    title: Kurs_68896
+  - identifier: ec3c805e-c031-4254-98a5-77aa6d86cf33
+    title: Kurs_70450
+  - identifier: 11b6c3f1-233d-4562-838c-783183466be4
+    title: Kurs_78306
+  - identifier: 1ffe3444-aebd-4fef-b98c-d8b88b3f270b
+    title: Kurs_74756
+  - identifier: 5f847a81-5874-4c58-91a2-a1d83007c3b7
+    title: Kurs_76404
+  - identifier: 6fe266b8-ff75-4f20-9747-d6b7f8e376aa
+    title: Kurs_76196
+  - identifier: a2cdc949-e580-467b-b2a9-bb2b8aa559e1
+    title: Kurs_76443
+  - identifier: c21bdfde-eed6-4489-82f1-a2ec4677475e
+    title: Kurs_78448
+  - identifier: b6290cee-cc06-4ec8-bda6-11882f0e76f0
+    title: Kurs_77384
+  - identifier: a761b624-b7f8-4365-9d32-77a08aae4066
+    title: Kurs_77490
+  - identifier: f69ae827-5049-480b-a451-4c9a479c0461
+    title: Kurs_76525
+  - identifier: b2a07c9b-cc73-4b17-b633-4e586097745a
+    title: Kurs_78775
+  - identifier: f60f1c49-f62c-40d9-825e-7868661c461b
+    title: Kurs_80664
+  - identifier: 35da00cd-399f-4fe4-9cb0-0f213304efb0
+    title: Kurs_80405
+  - identifier: e5c7eb23-453f-4a1c-9daa-5e61ca8245ac
+    title: Kurs_80350
+  - identifier: 07d84575-09c6-428c-87ea-69c10a8354ee
+    title: Kurs_79091
+  - identifier: 700c1cd1-3876-4f27-b2a1-eda666d951d9
+    title: Kurs_81232
+  - identifier: b8fcf1f3-93d7-46c9-bd6b-2205d30a061b
+    title: Kurs_80528
+  - identifier: 0994c286-835d-4b4a-b5b3-27563dfa639c
+    title: Kurs_74721
+  - identifier: 9ed16274-7af9-4aba-9743-384dc91b2de1
+    title: Kurs_79410
+  - identifier: a04e248f-113f-4c8a-94bd-570821f3f427
+    title: Kurs_81104
+  - identifier: e8a84ea0-7dc9-48f7-92d8-efe54c5c5dce
+    title: Kurs_79118
+  - identifier: 0de79562-a327-4ed4-84c4-06a4c2d98032
+    title: Kurs_81093
+  - identifier: b452672d-2222-4d32-afe7-6f43a28aea6c
+    title: Kurs_80415
+  - identifier: 86d6da2f-67eb-4431-830f-df177e546691
+    title: Kurs_72016
+  - identifier: 6ed163fc-ccea-4c8f-abf1-3c1846a763ab
+    title: Kurs_74805
+  - identifier: 5e61242b-ae89-4891-9847-460ccf0ac551
+    title: Kurs_79370
+  - identifier: 771e9bfb-b53a-4591-ab38-faaf4ed8501b
+    title: Kurs_80644
+  - identifier: 2d158fe9-9f50-44b7-aedf-bdfef1c4fb2f
+    title: Kurs_81345
+  - identifier: b77ec1a4-5b05-4312-97a2-0dbf40d520e0
+    title: Kurs_81097
+  - identifier: 41498bbb-29e0-4264-8cfe-d8c31ea67231
+    title: Kurs_75176
+  - identifier: 8b7bc86b-91c4-4875-85cc-42b676426f4d
+    title: Kurs_71892
+  - identifier: 4c8d82f4-dd03-489d-8c0c-c7be57881deb
+    title: Kurs_81112
+  - identifier: f91a48c8-1964-4d42-a10a-55b4d5f1aa1e
+    title: Kurs_80669
+  - identifier: f8fd018d-72a3-4719-a168-4e65502e45b9
+    title: Kurs_75429
+  - identifier: 863a36ac-93c1-4dc4-a9ba-3b194670b392
+    title: Kurs_75373
+  - identifier: 8367e0aa-a427-444e-a217-7b82cc8b287b
+    title: Kurs_75377
+  - identifier: f0d1345c-6b0b-483f-ab89-b1c3fe3088e4
+    title: Kurs_81224
+  - identifier: f4cc538e-5dd8-48d6-b822-d4500c9a6afa
+    title: Kurs_75430
+  - identifier: cdf19860-6245-4977-ae1d-9f5eeb67b3a8
+    title: Kurs_75375
+  - identifier: 575b4efa-8c36-4754-8952-0f949d43d694
+    title: Kurs_80353
+  - identifier: 95e9d81f-d81e-4e6f-bdf0-8f7250a5c43c
+    title: Kurs_81090
+  - identifier: 9480cd13-52e0-4167-b086-27d702bfa48b
+    title: Kurs_79442
+  - identifier: db7a1be5-24e7-4a69-9d3f-b5c8c1aed76d
+    title: Kurs_73813
+  - identifier: 839d3988-4664-4a8f-a79f-7cb7ccf091e4
+    title: Kurs_71619
+  - identifier: c7eac556-b244-47f2-9060-901a69b7cc36
+    title: Kurs_75234
+  - identifier: bb699757-bdcc-4f87-bdf9-6d53125b724a
+    title: Kurs_75146
+  - identifier: e74a1e43-cddb-44f6-b45a-ef32c28a1a70
+    title: Kurs_71607
+  - identifier: f45e3030-5116-4708-aa7b-428ca7853c9d
+    title: Kurs_75473
+  - identifier: ac8afe55-cf62-473c-ab6f-fa5d674a483e
+    title: Kurs_72048
+  - identifier: 64e9ed6b-1d1f-4dc7-835f-f8196d2ac0bf
+    title: Kurs_75428
+  - identifier: f3329287-1bf4-43cd-96fc-879f6f92ebed
+    title: Kurs_75433
+  - identifier: 40eac3f6-04cb-4c2f-9034-53a518927131
+    title: Kurs_79134
+  - identifier: ab0ef392-d9e6-4c7f-be3f-17dda70c85cd
+    title: Kurs_71908
+  - identifier: 1e9ef5dd-777a-4106-bc11-4bcaa633a0d4
+    title: Kurs_79087
+  - identifier: 6629ea9b-4821-45f2-8c6d-abf2c9efd421
+    title: Kurs_79214
+  - identifier: f69b441e-d525-4a39-911a-fae1a642cb91
+    title: Kurs_79334
+  - identifier: 285a3ada-4516-46be-af7d-d8f97f5155fe
+    title: Kurs_79086
+  - identifier: 09e6d851-dcea-470b-bffb-ea3d61b6da1a
+    title: Kurs_72272
+  - identifier: 9a2b1085-724d-40af-b13d-5deb8ac729e1
+    title: Kurs_79117
+  - identifier: 201a93f2-3077-4634-87ba-78e1773c641b
+    title: Kurs_80343
+  - identifier: b32cb2ea-980d-46f9-ac5a-f6f2c27cef0b
+    title: Kurs_80342
+  - identifier: 80236fcf-76b5-453a-b185-3e34cdc517b1
+    title: Kurs_3427
+  - identifier: e0b01ef5-60e8-4a2c-bd84-0a379f4d26b1
+    title: Kurs_75051
+  - identifier: 3e95a1f6-ae7b-4715-9eab-d0cda8be0991
+    title: Kurs_75474
+  - identifier: ca329f38-9471-4c74-87de-6d156961ef7f
+    title: Kurs_80341
+  - identifier: b1f5a027-2d91-440e-9e0e-bb342adc8879
+    title: Kurs_81235
+  - identifier: 987e1ff1-9539-4f0b-9e87-6c80eefbeb07
+    title: Kurs_80401
+  - identifier: a8756679-e2dd-4517-9511-bfde478e74b3
+    title: Kurs_75426
+  - identifier: 78422518-70bc-4099-825b-6152950aee9d
+    title: Kurs_72026
+  - identifier: be0790f7-f287-4beb-a778-75dc36efb49c
+    title: Kurs_79104
+  - identifier: f2c1b6a5-99cf-4d71-b5e0-1fa93583dc98
+    title: Kurs_80349
+  - identifier: afece6c0-d44b-43d8-96b9-48f640010dce
+    title: Kurs_70533
+  - identifier: 641acbfc-486f-4590-a682-b7ac5b569236
+    title: Kurs_70525
+  - identifier: 535c7294-f30f-4434-8b80-bca16b8aef87
+    title: Kurs_76661
+  - identifier: 63e8cab4-781a-44d5-9d18-2ecf987561bb
+    title: Kurs_77869
+  - identifier: bdd71681-ec93-47b1-8664-a422890e291b
+    title: Kurs_76935
+  - identifier: 4a5489cc-2f16-4894-907e-5f4f522721b6
+    title: Kurs_70529
+  - identifier: 2efe5aff-e39d-4915-bb8e-4c7327e76645
+    title: Kurs_69102
+  - identifier: 2d7d084a-bb40-4fe9-ba09-81333f423633
+    title: Kurs_76170
+  - identifier: c5f15911-931a-45d9-9458-77f5f8dff139
+    title: Kurs_77826
+  - identifier: 5ae4169e-10ce-473a-9b2a-53390dc021bd
+    title: Kurs_76384
+  - identifier: defaaeb2-efde-4d02-b749-065f488a06cb
+    title: Kurs_70429
+  - identifier: f8580e41-1455-439a-86b8-1a292cb1c617
+    title: Kurs_70593
+  - identifier: 6f1e9930-ccc1-48d6-8af4-18b0b629bb86
+    title: Kurs_63911
+  - identifier: e65af185-96bb-4071-b171-e64dfc3bf317
+    title: Kurs_71738
+  - identifier: 2a566743-f2b4-4d32-a026-3179c40a2705
+    title: Kurs_78297
+  - identifier: d865797e-7262-4856-ad53-8a4a378ae9d7
+    title: Kurs_71737
+  - identifier: 70e3b78e-7360-4330-9fe1-b90497cd59e6
+    title: Kurs_78298
+  - identifier: c46f5b02-906f-4b79-b84c-b1bef9471dc2
+    title: Kurs_76377
+  - identifier: 1e3800c1-d618-4d43-b172-821f92afeb5b
+    title: Kurs_76540
+  - identifier: ecae0450-4127-4130-bc9a-a62054a0f00e
+    title: Kurs_77825
+  - identifier: cad204e5-bf84-4fb5-a5f4-ab0b71b54370
+    title: Kurs_74886
+  - identifier: 1e119258-50ce-49e2-bb8c-5bc1fc1432a1
+    title: Kurs_76425
+  - identifier: dff5623d-3f0f-4315-9995-ac96e3c5f3f9
+    title: Kurs_74768
+  - identifier: b71aa44a-c0a5-49c6-be38-828852e9aead
+    title: Kurs_78921
+  - identifier: e15f22e3-6d32-49be-9406-45b9ae886b7d
+    title: Kurs_75988
+  - identifier: 0ad31646-20f9-4098-a94d-6b9414cfbf08
+    title: Kurs_77906
+  - identifier: 28bcde27-c05a-4d3c-8412-decd7b7982a9
+    title: Kurs_71984
+  - identifier: d9104ccd-50ad-4cc9-ad73-1a5d4b183d00
+    title: Kurs_71983
+  - identifier: 23442a7d-9a6a-4c34-aa1b-5f9cca4218b4
+    title: Kurs_71815
+  - identifier: 44c6097a-3b09-4265-9072-15f8a897999c
+    title: Kurs_78850
+  - identifier: 1c6d58da-dfe3-440a-9a6c-058960c3063d
+    title: Kurs_78922
+  - identifier: 6d95b309-e989-4fc6-a334-d322b73ed62f
+    title: Kurs_78913
+  - identifier: be32a2da-ee09-4726-a3b1-f6f1b3635d5d
+    title: Kurs_78997
+  - identifier: a5c83da7-2689-4b13-a099-155dca7f7c58
+    title: Kurs_75916
+  - identifier: 8405ecfb-7ad3-43e3-87f9-193f2955e6a6
+    title: Kurs_79018
+  - identifier: 18e65d97-1ffb-404c-8b6f-64a940b9fc1f
+    title: Kurs_76441
+  - identifier: 7c923214-d61d-4d76-9bec-122fa4d0ddda
+    title: Kurs_78996
+  - identifier: e00e4afa-cba2-40c3-a6c6-91f059c1857a
+    title: Kurs_79017
+  - identifier: 638281f7-0ecf-41b8-8efc-45140cf6e0c0
+    title: Kurs_79054
+  - identifier: 44087404-d9c0-45fc-9bab-1b8f08ae4daa
+    title: Kurs_78914
+  - identifier: a143448c-d0bb-44dd-811b-07ca0cbcaca5
+    title: Kurs_78371
+  - identifier: 4b172a46-ddfd-4932-a62a-ed577fd2249d
+    title: Kurs_71517
+  - identifier: dae48ed5-b09c-4f69-a63d-3484a9d48f6f
+    title: Kurs_75944
+  - identifier: abb8fde4-4519-4280-a33d-de43d4015971
+    title: Kurs_76932
+  - identifier: 621b77a8-1ce7-461d-b308-7e60023c909b
+    title: Kurs_77912
+  - identifier: 78e3d5a8-dd1a-48c3-be08-72c911bb1206
+    title: Kurs_78334
+  - identifier: 0404edd8-420c-45f5-9a60-368e558d928e
+    title: Kurs_78859
+  - identifier: fd6da7fd-b027-475e-8c2f-8e5783907040
+    title: Kurs_77916
+  - identifier: e9566114-ed1b-410e-ac4d-9c7dfac8aaa9
+    title: Kurs_77827
+  - identifier: d2d39044-aa7c-42d9-8d02-ac8e86c78248
+    title: Kurs_77818
+  - identifier: 94d089b3-af9e-4316-be4b-a94b928619f3
+    title: Kurs_78774
+  - identifier: 8bc50d47-59be-4b46-872d-40cc4d929f50
+    title: Kurs_77824
+  - identifier: 9a3586f6-cfcd-43ab-b8f6-c21223e54cf7
+    title: Kurs_77856
+  - identifier: b4e8fae5-6d13-4478-885f-77e460b45b17
+    title: Kurs_77894
+  - identifier: eb0bb6e7-4259-4e27-8d8c-8119c83d8e81
+    title: Kurs_77918
+  - identifier: 1e8da7d0-6f9c-4379-8aa3-847124e40fa5
+    title: Kurs_71606
+  - identifier: fe1d3447-c3f5-4928-ad80-8b2a852b820c
+    title: Kurs_76899
+  - identifier: d8afff09-7989-4457-a13d-d82986434c1d
+    title: Kurs_77187
+  - identifier: 5feb45d2-54fd-4d4c-aea8-7e29eb9510c6
+    title: Kurs_76852
+  - identifier: 0a471c00-a8b2-492b-8fc2-1d7c837c4d32
+    title: Kurs_77917
+  - identifier: 10d4c282-e491-45e4-927e-268793c9d113
+    title: Kurs_75223
+  - identifier: 721b9b1d-091c-4a66-b8d5-6072b3ec42b3
+    title: Kurs_75215
+  - identifier: 5bc4277a-22d3-4d26-9824-e880abcbb37f
+    title: Kurs_75486
+  - identifier: b2f02646-4961-4819-9dba-ee6f19bd7333
+    title: Kurs_75379
+  - identifier: 575c2bd4-f3c9-453e-a6d9-b23ac3c4d203
+    title: Kurs_71922
+  - identifier: 4cef280d-f648-4ed2-92df-57bf00ffb1f0
+    title: Kurs_73785
+  - identifier: de47f24f-a14e-4b98-88e5-77622a9d71b3
+    title: Kurs_75022
+  - identifier: d07e2d86-0b93-4312-aa2b-4e5f02fe93f0
+    title: Kurs_75026
+  - identifier: 1eb6f48a-908d-4c98-bc07-8075024dcf16
+    title: Kurs_73800
+  - identifier: 6e8f9eb2-5c00-4fcd-9dd2-5d543a02020e
+    title: Kurs_75363
+  - identifier: 0434a3f0-c499-47e8-9169-a39f24ea12f0
+    title: Kurs_75019
+  - identifier: 7ace9d42-a2df-40b7-a5c0-7ab572f928e7
+    title: Kurs_75071
+  - identifier: 452cf83c-b3ef-446b-90e9-166e067ac8fa
+    title: Kurs_75509
+  - identifier: 8d398933-1f01-4699-ba2d-929c84aeea98
+    title: Kurs_75505
+  - identifier: b6438ed2-7a25-4e8b-8389-293566565769
+    title: Kurs_75417
+  - identifier: 959b63bc-ac0d-4ece-af52-f1bbc329990f
+    title: Kurs_75211
+  - identifier: bf5bb395-14e4-45f8-973b-5dd0c22f3e9d
+    title: Kurs_75150
+  - identifier: 1a3c7fae-fc06-459f-bbeb-c9b8da38447a
+    title: Kurs_71670
+  - identifier: 696aea82-2fa5-4c5c-8e72-592250ad2849
+    title: Kurs_75378
+  - identifier: aca3e306-3750-4c89-b55e-c9617ebef9a1
+    title: Kurs_75658
+  - identifier: c1cbf90d-cc96-4b78-9fa9-aa21b59fd638
+    title: Kurs_75835
+  - identifier: 17fa0869-d40a-4c96-9ef0-6973d5a61a87
+    title: Kurs_75444
+  - identifier: 028666de-959a-46c2-9d53-b19a5d79c44a
+    title: Kurs_71918
+  - identifier: ba62f45c-d422-4c2d-b9f0-cd321adda484
+    title: Kurs_73734
+  - identifier: 26b7833a-d111-42d4-be8c-6cbeacc2c68b
+    title: Kurs_73723
+  - identifier: ef087305-3bf3-42a0-8cf7-fc1888128607
+    title: Kurs_74199
+  - identifier: fe6eff49-6005-4c97-b485-9ff4a179f2c2
+    title: Kurs_74977
+  - identifier: 427c87b2-152f-452d-9e43-f352c8a83b26
+    title: Kurs_75015
+  - identifier: dba84c49-d9fd-4e87-aed1-5757d45d74d1
+    title: Kurs_75017
+  - identifier: c569064b-8fde-4816-9e15-d1579c3ad228
+    title: Kurs_75050
+  - identifier: b1ce3c73-1ae5-48f0-a4c7-d7467ebfce19
+    title: Kurs_74018
+  - identifier: 0c3dec01-5719-48a2-bdbe-c65fd3e9014c
+    title: Kurs_75396
+  - identifier: 6b05045a-e745-44c4-bb4f-883e6a64f0ba
+    title: Kurs_75231
+  - identifier: 82e33536-b52e-4c6e-acd9-ea399d106a01
+    title: Kurs_82366
 
 media:
   - - flavor: presenter/source
