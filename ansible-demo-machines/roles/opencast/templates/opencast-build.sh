@@ -49,7 +49,20 @@ curl -fisS --retry 60 --retry-delay 1 --retry-all-errors \
 sudo systemctl start opencast.service
 
 # Wait until Opencast is up before ingesting media
-sleep 90
+# Initialize the counter
+counter=1
+# This takes a while right now beacuse of https://github.com/opencast/opencast/issues/7755
+# Loop while the counter is less than or equal to 5
+while (( counter <= 10 )); do
+  if [ $(curl -s -o /dev/null -w '%{http_code}' -f --digest -u 'opencast_system_account:CHANGE_ME' -H 'X-Requested-Auth: Digest'  http://localhost/info/me.json) -eq 200 ]; then
+    echo "Opencast ready"
+    break
+  fi
+  echo "Opencast not ready"
+  ((counter++))
+  sleep 60
+done
+
 ./ingest.py
 
 # Avoid registration form
