@@ -10,7 +10,7 @@
     gpgkey: https://nginx.org/keys/nginx_signing.key
     file: nginx-stable
   when: >
-    ansible_os_family == 'RedHat'
+    ansible_facts['os_family'] == 'RedHat'
 
 - name: Install Nginx
   ansible.builtin.package:
@@ -48,7 +48,7 @@
   ansible.builtin.package:
     name: python3-libsemanage
   when: >
-    ansible_os_family == 'RedHat'
+    ansible_facts['os_family'] == 'RedHat'
     and ansible_distribution_major_version >= '8'
 
 - name: Allow httpd to act as reverse proxy

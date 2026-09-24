@@ -2,7 +2,7 @@
 
 - name: Fail early if OS is not supported
   ansible.builtin.assert:
-    that: ansible_os_family == 'Debian'
+    that: ansible_facts['os_family'] == 'Debian'
 
 - name: Install opencast dependencies
   ansible.builtin.package:
