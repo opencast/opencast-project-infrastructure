@@ -1,15 +1,23 @@
 ---
 
+- name: Add nginx stable repository
+  ansible.builtin.yum_repository:
+    name: nginx-stable
+    description: nginx stable repo
+    baseurl: https://nginx.org/packages/centos/$releasever/$basearch/
+    gpgcheck: true
+    enabled: true
+    gpgkey: https://nginx.org/keys/nginx_signing.key
+    file: nginx-stable
+  when: >
+    ansible_os_family == 'RedHat'
+
 - name: Install Nginx
   ansible.builtin.package:
-    name: nginx
+    name:
+      - nginx
+      - nginx-module-acme
     state: present
-
-- name: Create ssl directory
-  ansible.builtin.file:
-    path: /etc/nginx/ssl
-    state: directory
-    mode: '0755'
 
 - name: Configure Nginx mime types
   ansible.builtin.copy:
@@ -18,18 +26,6 @@
     owner: root
     group: root
     mode: '0644'
-
-- name: Initial configuration for certificates
-  ansible.builtin.copy:
-    src: '{{ item }}.pem'
-    dest: /etc/nginx/ssl/{{ inventory_hostname }}.{{ item }}
-    owner: root
-    group: root
-    force: false
-    mode: '0640'
-  loop:
-    - crt
-    - key
 
 - name: Create diffie hellman ephemeral parameters for nginx
   community.crypto.openssl_dhparam:
