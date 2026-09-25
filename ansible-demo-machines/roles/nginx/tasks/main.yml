@@ -9,8 +9,35 @@
     enabled: true
     gpgkey: https://nginx.org/keys/nginx_signing.key
     file: nginx-stable
-  when: >
-    ansible_facts['os_family'] == 'RedHat'
+  when: ansible_facts['os_family'] == 'RedHat'
+
+- name: Add nginx repository
+  ansible.builtin.deb822_repository:
+    name: nginx
+    types: deb
+    uris: https://nginx.org/packages/ubuntu
+    suites: '{{ ansible_facts["distribution_release"] }}'
+    components: nginx
+    signed_by: https://nginx.org/keys/nginx_signing.key
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Update APT cache
+  ansible.builtin.apt:
+    update_cache: true
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Pin nginx repository
+  ansible.builtin.copy:
+    dest: /etc/apt/preferences.d/99nginx
+    content: |
+      Package: *
+      Pin: origin nginx.org
+      Pin: release o=nginx
+      Pin-Priority: 900
+    owner: root
+    group: root
+    mode: "0644"
+  when: ansible_facts['os_family'] == 'Debian'
 
 - name: Install Nginx
   ansible.builtin.package:
@@ -47,19 +74,14 @@
 - name: Install SElinux config libs
   ansible.builtin.package:
     name: python3-libsemanage
-  when: >
-    ansible_facts['os_family'] == 'RedHat'
-    and ansible_distribution_major_version >= '8'
+  when: ansible_facts['os_family'] == 'RedHat'
 
 - name: Allow httpd to act as reverse proxy
   ansible.posix.seboolean:
     name: httpd_can_network_relay
     state: true
     persistent: true
-  when: >
-    ansible_distribution == 'CentOS'
-    or ansible_distribution == 'RedHat'
-    or ansible_distribution == 'Scientific'
+  when: ansible_facts['os_family'] == 'RedHat'
 
 - name: Start and enable nginx
   ansible.builtin.service:
