@@ -1,11 +1,87 @@
 # -*- python -*-
 # ex: set filetype=python:
 
-from buildbot.plugins import steps, util
+from buildbot.plugins import steps, util, schedulers
 import random
+from urllib.parse import quote
+
+def getAnyBranchScheduler(name, builderNames, fileIsImportant=lambda fn: True, change_filter=None, properties=dict()):
+    return schedulers.AnyBranchScheduler(
+        name=name,
+        # NB: Do not make this a string, a horribly unclear error occurs and nothing works for this scheduler...
+        treeStableTimer={{ stability_limit }},
+        builderNames=builderNames,
+        properties=properties,
+        change_filter=change_filter,
+        fileIsImportant=fileIsImportant)
 
 
-def shellCommand(command, name, workdir="build", env={}, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, alwaysRun=False, doStepIf=True, hideStepIf=False):
+def getForceScheduler(name, props, builderNames, codebase=None, params=None):
+
+    defaultCodebase = [
+        util.CodebaseParameter(
+            "",
+            label="Main repository",
+            # will generate a combo box
+            branch=util.FixedParameter(
+                name="branch",
+                default=props['git_branch_name'],
+            ),
+            # will generate nothing in the form, but revision, repository,
+            # and project are needed by buildbot scheduling system so we
+            # need to pass a value ("")
+            revision=util.FixedParameter(name="revision", default="HEAD"),
+            repository=util.FixedParameter(
+                name="repository", default="{{ source_repo_url }}"),
+            project=util.FixedParameter(name="project", default=""),
+        ),
+    ]
+
+    defaultProperties = []
+
+    return schedulers.ForceScheduler(
+        name=f"FORCE{ name }".replace(".", "c").replace(" ", "s"),
+        buttonName="Force Build",
+        label="Force Build Settings",
+        builderNames=builderNames,
+        codebases=codebase or defaultCodebase,
+        properties=params or defaultProperties,
+
+        # will generate a text input
+        reason=util.StringParameter(
+            name="reason",
+            label="Reason:",
+            required=False,
+            size=80,
+            default=""),
+
+        # in case you don't require authentication this will display
+        # input for user to type his name
+        username=util.UserNameParameter(label="your name:", size=80))
+
+#If the command does not start with echo or df, prepend echo
+# We're excluding echo since that's required in some places (cf the deb builds)
+# We're excluding df since that's used in the preflight checks
+# We *can't* just exclude "|" because it's used in places where we should prepend, like the AWS steps in this file
+def testing_mode(command):
+    if list == type(command):
+        if not (command[0].startswith("echo") or command[0].startswith("df")):
+            return ["echo"] + command
+    elif util.Interpolate == type(command):
+        return ["echo", command]
+    else:
+        if not (command.startswith("echo") or command.startswith("df")):
+            from shlex import quote
+            return "echo " + quote(command)
+    return command
+
+
+def shellCommand(command, name, workdir="build", env={}, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, alwaysRun=False, doStepIf=True, hideStepIf=False, locks=[], timeout=60, exclude=False):
+    lock_temp = [ locks ] if type(locks) != list else locks
+{% if testing_mode %}
+    if not exclude:
+        command=testing_mode(command)
+{% endif %}
     return steps.ShellCommand(
         command=command,
         name=name,
@@ -16,10 +92,16 @@ def shellCommand(command, name, workdir="build", env={}, haltOnFailure=True, flu
         warnOnFailure=warnOnFailure,
         alwaysRun=alwaysRun,
         doStepIf=doStepIf,
-        hideStepIf=hideStepIf)
+        hideStepIf=hideStepIf,
+        locks=lock_temp,
+        timeout=timeout)
 
 
-def shellArg(command, logname, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True):
+def shellArg(command, logname, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, exclude=False):
+{% if testing_mode %}
+    if not exclude:
+        command=testing_mode(command)
+{% endif %}
     return util.ShellArg(
         command=command,
         logname=logname,
@@ -28,7 +110,7 @@ def shellArg(command, logname, haltOnFailure=True, flunkOnFailure=True, warnOnFa
         warnOnFailure=warnOnFailure)
 
 
-def shellSequence(commands, name, workdir="build", env={}, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, alwaysRun=False, doStepIf=True, hideStepIf=False, timeout=240):
+def shellSequence(commands, name, workdir="build", env={}, haltOnFailure=True, flunkOnFailure=True, warnOnFailure=True, alwaysRun=False, doStepIf=True, hideStepIf=False, timeout=240, locks=[]):
     return steps.ShellSequence(
         commands=commands,
         name=name,
@@ -40,7 +122,8 @@ def shellSequence(commands, name, workdir="build", env={}, haltOnFailure=True, f
         warnOnFailure=warnOnFailure,
         alwaysRun=alwaysRun,
         doStepIf=doStepIf,
-        hideStepIf=hideStepIf)
+        hideStepIf=hideStepIf,
+        locks=[ locks ] if type(locks) != list else locks)
 
 
 
@@ -68,11 +151,19 @@ def getClone(name="Clone/Checkout", url="{{ source_repo_url }}", branch=None):
         args["alwaysUseLatest"] = True
         return steps.Git(**args)
     if "github" in url:
-        return steps.GitLab(**args)
+        return steps.GitHub(**args)
     elif "gitlab" in url:
         return steps.GitLab(**args)
     else:
         return steps.Git(**args)
+
+def getSubmodules():
+    return shellCommand(
+                command=['git', 'submodule', 'update', '--init', '--recursive'],
+                name="Loading submodules",
+                env=getMavenEnv,
+                haltOnFailure=True,
+                flunkOnFailure=True)
 
 
 def getWorkerPrep():
@@ -83,15 +174,7 @@ def getWorkerPrep():
     ]
     return shellSequence(
         commands=commandsAry,
-        name="Build Prep")
-
-
-def getJDKBuilds(props):
-    return props['jdk']
-
-
-def getBuildWithJDK(prefix, build_type, jdk):
-    return prefix + " " + build_type + " JDK " + str(jdk)
+        name="Build Worker Prep")
 
 
 @util.renderer
@@ -117,15 +200,7 @@ def getMavenEnv(props):
     return env
 
 
-def getBuild(override=None, name="Build", workdir="build", timeout=240):
-    command = ['mvn', '-B', '-V', '-Dmaven.repo.local=/builder/m2', '-Dsurefire.rerunFailingTestsCount=2']
-{% if skip_tests %}
-    command.append('-DskipTests')
-{% endif %}
-    if not override:
-        command.extend(['install', '-T', util.Interpolate('%(prop:cores)s'), '-Pnone'])
-    else:
-        command.extend(override)
+def getBuildPrep(name="Build Prep", workdir="build"):
     return shellSequence(
         commands=[
 #            shellArg(
@@ -153,15 +228,33 @@ def getBuild(override=None, name="Build", workdir="build", timeout=240):
                 logname='new-timeout',
                 haltOnFailure=False,
                 flunkOnFailure=False,
-                warnOnFailure=False),
-            shellArg(
-                command=command,
-                logname='build')
+                warnOnFailure=False)
         ],
-        env=getMavenEnv,
         workdir=workdir,
-        name=name,
-        timeout=timeout)
+        name=name)
+
+
+def getBuild(override=None, name="Build", workdir="build", timeout=240, haltOnFailure=True, doStepIf=True, locks=[]):
+    command = ['mvn', '-B', '-V', '-Dmaven.repo.local=/builder/m2', '-Dsurefire.rerunFailingTestsCount=2']
+{% if skip_tests %}
+    command.append('-DskipTests')
+{% endif %}
+    if not override:
+        command.extend(['install', '-T', util.Property('cores', default='1'), '-Pnone'])
+    else:
+        command.extend(override)
+    return shellCommand(
+                command=command,
+                name=name,
+                workdir=workdir,
+                env=getMavenEnv,
+                haltOnFailure=haltOnFailure,
+                flunkOnFailure=haltOnFailure,
+                warnOnFailure=True, #We always warn, even if we try again later
+                doStepIf=doStepIf,
+                hideStepIf=not doStepIf,
+                locks=locks,
+                timeout=timeout)
 
 def getTarballs():
     return getBuild(
@@ -177,77 +270,93 @@ def compressDir(dirToCompress, outputFile, workdir="build"):
          name=f"Compressing { dirToCompress }")
 
 
-def copyAWS(pathFrom, pathTo, name, doStepIf=True, hideStepIf=False):
-    return AWSStep(
-        ['s3', 'cp', util.Interpolate(pathFrom), util.Interpolate(pathTo)],
-        name, doStepIf, hideStepIf)
-
-
-def syncAWS(pathFrom, pathTo, name, doStepIf=True, hideStepIf=False):
-    return AWSStep(
-        ['s3', 'sync', util.Interpolate(pathFrom), util.Interpolate(pathTo)],
-        name, doStepIf, hideStepIf)
-
-
-def AWSStep(command, name, doStepIf=True, hideStepIf=False, access=util.Secret("s3.public_access_key"), secret=util.Secret("s3.public_secret_key")):
-    commandAry = list()
-    commandAry.extend(['aws', '--endpoint-url', '{{ s3_host }}']),
-    if type(command) == list:
-        commandAry.extend(command)
-    else:
-        commandAry.append(command)
+def checkAWS(path, name, host="{{ s3_host }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key", doStepIf=True, hideStepIf=False):
     return shellCommand(
-        command=commandAry,
-        env={
-            "AWS_ACCESS_KEY_ID": access,
-            "AWS_SECRET_ACCESS_KEY": secret
-        },
+        command=['aws', '--endpoint-url', host, 's3', 'ls', '--recursive', util.Interpolate(path)],
         name=name,
+        env={
+            "AWS_ACCESS_KEY_ID": util.Secret(access_key_secret_id),
+            "AWS_SECRET_ACCESS_KEY": util.Secret(secret_key_secret_id)
+        },
         doStepIf=doStepIf,
         hideStepIf=hideStepIf)
 
 
-def deployS3fsSecrets():
+def copyAWS(pathFrom, pathTo, name, host="{{ s3_host }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key", doStepIf=True, hideStepIf=False):
     return shellCommand(
-        command=util.Interpolate("echo '%(secret:s3.public_access_key)s:%(secret:s3.public_secret_key)s' > /builder/.passwd-s3fs && chmod 600 /builder/.passwd-s3fs"),
-        name="Deploying S3 auth details")
+        command=['aws', '--endpoint-url', host, 's3', 'cp', util.Interpolate(pathFrom), util.Interpolate(pathTo)],
+        name=name,
+        env={
+            "AWS_ACCESS_KEY_ID": util.Secret(access_key_secret_id),
+            "AWS_SECRET_ACCESS_KEY": util.Secret(secret_key_secret_id)
+        },
+        doStepIf=doStepIf,
+        hideStepIf=hideStepIf)
 
-def mountS3fs():
-    return shellCommand(
-        command=util.Interpolate(" ".join(
-            ["mkdir", "-p", "/builder/s3", "&&",
-             "s3fs",
-             "-o", "use_path_request_style",
-             "-o", "url={{ s3_host }}/",
-             "-o", "uid=%(prop:builder_uid)s,gid=%(prop:builder_gid)s,umask=0000",
-             "{{ s3_public_bucket }}", "/builder/s3"])),
-        name="Mounting S3")
 
-def unmountS3fs():
+def syncAWS(pathFrom, pathTo, name, host="{{ s3_host }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key", doStepIf=True, hideStepIf=False):
+
     return shellCommand(
-        command=["fusermount", "-u", "/builder/s3"],
+        command=['aws', '--endpoint-url', host, 's3', 'sync', util.Interpolate(pathFrom), util.Interpolate(pathTo)],
+        name=name,
+        env={
+            "AWS_ACCESS_KEY_ID": util.Secret(access_key_secret_id),
+            "AWS_SECRET_ACCESS_KEY": util.Secret(secret_key_secret_id)
+        },
+        doStepIf=doStepIf,
+        hideStepIf=hideStepIf)
+
+
+def mountS3fs(host="{{ s3_host }}", bucket="{{ s3_public_bucket }}", target="/builder/s3", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key"):
+    return shellSequence(
+        commands=[
+            shellArg(
+                command=['mkdir', '-p', '/builder/s3'],
+                logname='mkdir'),
+            shellArg(
+                command=["s3fs",
+                    "-o", "use_path_request_style",
+                    "-o", f"url={ host }/",
+                    "-o", util.Interpolate("uid=%(prop:builder_uid)s,gid=%(prop:builder_gid)s,umask=0000"),
+                    f"{ bucket }", target],
+                logname="mount")
+        ],
+        env={
+            #NB the weird format here.  Thanks S3fs for being weird.
+            "AWSACCESSKEYID": util.Secret(access_key_secret_id),
+            "AWSSECRETACCESSKEY": util.Secret(secret_key_secret_id)
+        },
+        name=f"Mounting S3 on { host }")
+
+def unmountS3fs(target="/builder/s3"):
+    return shellCommand(
+        command=["fusermount", "-u", target],
+        alwaysRun=True,
         name="Unmounting S3")
 
 def cleanupS3Secrets():
     return shellCommand(
         command=["rm", "-f", ".passwd-s3fs"],
+        alwaysRun=True,
         name="Cleaning up S3 secrets")
 
 
-def getLatestBuildRevision():
-    pathFrom = "s3://{{ s3_public_bucket }}/builds/%(prop:branch_pretty)s/latest.txt"
+def getLatestBuildRevision(host="{{ s3_host }}", bucket="{{ s3_public_bucket }}", access_key_secret_id="s3.public_access_key", secret_key_secret_id="s3.public_secret_key", doStepIf=True, hideStepIf=False):
+    pathFrom = f"s3://{ bucket }/builds/%(prop:branch_pretty)s/latest.txt"
     pathTo = "-"
     command = 'cp'
     return steps.SetPropertyFromCommand(
-        command=['aws', '--endpoint-url', '{{ s3_host }}', 's3', command, util.Interpolate(pathFrom), util.Interpolate(pathTo)],
+        command=['aws', '--endpoint-url', host, 's3', command, util.Interpolate(pathFrom), util.Interpolate(pathTo)],
         env={
-            "AWS_ACCESS_KEY_ID": util.Secret("s3.public_access_key"),
-            "AWS_SECRET_ACCESS_KEY": util.Secret("s3.public_secret_key")
+            "AWS_ACCESS_KEY_ID": util.Secret(access_key_secret_id),
+            "AWS_SECRET_ACCESS_KEY": util.Secret(secret_key_secret_id)
         },
         # Note: We're overwriting this value to set it to the built revision rather than whatever it defaults to
         property="got_revision",
         flunkOnFailure=True,
         haltOnFailure=True,
+        doStepIf=doStepIf,
+        hideStepIf=hideStepIf,
         name="Get latest build version")
 
 
@@ -265,8 +374,10 @@ def getShortBuildRevision():
         name="Get build tarball short revision")
 
 
-def loadSigningKey():
-    pathFrom = "s3://{{ s3_private_bucket }}/{{ groups['master'][0] }}/key/signing.key"
+def loadSigningKey(key_override=None):
+    pathFrom = "s3://{{ s3_private_bucket }}/{{ groups['master'][0] }}/key/%(prop:signing_key_filename)s"
+    if key_override:
+      pathFrom = f"s3://{{ s3_private_bucket }}/{{ groups['master'][0] }}/key/{ key_override }"
     pathTo = "-"
     command = 'cp'
     return shellCommand(
@@ -321,6 +432,25 @@ def setLocale():
         flunkOnFailure=True,
         haltOnFailure=True,
         name="Generate locale for testing")
+
+def notifyMatrix(message, name, roomId="{{ default_matrix_room }}", secretId="matrix_announce_secret", warnOnFailure=True, flunkOnFailure=False, doStepIf=True, hideStepIf=False):
+    return shellCommand(
+        #I have tried so many combinations of f strings, interpolate, jinja, and various escape styles  This appears to be the least worst way of doing this...
+        # - f strings don't like the {} from the post data
+        # - jinja doesn't like the method of escaping {} in the f string
+        # - and just for fun, interpolate doesn't like the escaping that jinja uses
+        # Note: the quote()ed room gets replaced since Interpolate doesn't like things liks %21 (which is !), but handles %%21 correctly.
+        command=[
+            'curl', '-s', '-XPOST',
+            '-d', util.Interpolate('{"msgtype":"m.text", "body": "' + message + '"}'),
+            util.Interpolate('https://matrix.org/_matrix/client/r0/rooms/' + quote(roomId).replace("%", "%%") + '/send/m.room.message?access_token=%(secret:' + secretId + ')s')]
+        ,
+        name=name,
+        warnOnFailure=warnOnFailure,
+        flunkOnFailure=flunkOnFailure,
+        doStepIf=doStepIf,
+        hideStepIf=hideStepIf,
+        exclude=True)
 
 
 def getClean():

@@ -7,8 +7,8 @@ After=docker.service
 Type=oneshot
 RemainAfterExit=true
 WorkingDirectory={{ buildbot_home }}
-ExecStart=/usr/bin/docker-compose up -d --remove-orphans buildbot
-ExecStop=/usr/bin/docker-compose rm -sfv buildbot
+ExecStart=/usr/bin/docker compose up -d --remove-orphans buildbot
+ExecStop=/usr/bin/docker compose rm -sfv buildbot
 
 [Install]
 WantedBy=multi-user.target

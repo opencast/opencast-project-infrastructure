@@ -1,0 +1,13 @@
+[opencast]
+name = Opencast FIXME el 10 Repository
+baseurl  = https://pkg.opencast.org/rpms/release/el/10/oc-FIXME/x86_64
+enabled  = 0
+gpgcheck = 1
+gpgkey = https://pkg.opencast.org/gpgkeys/opencast-FIXME-rpm.key
+
+[opencast-noarch]
+name = Opencast FIXME el 10 Repository - noarch
+baseurl  = https://pkg.opencast.org/rpms/release/el/10/oc-FIXME/noarch
+enabled  = 0
+gpgcheck = 1
+gpgkey = https://pkg.opencast.org/gpgkeys/opencast-FIXME-rpm.key

@@ -1,0 +1,6 @@
+[crowdin]
+name=Crowdin repository
+baseurl=https://artifacts.crowdin.com/repo/rpm
+gpgcheck=1
+gpgkey=https://artifacts.crowdin.com/repo/GPG-KEY-crowdin
+enabled=1

@@ -36,15 +36,14 @@
     name: "{{ role_path }}/.ssh/{{ buildbot_master }}/"
     state: "{{ item }}"
   when: "'master' in group_names"
-  connection: local
+  delegate_to: localhost
   loop:
     - absent
     - directory
 
 - name: Get Buildbot master sshd server key
   shell: "ssh-keyscan {{ buildbot_master }} >> {{ role_path }}/.ssh/{{ buildbot_master }}/known_hosts"
-  when: "'master' in group_names"
-  connection: local
+  delegate_to: localhost
 
 - name: Fetch Buildbot SSH keys
   fetch:
@@ -57,7 +56,7 @@
 - name: Populate Buildbot master authorized_keys
   shell: cat {{ role_path }}/.ssh/{{ buildbot_master }}/*.pub > {{ role_path }}/.ssh/{{ buildbot_master }}/authorized_keys
   when: "'master' in group_names"
-  connection: local
+  delegate_to: localhost
 
 - name: Deploying master SSH configuration
   copy:
@@ -90,4 +89,4 @@
     name: "{{ role_path }}/.ssh"
     state: absent
   when: "'master' in group_names"
-  connection: local
+  delegate_to: localhost

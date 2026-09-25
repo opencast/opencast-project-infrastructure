@@ -1,0 +1,161 @@
+FROM ubuntu:26.04 AS core
+
+#Needed to work around pip bug: https://githubmemory.com/repo/pypa/pip/issues/10219
+ARG LANG=C.UTF-8
+ARG LC_ALL=C.UTF-8
+ARG BUILD_DATE=unknown
+
+# This will make apt-get install without question
+ARG         DEBIAN_FRONTEND=noninteractive
+
+LABEL org.opencontainers.image.authors="Greg Logan <gregorydlogan@gmail.com>" \
+      org.opencontainers.image.title="Opencast QA Ubuntu 26.04 Image" \
+      org.opencontainers.image.description="Opencast QA image based on an Ubuntu 26.04 environment" \
+      org.opencontainers.image.version="${VERSION}" \
+      org.opencontainers.image.vendor="Opencast" \
+      org.opencontainers.image.authors="Greg Logan <gregorydlogan@gmail.com>" \
+      org.opencontainers.image.url="https://github.com/opencast/opencast-project-infrastructure/docker-qa-images" \
+      org.opencontainers.image.source="https://github.com/opencast/opencast-project-infrastructure" \
+      org.opencontainers.image.created="${BUILD_DATE}"
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        software-properties-common \
+        sudo \
+        apt-transport-https \
+        gnupg \ 
+        curl \
+        ca-certificates && \
+    apt-get clean
+
+RUN mkdir -p /etc/apt/keyrings/
+COPY keys/* /etc/apt/keyrings/
+COPY repos/* /etc/apt/sources.list.d/
+
+COPY aws-config /builder/.aws/config
+
+COPY mozilla-firefox /etc/apt/preferences.d/
+
+#This automatically apt-get updates
+RUN add-apt-repository -y ppa:mozillateam/ppa && \
+    apt-get install -y --no-install-recommends \
+        bash \
+        locales \
+     # Run deps
+        tesseract-ocr \
+        netcat-openbsd \
+        sox \
+        hunspell \
+     # Build deps
+        openssh-client \
+        tar gzip bzip2 unzip \
+        git \
+        curl wget \
+        firefox && \
+    apt-get clean
+
+#Requires appimage, which doesn't work in Docker.
+#and appimagetool's extraction is not yet implemented, despite being documented as the 'solution' here
+#RUN curl --silent "https://api.github.com/repos/synfig/synfig/releases/latest" | \
+#    grep "browser_download_url.*linux64*" | \
+#    cut -d : -f 2,3 | tr -d \" | wget -qi - -O /usr/bin/synfig && \
+#    chmod 755 /usr/bin/synfig
+
+RUN apt-get install -y --no-install-recommends \
+     # Doc deps
+     ## Python deps
+        python3-dev \
+        python3-pip \
+     ## Packages for building docs
+        libyaml-dev \
+        nodejs && \
+    apt-get clean
+
+RUN apt-get install -y --no-install-recommends \
+     # Package building deps
+     # Note: build-essential is required for dpkg, gcc is required for python
+        build-essential \
+        dpkg-dev \
+        debhelper \
+        devscripts \
+        dh-exec \
+        libdistro-info-perl \
+        fakeroot \
+        cmake \
+     # s3fs since aptly needs it
+        s3fs \
+        s3cmd \
+     # Crowdin
+        crowdin && \
+    apt-get install -y -t squeeze aptly && \
+    apt-get clean
+
+RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen && \
+    sed -i -e 's/# es_ES.UTF-8 UTF-8/es_ES.UTF-8 UTF-8/' /etc/locale.gen && \
+    sed -i -e 's/# fr_FR.UTF-8 UTF-8/fr_FR.UTF-8 UTF-8/' /etc/locale.gen && \
+    locale-gen
+
+    # Ansible deploy bits
+RUN python3 -m pip --no-cache-dir install ansible paramiko --break-system-packages
+    # Buildbot s3 deploy bits
+RUN python3 -m pip --no-cache-dir install awscli --break-system-packages
+    # Vosk and vosk-cli
+RUN python3 -m pip --no-cache-dir install vosk vosk-cli webvtt-py --break-system-packages && \
+    mkdir -p /usr/share/vosk/models && \
+    wget https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip -O /usr/share/vosk/models/vosk-model-small-en-us-0.15.zip && \
+    unzip /usr/share/vosk/models/vosk-model-small-en-us-0.15.zip -d /usr/share/vosk/models/ && \
+    rm -f /usr/share/vosk/models/vosk-model-small-en-us-0.15.zip
+#NB: This adds about 3GB to the image, even without a model
+#    #Whisper, except without models
+##RUN python3 -m pip --no-cache-dir install openai-whisper
+
+#Install bits only needed for docker setup
+RUN apt-get install -y docker-ce-cli && \
+    apt-get clean
+
+COPY opencast.list /etc/apt/sources.list.d
+COPY install-ffmpeg.sh /builder/install-ffmpeg.sh
+RUN chmod 755 /builder/install-ffmpeg.sh
+
+
+FROM core AS base
+
+ARG VERSION=unknown
+
+    # Test runs produce a great quantity of dead grandchild processes.  In a
+    # non-docker environment, these are automatically reaped by init (process 1),
+    # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
+RUN curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.1/dumb-init_1.2.1_amd64 && \
+     chmod +x /usr/local/bin/dumb-init
+
+#Allow buildbot to install packages (ffmpeg) later
+RUN echo "buildbot ALL = (root) NOPASSWD : /usr/bin/apt-get, /usr/bin/yum, /usr/local/bin/dumb-init, /bin/sed" > /etc/sudoers.d/buildbot
+#Remove the default ubuntu user, which is colliding with the buildbot user
+RUN deluser ubuntu && rm -rf /home/ubuntu
+
+COPY buildbot.tac /builder/buildbot.tac
+    # Install required python packages, and twisted
+RUN python3 -m pip --no-cache-dir install future buildbot-worker==${VERSION} --break-system-packages
+
+
+FROM base AS jdk21
+
+RUN apt-get install -y \
+        openjdk-21-jre \
+        openjdk-21-jdk && \
+    #Do this after to prevent installing the default jdk
+    apt-get install -y \
+        maven && \
+    apt-get clean
+
+
+FROM base AS jdk25
+
+RUN apt-get install -y \
+        openjdk-25-jre \
+        openjdk-25-jdk && \
+    #Do this after to prevent installing the default jdk
+    apt-get install -y \
+        maven && \
+    apt-get clean

@@ -1,0 +1,46 @@
+---
+
+#Master settings
+mail_to: "gregorydlogan@gmail.com"
+docker_image_user: "greglogan"
+
+source_rpm_repo_url: "https://github.com/gregorydlogan/opencast-rpmbuild.git"
+
+send_mail_notifications: True
+send_gh_notifications: True
+push_crowdin: True
+deploy_tags: True
+
+s3_host: https://radosgw.public.os.wwu.de
+s3_public_bucket: opencast-ci
+s3_private_bucket: opencast-ci
+
+docker_user: "{{ vault_docker_user }}"
+docker_pass: "{{ vault_docker_pass }}"
+
+maven_username: "{{ vault_maven_user }}"
+maven_password: "{{ vault_maven_pass }}"
+
+#This is nightly and maven publishing
+
+crowdin_api_key: "{{ vault_crowdin_api_key }}"
+
+github_client_id: "{{ vault_github_client_id }}"
+github_client_secret: "{{ vault_github_client_secret }}"
+
+github_hook_user: "{{ vault_github_hook_user }}"
+github_hook_pass: "{{ vault_github_hook_pass }}"
+github_hook_secret: "{{ vault_github_hook_secret }}"
+
+github_token: "{{ vault_github_token }}"
+
+signing_key: "{{ vault_maven_and_nightly_signing_key }}"
+signing_key_id: 048D039F1DAE53EA0357ED824917F260EA15B53F
+
+public_s3_access_key: "{{ vault_public_s3_access_key }}"
+public_s3_secret_key: "{{ vault_public_s3_secret_key }}"
+
+private_s3_access_key: "{{ vault_private_s3_access_key }}"
+private_s3_secret_key: "{{ vault_private_s3_secret_key }}"
+
+matrix_announce_secret: "{{ vault_matrix_announce_secret }}"

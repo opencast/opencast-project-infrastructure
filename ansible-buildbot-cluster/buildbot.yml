@@ -3,22 +3,35 @@
 # This playbook deploys a Buildbot master and worker(s) configured for Opencast
 
 - hosts: s3
+  gather_facts: false
   user: "{{ login_user }}"
   roles:
     - { role: s3-server, when: "hostvars[inventory_hostname]['deploy_s3_server'] | bool" }
 
 - hosts: buildbot
+  gather_facts: true
   user: "{{ login_user }}"
   roles:
     - { role: buildbot-base }
-    - { role: docker-tcp-connectable }
-    - { role: buildbot-keysync, tags: [ rekey ] }
-    - { role: autossh, when: "'master' not in group_names", tags: [ rekey ] }
+    - { role: geerlingguy.docker, become: true, when: 'inventory_hostname != "localhost"' }
+    - { role: docker-tcp-connectable, when: 'inventory_hostname != "localhost"' }
+    - { role: buildbot-keysync, tags: [ rekey ], when: 'inventory_hostname != "localhost"' }
+    - { role: autossh, when: "'master' not in group_names and inventory_hostname != 'localhost'", tags: [ rekey ] }
     - { role: buildbot-id-mapping, tags: [ buildbot, reconfig ] }
   handlers:
     - import_tasks: handlers/handlers.yml
 
 - hosts: master
+  gather_facts: false
+  user: "{{ login_user }}"
+  roles:
+    - { role: certbot-init, become: yes, when: 'inventory_hostname != "localhost"', tags: certbot }
+    - { role: geerlingguy.certbot, become: yes, when: 'inventory_hostname != "localhost"', tags: certbot }
+  handlers:
+    - import_tasks: handlers/handlers.yml
+
+- hosts: master
+  gather_facts: false
   user: "{{ login_user }}"
   roles:
     - { role: buildbot-master-install, tags: [ buildbot ] }
@@ -26,6 +39,7 @@
     - import_tasks: handlers/handlers.yml
 
 - hosts: workers
+  gather_facts: false
   user: "{{ login_user }}"
   roles:
     - { role: buildbot-worker, tags: [ buildbot ] }
@@ -33,20 +47,15 @@
     - import_tasks: handlers/handlers.yml
 
 - hosts: all
+  gather_facts: false
   user: "{{ login_user }}"
   roles:
-    - { role: buildbot-config, tags: [ buildbot, reconfig ] }
-  handlers:
-    - import_tasks: handlers/handlers.yml
-
-- hosts: master
-  user: "{{ login_user }}"
-  roles:
-    - { role: geerlingguy.certbot, become: yes }
+    - { role: buildbot-config, tags: [ buildbot, reconfig, certbot ] }
   handlers:
     - import_tasks: handlers/handlers.yml
 
 - hosts: workers
+  gather_facts: false
   user: "{{ login_user }}"
   roles:
     - { role: buildbot-new-images, tags: [ buildbot, reconfig ] }

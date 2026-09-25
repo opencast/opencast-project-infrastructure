@@ -15,4 +15,5 @@
     - { path: "{{ buildbot_home }}/m2", mode: "0700" }
     - { path: "{{ buildbot_home }}/ansible", mode: "0700" }
     - { path: "{{ buildbot_home }}/builds", mode: "0700" }
+    - { path: "{{ buildbot_home }}/big-builds", mode: "0700" }
 

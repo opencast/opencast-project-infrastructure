@@ -1,13 +1,8 @@
 ---
 
-"10":
+"packages":
   - "autossh"
   - "sudo"
   - "python3"
-  - "docker-ce"
-
-"11":
-  - "autossh"
-  - "sudo"
-  - "python3"
-  - "docker-ce"
+  - "acl"
+  - "jq"

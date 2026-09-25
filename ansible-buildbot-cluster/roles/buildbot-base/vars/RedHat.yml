@@ -1,14 +1,8 @@
 ---
 
-"7":
+"packages":
   - "autossh"
   - "sudo"
   - "python3"
-  - "docker-ce"
-
-"8":
-  - "autossh"
-  - "sudo"
-  - "python3"
-  - "docker-ce"
+  - "jq"
 

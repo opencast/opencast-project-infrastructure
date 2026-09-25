@@ -1,4 +1,7 @@
 ---
 
 - src: geerlingguy.certbot
-  version: 5.0.2
+  version: 5.4.1
+
+- src: geerlingguy.docker
+  version: 8.0.0

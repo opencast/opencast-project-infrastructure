@@ -7,8 +7,8 @@ After=docker.service
 Type=oneshot
 RemainAfterExit=true
 WorkingDirectory={{ buildbot_home }}
-ExecStart=/usr/bin/docker-compose up -d --remove-orphans proxy
-ExecStop=/usr/bin/docker-compose rm -sfv proxy
+ExecStart=/usr/bin/docker compose up -d --remove-orphans proxy
+ExecStop=/usr/bin/docker compose rm -sfv proxy
 
 [Install]
 WantedBy=multi-user.target

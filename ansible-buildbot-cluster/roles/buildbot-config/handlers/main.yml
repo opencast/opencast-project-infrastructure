@@ -6,4 +6,5 @@
     state: stopped
     enabled: yes
     daemon_reload: yes
+  when: "'local' != ansible_connection"
   become: yes

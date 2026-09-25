@@ -11,46 +11,51 @@
   with_items:
     - { path: "{{ buildbot_home }}", mode: "0755" }
     - { path: "{{ buildbot_home }}/keys", mode: "0755" }
+    - { path: "{{ buildbot_home }}/nginx_root", mode: "0755" }
     - { path: "{{ buildbot_config_master }}", mode: "0755" }
     - { path: "{{ buildbot_secrets_master }}", mode: "0700" }
 
-- name: Ensure local temp directory exists
+- name: Ensure local temp directories exists
   file:
-    path: "{{ role_path }}/temp"
+    path: "{{ role_path }}/.temp/{{ item }}"
     state: directory
     mode: 0700
   tags: just-config
-  connection: local
+  delegate_to: localhost
+  with_items:
+    - key
+    - mvn
+    - env
 
 - name: Templating embeds locally
   template:
     src: "embeds/{{ item }}"
-    dest: "{{ role_path }}/temp/{{ item }}"
+    dest: "{{ role_path }}/.temp/{{ item }}"
     mode: 0600
   tags: just-config
-  connection: local
+  delegate_to: localhost
   with_items:
     - ssh_config
     - known_hosts
 
 - name: Munging templated embeds
   replace:
-    path: '{{ role_path }}/temp/{{ item }}'
+    path: '{{ role_path }}/.temp/{{ item }}'
     regexp: '(\w+[^\\])\n(\w+)' #This adds the backslashes on empty lines
     replace: '\1\\\\n\2'
   tags: just-config
-  connection: local
+  delegate_to: localhost
   with_items:
     - ssh_config
     - known_hosts
 
 - name: Munging templated embeds
   replace:
-    path: '{{ role_path }}/temp/{{ item }}'
+    path: '{{ role_path }}/.temp/{{ item }}'
     regexp: '([a-zA-Z0-9\/\-]+[^\\])\n' #This adds the backslash on everything else
     replace: '\1\\\\n'
   tags: just-config
-  connection: local
+  delegate_to: localhost
   with_items:
     - ssh_config
     - known_hosts
@@ -66,39 +71,51 @@
   become: yes
   with_items:
     - { src: "docker-compose.yml", dest: "{{ buildbot_home }}/docker-compose.yml" }
-    - { src: "buildbot.service", dest: "/etc/systemd/system/buildbot.service" }
-    - { src: "nginx.service", dest: "/etc/systemd/system/nginx.service" }
     - { src: "db.env", dest: "{{ buildbot_home }}/db.env" }
     - { src: "backup_database.sh", dest: "{{ buildbot_home }}/backup_database.sh", mode: "0700" }
-    - { src: "restore_database.sh", dest: "{{ buildbot_home }}/backup_database.sh", mode: "0700" }
+    - { src: "restore_database.sh", dest: "{{ buildbot_home }}/restore_database.sh", mode: "0700" }
     - { src: "master.cfg", dest: "{{ buildbot_config_master }}/master.cfg" }
-    - { src: "builders.py", dest: "{{ buildbot_config_master }}/builders.py" }
     - { src: "build.py", dest: "{{ buildbot_config_master }}/build.py" }
     - { src: "common.py", dest: "{{ buildbot_config_master }}/common.py" }
+    - { src: "packages.py", dest: "{{ buildbot_config_master }}/packages.py" }
     - { src: "debs.py", dest: "{{ buildbot_config_master }}/debs.py" }
     - { src: "markdown.py", dest: "{{ buildbot_config_master }}/markdown.py" }
-    - { src: "database.py", dest: "{{ buildbot_config_master }}/database.py" }
     - { src: "reports.py", dest: "{{ buildbot_config_master }}/reports.py" }
     - { src: "rpms.py", dest: "{{ buildbot_config_master }}/rpms.py" }
-    - { src: "schedulers.py", dest: "{{ buildbot_config_master }}/schedulers.py" }
     - { src: "ansible.py", dest: "{{ buildbot_config_master }}/ansible.py" }
     - { src: "maintenance.py", dest: "{{ buildbot_config_master }}/maintenance.py" }
     - { src: "docker_images.py", dest: "{{ buildbot_config_master }}/docker_images.py" }
-    - { src: "release.py", dest: "{{ buildbot_config_master }}/release.py" }
     - { src: "buildbot.conf", dest: "{{ buildbot_home }}/nginx-config/buildbot.conf" }
   notify: ["Stop Buildbot", "Start Buildbot"]
   tags: just-config
 
+- name: Template systemd config files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ buildbot_user }}"
+    group: "{{ buildbot_user }}"
+    mode: "{{ item.mode | default('0600') }}"
+    force: yes
+  become: yes
+  when: "'local' != ansible_connection"
+  with_items:
+    - { src: "buildbot.service", dest: "/etc/systemd/system/buildbot.service" }
+    - { src: "nginx.service", dest: "/etc/systemd/system/nginx.service" }
+  notify: ["Stop Buildbot", "Start Buildbot"]
+  tags: just-config
+
 - name: Checking if Buildbot is already running
-  shell: docker-compose ps -q buildbot
+  shell: docker compose ps -q buildbot
   args:
     chdir: "{{ buildbot_home }}"
   become: yes
+  ignore_errors: true
   tags: just-config
   register: docker_ps
 
 - name: Sanity check the files we just templated
-  shell: docker-compose run --rm buildbot /buildbot_venv/bin/buildbot checkconfig
+  shell: docker compose run --rm buildbot /buildbot_venv/bin/buildbot checkconfig
   args:
     chdir: "{{ buildbot_home }}"
   become: yes
@@ -106,7 +123,7 @@
   when: docker_ps.stdout_lines | length == 0
 
 - name: Sanity check the files we just templated
-  shell: docker-compose exec -T buildbot /buildbot_venv/bin/buildbot checkconfig
+  shell: docker compose exec -T buildbot /buildbot_venv/bin/buildbot checkconfig
   args:
     chdir: "{{ buildbot_home }}"
   become: yes
@@ -124,27 +141,51 @@
   with_items:
     - { src: "secrets/changehook.passwd", dest: "{{ buildbot_config_master }}/changehook.passwd" }
     - { src: "secrets/crowdin.key", dest: "{{ buildbot_secrets_master }}/crowdin.key" }
+    - { src: "secrets/matrix_announce_secret", dest: "{{ buildbot_secrets_master }}/matrix_announce_secret" }
     - { src: "secrets/s3.public_access_key", dest: "{{ buildbot_secrets_master }}/s3.public_access_key" }
     - { src: "secrets/s3.public_secret_key", dest: "{{ buildbot_secrets_master }}/s3.public_secret_key" }
     - { src: "secrets/s3.private_access_key", dest: "{{ buildbot_secrets_master }}/s3.private_access_key" }
     - { src: "secrets/s3.private_secret_key", dest: "{{ buildbot_secrets_master }}/s3.private_secret_key" }
-    #- { src: "secrets/greglogan-docker-user", dest: "{{ buildbot_secrets_master }}/greglogan-docker-user" }
-    #- { src: "secrets/greglogan-docker-pass", dest: "{{ buildbot_secrets_master }}/greglogan-docker-pass" }
+    #- { src: "secrets/docker-user", dest: "{{ buildbot_secrets_master }}/docker-user" }
+    #- { src: "secrets/docker-pass", dest: "{{ buildbot_secrets_master }}/docker-pass" }
 
 
   #The following files then get uploaded to S3 next
-- name: Template Buildbot private support files
+- name: Prepping local Buildbot private support files
   template:
     src: "{{ item.src }}"
-    dest: "{{role_path}}/{{ item.dest }}"
+    dest: "{{ role_path }}/{{ item.dest }}"
     mode: 0600
-  connection: local
+  delegate_to: localhost
   with_items:
-    - { src: "secrets/signing.key", dest: "temp/signing.key" }
-    - { src: "secrets/stable", dest: "temp/stable" }
-    - { src: "secrets/legacy", dest: "temp/legacy" }
-    - { src: "secrets/develop", dest: "temp/develop" }
-    - { src: "secrets/settings.xml", dest: "temp/settings.xml" }
+    #This top signing key is the default automated code signing key used for Maven and nightlies
+    - { src: "secrets/signing.key", dest: ".temp/key/signing.key" }
+    - { src: "secrets/stable", dest: ".temp/env/stable" }
+    - { src: "secrets/legacy", dest: ".temp/env/legacy" }
+    - { src: "secrets/develop", dest: ".temp/env/develop" }
+    - { src: "secrets/settings.xml", dest: ".temp/mvn/settings.xml" }
+
+- name: Templating per-repo deb signing keys
+  copy:
+    content: "{{ item['value']['deb_signing_key'] }}"
+    dest: "{{ role_path }}/.temp/key/deb-{{ item['key'] }}-signing.key"
+    mode: 0600
+  delegate_to: localhost
+  with_items:
+    - "{{ opencast | dict2items }}"
+  when: item.value.deb_signing_key is defined
+  no_log: true
+
+- name: Templating per-repo rpm signing keys
+  copy:
+    content: "{{ item['value']['rpm_signing_key'] }}"
+    dest: "{{ role_path }}/.temp/key/rpm-{{ item['key'] }}-signing.key"
+    mode: 0600
+  delegate_to: localhost
+  with_items:
+    - "{{ opencast | dict2items }}"
+  when: item.rpm_signing_key is defined
+  no_log: true
 
 - name: Distributing private support files into S3
   aws_s3:
@@ -156,34 +197,67 @@
     overwrite: "always"
     permission: [] #prevents a warning about PutObjectAcl not being implemented by minio
     bucket: "{{ s3_private_bucket }}"
-    src: "{{ role_path }}/{{ item.src }}"
-    object: "{{ item.dest }}"
-  connection: local
-  with_items:
-    - { src: "temp/signing.key", dest: "{{ groups['master'][0] }}/key/signing.key" }
-    - { src: "temp/stable", dest: "{{ groups['master'][0] }}/env/stable" }
-    - { src: "temp/legacy", dest: "{{ groups['master'][0] }}/env/legacy" }
-    - { src: "temp/develop", dest: "{{ groups['master'][0] }}/env/develop" }
-    - { src: "temp/settings.xml", dest: "{{ groups['master'][0] }}/mvn/settings.xml" }
+    src: "{{ item }}"
+    object: "{{ groups['master'][0] }}/{{ item.split('/')[-2:] | join('/') }}"
+  delegate_to: localhost
+  with_fileglob:
+    - "{{ role_path }}/.temp/key/*"
+    - "{{ role_path }}/.temp/mvn/*"
+    - "{{ role_path }}/.temp/env/*"
+  environment:
+    PYTHONPATH: "{{ EXTRA_PYTHONPATH if EXTRA_PYTHONPATH is defined else '' }}"
 
-- name: Extracting public signing key from private key
-  shell: gpg --no-default-keyring --keyring=./temp/keyring.gpg --import ./temp/signing.key && gpg --no-default-keyring --keyring=./temp/keyring.gpg -a --export {{ signing_key_id }} >> ./temp/{{ signing_key_id }}.asc
+- name: Building private keyring containing all signing keys
+  shell: "gpg --no-default-keyring --keyring={{ role_path }}/.temp/keyring.gpg --import {{ role_path }}/.temp/key/*-signing.key"
   args:
     chdir: "{{ role_path }}"
-  connection: local
+  delegate_to: localhost
 
-- name: Distributing public signing key
+- name: Extracting public signing keys from private keys
+  shell: "gpg --no-default-keyring --keyring={{ role_path }}/.temp/keyring.gpg -a --export {{ item }} >> {{ role_path }}/.temp/key/{{ item }}.asc"
+  args:
+    chdir: "{{ role_path }}"
+  with_items:
+    - "{{ opencast | dict2items | map(attribute='value.deb_signing_key_id', default='') }}"
+    - "{{ opencast | dict2items | map(attribute='value.rpm_signing_key_id', default='') }}"
+  delegate_to: localhost
+
+- name: Distributing public signing keys
   copy:
-    src: temp/{{ signing_key_id }}.asc
-    dest: "{{ buildbot_home }}/keys/public-signing-key.gpg"
+    src: "{{ item  }}"
+    dest: "{{ buildbot_home }}/keys/{{ item | basename }}"
     owner: "{{ buildbot_user }}"
     group: "{{ buildbot_user }}"
     mode: 0644
+  with_fileglob:
+    - "{{ role_path }}/.temp/key/*.asc"
   become: yes
+
+- name: Ensuring deb signing keys are linked
+  file:
+    src: "{{ buildbot_home }}/keys/{{ item['value']['deb_signing_key_id'] }}.asc"
+    dest: "{{ buildbot_home }}/keys/deb-{{ item['key'] }}-signing.key"
+    state: link
+    force: true
+  become: true
+  with_items:
+    - "{{ opencast | dict2items }}"
+  when: item.value.deb_signing_key_id is defined
+
+- name: Ensuring rpm signing keys are linked
+  file:
+    src: "{{ buildbot_home }}/keys/{{ item['value']['rpm_signing_key_id'] }}.asc"
+    dest: "{{ buildbot_home }}/keys/rpm-{{ item['key'] }}-signing.key"
+    state: link
+    force: true
+  become: true
+  with_items:
+    - "{{ opencast | dict2items }}"
+  when: item.rpm_signing_key_id is defined
 
 - name: Removing private support files from local disk
   file:
-    path: "{{ role_path }}/temp"
+    path: "{{ role_path }}/.temp"
     state: absent
-  connection: local
+  delegate_to: localhost
   tags: always

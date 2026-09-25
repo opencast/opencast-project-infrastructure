@@ -38,16 +38,34 @@ ansible_scripts_url: "https://github.com/opencast/oc-config-management.git"
 infra_repo_url: "https://github.com/opencast/opencast/opencast-project-infrastructure.git"
 
 #Where to fetch the signing key for the generated packages.  Must match the signing key id below!
-key_url: "https://pkg.opencast.org/gpgkeys/automated.key"
+key_base_url: "https://pkg.opencast.org/gpgkeys"
 
 #The GPG key ID of the key above.  These must match!
 key_id: "048D039F1DAE53EA0357ED824917F260EA15B53F"
+
+#The raw GPG key to use for package and repository signing.
+signing_key: ""
+
+#The GPG key filename to use for package and repository signing.  This is pulled from S3.
+signing_key_filename: "signing.key"
+
+#The signing key to use.  This ID *must* match the key above.
+signing_key_id: "048D039F1DAE53EA0357ED824917F260EA15B53F"
+
+#The username in the settings.xml file for Maven publishing
+maven_username: ""
+
+#The password in the settings.xml file for Maven publishing
+maven_password: ""
 
 #Where to find the deb and rpm packages
 repo_host: "pkg.opencast.org"
 
 #The repo suite to deploy Opencast from
 repo_deploy_suite: "unstable"
+
+#The room to post in about debian (and rpm?) packages being published
+default_matrix_room: "!RACMQVfKRDQTWhdXLa:matrix.org"
 
 #Who to send status mails to
 mail_to: "dev@opencast.org"
@@ -108,14 +126,14 @@ s3_public_bucket: "public"
 #This is assumed to be readable by the CI system and no one else
 s3_private_bucket: "private"
 
-#Whether to enable and expose the debug port, or not
-debug_enabled: False
-
 #Whether to enable auth, or leave things wide open
 enable_auth: True
 
 #Set this to true to deploy tags, otherwise they are ignored
 deploy_tags: False
+
+#Set this to true so to do everything *except* the stuff in ShellCommands
+testing_mode: false
 
 #######################
 # Networking Settings #
@@ -149,20 +167,6 @@ rpm_repo_fragment: "{{ repo_fragment }}/rpms"
 #Where Builbot lives, relative to the webserver root.  Leave this alone to have http://$servername/ be buildbot
 #String needs to start with a non-slash, and end with a slash (ie, buildbot/, not /buildbot or /builtbot/)
 buildbot_url: ""
-
-#Build url base
-url_base: /builds
-
-
-#Build url with build properties
-artifacts_url: "{{ url_base }}/{{ artifacts_fragment }}"
-
-#Build url for the reports
-reports_url: "{{ url_base }}/reports/%(prop:branch_pretty)s"
-#Build url for the debs
-debs_url: "{{ url_base }}/{{ debs_fragment }}"
-#Build url for the rpms
-rpms_url: "{{ url_base }}/{{ rpms_fragment }}"
 
 
 #################
