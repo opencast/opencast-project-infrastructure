@@ -30,6 +30,189 @@ sed -i 's/^#capture_agent.user.mh_default_org.opencast_capture_agent/capture_age
 sed -i 's_<!-- \(<ref.*oauthProtectedResourceFilter.*/>\) -->_\1_' /srv/opencast/opencast-dist-allinone/etc/security/mh_default_org.xml
 sed -i 's_#oauth_oauth_' /srv/opencast/opencast-dist-allinone/etc/org.opencastproject.kernel.security.OAuthConsumerDetailsService.cfg
 
+echo "# The catalog type, either 'events' or 'series'
+type=series
+
+# The tenants organization
+organization=mh_default_org
+
+# The mediapackage element flavor type and subtype
+# Anything can be used instead of "mycompany", for example "metadata", "client", etc.
+# Note: The flavor should not contain any special character!
+flavor=ethterms/series
+
+# The title of the catalog
+# This will show in the header of the section where the metadata are displayed
+title=ETH Extended Metadata
+
+
+# Name of the XML root element of the serialized catalog
+xml.rootElement.name=ethterms
+# Namespace binding for the XML root element
+xml.rootElement.namespace.URI=http://ethz.ch/video/opencast
+
+# XML namespace bindings
+xml.namespaceBinding.root.URI=http://ethz.ch/video/opencast
+xml.namespaceBinding.root.prefix=
+xml.namespaceBinding.terms.URI=http://ethz.ch/video/metadata
+xml.namespaceBinding.terms.prefix=ethterms
+
+
+##### Field Definitions #####
+
+# Advertised
+property.advertised.inputID=advertised
+property.advertised.label=Advertised
+property.advertised.type=boolean
+property.advertised.readOnly=false
+property.advertised.required=false
+property.advertised.namespace=http://ethz.ch/video/metadata
+property.advertised.order=1
+
+# Subtype
+property.subtype.inputID=subtype
+property.subtype.label=Subtype
+property.subtype.type=text
+property.subtype.readOnly=false
+property.subtype.required=false
+property.subtype.namespace=http://ethz.ch/video/metadata
+property.subtype.order=2
+
+# Episodes
+property.episodes.inputID=episodes
+property.episodes.label=Episodes
+property.episodes.type=text
+property.episodes.readOnly=false
+property.episodes.required=false
+property.episodes.namespace=http://ethz.ch/video/metadata
+property.episodes.order=3
+
+# VP URL 1
+property.vpUrl1.inputID=vpUrl1
+property.vpUrl1.label=VP URL 1
+property.vpUrl1.type=text
+property.vpUrl1.readOnly=false
+property.vpUrl1.required=false
+property.vpUrl1.namespace=http://ethz.ch/video/metadata
+property.vpUrl1.order=4
+
+# VP URL 2
+property.vpUrl2.inputID=vpUrl2
+property.vpUrl2.label=VP URL 2
+property.vpUrl2.type=text
+property.vpUrl2.readOnly=false
+property.vpUrl2.required=false
+property.vpUrl2.namespace=http://ethz.ch/video/metadata
+property.vpUrl2.order=5
+
+# MMP URL Old 1
+property.mmpUrlOld1.inputID=mmpUrlOld1
+property.mmpUrlOld1.label=MMP URL Old 1
+property.mmpUrlOld1.type=text
+property.mmpUrlOld1.readOnly=false
+property.mmpUrlOld1.required=false
+property.mmpUrlOld1.namespace=http://ethz.ch/video/metadata
+property.mmpUrlOld1.order=6
+
+# MMP URL Old 2
+property.mmpUrlOld2.inputID=mmpUrlOld2
+property.mmpUrlOld2.label=MMP URL Old 2
+property.mmpUrlOld2.type=text
+property.mmpUrlOld2.readOnly=false
+property.mmpUrlOld2.required=false
+property.mmpUrlOld2.namespace=http://ethz.ch/video/metadata
+property.mmpUrlOld2.order=7
+
+# DOI Prefix
+property.doiPrefix.inputID=doiPrefix
+property.doiPrefix.label=DOI Prefix
+property.doiPrefix.type=text
+property.doiPrefix.readOnly=false
+property.doiPrefix.required=false
+property.doiPrefix.namespace=http://ethz.ch/video/metadata
+property.doiPrefix.order=8
+
+# DOI ID
+property.doiId.inputID=doiId
+property.doiId.label=DOI ID
+property.doiId.type=text
+property.doiId.readOnly=false
+property.doiId.required=false
+property.doiId.namespace=http://ethz.ch/video/metadata
+property.doiId.order=9
+
+# Department
+property.department.inputID=department
+property.department.label=Department
+property.department.type=text
+property.department.readOnly=false
+property.department.required=false
+property.department.namespace=http://ethz.ch/video/metadata
+property.department.order=10
+
+# SHIS
+property.shis.inputID=shis
+property.shis.label=SHIS
+property.shis.type=text
+property.shis.readOnly=false
+property.shis.required=false
+property.shis.namespace=http://ethz.ch/video/metadata
+property.shis.order=11
+
+# Reverse Order
+property.reverseOrder.inputID=reverseOrder
+property.reverseOrder.label=Reverse Order
+property.reverseOrder.type=text
+property.reverseOrder.readOnly=false
+property.reverseOrder.required=false
+property.reverseOrder.namespace=http://ethz.ch/video/metadata
+property.reverseOrder.order=12
+
+# VVZ
+property.vvz.inputID=vvz
+property.vvz.label=VVZ
+property.vvz.type=text
+property.vvz.readOnly=false
+property.vvz.required=false
+property.vvz.namespace=http://ethz.ch/video/metadata
+property.vvz.order=13
+
+# Semester
+property.semester.inputID=semester
+property.semester.label=Semester
+property.semester.type=text
+property.semester.readOnly=false
+property.semester.required=false
+property.semester.namespace=http://ethz.ch/video/metadata
+property.semester.order=14
+
+# Notes
+property.notesSeries.inputID=notesSeries
+property.notesSeries.label=Notes
+property.notesSeries.type=text
+property.notesSeries.readOnly=false
+property.notesSeries.required=false
+property.notesSeries.namespace=http://ethz.ch/video/metadata
+property.notesSeries.order=15
+
+# URL
+property.urlSeries.inputID=urlSeries
+property.urlSeries.label=URL
+property.urlSeries.type=text
+property.urlSeries.readOnly=false
+property.urlSeries.required=false
+property.urlSeries.namespace=http://ethz.ch/video/metadata
+property.urlSeries.order=16
+
+# Legacy Series ID
+property.legacySeriesId.inputID=legacySeriesId
+property.legacySeriesId.label=Legacy Series ID
+property.legacySeriesId.type=text
+property.legacySeriesId.readOnly=false
+property.legacySeriesId.required=false
+property.legacySeriesId.namespace=http://ethz.ch/video/metadata
+property.legacySeriesId.order=17" > /srv/opencast/opencast-dist-allinone/etc/org.opencastproject.ui.metadata.CatalogUIAdapterFactory-series-ethterms.cfg
+
 # Ensure access to log files
 mkdir -p /srv/opencast/opencast-dist-allinone/data/log
 restorecon -r /srv/opencast/ || :
