@@ -40,18 +40,6 @@ opencast:
     server: 'legacy'
     deb_signing_key_id: "3259FFB3967266533FCD4B249A7EA8E5B3820B26"
     deb_signing_key: "{{ vault_all_deb_signing_key }}"
-  19.x:
-    branch: 'r/19.x'
-    pom: '19'
-    jdk: [ '21' ]
-    ffmpeg: 18
-    profiles: [ 'admin', 'adminpresentation', 'allinone', 'ingest', 'presentation', 'worker' ]
-    el: [ ]
-    cores: '1C'
-    server: 'legacy'
-    deb_signing_key_id: "3259FFB3967266533FCD4B249A7EA8E5B3820B26"
-    deb_signing_key: "{{ vault_all_deb_signing_key }}"
-
 
 #########################
 # User Related Settings #
