@@ -1,0 +1,85 @@
+---
+
+- name: Add Opensearch 3.x rpm repository
+  ansible.builtin.yum_repository:
+    name: nginx-stable
+    description: nginx stable repo
+    baseurl: https://artifacts.opensearch.org/releases/bundle/opensearch/3.x/yum
+    gpgcheck: true
+    enabled: true
+    gpgkey: https://artifacts.opensearch.org/publickeys/opensearch-release.pgp
+    file: opensearch-3.x
+  when: ansible_facts['os_family'] == 'RedHat'
+
+- name: Add Opensearch 3.x deb repository
+  ansible.builtin.deb822_repository:
+    name: opensearch-3.x
+    types: deb
+    uris: https://artifacts.opensearch.org/releases/bundle/opensearch/3.x/apt
+    suites: stable
+    components: nginx
+    signed_by: /etc/apt/keyrings/opensearch.gpg
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Deploy Opensearch 3.x deb signing key
+  copy:
+    src: opensearch-deb-signing.gpg
+    dest: /etc/apt/keyrings/opensearch.gpg
+    owner: root
+    group: root
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Update APT cache
+  ansible.builtin.apt:
+    update_cache: true
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Installing Opensearch 3 on RHEL
+  yum:
+    name: opensearch
+    state: present
+  environment:
+    #Hardcoded password is ok because config below only listens on 127.0.0.1
+    OPENSEARCH_INITIAL_ADMIN_PASSWORD: "Opensearchasdf1@"
+  when: ansible_facts['os_family'] == 'RedHat'
+
+- name: Installing Opensearch 3 on Debian
+  apt:
+    name: opensearch
+    state: present
+  environment:
+    #Hardcoded password is ok because config below only listens on 127.0.0.1
+    OPENSEARCH_INITIAL_ADMIN_PASSWORD: "Opensearchasdf1@"
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Destroying existing nodes, just in case this is upgrade
+  file:
+    path: /var/lib/opensearch/nodes
+    state: absent
+
+- name: Deploy Opensearch 3.x config
+  copy:
+    src: opensearch.yml
+    dest: /etc/opensearch/opensearch.yml
+    owner: opensearch
+    group: opensearch
+
+  # Opensearch refuses to start if upgrading from OS 2.x, so we destructively fix the issue :D
+- name: Clearing existing indexes
+  file:
+    path: /var/lib/opensearch/nodes
+    state: absent
+
+- name: Restarting Opensearch
+  service:
+    name: opensearch
+    state: restarted
+
+- name: Check if analysis-icu is installed
+  stat:
+    path: /usr/share/opensearch/plugins/analysis-icu
+  register: plugin_installed
+
+- name: Installing analysis-icu
+  shell: /usr/share/opensearch/bin/opensearch-plugin install analysis-icu
+  when: not (plugin_installed.stat.exists and plugin_installed.stat.isdir)

@@ -6,6 +6,7 @@
     - role: nginx
     - role: elan.opencast_firewalld
       when: ansible_os_family == 'RedHat'
+    - role: opensearch
     - role: opencast
     - role: lkiesow.dnf_autoupdate
       when: ansible_facts['os_family'] == 'RedHat'
