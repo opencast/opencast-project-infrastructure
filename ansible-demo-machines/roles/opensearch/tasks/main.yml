@@ -9,7 +9,7 @@
     enabled: true
     gpgkey: https://artifacts.opensearch.org/publickeys/opensearch-release.pgp
     file: opensearch-3.x
-  when: ansible_facts['os_family'] == 'RedHat'
+  when: ansible_facts['os_family'] == 'RedHat' and inventory_hostname != "legacy.opencast.org"
 
 - name: Add Opensearch 3.x deb repository
   ansible.builtin.deb822_repository:
@@ -19,7 +19,7 @@
     suites: stable
     components: nginx
     signed_by: /etc/apt/keyrings/opensearch.gpg
-  when: ansible_facts['os_family'] == 'Debian'
+  when: ansible_facts['os_family'] == 'Debian' and inventory_hostname != "legacy.opencast.org"
 
 - name: Deploy Opensearch 3.x deb signing key
   copy:
@@ -27,12 +27,12 @@
     dest: /etc/apt/keyrings/opensearch.gpg
     owner: root
     group: root
-  when: ansible_facts['os_family'] == 'Debian'
+  when: ansible_facts['os_family'] == 'Debian' and inventory_hostname != "legacy.opencast.org"
 
 - name: Update APT cache
   ansible.builtin.apt:
     update_cache: true
-  when: ansible_facts['os_family'] == 'Debian'
+  when: ansible_facts['os_family'] == 'Debian' and inventory_hostname != "legacy.opencast.org"
 
 - name: Installing Opensearch 3 on RHEL
   yum:
@@ -63,6 +63,7 @@
     dest: /etc/opensearch/opensearch.yml
     owner: opensearch
     group: opensearch
+  when: inventory_hostname != "legacy.opencast.org"
 
   # Opensearch refuses to start if upgrading from OS 2.x, so we destructively fix the issue :D
 - name: Clearing existing indexes
@@ -82,4 +83,4 @@
 
 - name: Installing analysis-icu
   shell: /usr/share/opensearch/bin/opensearch-plugin install analysis-icu
-  when: not (plugin_installed.stat.exists and plugin_installed.stat.isdir)
+  when: not (plugin_installed.stat.exists and plugin_installed.stat.isdir) and inventory_hostname != "legacy.opencast.org"
