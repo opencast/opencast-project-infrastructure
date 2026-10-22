@@ -12,7 +12,6 @@
       - ffmpeg-dist
       - netcat
       - opensearch
-      - opensearch-analysis-icu
       - tesseract-ocr
       - tesseract-ocr-deu
       # for ingest script
