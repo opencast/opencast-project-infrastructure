@@ -1,0 +1,6 @@
+---
+
+adopter_reg_version: "dfe052045256e0c2ab8037964b1d77a0e488d6fa"
+
+reg_server_pass: "{{ vault_reg_server_pass }}"
+reg_server_salt: "{{ vault_reg_server_salt }}"
