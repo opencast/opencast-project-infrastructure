@@ -8,7 +8,7 @@ roles:
   - name: lkiesow.dnf_autoupdate
     version: 3.0.0
   - src: geerlingguy.certbot
-    version: 5.0.2
+    version: 5.4.1
 
 collections:
   - community.crypto
