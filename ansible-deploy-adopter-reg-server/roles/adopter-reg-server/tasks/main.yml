@@ -19,14 +19,14 @@
 
 - name: Creating python venv
   command:
-    cmd: python3 -m venv {{ adopter_reg_venv }}
+    cmd: python3.12 -m venv {{ adopter_reg_venv }}
     creates: "{{ adopter_reg_venv }}"
   become_user: "{{ adopter_server_user }}"
 
 - name: Installing dependencies
   pip:
     requirements: "{{ adopter_reg_home }}/requirements.txt"
-    executable: "{{ adopter_reg_venv }}/bin/pip3"
+    executable: "{{ adopter_reg_venv }}/bin/pip3.12"
   become_user: "{{ adopter_server_user }}"
 
 - name: Changing the permissions

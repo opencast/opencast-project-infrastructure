@@ -6,66 +6,66 @@
     - role: lkiesow.dnf_autoupdate
 
   tasks:
-  - name: Ensuring epel is installed
-    package:
-      name: epel-release
-      state: present
+    - name: Ensuring epel is installed
+      package:
+        name: epel-release
+        state: present
 
-  - name: Installing git and python
-    package:
-      state: present
-      name:
-        - python3-passlib
-        - python3-packaging
-        - git
-        - sqlite
-        # These are for nginx
-        - python3-libsemanage
-        - checkpolicy
+    - name: Installing git and python
+      package:
+        state: present
+        name:
+          - python3.12
+          - python3.12-packaging
+          - git
+          - sqlite
+          # These are for nginx
+          - python3-libsemanage
+          - checkpolicy
 
-  - name: allow httpd to act as reverse proxy
-    seboolean:
-      name: httpd_can_network_relay
-      state: true
-      persistent: true
+    - name: allow httpd to act as reverse proxy
+      seboolean:
+        name: httpd_can_network_relay
+        state: true
+        persistent: true
 
-  - name: allow http and https via firewalld
-    firewalld:
-      service: "{{ item }}"
-      permanent: true
-      state: enabled
-    loop:
-      - http
-      - https
+    - name: allow http and https via firewalld
+      firewalld:
+        service: "{{ item }}"
+        permanent: true
+        state: enabled
+      loop:
+        - http
+        - https
 
-  - name: ensure ssl directory exists
-    file:
-      path: /etc/nginx/ssl
-      state: directory
-      owner: root
-      group: root
-      mode: '0640'
+    - name: ensure ssl directory exists
+      file:
+        path: /etc/nginx/ssl
+        state: directory
+        owner: root
+        group: root
+        mode: '0640'
 
-  - name: create diffie hellman ephemeral parameters for nginx
-    community.crypto.openssl_dhparam:
-      path: /etc/nginx/ssl/dhparam.pem
-      size: 2048
-      owner: root
-      group: root
-      mode: '0640'
+    - name: create diffie hellman ephemeral parameters for nginx
+      community.crypto.openssl_dhparam:
+        path: /etc/nginx/ssl/dhparam.pem
+        size: 2048
+        owner: root
+        group: root
+        mode: '0640'
 
-  - name: Create the Opencast group for the server
-    group:
-      name: 'opencast'
-      system: true
+    - name: Create the Opencast group for the server
+      group:
+        name: 'opencast'
+        system: true
 
-  - name: Create the Opencast user for the server
-    user:
-      name: 'opencast'
-      group: 'opencast'
-      password: '!'
-      system: true
-      create_home: false
+    - name: Create the Opencast user for the server
+      user:
+        name: 'opencast'
+        group: 'opencast'
+        password: '!'
+        system: true
+        create_home: false
 
 
 - hosts: all
@@ -77,76 +77,76 @@
     - adopter-reg-server
     - lkiesow.dnf_autoupdate
   vars:
-    - reg_server_user: "opencast@opencast.org"
-    - reg_server_pass: "{{ vault_reg_server_pass }}"
-    - reg_server_salt: "{{ vault_reg_server_salt }}"
-    - certbot_create_if_missing: true
-    - certbot_create_method: standalone
-    - certbot_hsts: true
-    - certbot_admin_email: cloud@opencast.org
-    - certbot_auto_renew_user: opencast
-    - certbot_certs:
-        - domains:
-            - "{{ inventory_hostname }}"
-    - certbot_create_standalone_stop_services:
-        - nginx
-    - nginx_manage_repo: false
-    - nginx_install_from: os_repository
-    - nginx_setup_license: false
-    - nginx_selinux: true
-    - nginx_config_http_template_enable: true
-    - nginx_config_http_template:
-        - deployment_location: /etc/nginx/conf.d/oc-reg-server.conf
-          config:
-            servers:
-              - core:
-                  listen:
-                    - address: 0.0.0.0
-                      port: 80
-                  server_name: "{{ inventory_hostname }}"
-                locations:
-                  - location: /
-                    rewrite:
-                      return:
-                        code: 301
-                        url: "https://{{ inventory_hostname }}$request_uri"
-              - core:
-                  listen:
-                    - address: 0.0.0.0
-                      port: 443
-                      http2: true
-                      ssl: true
-                  client_max_body_size: 0
-                  server_name: "{{ inventory_hostname }}"
-                ssl:
-                  certificate_key: /etc/letsencrypt/live/{{ inventory_hostname }}/privkey.pem
-                  certificate: /etc/letsencrypt/live/{{ inventory_hostname }}/fullchain.pem
-                  dhparam: /etc/nginx/ssl/dhparam.pem
-                  prefer_server_ciphers: true
-                  ciphers: "HIGH:!aNULL:!MD5:!3DES"
-                locations:
-                  - location: /
-                    proxy:
-                      pass: http://127.0.0.1:8080
-                      cookie_path:
-                        - path: /
-                          replacement: '"/; HTTPOnly; Secure"'
-                      buffering: false
-                      request_buffering: false
-                headers:
-                  add_headers:
-                    - name: Strict-Transport-Security
-                      value: '"max-age=31536000; includeSubdomains;"'
-                      always: true
-                    - name: X-Frame-Options
-                      value: SAMEORIGIN
-                      always: true
-                    - name: X-Content-Type-Options
-                      value: nosniff
-                      always: true
-                    - name: X-XSS-Protection
-                      value: '"1; mode=block"'
-                      always: true
-                    - name: Referrer-Policy
-                      value: strict-origin-when-cross-origin
-                      always: true
+    reg_server_user: "opencast@opencast.org"
+    reg_server_pass: "{{ vault_reg_server_pass }}"
+    reg_server_salt: "{{ vault_reg_server_salt }}"
+    certbot_create_if_missing: true
+    certbot_create_method: standalone
+    certbot_hsts: true
+    certbot_admin_email: cloud@opencast.org
+    certbot_auto_renew_user: opencast
+    certbot_certs:
+      - domains:
+          - "{{ inventory_hostname }}"
+    certbot_create_standalone_stop_services:
+      - nginx
+    nginx_manage_repo: false
+    nginx_install_from: os_repository
+    nginx_setup_license: false
+    nginx_selinux: true
+    nginx_config_http_template_enable: true
+    nginx_config_http_template:
+      - deployment_location: /etc/nginx/conf.d/oc-reg-server.conf
+        config:
+          servers:
+            - core:
+                listen:
+                  - address: 0.0.0.0
+                    port: 80
+                server_name: "{{ inventory_hostname }}"
+              locations:
+                - location: /
+                  rewrite:
+                    return:
+                      code: 301
+                      url: "https://{{ inventory_hostname }}$request_uri"
+            - core:
+                listen:
+                  - address: 0.0.0.0
+                    port: 443
+                    http2: true
+                    ssl: true
+                client_max_body_size: 0
+                server_name: "{{ inventory_hostname }}"
+              ssl:
+                certificate_key: /etc/letsencrypt/live/{{ inventory_hostname }}/privkey.pem
+                certificate: /etc/letsencrypt/live/{{ inventory_hostname }}/fullchain.pem
+                dhparam: /etc/nginx/ssl/dhparam.pem
+                prefer_server_ciphers: true
+                ciphers: "HIGH:!aNULL:!MD5:!3DES"
+              locations:
+                - location: /
+                  proxy:
+                    pass: http://127.0.0.1:8080
+                    cookie_path:
+                      - path: /
+                        replacement: '"/; HTTPOnly; Secure"'
+                    buffering: false
+                    request_buffering: false
+              headers:
+                add_headers:
+                  - name: Strict-Transport-Security
+                    value: '"max-age=31536000; includeSubdomains;"'
+                    always: true
+                  - name: X-Frame-Options
+                    value: SAMEORIGIN
+                    always: true
+                  - name: X-Content-Type-Options
+                    value: nosniff
+                    always: true
+                  - name: X-XSS-Protection
+                    value: '"1; mode=block"'
+                    always: true
+                  - name: Referrer-Policy
+                    value: strict-origin-when-cross-origin
+                    always: true
