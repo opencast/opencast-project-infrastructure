@@ -1,6 +1,6 @@
 ---
 
-adopter_reg_version: "dfe052045256e0c2ab8037964b1d77a0e488d6fa"
+adopter_reg_version: "4116b171c5e5d32a46395ca5ea40e2a8f450fa3d"
 
 reg_server_pass: "{{ vault_reg_server_pass }}"
 reg_server_salt: "{{ vault_reg_server_salt }}"
