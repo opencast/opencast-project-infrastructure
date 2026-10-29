@@ -52,11 +52,6 @@
     OPENSEARCH_INITIAL_ADMIN_PASSWORD: "Opensearchasdf1@"
   when: ansible_facts['os_family'] == 'Debian'
 
-- name: Destroying existing nodes, just in case this is upgrade
-  file:
-    path: /var/lib/opensearch/nodes
-    state: absent
-
 - name: Deploy Opensearch 3.x config
   copy:
     src: opensearch.yml
@@ -65,16 +60,34 @@
     group: opensearch
   when: inventory_hostname != "legacy.opencast.org"
 
-  # Opensearch refuses to start if upgrading from OS 2.x, so we destructively fix the issue :D
-- name: Clearing existing indexes
+- name: Create Opensearch override directory
+  file:
+    owner: root
+    group: root
+    mode: 0755
+    path: /etc/systemd/system/opensearch.service.d
+    state: directory
+  when: inventory_hostname != "legacy.opencast.org"
+
+- name: Deploy Opensearch override
+  copy:
+    src: override.conf
+    dest: /etc/systemd/system/opensearch.service.d
+    owner: root
+    group: root
+    mode: 0644
+  when: inventory_hostname != "legacy.opencast.org"
+
+- name: Destroying existing nodes, just in case this is upgrade
   file:
     path: /var/lib/opensearch/nodes
     state: absent
 
 - name: Restarting Opensearch
-  service:
+  systemd_service:
     name: opensearch
     state: restarted
+    daemon_reload: true
 
 - name: Check if analysis-icu is installed
   stat:
