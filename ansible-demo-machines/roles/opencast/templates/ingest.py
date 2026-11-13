@@ -36,7 +36,15 @@ def create_series():
     for series in config.get('series', []):
         series['acl'] = acl()
         r = post('/series/', data=series)
-        print_status(r.ok, series["title"])
+        ethterms = []
+        for ethfield in [f for f in series if f in ("advertised", "subtype", "episodes", "vpUrl1", "vpUrl2", "mmpUrlOld1", "mmpUrlOld2", "doiPrefix", "doiId", "department", "shis", "reverseOrder", "vvz", "semester", "notesSeries", "urlSeries", "legacySeriesId")]:
+            ethterms += [{'id': ethfield, 'value': series[ethfield]}]
+        auth = HTTPBasicAuth(
+                config['server']['username'],
+                config['server']['password'])
+        server = config['server']['url']
+        ext = requests.put(f'{server}/api/series/{series["identifier"]}/metadata?type=ethterms/series', auth=auth, data={'metadata': json.dumps(ethterms)})
+        print_status(r.ok and ext.ok, series["title"])
 
 
 def create_episodes():
