@@ -43,8 +43,12 @@ def create_series():
                 config['server']['username'],
                 config['server']['password'])
         server = config['server']['url']
-        ext = requests.put(f'{server}/api/series/{series["identifier"]}/metadata?type=ethterms/series', auth=auth, data={'metadata': json.dumps(ethterms)})
-        print_status(r.ok and ext.ok, series["title"])
+        if len(ethterms) > 0:
+            print({'metadata': json.dumps(ethterms)})
+            ext = requests.put(f'{server}/api/series/{series["identifier"]}/metadata?type=ethterms/series', auth=auth, data={'metadata': json.dumps(ethterms)})
+            print_status(r.ok and ext.ok, series["title"])
+        else:
+            print_status(r.ok, series["title"])
 
 
 def create_episodes():
