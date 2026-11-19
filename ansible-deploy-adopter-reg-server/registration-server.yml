@@ -114,7 +114,7 @@
                 listen:
                   - address: 0.0.0.0
                     port: 443
-                    http2: true
+                    http2: false
                     ssl: true
                 client_max_body_size: 0
                 server_name: "{{ inventory_hostname }}"
