@@ -1,0 +1,4 @@
+---
+dependencies:
+  # OpenSearch and its plugins are installed from the Opencast repository
+  - elan.opencast_repository
